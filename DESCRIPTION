@@ -1,0 +1,25 @@
+Package: miaViz
+Title: Microbiome Analysis Plotting and Visualization
+Version: 0.0.0.9000
+Date: 2020-11-03
+Authors@R: 
+    c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
+             email = "felix.gm.ernst@outlook.com",
+             comment = c(ORCID = "0000-0001-5064-0928")))
+Description: What the package does (one paragraph).
+License: GPL-3
+Encoding: UTF-8
+LazyData: false
+Depends:
+    R (>= 4.0),
+    TreeSummarizedExperiment,
+    mia
+Suggests: 
+    knitr,
+    rmarkdown,
+    BiocStyle
+Remotes:
+    github::FelixErnst/mia
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+VignetteBuilder: knitr
