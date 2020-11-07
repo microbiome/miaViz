@@ -8,25 +8,35 @@
 \alias{plotRowTree,TreeSummarizedExperiment-method}
 \title{Plotting tree information enriched with information}
 \usage{
-plotRowTree(x, ...)
+plotRowTree(object, ...)
 
-plotColTree(x, ...)
+plotColTree(object, ...)
 
 \S4method{plotColTree}{TreeSummarizedExperiment}(
-  x,
-  ...,
-  add_traits = NULL,
-  trait_data = NULL,
-  by_exprs_values = "counts"
+  object,
+  y = NULL,
+  layout = "circular",
+  show_label = FALSE,
+  colour_by = NULL,
+  shape_by = NULL,
+  size_by = NULL,
+  by_exprs_values = "counts",
+  other_fields = list(),
+  ...
 )
 
 \S4method{plotRowTree}{TreeSummarizedExperiment}(
-  x,
-  ...,
-  add_traits = NULL,
-  trait_data = NULL,
+  object,
+  y = NULL,
+  relabel_tree = FALSE,
+  layout = "circular",
+  show_label = FALSE,
+  colour_by = NULL,
+  shape_by = NULL,
+  size_by = NULL,
   by_exprs_values = "counts",
-  relabel_tree = FALSE
+  other_fields = list(),
+  ...
 )
 }
 \arguments{

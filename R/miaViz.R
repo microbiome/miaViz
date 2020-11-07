@@ -13,6 +13,7 @@ NULL
 
 #' @import methods
 #' @import mia
+#' @import ggplot2
 #' @importFrom rlang sym !!
 #' @importFrom dplyr %>%
 NULL

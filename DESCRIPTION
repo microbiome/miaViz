@@ -13,12 +13,13 @@ LazyData: false
 Depends:
     R (>= 4.0),
     TreeSummarizedExperiment,
-    mia
+    mia,
+    ggplot2
 Imports:
     methods,
-    ggplot2,
     ggtree,
     tibble,
+    tidytree,
     rlang,
     dplyr,
     ape
