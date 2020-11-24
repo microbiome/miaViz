@@ -165,58 +165,87 @@ additional information.</p>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>relabel_tree</th>
-      <td><p>= FALSE,</p></td>
-    </tr>
-    <tr>
-      <th>show_label</th>
-      <td><p>= FALSE,</p></td>
-    </tr>
-    <tr>
-      <th>add_legend</th>
-      <td><p>= TRUE,</p></td>
-    </tr>
-    <tr>
-      <th>layout</th>
-      <td><p>= "circular",</p></td>
-    </tr>
-    <tr>
-      <th>tip_colour_by</th>
-      <td><p>= NULL,</p></td>
-    </tr>
-    <tr>
-      <th>tip_shape_by</th>
-      <td><p>= NULL,</p></td>
-    </tr>
-    <tr>
-      <th>tip_size_by</th>
-      <td><p>= NULL,</p></td>
-    </tr>
-    <tr>
-      <th>node_colour_by</th>
-      <td><p>= NULL,</p></td>
-    </tr>
-    <tr>
-      <th>node_shape_by</th>
-      <td><p>= NULL,</p></td>
-    </tr>
-    <tr>
-      <th>node_size_by</th>
-      <td><p>= NULL,</p></td>
-    </tr>
-    <tr>
-      <th>by_exprs_values</th>
-      <td><p>= "counts",</p></td>
-    </tr>
-    <tr>
-      <th>other_fields</th>
-      <td><p>= list()</p></td>
-    </tr>
-    <tr>
-      <th>x</th>
+      <th>object</th>
       <td><p>a
 <code><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html'>TreeSummarizedExperiment</a></code>
 object.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>additional argument, currently not used.</p></td>
+    </tr>
+    <tr>
+      <th>relabel_tree</th>
+      <td><p>logical scalar, Should the tip labels be relabeled using
+the output of <code>getTaxonomyLabels(object, with_type = TRUE)</code>? This
+has consequences on how data can be merged from <code>other_fields</code>.
+(default: <code>relabel_tree = FALSE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>show_label</th>
+      <td><p>logical scalar or named logical vector. Should tip labels
+be plotted or if a logical vector is provided, which labels should be
+shown? Only names corresponding to <code>TRUE</code>, will be plotted.
+(default: <code>show_label = FALSE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>add_legend</th>
+      <td><p>logical scalar. Should legens be plotted?
+(default: <code>add_legend = TRUE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>layout</th>
+      <td><p>layout for the plotted tree. See
+<code><a href='https://rdrr.io/pkg/ggtree/man/ggtree.html'>ggtree</a></code> for details.</p></td>
+    </tr>
+    <tr>
+      <th>tip_colour_by</th>
+      <td><p>Specification of a column metadata field or a feature to
+colour tree tips by, see the by argument in
+<code><a href='https://rdrr.io/pkg/scater/man/retrieveCellInfo.html'>?retrieveCellInfo</a></code> for possible
+values.</p></td>
+    </tr>
+    <tr>
+      <th>tip_shape_by</th>
+      <td><p>Specification of a column metadata field or a feature to
+shape tree tips by, see the by argument in
+<code><a href='https://rdrr.io/pkg/scater/man/retrieveCellInfo.html'>?retrieveCellInfo</a></code> for possible
+values.</p></td>
+    </tr>
+    <tr>
+      <th>tip_size_by</th>
+      <td><p>Specification of a column metadata field or a feature to
+size tree tips by, see the by argument in
+<code><a href='https://rdrr.io/pkg/scater/man/retrieveCellInfo.html'>?retrieveCellInfo</a></code> for possible
+values.</p></td>
+    </tr>
+    <tr>
+      <th>node_colour_by</th>
+      <td><p>Specification of a column metadata field or a feature to
+colour tree nodes by. Must be a field from <code>other_fields</code>.</p></td>
+    </tr>
+    <tr>
+      <th>node_shape_by</th>
+      <td><p>Specification of a column metadata field or a feature to
+shape tree nodes by. Must be a field from <code>other_fields</code>.</p></td>
+    </tr>
+    <tr>
+      <th>node_size_by</th>
+      <td><p>Specification of a column metadata field or a feature to
+size tree nodes by. Must be a field from <code>other_fields</code>.</p></td>
+    </tr>
+    <tr>
+      <th>by_exprs_values</th>
+      <td><p>A string or integer scalar specifying which assay to
+obtain expression values from, for use in point aesthetics - see the
+<code>exprs_values</code> argument in
+<code><a href='https://rdrr.io/pkg/scater/man/retrieveCellInfo.html'>?retrieveCellInfo</a></code>.</p></td>
+    </tr>
+    <tr>
+      <th>other_fields</th>
+      <td><p>a <code>data.frame</code> or coercible to one, with at least
+one type of id information. See details in
+<code><a href='treeData.html'>treeData</a></code>.</p></td>
     </tr>
     </table>
 
@@ -230,7 +259,8 @@ object.</p></td>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
 <span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"genus"</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/agglomerate-methods.html'>agglomerateByRank</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Genus"</span><span class='op'>)</span>
 <span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"genus"</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/scuttle/man/addPerCellQC.html'>addPerFeatureQC</a></span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"genus"</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'>rowData</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"genus"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>$</span><span class='va'>log_mean</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='fu'>rowData</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"genus"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>$</span><span class='va'>mean</span><span class='op'>)</span>
+<span class='fu'>rowData</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"genus"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>$</span><span class='va'>log_mean</span> <span class='op'>&lt;-</span> 
+  <span class='fu'><a href='https://rdrr.io/r/base/Log.html'>log</a></span><span class='op'>(</span><span class='fu'>rowData</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"genus"</span><span class='op'>)</span><span class='op'>)</span><span class='op'>$</span><span class='va'>mean</span><span class='op'>)</span>
 <span class='va'>top_taxa</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/getTopTaxa.html'>getTopTaxa</a></span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"genus"</span><span class='op'>)</span>,
                        method<span class='op'>=</span><span class='st'>"mean"</span>,
                        top<span class='op'>=</span><span class='fl'>100L</span>,
