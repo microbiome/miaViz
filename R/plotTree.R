@@ -58,7 +58,8 @@
 #' data(GlobalPatterns)
 #' altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
 #' altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
-#' rowData(altExp(GlobalPatterns,"genus"))$log_mean <- log(rowData(altExp(GlobalPatterns,"genus"))$mean)
+#' rowData(altExp(GlobalPatterns,"genus"))$log_mean <- 
+#'   log(rowData(altExp(GlobalPatterns,"genus"))$mean)
 #' top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
 #'                        method="mean",
 #'                        top=100L,

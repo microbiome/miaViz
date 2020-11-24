@@ -78,6 +78,7 @@ setGeneric("combineTreeData", signature = c("x"),
 
 
 #' @rdname treeData
+#' @importFrom dplyr last_col
 #' @export
 setMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
     function(x){
@@ -89,6 +90,7 @@ setMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
     }
 )
 #' @rdname treeData
+#' @importFrom dplyr last_col
 #' @export
 setMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
     function(x){
