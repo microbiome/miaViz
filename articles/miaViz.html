@@ -74,99 +74,79 @@
 
     
     
+<div id="preface" class="section level2">
+<h2 class="hasAnchor">
+<a href="#preface" class="anchor"></a>Preface</h2>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">miaViz</span><span class="op">)</span>
-<span class="co">#&gt; Loading required package: TreeSummarizedExperiment</span>
-<span class="co">#&gt; Loading required package: SingleCellExperiment</span>
-<span class="co">#&gt; Loading required package: SummarizedExperiment</span>
-<span class="co">#&gt; Loading required package: MatrixGenerics</span>
-<span class="co">#&gt; Loading required package: matrixStats</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'MatrixGenerics'</span>
-<span class="co">#&gt; The following objects are masked from 'package:matrixStats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,</span>
-<span class="co">#&gt;     colCounts, colCummaxs, colCummins, colCumprods, colCumsums,</span>
-<span class="co">#&gt;     colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,</span>
-<span class="co">#&gt;     colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,</span>
-<span class="co">#&gt;     colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,</span>
-<span class="co">#&gt;     colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,</span>
-<span class="co">#&gt;     colWeightedMeans, colWeightedMedians, colWeightedSds,</span>
-<span class="co">#&gt;     colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,</span>
-<span class="co">#&gt;     rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,</span>
-<span class="co">#&gt;     rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,</span>
-<span class="co">#&gt;     rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,</span>
-<span class="co">#&gt;     rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,</span>
-<span class="co">#&gt;     rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,</span>
-<span class="co">#&gt;     rowWeightedMads, rowWeightedMeans, rowWeightedMedians,</span>
-<span class="co">#&gt;     rowWeightedSds, rowWeightedVars</span>
-<span class="co">#&gt; Loading required package: GenomicRanges</span>
-<span class="co">#&gt; Loading required package: stats4</span>
-<span class="co">#&gt; Loading required package: BiocGenerics</span>
-<span class="co">#&gt; Loading required package: parallel</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'BiocGenerics'</span>
-<span class="co">#&gt; The following objects are masked from 'package:parallel':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     clusterApply, clusterApplyLB, clusterCall, clusterEvalQ,</span>
-<span class="co">#&gt;     clusterExport, clusterMap, parApply, parCapply, parLapply,</span>
-<span class="co">#&gt;     parLapplyLB, parRapply, parSapply, parSapplyLB</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     IQR, mad, sd, var, xtabs</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     anyDuplicated, append, as.data.frame, basename, cbind, colnames,</span>
-<span class="co">#&gt;     dirname, do.call, duplicated, eval, evalq, Filter, Find, get, grep,</span>
-<span class="co">#&gt;     grepl, intersect, is.unsorted, lapply, Map, mapply, match, mget,</span>
-<span class="co">#&gt;     order, paste, pmax, pmax.int, pmin, pmin.int, Position, rank,</span>
-<span class="co">#&gt;     rbind, Reduce, rownames, sapply, setdiff, sort, table, tapply,</span>
-<span class="co">#&gt;     union, unique, unsplit, which.max, which.min</span>
-<span class="co">#&gt; Loading required package: S4Vectors</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'S4Vectors'</span>
-<span class="co">#&gt; The following object is masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     expand.grid</span>
-<span class="co">#&gt; Loading required package: IRanges</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'IRanges'</span>
-<span class="co">#&gt; The following object is masked from 'package:grDevices':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     windows</span>
-<span class="co">#&gt; Loading required package: GenomeInfoDb</span>
-<span class="co">#&gt; Loading required package: Biobase</span>
-<span class="co">#&gt; Welcome to Bioconductor</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     Vignettes contain introductory material; view with</span>
-<span class="co">#&gt;     'browseVignettes()'. To cite Bioconductor, see</span>
-<span class="co">#&gt;     'citation("Biobase")', and for packages 'citation("pkgname")'.</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'Biobase'</span>
-<span class="co">#&gt; The following object is masked from 'package:MatrixGenerics':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     rowMedians</span>
-<span class="co">#&gt; The following objects are masked from 'package:matrixStats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     anyMissing, rowMedians</span>
-<span class="co">#&gt; Loading required package: mia</span>
-<span class="co">#&gt; Loading required package: MicrobiomeExperiment</span>
-<span class="co">#&gt; Loading required package: Biostrings</span>
-<span class="co">#&gt; Loading required package: XVector</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'Biostrings'</span>
-<span class="co">#&gt; The following object is masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     strsplit</span>
-<span class="co">#&gt; Loading required package: ggplot2</span>
-<span class="co">#&gt; Registered S3 method overwritten by 'treeio':</span>
-<span class="co">#&gt;   method     from</span>
-<span class="co">#&gt;   root.phylo ape</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">miaViz</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="tree-plotting" class="section level1">
+<h1 class="hasAnchor">
+<a href="#tree-plotting" class="anchor"></a>Tree plotting</h1>
+<p>The information stored in the <code>rowTree</code> can be directly plotted. However, sizes of stored trees have to be kept in mind and plotting of large trees rarely makes sense.</p>
+<p>For this example we limit the information plotted to the top 100 taxa as judged by mean abundance on the genus level.</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/">scater</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">mia</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>
+<span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>
+<span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQC.html">addPerFeatureQC</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">log_mean</span> <span class="op">&lt;-</span>
+  <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span>
+<span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/getTopTaxa.html">getTopTaxa</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span>,
+                       method<span class="op">=</span><span class="st">"mean"</span>,
+                       top<span class="op">=</span><span class="fl">100L</span>,
+                       abund_values<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></code></pre></div>
+<p>Colour, size and shape of tree tips and nodes can be decorated based on data present in the <code>SE</code> object or by providing additional information via the <code>other_fields</code> argument. Note that currently infromation for nodes have to be provided via the <code>other_fields</code> arguments.</p>
+<p>Data will be matched via the <code>node</code> or <code>label</code> argument depending on which was provided. <code>label</code> takes precedent.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
+            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,
+            tip_size_by <span class="op">=</span> <span class="st">"detected"</span><span class="op">)</span>
+<span class="co">#&gt; Warning: `mutate_()` is deprecated as of dplyr 0.7.0.</span>
+<span class="co">#&gt; Please use `mutate()` instead.</span>
+<span class="co">#&gt; See vignette('programming') for more help</span>
+<span class="co">#&gt; This warning is displayed once every 8 hours.</span>
+<span class="co">#&gt; Call `lifecycle::last_warnings()` to see where this warning was generated.</span></code></pre></div>
+<div class="figure">
+<img src="miaViz_files/figure-html/plot1-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size)" width="700"><p class="caption">
+Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size)
+</p>
+</div>
+<p>Tip and node labels can be shown as well. Setting <code>show_label = TRUE</code> shows the tip labels only …</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
+            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,
+            tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,
+            show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="miaViz_files/figure-html/plot2-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Tip labels of the tree are shown as well." width="700"><p class="caption">
+Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Tip labels of the tree are shown as well.
+</p>
+</div>
+<p>… whereas node labels can be selectively shown by providing a named logical vector to <code>show_label</code>.</p>
+<p>Please not that currently <code>ggtree</code> only can plot node labels in a rectangular layout.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Genus:Providencia"</span> <span class="op">=</span> <span class="cn">TRUE</span>, <span class="st">"Genus:Morganella"</span> <span class="op">=</span> <span class="cn">FALSE</span>,
+            <span class="st">"0.961.60"</span> <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
+<span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
+            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,
+            tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,
+            show_label <span class="op">=</span> <span class="va">labels</span>,
+            layout<span class="op">=</span><span class="st">"rectangular"</span><span class="op">)</span></code></pre></div>
+<div class="figure">
+<img src="miaViz_files/figure-html/plot3-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown." width="700"><p class="caption">
+Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown.
+</p>
+</div>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
 
-      </div>
+        <nav id="toc" data-toggle="toc"><h2 data-toc-skip>Contents</h2>
+    </nav>
+</div>
 
 </div>
 
