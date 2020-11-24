@@ -44,7 +44,9 @@ combineTreeData(x, other_fields = list())
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{other_fields}{a \code{data.frame} or coercible to one, with at least one type
+\item{...}{additional arguments, currently not used.}
+
+\item{other_fields, value}{a \code{data.frame} or coercible to one, with at least one type
 of id information. See details.}
 }
 \value{

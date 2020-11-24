@@ -47,33 +47,60 @@ plotColTree(object, ...)
 )
 }
 \arguments{
-\item{relabel_tree}{= FALSE,}
-
-\item{show_label}{= FALSE,}
-
-\item{add_legend}{= TRUE,}
-
-\item{layout}{= "circular",}
-
-\item{tip_colour_by}{= NULL,}
-
-\item{tip_shape_by}{= NULL,}
-
-\item{tip_size_by}{= NULL,}
-
-\item{node_colour_by}{= NULL,}
-
-\item{node_shape_by}{= NULL,}
-
-\item{node_size_by}{= NULL,}
-
-\item{by_exprs_values}{= "counts",}
-
-\item{other_fields}{= list()}
-
-\item{x}{a
+\item{object}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
+
+\item{...}{additional argument, currently not used.}
+
+\item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
+the output of \code{getTaxonomyLabels(object, with_type = TRUE)}? This
+has consequences on how data can be merged from \code{other_fields}.
+(default: \code{relabel_tree = FALSE})}
+
+\item{show_label}{logical scalar or named logical vector. Should tip labels
+be plotted or if a logical vector is provided, which labels should be
+shown? Only names corresponding to \code{TRUE}, will be plotted.
+(default: \code{show_label = FALSE})}
+
+\item{add_legend}{logical scalar. Should legens be plotted?
+(default: \code{add_legend = TRUE})}
+
+\item{layout}{layout for the plotted tree. See
+\code{\link[ggtree:ggtree]{ggtree}} for details.}
+
+\item{tip_colour_by}{Specification of a column metadata field or a feature to
+colour tree tips by, see the by argument in
+\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
+values.}
+
+\item{tip_shape_by}{Specification of a column metadata field or a feature to
+shape tree tips by, see the by argument in
+\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
+values.}
+
+\item{tip_size_by}{Specification of a column metadata field or a feature to
+size tree tips by, see the by argument in
+\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
+values.}
+
+\item{node_colour_by}{Specification of a column metadata field or a feature to
+colour tree nodes by. Must be a field from \code{other_fields}.}
+
+\item{node_shape_by}{Specification of a column metadata field or a feature to
+shape tree nodes by. Must be a field from \code{other_fields}.}
+
+\item{node_size_by}{Specification of a column metadata field or a feature to
+size tree nodes by. Must be a field from \code{other_fields}.}
+
+\item{by_exprs_values}{A string or integer scalar specifying which assay to
+obtain expression values from, for use in point aesthetics - see the
+\code{exprs_values} argument in
+\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.}
+
+\item{other_fields}{a \code{data.frame} or coercible to one, with at least
+one type of id information. See details in
+\code{\link[=treeData]{treeData}}.}
 }
 \value{
 a \code{\link{ggtree}} plot

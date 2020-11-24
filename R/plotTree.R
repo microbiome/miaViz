@@ -5,22 +5,48 @@
 #' \code{colData} information can be taken for enriching the tree plots with
 #' additional information.
 #'
-#' @param x a
+#' @param object a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #'
-#' @param relabel_tree = FALSE,
-#' @param show_label = FALSE,
-#' @param add_legend = TRUE,
-#' @param layout = "circular",
-#' @param tip_colour_by = NULL,
-#' @param tip_shape_by = NULL,
-#' @param tip_size_by = NULL,
-#' @param node_colour_by = NULL,
-#' @param node_shape_by = NULL,
-#' @param node_size_by = NULL,
-#' @param by_exprs_values = "counts",
-#' @param other_fields = list()
+#' @param relabel_tree logical scalar, Should the tip labels be relabeled using 
+#'   the output of \code{getTaxonomyLabels(object, with_type = TRUE)}? This
+#'   has consequences on how data can be merged from \code{other_fields}. 
+#'   (default: \code{relabel_tree = FALSE})
+#' @param show_label logical scalar or named logical vector. Should tip labels
+#'   be plotted or if a logical vector is provided, which labels should be 
+#'   shown? Only names corresponding to \code{TRUE}, will be plotted. 
+#'   (default: \code{show_label = FALSE})
+#' @param add_legend logical scalar. Should legens be plotted? 
+#'   (default: \code{add_legend = TRUE})
+#' @param layout layout for the plotted tree. See 
+#'   \code{\link[ggtree:ggtree]{ggtree}} for details.
+#' @param tip_colour_by Specification of a column metadata field or a feature to
+#'   colour tree tips by, see the by argument in 
+#'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
+#'   values.
+#' @param tip_shape_by Specification of a column metadata field or a feature to
+#'   shape tree tips by, see the by argument in 
+#'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
+#'   values.
+#' @param tip_size_by Specification of a column metadata field or a feature to
+#'   size tree tips by, see the by argument in 
+#'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
+#'   values.
+#' @param node_colour_by Specification of a column metadata field or a feature to
+#'   colour tree nodes by. Must be a field from \code{other_fields}.
+#' @param node_shape_by Specification of a column metadata field or a feature to
+#'   shape tree nodes by. Must be a field from \code{other_fields}.
+#' @param node_size_by Specification of a column metadata field or a feature to
+#'   size tree nodes by. Must be a field from \code{other_fields}.
+#' @param by_exprs_values A string or integer scalar specifying which assay to
+#'   obtain expression values from, for use in point aesthetics - see the 
+#'   \code{exprs_values} argument in 
+#'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
+#' @param other_fields a \code{data.frame} or coercible to one, with at least 
+#'   one type of id information. See details in
+#'   \code{\link[=treeData]{treeData}}.
+#' @param ... additional argument, currently not used.
 #'
 #' @return a \code{\link{ggtree}} plot
 #'

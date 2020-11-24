@@ -8,8 +8,10 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #'
-#' @param other_fields a \code{data.frame} or coercible to one, with at least one type
+#' @param other_fields,value a \code{data.frame} or coercible to one, with at least one type
 #'   of id information. See details.
+#'   
+#' @param ... additional arguments, currently not used.
 #'
 #' @return a \code{data.frame} for the accessor and the modified
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}

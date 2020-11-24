@@ -10,14 +10,27 @@ Description: What the package does (one paragraph).
 License: GPL-3
 Encoding: UTF-8
 LazyData: false
-Depends: R (>= 4.0), TreeSummarizedExperiment, mia, ggplot2
-Imports: methods, scater, ggtree, tibble, tidytree, rlang, dplyr, ape
-Suggests: knitr, rmarkdown, BiocStyle, testthat
-Remotes: github::FelixErnst/mia
+Depends:
+    R (>= 4.0),
+    TreeSummarizedExperiment,
+    mia,
+    ggplot2
+Imports: 
+    methods,
+    scater,
+    ggtree,
+    tibble,
+    tidytree,
+    rlang,
+    dplyr,
+    ape
+Suggests:
+    knitr,
+    rmarkdown,
+    BiocStyle,
+    testthat
+Remotes: 
+    github::FelixErnst/mia
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr
-NeedsCompilation: no
-Packaged: 2020-11-24 13:20:09 UTC; user-adm
-Author: Felix G.M. Ernst [aut, cre] (<https://orcid.org/0000-0001-5064-0928>)
-Maintainer: Felix G.M. Ernst <felix.gm.ernst@outlook.com>

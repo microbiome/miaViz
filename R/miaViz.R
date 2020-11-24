@@ -12,8 +12,9 @@
 NULL
 
 #' @import methods
+#' @import TreeSummarizedExperiment
 #' @import mia
 #' @import ggplot2
-#' @importFrom rlang sym !!
+#' @importFrom rlang sym !! :=
 #' @importFrom dplyr %>%
 NULL
