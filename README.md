@@ -1,5 +1,13 @@
 # miaViz
 
+<!-- badges: start -->
+
+[![R-CMD-check-Bioc-devel](https://github.com/microbiome/miaViz/workflows/R-CMD-check-Bioc-devel/badge.svg)](https://github.com/microbiome/miaViz/actions)
+[![Codecov test
+coverage](https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/miaViz?branch=master)
+
+<!-- badges: end -->
+
 ## Microbiome Analysis Plotting and Visualization
 
 The scope of this package is the plotting and visualization of microbiome data.
@@ -26,5 +34,5 @@ against the `master` branch and then merged to `release` for release.
 
 # Code of conduct
 
-Please note that the MicrobiomeExperiment project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
+Please note that the miaViz project is released with a [Contributor Code of Conduct](https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html).
 By contributing to this project, you agree to abide by its terms.
