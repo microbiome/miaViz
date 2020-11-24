@@ -8,7 +8,7 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #'
-#' @param fields a \code{data.frame} or coercible to one, with at least one type
+#' @param other_fields a \code{data.frame} or coercible to one, with at least one type
 #'   of id information. See details.
 #'
 #' @return a \code{data.frame} for the accessor and the modified
@@ -16,7 +16,7 @@
 #'   object
 #'
 #' @details
-#' To match information to nodes, the id information in \code{fields} are used.
+#' To match information to nodes, the id information in \code{other_fields} are used.
 #' These can either be a column, named \sQuote{node} or \sQuote{label}
 #' (\sQuote{node} taking precedent), or rownames. If all rownames can be coerced
 #' to \code{integer}, they are considered as \sQuote{node} values, otherwise as
@@ -60,12 +60,12 @@ setGeneric("colTreeData<-", signature = c("x"),
 
 #' @rdname treeData
 setGeneric("combineTreeData", signature = c("x"),
-           function(x, fields)
+           function(x, other_fields = list())
                standardGeneric("combineTreeData"))
 
 #' @rdname treeData
 setGeneric("combineTreeData", signature = c("x"),
-           function(x, fields)
+           function(x, other_fields = list())
                standardGeneric("combineTreeData"))
 
 #' @importFrom tidytree as_tibble
@@ -98,9 +98,10 @@ setMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
     }
 )
 
+DEFAULT_TREE_DATA_COLS <- c("parent","node","branch.length","label")
 .clean_tree_data <- function(tree_data){
     tree_data %>%
-        select("parent","node","branch.length","label")
+        select(DEFAULT_TREE_DATA_COLS)
 }
 
 #' @rdname treeData
@@ -136,84 +137,95 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom tibble rownames_to_column
 #' @importFrom dplyr select relocate
-.norm_fields <- function(fields, tree_data){
-    if(is.null(fields) || length(fields) == 0L){
+.norm_other_fields <- function(other_fields){
+    if(is.null(other_fields) || length(other_fields) == 0L){
         return(NULL)
     }
-    if(is(fields,"DataFrame") || !is.data.frame(fields)){
-        fields <- as.data.frame(fields)
+    if(is(other_fields,"DataFrame") || !is.data.frame(other_fields)){
+        other_fields <- as.data.frame(other_fields)
     }
-    if(!is.data.frame(fields)){
+    if(!is.data.frame(other_fields)){
         stop("'other_fields' must be a data.frame or coercible to one.",
              call. = FALSE)
     }
+    if(nrow(other_fields) == 0L){
+        return(NULL)
+    }
     # check for node or label column and rownames
-    cn <- colnames(fields)
-    rn <- rownames(fields)
-    if(!any(c("node","label") %in% cn)){
+    rn <- rownames(other_fields)
+    cn <- colnames(other_fields)
+    f <- c("node","label") %in% cn
+    if(!any(f)){
+        # populate if necessary
         if(is.null(rn)){
             stop("Neither one of the following columns 'node'/'label' nor ",
                  "rownames set for 'other_fields'.", call. = FALSE)
         }
         rn_i <- suppressWarnings(as.integer(rn))
         if(!anyNA(rn_i)){
-            fields <- fields %>%
+            other_fields <- other_fields %>%
                 rownames_to_column("node")
         } else {
-            fields <- fields %>%
+            other_fields <- other_fields %>%
                 rownames_to_column("label")
         }
+    } else {
+        other_fields <- other_fields %>%
+            relocate(c("node","label")[f])
     }
-    fields
+    other_fields
 }
 
-.norm_id_col_of_fields <- function(fields, tree_data){
-    if(is.null(fields)){
-        return(fields)
+.norm_id_col_of_other_fields <- function(other_fields, tree_data){
+    if(is.null(other_fields)){
+        return(other_fields)
     }
-    cn <- colnames(fields)
+    if(missing(tree_data)){
+        stop(".")
+    }
+    cn <- colnames(other_fields)
     # select one id column and reorder columns
-    f <- which(cn %in% c("node","label"))
+    f <- which(cn %in% c("label","node"))
     if(length(f) == 2L){
-        fields <- fields %>%
+        other_fields <- other_fields %>%
             select(!sym(cn[f[2L]]))
     }
-    fields <- fields %>%
+    other_fields <- other_fields %>%
         relocate(sym(cn[f[1L]]))
     #
-    by_col_name <- colnames(fields)[1L]
-    if(anyDuplicated(fields[[by_col_name]])){
+    by_col_name <- colnames(other_fields)[1L]
+    if(anyDuplicated(other_fields[[by_col_name]])){
         stop("'",by_col_name,"' contains duplicate entries.", call. = FALSE)
     }
-    if(!all(fields[[by_col_name]] %in% tree_data[[by_col_name]])){
+    if(!all(other_fields[[by_col_name]] %in% tree_data[[by_col_name]])){
         warning("Not all '",by_col_name,"' values found in tree data.",
                 call. = FALSE)
-    } else if(!any(fields[[by_col_name]] %in% tree_data[[by_col_name]])){
+    } else if(!any(other_fields[[by_col_name]] %in% tree_data[[by_col_name]])){
         stop("No overlap between '",by_col_name,"'and tree data.",
              call. = FALSE)
     }
-    fields
+    other_fields
 }
 
 #' @importFrom dplyr left_join
-.combine_tree_data_and_fields <- function(tree_data, fields){
-    if(!is.null(fields)){
-        by_col_name <- colnames(fields)[1L]
+.combine_tree_data_and_other_fields <- function(tree_data, other_fields){
+    if(!is.null(other_fields)){
+        by_col_name <- colnames(other_fields)[1L]
         tree_data <- tree_data %>%
-            left_join(fields, by = by_col_name)
+            left_join(other_fields, by = by_col_name)
     }
     tree_data
 }
 
 #' @importFrom tidytree as.treedata
-.combine_tree_and_fields <- function(tree, fields){
+.combine_tree_and_other_fields <- function(tree, other_fields = list()){
     tree_data <- .get_tree_data(tree)
-    if(nrow(fields) == 0L){
+    other_fields <- .norm_other_fields(other_fields)
+    if(is.null(other_fields)){
         tree_data <- .clean_tree_data(tree_data)
     } else {
-        fields <- .norm_fields(fields, tree_data)
-        fields <- .norm_id_col_of_fields(fields, tree_data)
-        tree_data <- .combine_tree_data_and_fields(tree_data, fields)
+        other_fields <- .norm_id_col_of_other_fields(other_fields, tree_data)
+        tree_data <- .combine_tree_data_and_other_fields(tree_data, other_fields)
     }
     tidytree::as.treedata(tree_data)
 }
@@ -221,15 +233,15 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname treeData
 #' @export
 setMethod("combineTreeData", signature = c(x = "phylo"),
-    function(x, fields){
-        .combine_tree_and_fields(x, fields)
+    function(x, other_fields = list()){
+        .combine_tree_and_other_fields(x, other_fields)
     }
 )
 
 #' @rdname treeData
 #' @export
 setMethod("combineTreeData", signature = c(x = "treedata"),
-    function(x, fields){
-        .combine_tree_and_fields(x, fields)
+    function(x, other_fields = list()){
+        .combine_tree_and_other_fields(x, other_fields)
     }
 )

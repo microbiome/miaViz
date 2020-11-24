@@ -23,9 +23,9 @@ rowTreeData(x) <- value
 
 colTreeData(x) <- value
 
-combineTreeData(x, fields)
+combineTreeData(x, other_fields = list())
 
-combineTreeData(x, fields)
+combineTreeData(x, other_fields = list())
 
 \S4method{colTreeData}{TreeSummarizedExperiment}(x)
 
@@ -35,16 +35,16 @@ combineTreeData(x, fields)
 
 \S4method{rowTreeData}{TreeSummarizedExperiment}(x) <- value
 
-\S4method{combineTreeData}{phylo}(x, fields)
+\S4method{combineTreeData}{phylo}(x, other_fields = list())
 
-\S4method{combineTreeData}{treedata}(x, fields)
+\S4method{combineTreeData}{treedata}(x, other_fields = list())
 }
 \arguments{
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{fields}{a \code{data.frame} or coercible to one, with at least one type
+\item{other_fields}{a \code{data.frame} or coercible to one, with at least one type
 of id information. See details.}
 }
 \value{
@@ -58,7 +58,7 @@ To facilitate the dressing of the tree data stored in a
 \code{colTreeData} can be used.
 }
 \details{
-To match information to nodes, the id information in \code{fields} are used.
+To match information to nodes, the id information in \code{other_fields} are used.
 These can either be a column, named \sQuote{node} or \sQuote{label}
 (\sQuote{node} taking precedent), or rownames. If all rownames can be coerced
 to \code{integer}, they are considered as \sQuote{node} values, otherwise as

@@ -9,12 +9,52 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #'
+#' @param relabel_tree = FALSE,
+#' @param show_label = FALSE,
+#' @param add_legend = TRUE,
+#' @param layout = "circular",
+#' @param tip_colour_by = NULL,
+#' @param tip_shape_by = NULL,
+#' @param tip_size_by = NULL,
+#' @param node_colour_by = NULL,
+#' @param node_shape_by = NULL,
+#' @param node_size_by = NULL,
+#' @param by_exprs_values = "counts",
+#' @param other_fields = list()
+#'
 #' @return a \code{\link{ggtree}} plot
 #'
 #' @name plotTree
 #'
 #' @examples
+#' library(scater)
+#' library(mia)
+#' data(GlobalPatterns)
+#' altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
+#' altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
+#' rowData(altExp(GlobalPatterns,"genus"))$log_mean <- log(rowData(altExp(GlobalPatterns,"genus"))$mean)
+#' top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
+#'                        method="mean",
+#'                        top=100L,
+#'                        abund_values="counts")
+#' #
+#' plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+#'             tip_colour_by = "log_mean",
+#'             tip_size_by = "detected")
 #'
+#' # plot with tip labels
+#' plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+#'             tip_colour_by = "log_mean",
+#'             tip_size_by = "detected",
+#'             show_label = TRUE)
+#' # plot with selected labels
+#' labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
+#'             "0.961.60" = TRUE)
+#' plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+#'             tip_colour_by = "log_mean",
+#'             tip_size_by = "detected",
+#'             show_label = labels,
+#'             layout="rectangular")
 NULL
 
 #' @rdname plotTree
@@ -26,17 +66,36 @@ setGeneric("plotColTree", signature = c("object"),
            function(object, ...)
                standardGeneric("plotColTree"))
 
+.check_tree_plot_switches <- function(relabel_tree, show_label, add_legend){
+    if(!.is_a_bool(relabel_tree)){
+        stop("'relabel_tree' must be either TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(show_label)){
+        if(!is.logical(show_label) || is.null(names(show_label))){
+            stop("'show_label' must be either TRUE or FALSE or named logical ",
+                 "vector. Names should match the label of the tree.",
+                 call. = FALSE)
+        }
+    }
+    if(!.is_a_bool(add_legend)){
+        stop("'add_legend' must be either TRUE or FALSE.", call. = FALSE)
+    }
+}
 
 #' @rdname plotTree
 #' @export
 setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
     function(object,
-             y = NULL,
-             layout = "circular",
+             relabel_tree = FALSE,
              show_label = FALSE,
-             colour_by = NULL,
-             shape_by = NULL,
-             size_by = NULL,
+             add_legend = TRUE,
+             layout = "circular",
+             tip_colour_by = NULL,
+             tip_shape_by = NULL,
+             tip_size_by = NULL,
+             node_colour_by = NULL,
+             node_shape_by = NULL,
+             node_size_by = NULL,
              by_exprs_values = "counts",
              other_fields = list(),
              ...){
@@ -44,31 +103,35 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
         if(is.null(colTree(object))){
           stop("colTree(object) is empty.", call. = FALSE)
         }
-        .check_plotting_options(layout = layout,
-                                show_label = show_label,
-                                colour_by = colour_by,
-                                shape_by = shape_by,
-                                size_by = size_by)
+        .check_tree_plot_switches(relabel_tree = relabel_tree,
+                                  show_label = show_label,
+                                  add_legend = add_legend)
         #
-        tree <- .get_trimed_tree(object, type = "column", relabel = FALSE,
-                                 colnames(object))
-        tree_data <- .get_tree_data(tree)
+        tree <- .get_trimed_tree(object, type = "row", relabel = relabel_tree,
+                                 rownames(object))
+        tree_data <- .get_tree_data(combineTreeData(tree, other_fields))
         #
-        variables <- .norm_variables_for_tree_plotting(c(y,colour_by,shape_by,
-                                                         size_by))
-        fields <- .norm_fields(other_fields, tree_data)
-        fields <- .add_object_data_to_fields(object, variables, fields,
-                                             by_exprs_values = by_exprs_values,
-                                             type = "column")
-        fields <- .norm_id_col_of_fields(fields, tree_data)
-        tree_data <- .combine_tree_data_and_fields(tree_data, fields)
+        vis_out <- .incorporate_tree_vis(tree_data,
+                                         se = object,
+                                         tip_colour_by = tip_colour_by,
+                                         tip_shape_by = tip_shape_by,
+                                         tip_size_by = tip_size_by,
+                                         node_colour_by = node_colour_by,
+                                         node_shape_by = node_shape_by,
+                                         node_size_by = node_size_by,
+                                         by_exprs_values = by_exprs_values)
+        tree_data <- vis_out$df
+        colour_by <- vis_out$colour_by
+        shape_by <- vis_out$shape_by
+        size_by <- vis_out$size_by
         #
-        .plot_tree(tree_data, y,
-                   layout = layout,
-                   show_label = show_label,
-                   colour_by = colour_by,
-                   shape_by = shape_by,
-                   size_by = size_by)
+        .tree_plotter(tree_data,
+                      layout = layout,
+                      show_label = show_label,
+                      add_legend = add_legend,
+                      colour_by = colour_by,
+                      shape_by = shape_by,
+                      size_by = size_by)
     }
 )
 
@@ -76,68 +139,54 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
 #' @export
 setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     function(object,
-             y = NULL,
              relabel_tree = FALSE,
-             layout = "circular",
              show_label = FALSE,
-             colour_by = NULL,
-             shape_by = NULL,
-             size_by = NULL,
+             add_legend = TRUE,
+             layout = "circular",
+             tip_colour_by = NULL,
+             tip_shape_by = NULL,
+             tip_size_by = NULL,
+             node_colour_by = NULL,
+             node_shape_by = NULL,
+             node_size_by = NULL,
              by_exprs_values = "counts",
              other_fields = list(),
              ...){
-        browser()
         # input check
         if(is.null(rowTree(object))){
           stop("rowTree(object) is empty.", call. = FALSE)
         }
-        if(!is.logical(relabel_tree) || length(relabel_tree) != 1L){
-            stop("'relabel_tree' must be either TRUE or FALSE.", call. = FALSE)
-        }
-        .check_plotting_options(layout = layout,
-                                show_label = show_label,
-                                colour_by = colour_by,
-                                shape_by = shape_by,
-                                size_by = size_by)
+        .check_tree_plot_switches(relabel_tree = relabel_tree,
+                                  show_label = show_label,
+                                  add_legend = add_legend)
         #
         tree <- .get_trimed_tree(object, type = "row", relabel = relabel_tree,
                                  rownames(object))
-        tree_data <- .get_tree_data(tree)
+        tree_data <- .get_tree_data(combineTreeData(tree, other_fields))
         #
-        variables <- .norm_variables_for_tree_plotting(c(y,colour_by,shape_by,
-                                                         size_by))
-        fields <- .norm_fields(other_fields, rownames(object))
-        fields <- .add_object_data_to_fields(object, variables, fields,
-                                             by_exprs_values = by_exprs_values,
-                                             type = "row")
-        fields <- .norm_id_col_of_fields(fields, tree_data)
-        tree_data <- .combine_tree_data_and_fields(tree_data, fields)
+        vis_out <- .incorporate_tree_vis(tree_data,
+                                         se = object,
+                                         tip_colour_by = tip_colour_by,
+                                         tip_shape_by = tip_shape_by,
+                                         tip_size_by = tip_size_by,
+                                         node_colour_by = node_colour_by,
+                                         node_shape_by = node_shape_by,
+                                         node_size_by = node_size_by,
+                                         by_exprs_values = by_exprs_values)
+        tree_data <- vis_out$df
+        colour_by <- vis_out$colour_by
+        shape_by <- vis_out$shape_by
+        size_by <- vis_out$size_by
         #
-        .plot_tree(tree_data, y,
-                   layout = layout,
-                   show_label = show_label,
-                   colour_by = colour_by,
-                   shape_by = shape_by,
-                   size_by = size_by)
+        .tree_plotter(tree_data,
+                      layout = layout,
+                      show_label = show_label,
+                      add_legend = add_legend,
+                      colour_by = colour_by,
+                      shape_by = shape_by,
+                      size_by = size_by)
     }
 )
-
-.check_plotting_options <- function(...){
-
-}
-
-.norm_variables_for_tree_plotting <- function(x){
-    if(is.null(x)){
-        return(NULL)
-    }
-    names_x <- x
-    f <- x %in% c("node","label")
-    if(any(f)){
-        x <- paste0(x[f], "_tmp")
-    }
-    names(x) <- names_x
-    x
-}
 
 #' @importFrom ape keep.tip
 .get_trimed_tree <- function(x, type = c("row","columns"),
@@ -162,131 +211,213 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 }
 
 #' @importFrom tibble tibble
-.get_feature_info <- function(by, object, FUN, exprs_values){
-    feature_info <- try(FUN(object, by = by, exprs_values = exprs_values),
-                        silent = TRUE)
-    if(is(feature_info,"try-error")){
-        return(NULL)
-    }
-    tibble(!!sym(feature_info$name) := feature_info$value)
+.get_feature_info <- function(by, se, FUN, exprs_values){
+    feature_info <- FUN(se, by = by, exprs_values = exprs_values)
+    feature_info <- tibble(!!sym(feature_info$name) := feature_info$value)
+    feature_info
 }
+
+TIP_VARIABLES <- c("tip_colour_by", "tip_shape_by", "tip_size_by")
+NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 
 #' @importFrom scater retrieveFeatureInfo retrieveCellInfo
 #' @importFrom dplyr bind_cols mutate relocate
 #' @importFrom tibble rownames_to_column
-.add_object_data_to_fields <- function(object, variables, fields,
-                                       by_exprs_values = "counts",
-                                       type = c("row","column")){
-    if(is.null(variables)){
-        return(fields)
-    }
-    type <- match.arg(type)
-    # remove any variables values, which are already available
-    cn <- colnames(fields)
-    cn_data <- cn[!(cn %in% c("node","label"))]
-    if(!is.null(fields) && length(cn_data) > 0L){
-        variables <- variables[!(names(variables) %in% cn_data)]
-    }
-    # for remaining variables try to get data
-    if(length(variables) > 0L){
-        type_FUN <- switch(type,
-                           row = scater::retrieveFeatureInfo,
-                           column = scater::retrieveCellInfo,
-                           stop("."))
-        feature_info <- vector(mode = "list", length = length(variables))
-        for(i in seq_along(variables)){
-            feature_info[[i]] <-
-                .get_feature_info(names(variables)[i], object = object,
-                                  FUN = type_FUN, exprs_values = by_exprs_values)
+.incorporate_tree_vis <- function(tree_data,
+                                  se,
+                                  tip_colour_by,
+                                  tip_shape_by,
+                                  tip_size_by,
+                                  node_colour_by,
+                                  node_shape_by,
+                                  node_size_by,
+                                  by_exprs_values = "counts",
+                                  type = c("row","column")){
+    colour_by = NULL
+    shape_by = NULL
+    size_by = NULL
+    variables <- c(tip_colour_by = tip_colour_by,
+                   tip_shape_by = tip_shape_by,
+                   tip_size_by = tip_size_by,
+                   node_colour_by = node_colour_by,
+                   node_shape_by = node_shape_by,
+                   node_size_by = node_size_by)
+    if(!is.null(variables)){
+        # remove any variables values, which are already available and
+        # rename columns by their usage
+        cn <- colnames(tree_data)
+        cn_data <- cn[!(cn %in% c(DEFAULT_TREE_DATA_COLS))]
+        if(length(cn_data) > 0L){
+            f <- variables %in% cn_data
+            if(any(f)){
+                tree_data <- tree_data[,c(DEFAULT_TREE_DATA_COLS,variables[f])]
+                # rename columns by their usage and merge by node type
+                colnames(tree_data) <- c(DEFAULT_TREE_DATA_COLS,names(variables)[f])
+                # mirror back variable name
+                for(i in variables[f]){
+                    var_name <- gsub("tip_|node_","",names(variables)[f][i])
+                    assign(var_name,
+                           paste(get(var_name),
+                                 variables[f][i],
+                                 collapse = " & ", sep = ""))
+                }
+                variables <- variables[!f]
+            }
         }
-        f <- !vapply(feature_info,is.null,logical(1))
-        if(any(!f)) {
-            stop("No data for values '", paste(variables[!f],collapse = "', '"),
-                 "' found in 'object'.",
-                 call. = FALSE)
+        if(any(names(variables) %in% NODE_VARIABLES)){
+            warning("informaton on nodes can currently only be supplied via ",
+                    "'other_fields' and not from 'object'", call. = FALSE)
+            variables <- variables[!(names(variables) %in% NODE_VARIABLES)]
         }
-        feature_info <- feature_info[f]
-        if(length(feature_info) != 0L){
+        # for remaining variables try to get data
+        if(length(variables) > 0L){
+            type <- match.arg(type)
+            type_FUN <- switch(type,
+                               row = scater::retrieveFeatureInfo,
+                               column = scater::retrieveCellInfo)
+            feature_info <- vector(mode = "list", length = length(variables))
+            for(i in seq_along(variables)){
+                # get data
+                feature_info[[i]] <-
+                    .get_feature_info(variables[i], se = se,
+                                      FUN = type_FUN, exprs_values = by_exprs_values)
+                # mirror back variable name, if a partial match was used
+                var_name <- gsub("tip_|node_","",names(variables)[i])
+                assign(var_name,
+                       paste(get(var_name),
+                             colnames(feature_info[[i]]),
+                             collapse = " & ", sep = ""))
+            }
             feature_info <- bind_cols(feature_info)
-            colnames(feature_info) <- names(variables)[f]
-            rn <- rownames(feature_info)
-            rn_i <- suppressWarnings(as.integer(rn))
-            if(!anyNA(rn_i)){
-                feature_info <- feature_info %>%
-                    rownames_to_column("node") %>%
-                    mutate(node = as.integer(node)) %>%
-                    relocate("node")
-            } else {
-                feature_info <- feature_info %>%
-                    rownames_to_column("label") %>%
-                    relocate("label")
-            }
-            if(!is.null(fields)){
-                fields <- feature_info %>%
-                    left_join(fields, by = colnames(feature_info)[1L])
-            } else {
-                fields <- feature_info
-            }
+            # rename columns by their usage
+            colnames(feature_info) <- names(variables)
+            feature_info <- feature_info %>%
+                mutate(label = rownames(se)) %>%
+                relocate("label")
+            tree_data <- .merge_tree_vis_data(tree_data, feature_info)
         }
+        tree_data <- .merge_tip_node_tree_data(tree_data)
     }
-    fields
+    return(list(df = tree_data,
+                colour_by = colour_by,
+                shape_by = shape_by,
+                size_by = size_by))
+}
+
+.merge_tip_node_tree_data <- function(tree_data){
+    # setup variables for ordering and order tree_data
+    is_leaf <- !(tree_data$node %in% unique(tree_data$parent))
+    bak_o <- tree_data$node
+    o <- order(is_leaf)
+    tree_data <- tree_data[o,]
+    is_leaf_o <- !(tree_data$node %in% unique(tree_data$parent))
+    # default values
+    colour_by <- NULL
+    shape_by <- NULL
+    size_by <- NULL
+    #
+    cn <- colnames(tree_data)
+    if(all(c("tip_colour_by","node_colour_by") %in% cn)){
+        colour_by <- c(tree_data$node_colour_by[!is_leaf_o],
+                       tree_data$tip_colour_by[is_leaf_o])
+    } else if("tip_colour_by" %in% cn) {
+        colour_by <- tree_data$tip_colour_by
+    } else if("node_colour_by" %in% cn) {
+        colour_by <- tree_data$node_colour_by
+    }
+    if(all(c("tip_shape_by","node_shape_by") %in% cn)){
+        shape_by <- c(tree_data$node_shape_by[!is_leaf_o],
+                      tree_data$tip_shape_by[is_leaf_o])
+    } else if("tip_shape_by" %in% cn) {
+        shape_by <- tree_data$tip_shape_by
+    } else if("node_shape_by" %in% cn) {
+        shape_by <- tree_data$node_shape_by
+    }
+    if(all(c("tip_size_by","node_size_by") %in% cn)){
+        size_by <- c(tree_data$node_size_by[!is_leaf_o],
+                     tree_data$tip_size_by[is_leaf_o])
+    } else if("tip_size_by" %in% cn) {
+        size_by <- tree_data$tip_size_by
+    } else if("node_size_by" %in% cn) {
+        size_by <- tree_data$node_size_by
+    }
+    #
+    tree_data <- tree_data[,DEFAULT_TREE_DATA_COLS]
+    tree_data$colour_by <- colour_by
+    tree_data$shape_by <- shape_by
+    tree_data$size_by <- size_by
+    # return tree_data with original ordering
+    tree_data[match(bak_o,tree_data$node),]
+}
+
+.merge_tree_vis_data <- function(tree_data, feature_info){
+    tree_data <- tree_data %>%
+        left_join(feature_info, by = "label")
+    tree_data
 }
 
 #' @importFrom tidytree as.treedata
-#' @importFrom ggtree ggtree geom_tiplab geom_tippoint
-.plot_tree <- function(tree_data,
-                       y,
-                       layout = "circular",
-                       show_label = TRUE,
-                       colour_by = NULL,
-                       shape_by = NULL,
-                       size_by = NULL){
+#' @importFrom ggtree ggtree geom_tippoint geom_nodepoint
+.tree_plotter <- function(object,
+                          layout = "circular",
+                          show_label = TRUE,
+                          add_legend = TRUE,
+                          colour_by = NULL,
+                          shape_by = NULL,
+                          size_by = NULL,
+                          point_alpha = 0.65,
+                          point_size = 1){
     # assemble arg list
-    args <- list(y = y,
-                 layout = layout,
-                 show_label = show_label,
-                 colour_by = colour_by,
-                 shape_by = shape_by,
-                 size_by = size_by)
+    point_out <- .get_point_args(colour_by,
+                                 shape_by,
+                                 size_by,
+                                 alpha = point_alpha,
+                                 size = point_size)
+    object <- .na_replace_from_plot_data(object,
+                                         shape_by,
+                                         size_by)
     # start plotting
-    p <- ggtree(tidytree::as.treedata(tree_data), layout = layout)
-    if(show_label){
-        p <- p + geom_tiplab(offset = .1)
+    plot_out <- ggtree(tidytree::as.treedata(object), layout = layout)
+    tip_point_FUN <- geom_tippoint
+    node_point_FUN <- geom_nodepoint
+    plot_out <- plot_out +
+        do.call(tip_point_FUN, point_out$args) +
+        do.call(node_point_FUN, point_out$args)
+    plot_out <- .add_tree_labels(plot_out, show_label)
+    if(!is.null(colour_by)){
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          object$colour_by,
+                                          colour_by,
+                                          fill = point_out$fill)
     }
-    point_aes <- .get_point_aes(args)
-    colour <- .get_colour(tree_data, args)
-    p <- p +
-        geom_tippoint(point_aes, shape = 21) +
-        geom_nodepoint(point_aes, shape = 21) +
-        colour
-    p
+    plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
+    if (!add_legend) {
+        plot_out <- plot_out + theme(legend.position = "none")
+    }
+    plot_out
 }
 
-.get_point_aes <- function(args){
-    colour <- args$colour_by
-    shape <- args$shape_by
-    size <- args$size_by
-    aes <- aes_string(fill = colour,
-                      shape = shape,
-                      size = size)
-    aes
-}
-
-.get_colour <- function(tree_data, args){
-    if(is.null(args$colour_by)){
-        return(NULL)
+#' @importFrom ggtree geom_tiplab geom_nodelab
+.add_tree_labels <- function(plot_out, show_label){
+    if(length(show_label) == 1L && show_label){
+        plot_out <- plot_out +
+            geom_tiplab(offset = .1)
+    } else if(length(show_label) > 1L && any(show_label)) {
+        is_leaf <- !(plot_out$data$node %in% unique(plot_out$data$parent))
+        label <- plot_out$data$label
+        m <- match(label,names(show_label))
+        m <- m[!is.na(m)]
+        m <- m[show_label[m]]
+        tmp <- rep("",length(label))
+        names(tmp) <- label
+        label <- tmp
+        label[names(show_label)[m]] <- names(show_label)[m]
+        plot_out$data$label <- label
+        # add tip and node labels
+        plot_out <- plot_out +
+            geom_tiplab(offset = .1) +
+            #geom_nodelab(offset = .1)
+            geom_nodelab()
     }
-    if(is.null(args$shape_by)){
-        if(is.numeric(tree_data[[args$colour_by]])){
-            scale_fill_viridis_c()
-        } else {
-            scale_fill_viridis_d()
-        }
-    } else {
-        if(is.numeric(tree_data[[args$colour_by]])){
-            scale_colour_viridis_c()
-        } else {
-            scale_colour_viridis_d()
-        }
-    }
+    plot_out
 }

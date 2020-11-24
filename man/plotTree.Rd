@@ -14,12 +14,16 @@ plotColTree(object, ...)
 
 \S4method{plotColTree}{TreeSummarizedExperiment}(
   object,
-  y = NULL,
-  layout = "circular",
+  relabel_tree = FALSE,
   show_label = FALSE,
-  colour_by = NULL,
-  shape_by = NULL,
-  size_by = NULL,
+  add_legend = TRUE,
+  layout = "circular",
+  tip_colour_by = NULL,
+  tip_shape_by = NULL,
+  tip_size_by = NULL,
+  node_colour_by = NULL,
+  node_shape_by = NULL,
+  node_size_by = NULL,
   by_exprs_values = "counts",
   other_fields = list(),
   ...
@@ -27,19 +31,46 @@ plotColTree(object, ...)
 
 \S4method{plotRowTree}{TreeSummarizedExperiment}(
   object,
-  y = NULL,
   relabel_tree = FALSE,
-  layout = "circular",
   show_label = FALSE,
-  colour_by = NULL,
-  shape_by = NULL,
-  size_by = NULL,
+  add_legend = TRUE,
+  layout = "circular",
+  tip_colour_by = NULL,
+  tip_shape_by = NULL,
+  tip_size_by = NULL,
+  node_colour_by = NULL,
+  node_shape_by = NULL,
+  node_size_by = NULL,
   by_exprs_values = "counts",
   other_fields = list(),
   ...
 )
 }
 \arguments{
+\item{relabel_tree}{= FALSE,}
+
+\item{show_label}{= FALSE,}
+
+\item{add_legend}{= TRUE,}
+
+\item{layout}{= "circular",}
+
+\item{tip_colour_by}{= NULL,}
+
+\item{tip_shape_by}{= NULL,}
+
+\item{tip_size_by}{= NULL,}
+
+\item{node_colour_by}{= NULL,}
+
+\item{node_shape_by}{= NULL,}
+
+\item{node_size_by}{= NULL,}
+
+\item{by_exprs_values}{= "counts",}
+
+\item{other_fields}{= list()}
+
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
@@ -54,5 +85,32 @@ be plotted. From the \code{rowData}, the \code{assays} as well as the
 additional information.
 }
 \examples{
+library(scater)
+library(mia)
+data(GlobalPatterns)
+altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
+altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
+rowData(altExp(GlobalPatterns,"genus"))$log_mean <- log(rowData(altExp(GlobalPatterns,"genus"))$mean)
+top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
+                       method="mean",
+                       top=100L,
+                       abund_values="counts")
+#
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            tip_colour_by = "log_mean",
+            tip_size_by = "detected")
 
+# plot with tip labels
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            tip_colour_by = "log_mean",
+            tip_size_by = "detected",
+            show_label = TRUE)
+# plot with selected labels
+labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
+            "0.961.60" = TRUE)
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            tip_colour_by = "log_mean",
+            tip_size_by = "detected",
+            show_label = labels,
+            layout="rectangular")
 }
