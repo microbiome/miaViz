@@ -1,7 +1,7 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 0.0.0.9000
-Date: 2020-11-03
+Version: 0.0.0.9001
+Date: 2020-11-24
 Authors@R: 
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -13,12 +13,23 @@ LazyData: false
 Depends:
     R (>= 4.0),
     TreeSummarizedExperiment,
-    mia
-Suggests: 
+    mia,
+    ggplot2
+Imports: 
+    methods,
+    scater,
+    ggtree,
+    tibble,
+    tidytree,
+    rlang,
+    dplyr,
+    ape
+Suggests:
     knitr,
     rmarkdown,
-    BiocStyle
-Remotes:
+    BiocStyle,
+    testthat
+Remotes: 
     github::FelixErnst/mia
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1

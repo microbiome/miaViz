@@ -20,6 +20,81 @@ knitr::opts_chunk$set(
 )
 ```
 
-```{r setup}
+## Preface
+
+```{r setup, message=FALSE}
 library(miaViz)
 ```
+
+# Tree plotting
+
+The information stored in the `rowTree` can be directly plotted. However,
+sizes of stored trees have to be kept in mind and plotting of large trees
+rarely makes sense.
+
+For this example we limit the information plotted to the top 100 taxa as judged
+by mean abundance on the genus level.
+
+```{r}
+library(scater)
+library(mia)
+data(GlobalPatterns)
+altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
+altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
+rowData(altExp(GlobalPatterns,"genus"))$log_mean <-
+  log(rowData(altExp(GlobalPatterns,"genus"))$mean)
+top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
+                       method="mean",
+                       top=100L,
+                       abund_values="counts")
+```
+
+Colour, size and shape of tree tips and nodes can be decorated based on data
+present in the `SE` object or by providing additional information via the 
+`other_fields` argument. Note that currently infromation for nodes have to be
+provided via the `other_fields` arguments.
+
+Data will be matched via the `node` or `label` argument depending on which was
+provided. `label` takes precedent.
+
+```{r plot1, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size)"}
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            tip_colour_by = "log_mean",
+            tip_size_by = "detected")
+```
+
+Tip and node labels can be shown as well. Setting `show_label = TRUE` shows the
+tip labels only ...
+
+```{r plot2, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Tip labels of the tree are shown as well."}
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            tip_colour_by = "log_mean",
+            tip_size_by = "detected",
+            show_label = TRUE)
+```
+
+... whereas node labels can be selectively shown by providing a named logical
+vector to `show_label`.
+
+Please not that currently `ggtree` only can plot node labels in a rectangular
+layout.
+
+```{r plot3, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown."}
+labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
+            "0.961.60" = TRUE)
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            tip_colour_by = "log_mean",
+            tip_size_by = "detected",
+            show_label = labels,
+            layout="rectangular")
+```
+
+Information can also be visualized on the edges of the tree plot.
+
+```{r plot4, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and edges labeled Kingdom (colour) and prevalence (size)"}
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            edge_colour_by = "Kingdom",
+            edge_size_by = "detected",
+            tip_colour_by = "log_mean")
+```
+

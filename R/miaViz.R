@@ -10,3 +10,11 @@
 #' \link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
 #' \link[mia:mia-package]{mia} class
 NULL
+
+#' @import methods
+#' @import TreeSummarizedExperiment
+#' @import mia
+#' @import ggplot2
+#' @importFrom rlang sym !! :=
+#' @importFrom dplyr %>%
+NULL
