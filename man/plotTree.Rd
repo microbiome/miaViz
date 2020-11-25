@@ -18,6 +18,8 @@ plotColTree(object, ...)
   show_label = FALSE,
   add_legend = TRUE,
   layout = "circular",
+  edge_colour_by = NULL,
+  edge_size_by = NULL,
   tip_colour_by = NULL,
   tip_shape_by = NULL,
   tip_size_by = NULL,
@@ -35,6 +37,8 @@ plotColTree(object, ...)
   show_label = FALSE,
   add_legend = TRUE,
   layout = "circular",
+  edge_colour_by = NULL,
+  edge_size_by = NULL,
   tip_colour_by = NULL,
   tip_shape_by = NULL,
   tip_size_by = NULL,
@@ -68,6 +72,16 @@ shown? Only names corresponding to \code{TRUE}, will be plotted.
 
 \item{layout}{layout for the plotted tree. See
 \code{\link[ggtree:ggtree]{ggtree}} for details.}
+
+\item{edge_colour_by}{Specification of a column metadata field or a feature
+to colour tree edges by, see the by argument in
+\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
+values.}
+
+\item{edge_size_by}{Specification of a column metadata field or a feature
+to size tree edges by, see the by argument in
+\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
+values.}
 
 \item{tip_colour_by}{Specification of a column metadata field or a feature to
 colour tree tips by, see the by argument in
@@ -119,6 +133,8 @@ altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
 altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
 rowData(altExp(GlobalPatterns,"genus"))$log_mean <- 
   log(rowData(altExp(GlobalPatterns,"genus"))$mean)
+rowData(altExp(GlobalPatterns,"genus"))$detected <- 
+  rowData(altExp(GlobalPatterns,"genus"))$detected / 100
 top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
                        method="mean",
                        top=100L,
@@ -141,4 +157,10 @@ plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
             tip_size_by = "detected",
             show_label = labels,
             layout="rectangular")
+            
+# plot with labeled edges
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            edge_colour_by = "Kingdom",
+            edge_size_by = "detected",
+            tip_colour_by = "log_mean")
 }

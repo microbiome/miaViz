@@ -88,3 +88,13 @@ plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
             show_label = labels,
             layout="rectangular")
 ```
+
+Information can also be visualized on the edges of the tree plot.
+
+```{r plot4, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and edges labeled Kingdom (colour) and prevalence (size)"}
+plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+            edge_colour_by = "Kingdom",
+            edge_size_by = "detected",
+            tip_colour_by = "log_mean")
+```
+

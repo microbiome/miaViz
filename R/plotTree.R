@@ -21,6 +21,14 @@
 #'   (default: \code{add_legend = TRUE})
 #' @param layout layout for the plotted tree. See 
 #'   \code{\link[ggtree:ggtree]{ggtree}} for details.
+#' @param edge_colour_by Specification of a column metadata field or a feature 
+#'   to colour tree edges by, see the by argument in 
+#'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
+#'   values.
+#' @param edge_size_by Specification of a column metadata field or a feature 
+#'   to size tree edges by, see the by argument in 
+#'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
+#'   values.
 #' @param tip_colour_by Specification of a column metadata field or a feature to
 #'   colour tree tips by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
@@ -60,6 +68,8 @@
 #' altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
 #' rowData(altExp(GlobalPatterns,"genus"))$log_mean <- 
 #'   log(rowData(altExp(GlobalPatterns,"genus"))$mean)
+#' rowData(altExp(GlobalPatterns,"genus"))$detected <- 
+#'   rowData(altExp(GlobalPatterns,"genus"))$detected / 100
 #' top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
 #'                        method="mean",
 #'                        top=100L,
@@ -82,6 +92,12 @@
 #'             tip_size_by = "detected",
 #'             show_label = labels,
 #'             layout="rectangular")
+#'             
+#' # plot with labeled edges
+#' plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+#'             edge_colour_by = "Kingdom",
+#'             edge_size_by = "detected",
+#'             tip_colour_by = "log_mean")
 NULL
 
 #' @rdname plotTree
@@ -117,6 +133,8 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
              show_label = FALSE,
              add_legend = TRUE,
              layout = "circular",
+             edge_colour_by = NULL,
+             edge_size_by = NULL,
              tip_colour_by = NULL,
              tip_shape_by = NULL,
              tip_size_by = NULL,
@@ -140,6 +158,8 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
         #
         vis_out <- .incorporate_tree_vis(tree_data,
                                          se = object,
+                                         edge_colour_by = edge_colour_by,
+                                         edge_size_by = edge_size_by,
                                          tip_colour_by = tip_colour_by,
                                          tip_shape_by = tip_shape_by,
                                          tip_size_by = tip_size_by,
@@ -148,17 +168,28 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
                                          node_size_by = node_size_by,
                                          by_exprs_values = by_exprs_values)
         tree_data <- vis_out$df
+        edge_colour_by <- vis_out$edge_colour_by
+        edge_size_by <- vis_out$edge_size_by
         colour_by <- vis_out$colour_by
         shape_by <- vis_out$shape_by
         size_by <- vis_out$size_by
+        show_tips <- any(!vapply(c(tip_colour_by, tip_shape_by, tip_size_by),
+                                 is.null, logical(1)))
+        show_nodes <- any(!vapply(c(node_colour_by, node_shape_by, node_size_by),
+                                  is.null, logical(1)))
         #
         .tree_plotter(tree_data,
                       layout = layout,
-                      show_label = show_label,
                       add_legend = add_legend,
+                      show_label = show_label,
+                      show_tips = show_tips,
+                      show_nodes = show_nodes,
+                      edge_colour_by = edge_colour_by,
+                      edge_size_by = edge_size_by,
                       colour_by = colour_by,
                       shape_by = shape_by,
-                      size_by = size_by)
+                      size_by = size_by,
+                      ...)
     }
 )
 
@@ -170,6 +201,8 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
              show_label = FALSE,
              add_legend = TRUE,
              layout = "circular",
+             edge_colour_by = NULL,
+             edge_size_by = NULL,
              tip_colour_by = NULL,
              tip_shape_by = NULL,
              tip_size_by = NULL,
@@ -193,6 +226,8 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
         #
         vis_out <- .incorporate_tree_vis(tree_data,
                                          se = object,
+                                         edge_colour_by = edge_colour_by,
+                                         edge_size_by = edge_size_by,
                                          tip_colour_by = tip_colour_by,
                                          tip_shape_by = tip_shape_by,
                                          tip_size_by = tip_size_by,
@@ -201,17 +236,28 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                                          node_size_by = node_size_by,
                                          by_exprs_values = by_exprs_values)
         tree_data <- vis_out$df
+        edge_colour_by <- vis_out$edge_colour_by
+        edge_size_by <- vis_out$edge_size_by
         colour_by <- vis_out$colour_by
         shape_by <- vis_out$shape_by
         size_by <- vis_out$size_by
+        show_tips <- any(!vapply(c(tip_colour_by, tip_shape_by, tip_size_by),
+                                 is.null, logical(1)))
+        show_nodes <- any(!vapply(c(node_colour_by, node_shape_by, node_size_by),
+                                  is.null, logical(1)))
         #
         .tree_plotter(tree_data,
                       layout = layout,
-                      show_label = show_label,
                       add_legend = add_legend,
+                      show_label = show_label,
+                      show_tips = show_tips,
+                      show_nodes = show_nodes,
+                      edge_colour_by = edge_colour_by,
+                      edge_size_by = edge_size_by,
                       colour_by = colour_by,
                       shape_by = shape_by,
-                      size_by = size_by)
+                      size_by = size_by,
+                      ...)
     }
 )
 
@@ -252,6 +298,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 #' @importFrom tibble rownames_to_column
 .incorporate_tree_vis <- function(tree_data,
                                   se,
+                                  edge_colour_by,
+                                  edge_size_by,
                                   tip_colour_by,
                                   tip_shape_by,
                                   tip_size_by,
@@ -260,15 +308,20 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                   node_size_by,
                                   by_exprs_values = "counts",
                                   type = c("row","column")){
-    colour_by = NULL
-    shape_by = NULL
-    size_by = NULL
-    variables <- c(tip_colour_by = tip_colour_by,
+    
+    variables <- c(edge_colour_by = edge_colour_by,
+                   edge_size_by = edge_size_by,
+                   tip_colour_by = tip_colour_by,
                    tip_shape_by = tip_shape_by,
                    tip_size_by = tip_size_by,
                    node_colour_by = node_colour_by,
                    node_shape_by = node_shape_by,
                    node_size_by = node_size_by)
+    edge_colour_by <- NULL
+    edge_size_by <- NULL
+    colour_by <- NULL
+    shape_by <- NULL
+    size_by <- NULL
     if(!is.null(variables)){
         # remove any variables values, which are already available and
         # rename columns by their usage
@@ -326,6 +379,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         tree_data <- .merge_tip_node_tree_data(tree_data)
     }
     return(list(df = tree_data,
+                edge_colour_by = edge_colour_by,
+                edge_size_by = edge_size_by,
                 colour_by = colour_by,
                 shape_by = shape_by,
                 size_by = size_by))
@@ -339,6 +394,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     tree_data <- tree_data[o,]
     is_leaf_o <- !(tree_data$node %in% unique(tree_data$parent))
     # default values
+    edge_colour_by <- NULL
     colour_by <- NULL
     shape_by <- NULL
     size_by <- NULL
@@ -369,7 +425,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         size_by <- tree_data$node_size_by
     }
     #
-    tree_data <- tree_data[,DEFAULT_TREE_DATA_COLS]
+    tree_data <- tree_data[,cn[!grepl("tip_|node_",cn)]]
     tree_data$colour_by <- colour_by
     tree_data$shape_by <- shape_by
     tree_data$size_by <- size_by
@@ -384,32 +440,54 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 }
 
 #' @importFrom tidytree as.treedata
+#' @importFrom ggplot2 scale_size_identity
 #' @importFrom ggtree ggtree geom_tippoint geom_nodepoint
 .tree_plotter <- function(object,
                           layout = "circular",
-                          show_label = TRUE,
                           add_legend = TRUE,
+                          show_label = TRUE,
+                          show_tips = FALSE,
+                          show_nodes = FALSE,
+                          edge_colour_by = NULL,
+                          edge_size_by = NULL,
                           colour_by = NULL,
                           shape_by = NULL,
                           size_by = NULL,
-                          point_alpha = 0.65,
-                          point_size = 1){
+                          tree_edge_alpha = 1,
+                          tree_edge_size = NULL,
+                          point_alpha = 1,
+                          point_size = 2){
     # assemble arg list
     point_out <- .get_point_args(colour_by,
                                  shape_by,
                                  size_by,
                                  alpha = point_alpha,
                                  size = point_size)
+    edge_out <- .get_edge_args(edge_colour_by,
+                               edge_size_by,
+                               alpha = tree_edge_alpha,
+                               size = tree_edge_size)
     object <- .na_replace_from_plot_data(object,
+                                         edge_size_by,
                                          shape_by,
                                          size_by)
     # start plotting
-    plot_out <- ggtree(tidytree::as.treedata(object), layout = layout)
+    plot_out <- ggtree(tidytree::as.treedata(object), layout = layout) +
+        do.call(geom_tree, edge_out$args)
+    if (!is.null(edge_size_by)) {
+        plot_out <- plot_out + 
+            scale_size_identity(guide="legend")
+    }
     tip_point_FUN <- geom_tippoint
     node_point_FUN <- geom_nodepoint
-    plot_out <- plot_out +
-        do.call(tip_point_FUN, point_out$args) +
-        do.call(node_point_FUN, point_out$args)
+    if(show_tips){
+        plot_out <- plot_out +
+            do.call(tip_point_FUN, point_out$args)
+    }
+    if(show_nodes){
+        plot_out <- plot_out +
+            do.call(node_point_FUN, point_out$args)
+    }
     plot_out <- .add_tree_labels(plot_out, show_label)
     if(!is.null(colour_by)){
         plot_out <- .resolve_plot_colours(plot_out,
