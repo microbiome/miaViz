@@ -441,7 +441,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 
 #' @importFrom tidytree as.treedata
 #' @importFrom ggplot2 scale_size_identity
-#' @importFrom ggtree ggtree geom_tippoint geom_nodepoint
+#' @importFrom ggtree ggtree geom_tree geom_tippoint geom_nodepoint
 .tree_plotter <- function(object,
                           layout = "circular",
                           add_legend = TRUE,
