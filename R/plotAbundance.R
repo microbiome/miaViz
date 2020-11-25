@@ -130,7 +130,7 @@ setGeneric("plotAbundanceOrdered", signature = c("x"),
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x, ...){
         plot <- plotExpression(x, ...)
-        ylab <- gsub("Expression","Abundance",z$labels$y)
+        ylab <- gsub("Expression","Abundance",plot$labels$y)
         plot <- plot +
           ylab(ylab)
         plot
