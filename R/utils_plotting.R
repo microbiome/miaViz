@@ -52,7 +52,7 @@
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
-        aes_args$colour <- "group"
+        aes_args$colour <- "edge_colour_by"
     }
     if (!is.null(edge_size_by)) {
         aes_args$size <- "edge_size_by"

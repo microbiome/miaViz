@@ -132,9 +132,9 @@ library(mia)
 data(GlobalPatterns)
 altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
 altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
-rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- 
+rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
-rowData(altExp(GlobalPatterns,"Genus"))$detected <- 
+rowData(altExp(GlobalPatterns,"Genus"))$detected <-
   rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
 top_taxa <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
                        method="mean",
@@ -158,10 +158,10 @@ plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
             tip_size_by = "detected",
             show_label = labels,
             layout="rectangular")
-            
+
 # plot with labeled edges
 plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
-            edge_colour_by = "Kingdom",
+            edge_colour_by = "Phylum",
             edge_size_by = "detected",
             tip_colour_by = "log_mean")
 
