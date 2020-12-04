@@ -135,11 +135,15 @@ altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus")
 rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
 rowData(altExp(GlobalPatterns,"Genus"))$detected <-
-  rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
+   rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
 top_genus <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
-                       method="mean",
-                       top=100L,
-                       abund_values="counts")
+                        method="mean",
+                        top=100L,
+                        abund_values="counts")
+top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
+                        method="mean",
+                        top=10L,
+                        abund_values="counts")
 #
 plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
             tip_colour_by = "log_mean",
@@ -179,8 +183,8 @@ altExps(GlobalPatterns) <-
           })
 x <- unsplitByRanks(GlobalPatterns)
 x <- addTaxonomyTree(x)
-plotRowTree(x,
-            edge_colour_by = "Kingdom",
+plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
+            edge_colour_by = "Phylum",
             edge_size_by = "detected",
             tip_colour_by = "log_mean",
             node_colour_by = "log_mean")

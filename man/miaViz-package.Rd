@@ -10,6 +10,5 @@ The main classes for interfacing should be either the
 \code{TreeSummarizedExperiment} or the \code{MicrobiomeExperiment} class.
 }
 \seealso{
-\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
 \link[mia:mia-package]{mia} class
 }

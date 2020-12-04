@@ -7,7 +7,6 @@
 #' @name miaViz-package
 #' @docType package
 #' @seealso
-#' \link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
 #' \link[mia:mia-package]{mia} class
 NULL
 
