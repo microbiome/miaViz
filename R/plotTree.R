@@ -73,32 +73,36 @@
 #' rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
 #'   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
 #' rowData(altExp(GlobalPatterns,"Genus"))$detected <-
-#'   rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
-#' top_taxa <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
-#'                        method="mean",
-#'                        top=100L,
-#'                        abund_values="counts")
+#'    rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
+#' top_genus <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
+#'                         method="mean",
+#'                         top=100L,
+#'                         abund_values="counts")
+#' top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
+#'                         method="mean",
+#'                         top=10L,
+#'                         abund_values="counts")
 #' #
-#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
 #'             tip_colour_by = "log_mean",
 #'             tip_size_by = "detected")
 #' 
 #' # plot with tip labels
-#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
 #'             tip_colour_by = "log_mean",
 #'             tip_size_by = "detected",
 #'             show_label = TRUE)
 #' # plot with selected labels
 #' labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
 #'             "0.961.60" = TRUE)
-#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
 #'             tip_colour_by = "log_mean",
 #'             tip_size_by = "detected",
 #'             show_label = labels,
 #'             layout="rectangular")
 #' 
 #' # plot with labeled edges
-#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
 #'             edge_colour_by = "Phylum",
 #'             edge_size_by = "detected",
 #'             tip_colour_by = "log_mean")
@@ -117,8 +121,8 @@
 #'           })
 #' x <- unsplitByRanks(GlobalPatterns)
 #' x <- addTaxonomyTree(x)
-#' plotRowTree(x,
-#'             edge_colour_by = "Kingdom",
+#' plotRowTree(x[rowData(x)$Phylum %in% top_phyla,],
+#'             edge_colour_by = "Phylum",
 #'             edge_size_by = "detected",
 #'             tip_colour_by = "log_mean",
 #'             node_colour_by = "log_mean")
@@ -288,8 +292,8 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     }
 )
 
-#' @importFrom ape keep.tip
-#' @importFrom treeio as_tibble as.phylo
+#' @importFrom ape keep.tip as.phylo
+#' @importFrom tidytree as_tibble 
 .get_trimed_object_and_tree <- function(object, type = c("row","columns"),
                                         relabel = FALSE){
     type <- match.arg(type)
@@ -299,9 +303,12 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     tree <- tree_FUN(object)
     links <- links_FUN(object)
     #
-    track <- trackNode(tree)
-    newTree <- ape::keep.tip(tree, unique(links$nodeNum[links$isLeaf]))
-    track <- ape::keep.tip(track, unique(links$nodeNum[links$isLeaf]))
+    tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
+    drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
+    oldTree <- tree
+    newTree <- ape::drop.tip(oldTree, tip = drop_tip, collapse.singles = FALSE)
+    track <- trackNode(oldTree)
+    track <- ape::drop.tip(track, tip = drop_tip, collapse.singles = FALSE)
     #
     oldAlias <- links$nodeLab_alias
     newNode <- convertNode(tree = track, node = oldAlias)
