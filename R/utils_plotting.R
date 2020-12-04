@@ -7,12 +7,16 @@
                                        shape_by = NULL,
                                        size_by = NULL,
                                        default_shape = 21,
-                                       default_size = 2){
+                                       default_size = 2,
+                                       default_edge_size = 0){
     if(!is.null(shape_by)){
         object$shape_by[is.na(object$shape_by)] <- default_shape
     }
     if(!is.null(size_by)){
         object$size_by[is.na(object$size_by)] <- default_size
+    }
+    if(!is.null(edge_size_by)){
+        object$edge_size_by[is.na(object$edge_size_by)] <- default_edge_size
     }
     object
 }

@@ -20,18 +20,17 @@ test_that("plot tree", {
     #
     data("GlobalPatterns")
     x <- GlobalPatterns
-    # .get_trimed_tree
-    expect_error(miaViz:::.get_trimed_tree(),
-                 'argument "x" is missing')
-    expect_error(miaViz:::.get_trimed_tree(x),
-                 'argument "dimnames" is missing')
-    actual <- miaViz:::.get_trimed_tree(x, dimnames = "549322")
-    expect_s3_class(actual,"phylo")
-    expect_equal(unique(actual$tip.label), c("549322", NA))
-    actual <- miaViz:::.get_trimed_tree(x, dimnames = rownames(x))
-    expect_equal(actual$tip.label, rownames(x))
-    actual <- miaViz:::.get_trimed_tree(x, dimnames = rownames(x), relabel = TRUE)
-    expect_equal(actual$tip.label[1L], "Class::Thermoprotei")
+    # .get_trimed_object_and_tree
+    expect_error(miaViz:::.get_trimed_object_and_tree(),
+                 'argument "object" is missing')
+    actual <- miaViz:::.get_trimed_object_and_tree(x["549322",])
+    expect_s3_class(actual$tree,"phylo")
+    expect_s4_class(actual$object,"TreeSummarizedExperiment")
+    expect_equal(unique(actual$tree$tip.label), c("549322"))
+    actual <- miaViz:::.get_trimed_object_and_tree(x)
+    expect_equal(actual$tree$tip.label, rownames(x))
+    actual <- miaViz:::.get_trimed_object_and_tree(x, relabel = TRUE)
+    expect_equal(actual$tree$tip.label[1L], "Class:Thermoprotei")
     #
     library(scater)
     library(mia)
