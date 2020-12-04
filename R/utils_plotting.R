@@ -7,12 +7,16 @@
                                        shape_by = NULL,
                                        size_by = NULL,
                                        default_shape = 21,
-                                       default_size = 2){
+                                       default_size = 2,
+                                       default_edge_size = 0){
     if(!is.null(shape_by)){
         object$shape_by[is.na(object$shape_by)] <- default_shape
     }
     if(!is.null(size_by)){
         object$size_by[is.na(object$size_by)] <- default_size
+    }
+    if(!is.null(edge_size_by)){
+        object$edge_size_by[is.na(object$edge_size_by)] <- default_edge_size
     }
     object
 }
@@ -48,7 +52,7 @@
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
-        aes_args$colour <- "edge_colour_by"
+        aes_args$colour <- "group"
     }
     if (!is.null(edge_size_by)) {
         aes_args$size <- "edge_size_by"

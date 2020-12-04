@@ -57,47 +57,71 @@
 #' @param ... additional argument, currently not used.
 #'
 #' @return a \code{\link{ggtree}} plot
+#' 
+#' @seealso
+#' \code{\link[mia:splitByRanks]{splitByRanks}}
 #'
 #' @name plotTree
 #'
 #' @examples
 #' library(scater)
 #' library(mia)
+#' # preparation of some data
 #' data(GlobalPatterns)
-#' altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
-#' altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
-#' rowData(altExp(GlobalPatterns,"genus"))$log_mean <- 
-#'   log(rowData(altExp(GlobalPatterns,"genus"))$mean)
-#' rowData(altExp(GlobalPatterns,"genus"))$detected <- 
-#'   rowData(altExp(GlobalPatterns,"genus"))$detected / 100
-#' top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
+#' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+#' altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
+#' rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- 
+#'   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
+#' rowData(altExp(GlobalPatterns,"Genus"))$detected <- 
+#'   rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
+#' top_taxa <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
 #'                        method="mean",
 #'                        top=100L,
 #'                        abund_values="counts")
 #' #
-#' plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
 #'             tip_colour_by = "log_mean",
 #'             tip_size_by = "detected")
 #'
 #' # plot with tip labels
-#' plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
 #'             tip_colour_by = "log_mean",
 #'             tip_size_by = "detected",
 #'             show_label = TRUE)
 #' # plot with selected labels
 #' labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
 #'             "0.961.60" = TRUE)
-#' plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
 #'             tip_colour_by = "log_mean",
 #'             tip_size_by = "detected",
 #'             show_label = labels,
 #'             layout="rectangular")
 #'             
 #' # plot with labeled edges
-#' plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
 #'             edge_colour_by = "Kingdom",
 #'             edge_size_by = "detected",
 #'             tip_colour_by = "log_mean")
+#' 
+#' # aggregating data over the taxonomic levels for plotting a taxonomic tree
+#' # please note that the original tree of GlobalPatterns is dropped by
+#' # unsplitByRanks
+#' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+#' altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
+#' altExps(GlobalPatterns) <-
+#'    lapply(altExps(GlobalPatterns),
+#'           function(y){
+#'               rowData(y)$log_mean <- log(rowData(y)$mean)
+#'               rowData(y)$detected <- rowData(y)$detected / 100
+#'               y
+#'           })
+#' x <- unsplitByRanks(GlobalPatterns)
+#' x <- addTaxonomyTree(x)
+#' plotRowTree(x,
+#'             edge_colour_by = "Kingdom",
+#'             edge_size_by = "detected",
+#'             tip_colour_by = "log_mean",
+#'             node_colour_by = "log_mean")
 NULL
 
 #' @rdname plotTree
@@ -152,8 +176,11 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
                                   show_label = show_label,
                                   add_legend = add_legend)
         #
-        tree <- .get_trimed_tree(object, type = "row", relabel = relabel_tree,
-                                 rownames(object))
+        tree <- .get_trimed_tree(object, type = "column")
+        relabel_out <- relabel_object_tree(object, tree, type = "column",
+                                           relabel = relabel_tree)
+        object <- relabel_out$object
+        tree <- relabel_out$tree
         tree_data <- .get_tree_data(combineTreeData(tree, other_fields))
         #
         vis_out <- .incorporate_tree_vis(tree_data,
@@ -192,7 +219,6 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
                       ...)
     }
 )
-
 #' @rdname plotTree
 #' @export
 setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
@@ -220,8 +246,11 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                                   show_label = show_label,
                                   add_legend = add_legend)
         #
-        tree <- .get_trimed_tree(object, type = "row", relabel = relabel_tree,
-                                 rownames(object))
+        tree <- .get_trimed_tree(object, type = "row")
+        relabel_out <- relabel_object_tree(object, tree, type = "row",
+                                           relabel = relabel_tree)
+        object <- relabel_out$object
+        tree <- relabel_out$tree
         tree_data <- .get_tree_data(combineTreeData(tree, other_fields))
         #
         vis_out <- .incorporate_tree_vis(tree_data,
@@ -262,26 +291,50 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 )
 
 #' @importFrom ape keep.tip
-.get_trimed_tree <- function(x, type = c("row","columns"),
-                             relabel = FALSE, dimnames){
+.get_trimed_tree <- function(object, type = c("row","columns")){
     type <- match.arg(type)
     tree_FUN <- switch(type, row = rowTree, column = colTree, stop("."))
     links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
-    tree <- tree_FUN(x)
-    links <- links_FUN(x)
-    tree <- ape::keep.tip(tree, unique(links$nodeNum))
-    m <- match(unique(links$nodeNum),links$nodeNum)
-    if(relabel){
+    tree <- tree_FUN(object)
+    links <- links_FUN(object)
+    #
+    tree <- ape::keep.tip(tree, unique(links$nodeNum[links$isLeaf]))
+    tree
+}
+
+relabel_object_tree <- function(object, tree, type = c("row","columns"),
+                                relabel = FALSE){
+    type <- match.arg(type)
+    links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
+    dimnames_FUN <- switch(type, row = rownames, column = colnames, stop("."))
+    dimnames_rep_FUN <- switch(type, row = rownames, column = colnames, stop("."))
+    links <- links_FUN(object)
+    dimnames <- dimnames_FUN(object)
+    # change labels
+    leaf_nodes <- unique(links$nodeNum[links$isLeaf])
+    # in case leafs are not the first in the list
+    leaf_seq <- seq_along(leaf_nodes)
+    leaf_nodes <- leaf_seq[leaf_seq[order(leaf_nodes)]]
+    if(relabel ||
+       any(tree$tip.label[leaf_nodes] != dimnames[links$isLeaf]) ||
+       anyDuplicated(dimnames[links$isLeaf])){
         if(type == "column"){
             stop(".") # Now taxonomic info on the cols
         }
-        new_tip_labels <- getTaxonomyLabels(x[m,], with_type = TRUE)
+        new_tip_labels <- getTaxonomyLabels(object, with_type = TRUE,
+                                            resolve_loops = TRUE)
     } else {
-        new_tip_labels <- dimnames[m]
+        new_tip_labels <- dimnames
     }
-    tree$tip.label <- new_tip_labels
-    tree
+    tree$tip.label[leaf_nodes] <- new_tip_labels[links$isLeaf]
+    if(type == "row"){
+        rownames(object) <- new_tip_labels
+    } else {
+        colnames(object) <- new_tip_labels
+    }
+    list(object = object, tree = tree)
 }
+
 
 #' @importFrom tibble tibble
 .get_feature_info <- function(by, se, FUN, exprs_values){
@@ -344,12 +397,6 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                 variables <- variables[!f]
             }
         }
-        if(any(names(variables) %in% NODE_VARIABLES)){
-            warning("informaton on nodes can currently only be supplied via ",
-                    "'other_fields' and not from 'object'", call. = FALSE)
-            variables <- variables[!(names(variables) %in% NODE_VARIABLES)]
-        }
-        # for remaining variables try to get data
         if(length(variables) > 0L){
             type <- match.arg(type)
             type_FUN <- switch(type,
@@ -434,6 +481,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 }
 
 .merge_tree_vis_data <- function(tree_data, feature_info){
+    if(anyDuplicated(tree_data$label) || anyDuplicated(feature_info$label)){
+        stop(".")
+    }
     tree_data <- tree_data %>%
         left_join(feature_info, by = "label")
     tree_data
@@ -441,7 +491,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 
 #' @importFrom tidytree as.treedata
 #' @importFrom ggplot2 scale_size_identity
-#' @importFrom ggtree ggtree geom_tree geom_tippoint geom_nodepoint
+#' @importFrom ggtree ggtree geom_tree geom_tippoint geom_nodepoint groupOTU
 .tree_plotter <- function(object,
                           layout = "circular",
                           add_legend = TRUE,
@@ -472,6 +522,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                          shape_by,
                                          size_by)
     # start plotting
+    if (!is.null(edge_colour_by)) {
+        object <- groupOTU(object, split(object$node, object$edge_colour_by))
+    }
     plot_out <- ggtree(tidytree::as.treedata(object), layout = layout) +
         do.call(geom_tree, edge_out$args)
     if (!is.null(edge_size_by)) {

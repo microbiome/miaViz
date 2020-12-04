@@ -128,39 +128,63 @@ additional information.
 \examples{
 library(scater)
 library(mia)
+# preparation of some data
 data(GlobalPatterns)
-altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
-altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
-rowData(altExp(GlobalPatterns,"genus"))$log_mean <- 
-  log(rowData(altExp(GlobalPatterns,"genus"))$mean)
-rowData(altExp(GlobalPatterns,"genus"))$detected <- 
-  rowData(altExp(GlobalPatterns,"genus"))$detected / 100
-top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
+altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
+rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- 
+  log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
+rowData(altExp(GlobalPatterns,"Genus"))$detected <- 
+  rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
+top_taxa <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
                        method="mean",
                        top=100L,
                        abund_values="counts")
 #
-plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected")
 
 # plot with tip labels
-plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",
             show_label = TRUE)
 # plot with selected labels
 labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
             "0.961.60" = TRUE)
-plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",
             show_label = labels,
             layout="rectangular")
             
 # plot with labeled edges
-plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
             edge_colour_by = "Kingdom",
             edge_size_by = "detected",
             tip_colour_by = "log_mean")
+
+# aggregating data over the taxonomic levels for plotting a taxonomic tree
+# please note that the original tree of GlobalPatterns is dropped by
+# unsplitByRanks
+altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
+altExps(GlobalPatterns) <-
+   lapply(altExps(GlobalPatterns),
+          function(y){
+              rowData(y)$log_mean <- log(rowData(y)$mean)
+              rowData(y)$detected <- rowData(y)$detected / 100
+              y
+          })
+x <- unsplitByRanks(GlobalPatterns)
+x <- addTaxonomyTree(x)
+plotRowTree(x,
+            edge_colour_by = "Kingdom",
+            edge_size_by = "detected",
+            tip_colour_by = "log_mean",
+            node_colour_by = "log_mean")
+}
+\seealso{
+\code{\link[mia:splitByRanks]{splitByRanks}}
 }
