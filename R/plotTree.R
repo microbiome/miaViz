@@ -78,10 +78,6 @@
 #'                         method="mean",
 #'                         top=100L,
 #'                         abund_values="counts")
-#' top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
-#'                         method="mean",
-#'                         top=10L,
-#'                         abund_values="counts")
 #' #
 #' plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
 #'             tip_colour_by = "log_mean",
@@ -104,6 +100,10 @@
 #' # plot with labeled edges
 #' plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
 #'             edge_colour_by = "Phylum",
+#'             tip_colour_by = "log_mean")
+#' # if edges are sized, colours might disappear depending on plotting device
+#' plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+#'             edge_colour_by = "Phylum",
 #'             edge_size_by = "detected",
 #'             tip_colour_by = "log_mean")
 #' 
@@ -111,6 +111,10 @@
 #' # please note that the original tree of GlobalPatterns is dropped by
 #' # unsplitByRanks
 #' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+#' top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
+#'                         method="mean",
+#'                         top=10L,
+#'                         abund_values="counts")
 #' altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
 #' altExps(GlobalPatterns) <-
 #'    lapply(altExps(GlobalPatterns),
@@ -497,6 +501,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 #' @importFrom tidytree as.treedata
 #' @importFrom ggplot2 scale_size_identity
 #' @importFrom ggtree ggtree geom_tree geom_tippoint geom_nodepoint groupOTU
+#'   theme_tree
 .tree_plotter <- function(object,
                           layout = "circular",
                           add_legend = TRUE,
@@ -560,8 +565,10 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                           fill = point_out$fill)
     }
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
+    plot_out <- .theme_plotTree(plot_out)
     if (!add_legend) {
-        plot_out <- plot_out + theme(legend.position = "none")
+        plot_out <- plot_out +
+            theme(legend.position = "none")
     }
     plot_out
 }
@@ -589,4 +596,12 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
             geom_nodelab()
     }
     plot_out
+}
+
+.theme_plotTree <- function(plot){
+    plot + 
+        theme(legend.background = element_rect(fill = "transparent",colour = NA),
+              legend.box.background = element_rect(fill = "transparent",colour = NA),
+              panel.background = element_rect(fill = "transparent",colour = NA),
+              plot.background = element_rect(fill = "transparent",colour = NA))
 }

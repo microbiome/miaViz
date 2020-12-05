@@ -140,10 +140,6 @@ top_genus <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
                         method="mean",
                         top=100L,
                         abund_values="counts")
-top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
-                        method="mean",
-                        top=10L,
-                        abund_values="counts")
 #
 plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
             tip_colour_by = "log_mean",
@@ -166,6 +162,10 @@ plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
 # plot with labeled edges
 plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
             edge_colour_by = "Phylum",
+            tip_colour_by = "log_mean")
+# if edges are sized, colours might disappear depending on plotting device
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+            edge_colour_by = "Phylum",
             edge_size_by = "detected",
             tip_colour_by = "log_mean")
 
@@ -173,6 +173,10 @@ plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
 # please note that the original tree of GlobalPatterns is dropped by
 # unsplitByRanks
 altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
+                        method="mean",
+                        top=10L,
+                        abund_values="counts")
 altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
 altExps(GlobalPatterns) <-
    lapply(altExps(GlobalPatterns),
