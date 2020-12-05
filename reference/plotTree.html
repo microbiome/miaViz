@@ -38,6 +38,8 @@
 
 
 
+  <link href="../extra.css" rel="stylesheet">
+  
 
 <meta property="og:title" content="Plotting tree information enriched with information — plotTree" />
 <meta property="og:description" content="Based on the stored data in a TreeSummarizedExperiment a tree can
@@ -289,10 +291,6 @@ one type of id information. See details in
                         method<span class='op'>=</span><span class='st'>"mean"</span>,
                         top<span class='op'>=</span><span class='fl'>100L</span>,
                         abund_values<span class='op'>=</span><span class='st'>"counts"</span><span class='op'>)</span>
-<span class='va'>top_phyla</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/getTopTaxa.html'>getTopTaxa</a></span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Phylum"</span><span class='op'>)</span>,
-                        method<span class='op'>=</span><span class='st'>"mean"</span>,
-                        top<span class='op'>=</span><span class='fl'>10L</span>,
-                        abund_values<span class='op'>=</span><span class='st'>"counts"</span><span class='op'>)</span>
 <span class='co'>#</span>
 <span class='fu'>plotRowTree</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Genus"</span><span class='op'>)</span><span class='op'>[</span><span class='va'>top_genus</span>,<span class='op'>]</span>,
             tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
@@ -301,13 +299,13 @@ one type of id information. See details in
 #&gt; <span class='warning'>Please use `mutate()` instead.</span>
 #&gt; <span class='warning'>See vignette('programming') for more help</span>
 #&gt; <span class='warning'><span style='color: #555555;'>This warning is displayed once every 8 hours.</span><span></span>
-#&gt; <span class='warning'></span><span style='color: #555555;'>Call `lifecycle::last_warnings()` to see where this warning was generated.</span><span></span></div><div class='img'><img src='plotTree-1.png' alt='' width='700' height='433' /></div><div class='input'>
+#&gt; <span class='warning'></span><span style='color: #555555;'>Call `lifecycle::last_warnings()` to see where this warning was generated.</span><span></span></div><div class='img'><img src='plotTree-1.png' alt='' width='3000' height='2100' /></div><div class='input'>
 <span class='co'># plot with tip labels</span>
 <span class='fu'>plotRowTree</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Genus"</span><span class='op'>)</span><span class='op'>[</span><span class='va'>top_genus</span>,<span class='op'>]</span>,
             tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
             tip_size_by <span class='op'>=</span> <span class='st'>"detected"</span>,
             show_label <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='img'><img src='plotTree-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='co'># plot with selected labels</span>
+</div><div class='img'><img src='plotTree-2.png' alt='' width='3000' height='2100' /></div><div class='input'><span class='co'># plot with selected labels</span>
 <span class='va'>labels</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Genus:Providencia"</span> <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='st'>"Genus:Morganella"</span> <span class='op'>=</span> <span class='cn'>FALSE</span>,
             <span class='st'>"0.961.60"</span> <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 <span class='fu'>plotRowTree</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Genus"</span><span class='op'>)</span><span class='op'>[</span><span class='va'>top_genus</span>,<span class='op'>]</span>,
@@ -315,17 +313,25 @@ one type of id information. See details in
             tip_size_by <span class='op'>=</span> <span class='st'>"detected"</span>,
             show_label <span class='op'>=</span> <span class='va'>labels</span>,
             layout<span class='op'>=</span><span class='st'>"rectangular"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotTree-3.png' alt='' width='700' height='433' /></div><div class='input'>
+</div><div class='img'><img src='plotTree-3.png' alt='' width='3000' height='2100' /></div><div class='input'>
 <span class='co'># plot with labeled edges</span>
+<span class='fu'>plotRowTree</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Genus"</span><span class='op'>)</span><span class='op'>[</span><span class='va'>top_genus</span>,<span class='op'>]</span>,
+            edge_colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span>,
+            tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotTree-4.png' alt='' width='3000' height='2100' /></div><div class='input'><span class='co'># if edges are sized, colours might disappear depending on plotting device</span>
 <span class='fu'>plotRowTree</span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Genus"</span><span class='op'>)</span><span class='op'>[</span><span class='va'>top_genus</span>,<span class='op'>]</span>,
             edge_colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span>,
             edge_size_by <span class='op'>=</span> <span class='st'>"detected"</span>,
             tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotTree-4.png' alt='' width='700' height='433' /></div><div class='input'>
+</div><div class='img'><img src='plotTree-5.png' alt='' width='3000' height='2100' /></div><div class='input'>
 <span class='co'># aggregating data over the taxonomic levels for plotting a taxonomic tree</span>
 <span class='co'># please note that the original tree of GlobalPatterns is dropped by</span>
 <span class='co'># unsplitByRanks</span>
 <span class='fu'>altExps</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/splitByRanks.html'>splitByRanks</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
+<span class='va'>top_phyla</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/getTopTaxa.html'>getTopTaxa</a></span><span class='op'>(</span><span class='fu'>altExp</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>,<span class='st'>"Phylum"</span><span class='op'>)</span>,
+                        method<span class='op'>=</span><span class='st'>"mean"</span>,
+                        top<span class='op'>=</span><span class='fl'>10L</span>,
+                        abund_values<span class='op'>=</span><span class='st'>"counts"</span><span class='op'>)</span>
 <span class='fu'>altExps</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'>altExps</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>, <span class='va'>addPerFeatureQC</span><span class='op'>)</span>
 <span class='fu'>altExps</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span> <span class='op'>&lt;-</span>
    <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'>altExps</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>,
@@ -341,7 +347,7 @@ one type of id information. See details in
             edge_size_by <span class='op'>=</span> <span class='st'>"detected"</span>,
             tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
             node_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotTree-5.png' alt='' width='700' height='433' /></div></span></pre>
+</div><div class='img'><img src='plotTree-6.png' alt='' width='3000' height='2100' /></div></span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
