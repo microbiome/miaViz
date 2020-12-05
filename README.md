@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 
-[![R-CMD-check-Bioc-devel](https://github.com/microbiome/miaViz/workflows/R-CMD-check-Bioc-devel/badge.svg)](https://github.com/microbiome/miaViz/actions)
+[![R-CMD-check-Bioc-devel](https://github.com/microbiome/miaViz/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/miaViz/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/miaViz?branch=master)
 
