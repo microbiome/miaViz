@@ -355,6 +355,19 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 TIP_VARIABLES <- c("tip_colour_by", "tip_shape_by", "tip_size_by")
 NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 
+.get_new_var_name_value <- function(var_name_value, add){
+    if(!is.null(var_name_value) &&
+       add != var_name_value){
+        new_var_name_value <-
+            paste0(var_name_value,
+                   ifelse(is.null(var_name_value),"", " & "),
+                   add)
+    } else {
+        new_var_name_value <- add
+    }
+    new_var_name_value
+}
+
 #' @importFrom scater retrieveFeatureInfo retrieveCellInfo
 #' @importFrom dplyr bind_cols mutate relocate
 #' @importFrom tibble rownames_to_column
@@ -398,10 +411,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                 # mirror back variable name
                 for(i in variables[f]){
                     var_name <- gsub("tip_|node_","",names(variables)[f][i])
-                    assign(var_name,
-                           paste0(get(var_name),
-                                  variables[f][i],
-                                  collapse = " & "))
+                    assign(var_name, 
+                           .get_new_var_name_value(get(var_name),
+                                                   variables[f][i]))
                 }
                 variables <- variables[!f]
             }
@@ -419,10 +431,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                       FUN = type_FUN, exprs_values = by_exprs_values)
                 # mirror back variable name, if a partial match was used
                 var_name <- gsub("tip_|node_","",names(variables)[i])
-                assign(var_name,
-                       paste0(get(var_name),
-                              colnames(feature_info[[i]]),
-                              collapse = " & "))
+                assign(var_name, 
+                       .get_new_var_name_value(get(var_name),
+                                               colnames(feature_info[[i]])))
                 # rename columns by their usage
                 colnames(feature_info[[i]]) <- names(variables[i])
             }
