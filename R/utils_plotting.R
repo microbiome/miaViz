@@ -67,3 +67,26 @@
     }
     return(list(args = geom_args))
 }
+
+.get_hightlight_args <- function(highlights, colour_highlights = FALSE,
+                                 extendto = 0.52){
+    aes_args <- list()
+    aes_args$subset <- paste0("node %in% c(",paste(highlights, collapse = ","),
+                              ")")
+    if (colour_highlights) {
+        aes_args$fill <- ~label
+    }
+    new_aes <- do.call(aes_, aes_args)
+    geom_args <- list(mapping = new_aes)
+    geom_args$extendto = extendto
+    if (!colour_highlights) {
+        geom_args$fill <- "grey70"
+    }
+    if (colour_highlights) {
+        geom_args$colour <- "grey40"
+    }
+    if (!colour_highlights) {
+        geom_args$colour <- "grey20"
+    }
+    return(list(args = geom_args))
+}

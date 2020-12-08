@@ -16,6 +16,8 @@ plotColTree(object, ...)
   object,
   relabel_tree = FALSE,
   show_label = FALSE,
+  show_highlights = FALSE,
+  colour_highlights = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -35,6 +37,8 @@ plotColTree(object, ...)
   object,
   relabel_tree = FALSE,
   show_label = FALSE,
+  show_highlights = FALSE,
+  colour_highlights = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -62,10 +66,20 @@ the output of \code{getTaxonomyLabels(object, with_type = TRUE)}? This
 has consequences on how data can be merged from \code{other_fields}.
 (default: \code{relabel_tree = FALSE})}
 
-\item{show_label}{logical scalar or named logical vector. Should tip labels
+\item{show_label}{logical scalar or character vector. Should tip labels
 be plotted or if a logical vector is provided, which labels should be
-shown? Only names corresponding to \code{TRUE}, will be plotted.
+shown? Only values corresponding to actual labels will be plotted.
 (default: \code{show_label = FALSE})}
+
+\item{show_highlights}{logical scalar or character vector. Should highlights
+around nodes and its decendents be plotted? If set \code{TRUE} this will be
+limit do direct decendents of the rootnode. If a character vector is
+provided, which nodes should be shown? Only values corresponding to actual
+node labels will be plotted. (default: \code{show_highlights = FALSE})}
+
+\item{colour_highlights}{Should the highlights be colour differently?
+If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
+\code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
 
 \item{add_legend}{logical scalar. Should legens be plotted?
 (default: \code{add_legend = TRUE})}

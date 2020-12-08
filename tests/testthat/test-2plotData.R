@@ -7,15 +7,19 @@ test_that("plot tree", {
     expect_error(miaViz:::.check_tree_plot_switches(TRUE),
                  'argument "show_label" is missing')
     expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE),
+                 'argument "show_highlights" is missing')
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE, TRUE),
+                 'argument "colour_highlights" is missing')
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE, TRUE, TRUE),
                  'argument "add_legend" is missing')
-    expect_null(miaViz:::.check_tree_plot_switches(TRUE, TRUE, TRUE))
+    expect_null(miaViz:::.check_tree_plot_switches(TRUE, TRUE, TRUE, TRUE, TRUE))
     expect_error(miaViz:::.check_tree_plot_switches("TRUE", TRUE, TRUE),
                  "'relabel_tree' must be either TRUE or FALSE")
-    expect_error(miaViz:::.check_tree_plot_switches(TRUE, "TRUE", TRUE),
-                 "'show_label' must be either TRUE or FALSE or named logical vector")
-    expect_error(miaViz:::.check_tree_plot_switches(TRUE, c(TRUE,FALSE), TRUE),
-                 "'show_label' must be either TRUE or FALSE or named logical vector")
-    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE, "TRUE"),
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, 2, TRUE, TRUE, TRUE),
+                 "'show_label' must be either TRUE or FALSE or character vector")
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE, 2, TRUE, TRUE),
+                 "'show_highlights' must be either TRUE or FALSE or character vector")
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE,TRUE, TRUE, "TRUE"),
                  "'add_legend' must be either TRUE or FALSE")
     #
     data("GlobalPatterns")
@@ -61,5 +65,4 @@ test_that("plot tree", {
                 show_label = labels,
                 layout="rectangular")
     expect_true(all(c("colour_by", "size_by") %in% colnames(plot$data)))
-    expect_equal(unique(plot$data$label), c("","Genus:Providencia","0.961.60"))
 })
