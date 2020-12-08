@@ -77,7 +77,7 @@ additional information." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.4</span>
       </span>
     </div>
 
@@ -132,6 +132,8 @@ additional information.</p>
   <span class='va'>object</span>,
   relabel_tree <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show_label <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  show_highlights <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  colour_highlights <span class='op'>=</span> <span class='cn'>FALSE</span>,
   add_legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   layout <span class='op'>=</span> <span class='st'>"circular"</span>,
   edge_colour_by <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -152,6 +154,8 @@ additional information.</p>
   <span class='va'>object</span>,
   relabel_tree <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show_label <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  show_highlights <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  colour_highlights <span class='op'>=</span> <span class='cn'>FALSE</span>,
   add_legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   layout <span class='op'>=</span> <span class='st'>"circular"</span>,
   edge_colour_by <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -189,10 +193,24 @@ has consequences on how data can be merged from <code>other_fields</code>.
     </tr>
     <tr>
       <th>show_label</th>
-      <td><p>logical scalar or named logical vector. Should tip labels
+      <td><p>logical scalar or character vector. Should tip labels
 be plotted or if a logical vector is provided, which labels should be
-shown? Only names corresponding to <code>TRUE</code>, will be plotted.
+shown? Only values corresponding to actual labels will be plotted.
 (default: <code>show_label = FALSE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>show_highlights</th>
+      <td><p>logical scalar or character vector. Should highlights
+around nodes and its decendents be plotted? If set <code>TRUE</code> this will be
+limit do direct decendents of the rootnode. If a character vector is
+provided, which nodes should be shown? Only values corresponding to actual
+node labels will be plotted. (default: <code>show_highlights = FALSE</code>)</p></td>
+    </tr>
+    <tr>
+      <th>colour_highlights</th>
+      <td><p>Should the highlights be colour differently?
+If <code>show_highlights = TRUE</code>, <code>colour_highlights</code> will be set to
+<code>TRUE</code> as default. (default: <code>colour_highlights = FALSE</code>)</p></td>
     </tr>
     <tr>
       <th>add_legend</th>
