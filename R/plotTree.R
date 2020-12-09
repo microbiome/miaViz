@@ -10,7 +10,7 @@
 #'   object.
 #'
 #' @param relabel_tree logical scalar, Should the tip labels be relabeled using 
-#'   the output of \code{getTaxonomyLabels(object, with_type = TRUE)}? This
+#'   the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
 #'   has consequences on how data can be merged from \code{other_fields}. 
 #'   (default: \code{relabel_tree = FALSE})
 #' @param show_label logical scalar or character vector. Should tip labels
@@ -369,7 +369,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     node_labels <- tree_data$label[m]
     if(relabel || 
        !all(node_labels %in% dimnames)){
-        new_node_labels <- getTaxonomyLabels(object, with_type = TRUE,
+        new_node_labels <- getTaxonomyLabels(object, with_rank = TRUE,
                                              resolve_loops = TRUE)
         if(type == "row"){
             rownames(object) <- new_node_labels

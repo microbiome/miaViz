@@ -62,7 +62,7 @@ object.}
 \item{...}{additional argument, currently not used.}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
-the output of \code{getTaxonomyLabels(object, with_type = TRUE)}? This
+the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
 has consequences on how data can be merged from \code{other_fields}.
 (default: \code{relabel_tree = FALSE})}
 
