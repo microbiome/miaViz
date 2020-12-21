@@ -11,8 +11,7 @@ coverage](https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg)
 ## Microbiome Analysis Plotting and Visualization
 
 The scope of this package is the plotting and visualization of microbiome data.
-The main classes for interfacing should be either the `TreeSummarizedExperiment`
-or the `MicrobiomeExperiment` class.
+The main classes for interfacing is the `TreeSummarizedExperiment` class.
 
 ## Contribution
 
@@ -23,7 +22,7 @@ package.
 
 Additionally, please make sure that working examples are included and that 
 vignetted make use of added functions in either `miaViz` or the
-[`MicrobiomeExperiment`](https://github.com/FelixErnst/MicrobiomeExperiment)
+[`TreeSummarizedExperiment`](https://github.com/fionarhuang/TreeSummarizedExperiment)
 package.
 
 ## Technical aspects
