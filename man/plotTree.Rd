@@ -16,6 +16,8 @@ plotColTree(object, ...)
   object,
   relabel_tree = FALSE,
   show_label = FALSE,
+  show_highlights = FALSE,
+  colour_highlights = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -35,6 +37,8 @@ plotColTree(object, ...)
   object,
   relabel_tree = FALSE,
   show_label = FALSE,
+  show_highlights = FALSE,
+  colour_highlights = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -58,14 +62,24 @@ object.}
 \item{...}{additional argument, currently not used.}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
-the output of \code{getTaxonomyLabels(object, with_type = TRUE)}? This
+the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
 has consequences on how data can be merged from \code{other_fields}.
 (default: \code{relabel_tree = FALSE})}
 
-\item{show_label}{logical scalar or named logical vector. Should tip labels
+\item{show_label}{logical scalar or character vector. Should tip labels
 be plotted or if a logical vector is provided, which labels should be
-shown? Only names corresponding to \code{TRUE}, will be plotted.
+shown? Only values corresponding to actual labels will be plotted.
 (default: \code{show_label = FALSE})}
+
+\item{show_highlights}{logical scalar or character vector. Should highlights
+around nodes and its decendents be plotted? If set \code{TRUE} this will be
+limit do direct decendents of the rootnode. If a character vector is
+provided, which nodes should be shown? Only values corresponding to actual
+node labels will be plotted. (default: \code{show_highlights = FALSE})}
+
+\item{colour_highlights}{Should the highlights be colour differently?
+If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
+\code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
 
 \item{add_legend}{logical scalar. Should legens be plotted?
 (default: \code{add_legend = TRUE})}
@@ -128,39 +142,71 @@ additional information.
 \examples{
 library(scater)
 library(mia)
+# preparation of some data
 data(GlobalPatterns)
-altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
-altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
-rowData(altExp(GlobalPatterns,"genus"))$log_mean <- 
-  log(rowData(altExp(GlobalPatterns,"genus"))$mean)
-rowData(altExp(GlobalPatterns,"genus"))$detected <- 
-  rowData(altExp(GlobalPatterns,"genus"))$detected / 100
-top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
-                       method="mean",
-                       top=100L,
-                       abund_values="counts")
+altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
+rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
+  log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
+rowData(altExp(GlobalPatterns,"Genus"))$detected <-
+   rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
+top_genus <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
+                        method="mean",
+                        top=100L,
+                        abund_values="counts")
 #
-plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected")
 
 # plot with tip labels
-plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",
             show_label = TRUE)
 # plot with selected labels
 labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
             "0.961.60" = TRUE)
-plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",
             show_label = labels,
             layout="rectangular")
-            
+
 # plot with labeled edges
-plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
-            edge_colour_by = "Kingdom",
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+            edge_colour_by = "Phylum",
+            tip_colour_by = "log_mean")
+# if edges are sized, colours might disappear depending on plotting device
+plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+            edge_colour_by = "Phylum",
             edge_size_by = "detected",
             tip_colour_by = "log_mean")
+
+# aggregating data over the taxonomic levels for plotting a taxonomic tree
+# please note that the original tree of GlobalPatterns is dropped by
+# unsplitByRanks
+altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
+                        method="mean",
+                        top=10L,
+                        abund_values="counts")
+altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
+altExps(GlobalPatterns) <-
+   lapply(altExps(GlobalPatterns),
+          function(y){
+              rowData(y)$log_mean <- log(rowData(y)$mean)
+              rowData(y)$detected <- rowData(y)$detected / 100
+              y
+          })
+x <- unsplitByRanks(GlobalPatterns)
+x <- addTaxonomyTree(x)
+plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
+            edge_colour_by = "Phylum",
+            edge_size_by = "detected",
+            tip_colour_by = "log_mean",
+            node_colour_by = "log_mean")
+}
+\seealso{
+\code{\link[mia:splitByRanks]{splitByRanks}}
 }

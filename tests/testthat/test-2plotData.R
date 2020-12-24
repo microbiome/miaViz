@@ -7,31 +7,34 @@ test_that("plot tree", {
     expect_error(miaViz:::.check_tree_plot_switches(TRUE),
                  'argument "show_label" is missing')
     expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE),
+                 'argument "show_highlights" is missing')
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE, TRUE),
+                 'argument "colour_highlights" is missing')
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE, TRUE, TRUE),
                  'argument "add_legend" is missing')
-    expect_null(miaViz:::.check_tree_plot_switches(TRUE, TRUE, TRUE))
+    expect_null(miaViz:::.check_tree_plot_switches(TRUE, TRUE, TRUE, TRUE, TRUE))
     expect_error(miaViz:::.check_tree_plot_switches("TRUE", TRUE, TRUE),
                  "'relabel_tree' must be either TRUE or FALSE")
-    expect_error(miaViz:::.check_tree_plot_switches(TRUE, "TRUE", TRUE),
-                 "'show_label' must be either TRUE or FALSE or named logical vector")
-    expect_error(miaViz:::.check_tree_plot_switches(TRUE, c(TRUE,FALSE), TRUE),
-                 "'show_label' must be either TRUE or FALSE or named logical vector")
-    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE, "TRUE"),
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, 2, TRUE, TRUE, TRUE),
+                 "'show_label' must be either TRUE or FALSE or character vector")
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE, 2, TRUE, TRUE),
+                 "'show_highlights' must be either TRUE or FALSE or character vector")
+    expect_error(miaViz:::.check_tree_plot_switches(TRUE, TRUE,TRUE, TRUE, "TRUE"),
                  "'add_legend' must be either TRUE or FALSE")
     #
     data("GlobalPatterns")
     x <- GlobalPatterns
-    # .get_trimed_tree
-    expect_error(miaViz:::.get_trimed_tree(),
-                 'argument "x" is missing')
-    expect_error(miaViz:::.get_trimed_tree(x),
-                 'argument "dimnames" is missing')
-    actual <- miaViz:::.get_trimed_tree(x, dimnames = "549322")
-    expect_s3_class(actual,"phylo")
-    expect_equal(unique(actual$tip.label), c("549322", NA))
-    actual <- miaViz:::.get_trimed_tree(x, dimnames = rownames(x))
-    expect_equal(actual$tip.label, rownames(x))
-    actual <- miaViz:::.get_trimed_tree(x, dimnames = rownames(x), relabel = TRUE)
-    expect_equal(actual$tip.label[1L], "Class::Thermoprotei")
+    # .get_trimed_object_and_tree
+    expect_error(miaViz:::.get_trimed_object_and_tree(),
+                 'argument "object" is missing')
+    actual <- miaViz:::.get_trimed_object_and_tree(x["549322",])
+    expect_s3_class(actual$tree,"phylo")
+    expect_s4_class(actual$object,"TreeSummarizedExperiment")
+    expect_equal(unique(actual$tree$tip.label), c("549322"))
+    actual <- miaViz:::.get_trimed_object_and_tree(x)
+    expect_equal(actual$tree$tip.label, rownames(x))
+    actual <- miaViz:::.get_trimed_object_and_tree(x, relabel = TRUE)
+    expect_equal(actual$tree$tip.label[1L], "Class:Thermoprotei")
     #
     library(scater)
     library(mia)
@@ -62,5 +65,4 @@ test_that("plot tree", {
                 show_label = labels,
                 layout="rectangular")
     expect_true(all(c("colour_by", "size_by") %in% colnames(plot$data)))
-    expect_equal(unique(plot$data$label), c("","Genus:Providencia","0.961.60"))
 })

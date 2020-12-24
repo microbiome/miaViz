@@ -7,12 +7,16 @@
                                        shape_by = NULL,
                                        size_by = NULL,
                                        default_shape = 21,
-                                       default_size = 2){
+                                       default_size = 0,
+                                       default_edge_size = 0){
     if(!is.null(shape_by)){
         object$shape_by[is.na(object$shape_by)] <- default_shape
     }
     if(!is.null(size_by)){
         object$size_by[is.na(object$size_by)] <- default_size
+    }
+    if(!is.null(edge_size_by)){
+        object$edge_size_by[is.na(object$edge_size_by)] <- default_edge_size
     }
     object
 }
@@ -60,6 +64,29 @@
     }
     if (is.null(edge_size_by)) {
         geom_args$size <- size
+    }
+    return(list(args = geom_args))
+}
+
+.get_hightlight_args <- function(highlights, colour_highlights = FALSE,
+                                 extendto = 0.52){
+    aes_args <- list()
+    aes_args$subset <- paste0("node %in% c(",paste(highlights, collapse = ","),
+                              ")")
+    if (colour_highlights) {
+        aes_args$fill <- ~label
+    }
+    new_aes <- do.call(aes_, aes_args)
+    geom_args <- list(mapping = new_aes)
+    geom_args$extendto = extendto
+    if (!colour_highlights) {
+        geom_args$fill <- "grey70"
+    }
+    if (colour_highlights) {
+        geom_args$colour <- "grey40"
+    }
+    if (!colour_highlights) {
+        geom_args$colour <- "grey20"
     }
     return(list(args = geom_args))
 }

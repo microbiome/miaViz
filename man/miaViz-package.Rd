@@ -5,11 +5,10 @@
 \alias{miaViz-package}
 \title{miaViz - Microbiome Analysis Plotting and Visualization}
 \description{
-The scope of this package is the plotting and visualization of microbiome data.
-The main classes for interfacing should be either the
-\code{TreeSummarizedExperiment} or the \code{MicrobiomeExperiment} class.
+The scope of this package is the plotting and visualization of microbiome
+data. The main class for interfacing is the \code{TreeSummarizedExperiment}
+class.
 }
 \seealso{
-\link[TreeSummarizedExperiment:MicrobiomeExperiment-class]{MicrobiomeExperiment} class
 \link[mia:mia-package]{mia} class
 }
