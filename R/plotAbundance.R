@@ -15,233 +15,123 @@
 #' @param rank a single \code{character} value defining the taxonomic rank to
 #'   use. Must be a value of \code{taxonomyRanks(x)}.
 #'
-#' @param across,per a \code{character} value selecting the values to use
-#'   from \code{colData(x)}. For \code{across} a continous numeric value or a
-#'   factor is expected and for \code{per} a factor or character value. By
-#'   default the first occurance of these types is used for plotting. (default:
-#'   \code{across = sample_val = NULL})
-#'
 #' @param abund_values a \code{character} value defining which assay data to
 #'   use. (default: \code{abund_values = "relabundance"})
+#'
+#' @param layout Either \dQuote{bar} or \dQuote{point}. 
+#' 
+#' @param one_facet Should the plot be returned in on facet or split into 
+#'   different facet, one facet per different value detect in \code{rank}
+#' 
+#' @param ncol,scales if \code{one_facet = FALSE}, \code{ncol} defines many 
+#'   columns should be for plotting the different facets and \code{scales} is
+#'   used to define the behavior of the scales of each facet. Both values are 
+#'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
+#' 
+#' @param ... additional parameters for plotting
 #'
 #' @return a \code{\link[ggplot2:ggplot]{ggplot}} object
 #'
 #' @name plotAbundance
-#' @aliases plotAbundanceAcross plotAbundancePer
 #'
 #' @examples
-#' \dontrun{
 #' data(GlobalPatterns)
-#' plotRelAbundance(GlobalPatterns,
-#'                  rank = "Phylum")
-#' plotRelAbundance(GlobalPatterns,
-#'                  rank = "Phylum",
-#'                  subset_by = c("Crenarchaeota","Firmicutes","Bacteroidetes"),
-#'                  order_by = c("Bacteroidetes","Firmicutes"))
-#' }
+#' se <- GlobalPatterns
+#' 
+#' #
+#' plotAbundance(se, abund_values="counts")
+#' #
+#' plotAbundance(se, abund_values="counts", rank = "Phylum", add_legend = FALSE)
+#' 
+#' # If rank is set to NULL plotAbundance behaves like plotExpression
+#' plotAbundance(se, abund_values="counts", rank = NULL,
+#'               features = head(rownames(se)))
+#' 
 NULL
-
-
-.get_first_numeric_or_factor <- function(x){
-    f <- vapply(colData(x),is.numeric,logical(1)) |
-        vapply(colData(x),is.factor,logical(1))
-    if(!any(f)){
-        stop("No numeric of factor values found in colData(x).", call. = FALSE)
-    }
-    colnames(colData(x))[f][1L]
-}
-
-.get_first_factor_or_character <- function(x){
-    f <- vapply(colData(x),is.character,logical(1)) |
-        vapply(colData(x),is.factor,logical(1))
-    if(!any(f)){
-        stop("No character of factor values found in colData(x).",
-             call. = FALSE)
-    }
-    colnames(colData(x))[f][1L]
-}
-
-.norm_across <- function(across, x){
-    if(!is.null(across)){
-        if(!is.character(across) || length(across) == 0L){
-            stop("'across' must be a single character value.", call. = FALSE)
-        }
-        if(!(across %in% colnames(colData(x)))){
-            stop("'across' must define a column name of colData(x)",
-                 call. = FALSE)
-        }
-        values <- colData(x)[,across]
-        if(!is.numeric(values) && !is.factor(values)){
-            stop("values defined by 'across' must be numeric or a factor",
-                 call. = FALSE)
-        }
-    } else {
-        across <- .get_first_numeric_or_factor(x)
-    }
-    across
-}
-
-.norm_per <- function(per, x){
-    if(!is.null(per)){
-        if(!is.character(per) || length(per) == 0L){
-            stop("'per' must be a single character value.", call. = FALSE)
-        }
-        if(!(per %in% colnames(colData(x)))){
-            stop("'per' must define a column name of colData(x)",
-                 call. = FALSE)
-        }
-        values <- colData(x)[,per]
-        if(!is.character(values) && !is.factor(values)){
-            stop("values defined by 'across' must be character or a factor",
-                 call. = FALSE)
-        }
-    } else {
-        per <- .get_first_factor_or_character(x)
-    }
-    per
-}
 
 #' @rdname plotAbundance
 setGeneric("plotAbundance", signature = c("x"),
            function(x, ...)
                standardGeneric("plotAbundance"))
 
-#' @rdname plotAbundance
-setGeneric("plotAbundanceAcross", signature = c("x"),
-           function(x, rank = taxonomyRanks(x)[1], across = NULL,
-                    abund_values = "relabundance",
-                    ...)
-               standardGeneric("plotAbundanceAcross"))
+.check_abund_plot_args <- function(one_facet = TRUE,
+                                   ncol = 2){
+    
+   if(!.is_a_bool(one_facet)){
+        stop("'one_facet' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if(!is.numeric(ncol) || as.integer(ncol) != ncol || ncol < 1){
+        stop("'ncol' must be an integer value above or equal to 1.",
+             call. = FALSE)
+    }
+}
+
 
 #' @rdname plotAbundance
-setGeneric("plotAbundancePer", signature = c("x"),
-           function(x, rank = taxonomyRanks(x)[1], per = NULL,
-                    abund_values = "relabundance",
-                    ...)
-               standardGeneric("plotAbundancePer"))
-
-#' @rdname plotAbundance
-setGeneric("plotAbundanceOrdered", signature = c("x"),
-           function(x, ...)
-               standardGeneric("plotAbundanceOrdered"))
-
-#' @rdname plotAbundance
+#' @importFrom scater plotExpression
+#' @importFrom ggplot2 facet_wrap
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
-    function(x, ...){
-        plot <- plotExpression(x, ...)
-        ylab <- gsub("Expression","Abundance",plot$labels$y)
-        plot <- plot +
-          ylab(ylab)
-        plot
-    }
-)
-
-
-#' @rdname plotAbundance
-#' @export
-setMethod("plotAbundanceAcross", signature = c("SummarizedExperiment"),
-    function(x, rank = taxonomyRanks(x)[1], across = NULL,
-             abund_values = "relabundance", scale = FALSE,
-             type = c("bar","point"), legend = TRUE, ...){
+    function(x,
+             rank = taxonomyRanks(x)[1],
+             abund_values = "relabundance",
+             layout = c("bar","point"),
+             one_facet = TRUE,
+             ncol = 2,
+             scales = "fixed",
+             ...){
         # input checks
-        if(!.is_non_empty_string(rank)){
-          stop("'rank' must be an non empty single character value.",
-               call. = FALSE)
-        }
         if(nrow(x) == 0L){
-          stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
+            stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
         .check_abund_values(abund_values, x)
-        .check_taxonomic_rank(rank, x)
-        .check_for_taxonomic_data_order(x)
-        across <- .norm_across(across, x)
-        if(!.is_a_bool(scale)){
-          stop("'scale' must be TRUE or FALSE.", call. = FALSE)
+        # if rank is set to NULL, default to plotExpression 
+        if(is.null(rank)){
+            plot <- plotExpression(x, exprs_values = abund_values, one_facet = one_facet,
+                                   ncol = ncol, scales = scales, ...)
+            ylab <- gsub("Expression","Abundance",plot$labels$y)
+            plot <- plot +
+                ylab(ylab)
+            return(plot)
         }
-        type <- match.arg(type, c("bar","point"))
-        if(!.is_a_bool(legend)){
-          stop("'legend' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
-        plot_args <- list(theme = theme_bw)
-        plot_data <- .get_abundance_plot_data(x, rank, across, abund_values,
-                                            scale)
-        plot_data <- .order_plot_data(plot_data, across)
-        #
-        plot <- .get_base_plot(plot_data, plot_args)
-        if(type == "point" ||
-         (!scale && length(unique(plot_data[[MELT_NAME]])) == 1L)){
-          plot <- .get_rel_abundance_point_plot_across(plot, rank, across)
-        } else {
-          plot <- .get_rel_abundance_plot_across(plot, rank, across)
-        }
-        plot <- .add_abundance_plot_labels(plot, rank, across, scale,
-                                         abund_values)
-        plot <- .add_abundance_legend(plot, legend)
-        plot
-    }
-)
-
-
-
-#' @rdname plotAbundance
-#' @export
-setMethod("plotAbundancePer", signature = c("SummarizedExperiment"),
-    function(x, rank = taxonomyRanks(x)[1], per = NULL,
-             abund_values = "relabundance", scale = FALSE, ...){
         # input checks
         if(!.is_non_empty_string(rank)){
-          stop("'rank' must be an non empty single character value.",
-               call. = FALSE)
+            stop("'rank' must be an non empty single character value.",
+                 call. = FALSE)
         }
-        if(nrow(x) == 0L){
-          stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
-        }
-        .check_abund_values(abund_values, x)
         .check_taxonomic_rank(rank, x)
         .check_for_taxonomic_data_order(x)
-        per <- .norm_per(per, x)
-        if(!.is_a_bool(scale)){
-          stop("'scale' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if(!.is_a_bool(legend)){
-          stop("'legend' must be TRUE or FALSE.", call. = FALSE)
-        }
+        layout <- match.arg(layout, c("bar","point"))
+        .check_abund_plot_args(one_facet = one_facet,
+                               ncol = ncol)
         #
-        plot_args <- list(theme = theme_bw)
-        plot_data <- .get_abundance_plot_data(x, rank, per, abund_values,
-                                            scale,
-                                            plot_args)
-        plot_data <- .order_plot_data(plot_data, per)
-        #
-        plot <- .get_base_plot(plot_data, plot_args)
-        plot <- .get_rel_abundance_plot_per(plot, rank, per)
-        plot <- .add_abundance_plot_labels(plot, rank, per, scale,
-                                         abund_values)
-        plot <- .add_abundance_legend(plot, legend)
-        plot
+        abund_data <- .get_abundance_data(x, rank, abund_values)
+        plot_out <- .abund_plotter(abund_data,
+                                   xlab = "Samples",
+                                   ylab = "Rel. Abundance",
+                                   colour_by = rank,
+                                   layout = layout,
+                                   ...)
+        if (!one_facet) {
+            plot_out <- plot_out + 
+                facet_wrap(~colour_by, ncol = ncol, scales = scales)
+        }
+        plot_out
     }
 )
+
 
 MELT_NAME <- "Sample"
 MELT_VALUES <- "Value"
 
 #' @importFrom SummarizedExperiment rowData
-#' @importFrom dplyr %>% mutate left_join group_by summarize
-#' @importFrom rlang sym `!!`
+#' @importFrom dplyr mutate group_by summarize rename
 #' @importFrom tidyr pivot_longer nest unnest
 #' @importFrom tibble rownames_to_column
 #' @importFrom purrr map
-.get_abundance_plot_data <- function(x, rank, value_select, abund_values,
-                                     scale){
-    if(is.null(rownames(colData(x)))){
-        stop(".")
-    }
+.get_abundance_data <- function(x, rank, abund_values){
     data <- assay(x,abund_values)
-    if(scale){
-        data <- sweep(data, 2L, colSums(data),"/")
-    }
+    data <- sweep(data, 2L, colSums(data),"/")
     merge_FUN <- function(data){
         data %>%
             group_by(!!sym(MELT_NAME)) %>%
@@ -256,154 +146,93 @@ MELT_VALUES <- "Value"
         mutate(!!sym(MELT_NAME) := factor(!!sym(MELT_NAME), unique(!!sym(MELT_NAME)))) %>%
         nest(data = !rank) %>%
         mutate(data = map(data, merge_FUN)) %>%
-        unnest(cols = data) %>%
-        left_join(colData(x)[value_select] %>%
-                      as.data.frame %>%
-                      rownames_to_column(MELT_NAME),
-                  by = MELT_NAME)
+        unnest(cols = data)
+    # rename columns
+    data <- data %>%
+        dplyr::rename(colour_by = "rank",
+                      X = MELT_NAME,
+                      Y = MELT_VALUES)
     data
 }
 
-#' @importFrom tidyr pivot_wider
-.order_plot_data <- function(plot_data, value_select,
-                             by_abund = FALSE, decreasing = FALSE){
-    if(by_abund){
-        lvl <- levels(plot_data$rank)
-        tmp <- plot_data %>%
-            pivot_wider(id_cols = "rank", names_from = "rank",
-                        values_from = "Value", values_fn = list) %>%
-            as.list %>%
-            lapply("[[",1L)
-        o <- do.call(order,
-                     c(tmp[levels(plot_data$rank)],
-                       list(decreasing = decreasing)))
-        lvl <- unique(plot_data[[MELT_NAME]])[o]
-    } else {
-        plot_data$rank <- factor(plot_data$rank, unique(plot_data$rank))
-        o <- order(plot_data[[value_select]])
-        lvl <- unique(plot_data[[MELT_NAME]][o])
-    }
-    plot_data[[MELT_NAME]] <- factor(plot_data[[MELT_NAME]], lvl)
-    plot_data <- plot_data[order(plot_data[[MELT_NAME]]),]
-    plot_data[[MELT_NAME]] <- as.integer(plot_data[[MELT_NAME]])
-    plot_data
-}
-
-#' @importFrom ggplot2 ggplot
-.get_base_plot <- function(plot_data, plot_args){
-    ggplot(plot_data) +
-        do.call(plot_args$theme,list())
-}
-
-#' @importFrom ggplot2 aes_string geom_bar theme element_text
-#'   scale_y_continuous scale_x_continuous scale_x_discrete element_blank
-.get_rel_abundance_plot_across <- function(plot, rank, across){
-    aes <- aes_string(x = MELT_NAME, y = MELT_VALUES, fill = "rank")
-    plot +
-        geom_bar(mapping = aes,
-                 stat = "identity") +
-        scale_y_continuous(expand = c(0,0)) +
-        scale_x_continuous(expand = c(0,0))
-}
-
-#' @importFrom ggplot2 aes_string geom_point geom_smooth theme
-#'   element_blank scale_y_continuous scale_x_continuous scale_x_discrete
-#'   facet_wrap
-.get_rel_abundance_point_plot_across <- function(plot, rank, across){
-    aes_point <- aes_string(x = MELT_NAME,
-                            y = MELT_VALUES,
-                            fill = "rank")
-    aes_smooth <- aes_string(x = MELT_NAME,
-                             y = MELT_VALUES,
-                             colour = "rank")
-    plot +
-        geom_point(mapping = aes_point, shape = 21, colour = "grey70") +
-        geom_smooth(mapping = aes_smooth, formula = y ~ x) +
-        scale_y_continuous(expand = c(0,0)) +
-        scale_x_continuous(expand = c(0,0)) +
-        facet_wrap(. ~ rank, scales="free_y")
-}
-
-#' @importFrom ggplot2 aes_string geom_boxplot theme_bw theme
-#'   element_text
-.get_rel_abundance_plot_per <- function(plot, rank, per){
-    aes <- aes_string(x = per, y = MELT_VALUES, colour = "rank")
-    plot +
-        geom_boxplot(mapping = aes) +
-        theme_bw() +
-        theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1))
-}
-
-#' @importFrom ggplot2 guide_legend ylab xlab
-.add_abundance_plot_labels <- function(plot, rank, values_select, scale,
-                                       abund_values){
-    if(scale){
-        ylab <- paste0("Relative abundance - ",abund_values," (%)")
-    } else {
-        ylab <- paste0("Abundance - ",abund_values)
-    }
-    plot <- plot +
-        guides(colour = guide_legend(title = rank)) +
-        ylab(ylab) +
-        xlab(values_select)
-    plot
-}
-
-#' @importFrom ggplot2 theme
-.add_abundance_legend <- function(plot, legend){
-    if (!legend) {
-        plot <- plot + theme(legend.position = "none")
-    }
-    plot
-}
 
 ################################################################################
+# abundance plotter
 
-#' @rdname plotAbundance
-#' @export
-setMethod("plotAbundanceOrdered", signature = c("SummarizedExperiment"),
-    function(x, rank = taxonomyRanks(x)[1], across = NULL,
-             abund_values = "relabundance", decreasing = TRUE, scale = FALSE,
-             type = c("bar","point"), legend = TRUE, ...){
-        # input checks
-        if(!.is_non_empty_string(rank)){
-          stop("'rank' must be an non empty single character value.",
-               call. = FALSE)
-        }
-        if(nrow(x) == 0L){
-          stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
-        }
-        if(!.is_a_bool(decreasing)){
-          stop("'decreasing' must be TRUE or FALSE.", call. = FALSE)
-        }
-        .check_abund_values(abund_values, x)
-        .check_taxonomic_rank(rank, x)
-        .check_for_taxonomic_data_order(x)
-        across <- .norm_across(across, x)
-        if(!.is_a_bool(scale)){
-          stop("'scale' must be TRUE or FALSE.", call. = FALSE)
-        }
-        type <- match.arg(type, c("bar","point"))
-        if(!.is_a_bool(legend)){
-          stop("'legend' must be TRUE or FALSE.", call. = FALSE)
-        }
-        #
-        plot_args <- list(theme = theme_bw)
-        plot_data <- .get_abundance_plot_data(x, rank, across, abund_values,
-                                            scale)
-        plot_data <- .order_plot_data(plot_data, across, by_abund = TRUE,
-                                    decreasing = decreasing)
-        #
-        plot <- .get_base_plot(plot_data, plot_args)
-        if(type == "point" ||
-         (!scale && length(unique(plot_data[[MELT_NAME]])) == 1L)){
-          plot <- .get_rel_abundance_point_plot_across(plot, rank, across)
-        } else {
-          plot <- .get_rel_abundance_plot_across(plot, rank, across)
-        }
-        plot <- .add_abundance_plot_labels(plot, rank, across, scale,
-                                         abund_values)
-        plot <- .add_abundance_legend(plot, legend)
-        plot
+
+#' @importFrom ggplot2 ggplot theme_classic geom_point geom_bar coord_flip
+#'   scale_y_continuous
+.abund_plotter <- function(object,
+                           xlab = NULL,
+                           ylab = NULL,
+                           colour_by = NULL,
+                           layout = "bar",
+                           flipped = FALSE,
+                           add_legend = TRUE,
+                           add_x_text = FALSE,
+                           bar_alpha = 0.65,
+                           point_alpha = 1,
+                           point_size = 2){
+    # start plotting
+    plot_out <- ggplot(object, aes_string(x="X", y="Y")) +
+        xlab(xlab) +
+        ylab(ylab)
+    # either bar or point plot
+    if(layout == "bar"){
+        abund_out <- .get_bar_args(colour_by,
+                                   colour_by,
+                                   alpha = bar_alpha)
+        plot_out <- plot_out +
+            do.call(geom_bar, c(abund_out$args, list(stat="identity"))) +
+            scale_y_continuous(expand = c(0,0))
+        
+    } else {
+        abund_out <- .get_point_args(colour_by,
+                                     shape_by = NULL,
+                                     size_by = NULL,
+                                     alpha = point_alpha,
+                                     size = point_size)
+        plot_out <- plot_out +
+            do.call(geom_point, abund_out$args)
     }
-)
+    # adjust point colours
+    if(!is.null(colour_by)){
+        # resolve the colour for the line colours
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          object$colour_by,
+                                          colour_by,
+                                          fill = FALSE)
+        # resolve the color for fill
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          object$colour_by,
+                                          colour_by,
+                                          fill = TRUE)
+    }
+    plot_out <- plot_out +
+        theme_classic()
+    # add legend
+    if(!add_legend){
+        plot_out <- plot_out +
+            theme(legend.position = "none")
+    }
+    
+    # flip
+    if (flipped) {
+        plot_out <- plot_out + coord_flip()
+        if(!add_x_text){
+            plot_out <- plot_out +
+                theme(axis.text.y = element_blank(),
+                      axis.ticks.y = element_blank())
+        }
+    } else {
+        if(!add_x_text){
+            plot_out <- plot_out +
+                theme(axis.text.x = element_blank(),
+                      axis.ticks.x = element_blank())
+        } else {
+            plot_out <- plot_out +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        }
+    }
+    plot_out
+}

@@ -21,8 +21,28 @@
     object
 }
 
+.get_bar_args <- function (fill_by, colour_by, alpha = 0.65) 
+{
+    aes_args <- list()
+    fill_colour <- TRUE
+    if (!is.null(fill_by)) {
+        aes_args$fill <- "colour_by"
+    }
+    if (!is.null(colour_by)) {
+        aes_args$colour <- "colour_by"
+    }
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes, alpha = alpha)
+    if (is.null(colour_by)) {
+        geom_args$colour <- "grey20"
+    }
+    return(list(args = geom_args, fill = fill_colour))
+}
+
+
 # Adjusted function originally developed for scater package by Aaron Lun
-.get_point_args <- function (colour_by, shape_by, size_by, alpha = 0.65, size = NULL) 
+.get_point_args <- function (colour_by, shape_by, size_by, alpha = 0.65,
+                             size = NULL) 
 {
     aes_args <- list()
     fill_colour <- TRUE
