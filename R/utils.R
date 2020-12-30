@@ -6,6 +6,7 @@
 .require_package <- mia:::.require_package
 .check_taxonomic_rank <- mia:::.check_taxonomic_rank
 .check_for_taxonomic_data_order <- mia:::.check_for_taxonomic_data_order
+.calc_rel_abund <- mia:::.calc_rel_abund
 
 .is_a_bool <- mia:::.is_a_bool
 .is_non_empty_character <- mia:::.is_non_empty_character

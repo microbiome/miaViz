@@ -12,6 +12,10 @@ plotAbundance(x, ...)
   x,
   rank = taxonomyRanks(x)[1],
   abund_values = "relabundance",
+  features = NULL,
+  order_rank_by = c("name", "abund", "revabund"),
+  order_sample_by = NULL,
+  decreasing = TRUE,
   layout = c("bar", "point"),
   one_facet = TRUE,
   ncol = 2,
@@ -34,10 +38,29 @@ use. Must be a value of \code{taxonomyRanks(x)}.}
 \item{abund_values}{a \code{character} value defining which assay data to
 use. (default: \code{abund_values = "relabundance"})}
 
+\item{features}{data \code{colData} to be plotted below the abundance plot.
+Continuous numeric values will be plotted as point, whereas factors and
+character will be plotted as colour-code bar. (default: \code{features =
+  NULL})}
+
+\item{order_rank_by}{How to order abundance value: By name (\dQuote{name}),
+by abundance (\dQuote{abund}) or by reverse abundance (\dQuote{revabund}).}
+
+\item{order_sample_by}{A single character value from the chosen rank of abundance
+data data or from \code{colData} to select values to order the abundance
+plot by. If the value is not part of \code{features}, it will be added.
+(default: \code{order_sample_by = NULL})}
+
+\item{decreasing}{TRUE or FALSE: If the \code{order_sample_by} is defined and the
+values are numeric, should the values used to order in decreasing or
+increasing fashion? (default: \code{decreasing = FALSE})}
+
 \item{layout}{Either \dQuote{bar} or \dQuote{point}.}
 
 \item{one_facet}{Should the plot be returned in on facet or split into
-different facet, one facet per different value detect in \code{rank}}
+different facet, one facet per different value detect in \code{rank}. If
+\code{features} or \code{order_sample_by} is not \code{NULL}, this setting will
+be disregarded.}
 
 \item{ncol, scales}{if \code{one_facet = FALSE}, \code{ncol} defines many
 columns should be for plotting the different facets and \code{scales} is

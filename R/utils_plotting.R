@@ -21,14 +21,20 @@
     object
 }
 
-.get_bar_args <- function (fill_by, colour_by, alpha = 0.65) 
+.get_bar_args <- function (fill_by, colour_by, alpha = 0.65, add_border = NULL,
+                           n = 0) 
 {
     aes_args <- list()
     fill_colour <- TRUE
+    border <- FALSE
     if (!is.null(fill_by)) {
         aes_args$fill <- "colour_by"
     }
-    if (!is.null(colour_by)) {
+    if(!is.null(add_border) && add_border && !is.null(colour_by)){
+        border <- TRUE
+        aes_args$colour <- "colour_by"
+    } else if(is.null(add_border) && n <= 20) {
+        border <- TRUE
         aes_args$colour <- "colour_by"
     }
     new_aes <- do.call(aes_string, aes_args)
@@ -36,7 +42,7 @@
     if (is.null(colour_by)) {
         geom_args$colour <- "grey20"
     }
-    return(list(args = geom_args, fill = fill_colour))
+    return(list(args = geom_args, fill = fill_colour, border = border))
 }
 
 
@@ -109,4 +115,50 @@
         geom_args$colour <- "grey20"
     }
     return(list(args = geom_args))
+}
+
+#' @importFrom ggplot2 coord_flip element_blank element_text
+.flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE){
+    if (flipped) {
+        plot_out <- plot_out + 
+            coord_flip()
+        if(!add_x_text){
+            plot_out <- plot_out +
+                theme(axis.text.y = element_blank(),
+                      axis.ticks.y = element_blank())
+        }
+    } else {
+        if(!add_x_text){
+            plot_out <- plot_out +
+                theme(axis.text.x = element_blank(),
+                      axis.ticks.x = element_blank())
+        } else {
+            plot_out <- plot_out +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        }
+    }
+    plot_out
+}
+
+#' @importFrom ggplot2 theme
+.add_legend <- function(plot_out, add_legend){
+    if(!add_legend){
+        plot_out <- plot_out +
+            theme(legend.position = "none")
+    }
+    plot_out
+}
+
+#' @importFrom cowplot plot_grid
+.combine_plots <- function(plots, flipped = FALSE, ...){
+    if(flipped){
+        plot_out <- plot_grid(plotlist = rev(plots), nrow=1, align="h",
+                              axis = "tb",
+                              rel_widths = c(rep(1, length(plots) - 1L), 2))
+    } else {
+        plot_out <- plot_grid(plotlist = plots, ncol=1, align="v",
+                              axis = "lr",
+                              rel_heights = c(2, rep(1, length(plots) - 1L)))
+    }
+    plot_out
 }

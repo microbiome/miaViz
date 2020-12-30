@@ -20,6 +20,7 @@ Imports:
     scater,
     ggtree,
     ggnewscale,
+    cowplot,
     tibble,
     tidytree,
     rlang,
