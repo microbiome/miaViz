@@ -12,6 +12,7 @@ Encoding: UTF-8
 LazyData: false
 Depends:
     R (>= 4.0),
+    SummarizedExperiment,
     TreeSummarizedExperiment,
     mia (>= 0.98.16),
     ggplot2
@@ -24,6 +25,8 @@ Imports:
     tibble,
     tidytree,
     rlang,
+    purrr,
+    tidyr,
     dplyr,
     ape
 Suggests:
