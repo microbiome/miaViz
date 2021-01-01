@@ -54,7 +54,7 @@
 #' @name plotAbundance
 #'
 #' @examples
-#' data(GlobalPatterns)
+#' data(GlobalPatterns, package="mia")
 #' se <- GlobalPatterns
 #' 
 #' #
@@ -65,7 +65,6 @@
 #' # If rank is set to NULL plotAbundance behaves like plotExpression
 #' plotAbundance(se, abund_values="counts", rank = NULL,
 #'               features = head(rownames(se)))
-#' 
 NULL
 
 #' @rdname plotAbundance
