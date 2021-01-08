@@ -34,6 +34,9 @@
 #' @param decreasing TRUE or FALSE: If the \code{order_sample_by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
 #'   increasing fashion? (default: \code{decreasing = FALSE})
+#'   
+#' @param use_relative \code{TRUE} or \code{FALSE}: Should the relative values
+#'   be calculated? (default: \code{use_relative = TRUE})
 #'
 #' @param layout Either \dQuote{bar} or \dQuote{point}. 
 #' 
@@ -97,6 +100,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
              order_rank_by = c("name","abund","revabund"),
              order_sample_by = NULL,
              decreasing = TRUE,
+             use_relative = TRUE,
              layout = c("bar","point"),
              one_facet = TRUE,
              ncol = 2,
@@ -123,6 +127,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             stop("'rank' must be an non empty single character value.",
                  call. = FALSE)
         }
+        if(!.is_a_bool(use_relative)){
+            stop("'use_relative' must be TRUE or FALSE.",
+                 call. = FALSE)
+        }
         .check_taxonomic_rank(rank, x)
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
@@ -130,9 +138,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         .check_abund_plot_args(one_facet = one_facet,
                                ncol = ncol)
         #
-        abund_data <- .get_abundance_data(x, rank, abund_values, order_rank_by)
+        abund_data <- .get_abundance_data(x, rank, abund_values, order_rank_by,
+                                          use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
-                                                 unique(abund_data$colour_by), x)
+                                                 unique(abund_data$colour_by),
+                                                 x)
         features_data <- NULL
         if(!is.null(features) || !is.null(order_sample_by)){
             features_data <- .get_features_data(features, order_sample_by, x)
@@ -176,9 +186,12 @@ MELT_VALUES <- "Value"
 #' @importFrom tidyr pivot_longer nest unnest
 #' @importFrom tibble rownames_to_column
 #' @importFrom purrr map
-.get_abundance_data <- function(x, rank, abund_values, order_rank_by = "name"){
+.get_abundance_data <- function(x, rank, abund_values, order_rank_by = "name",
+                                use_relative = TRUE){
     data <- assay(x,abund_values)
-    data <- .calc_rel_abund(data)
+    if(use_relative){
+        data <- .calc_rel_abund(data)
+    }
     merge_FUN <- function(data){
         data %>%
             group_by(!!sym(MELT_NAME)) %>%
