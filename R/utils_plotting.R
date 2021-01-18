@@ -21,13 +21,13 @@
     object
 }
 
-.get_bar_args <- function (fill_by, colour_by, alpha = 0.65, add_border = NULL,
+.get_bar_args <- function (colour_by, alpha = 0.65, add_border = NULL,
                            n = 0) 
 {
     aes_args <- list()
     fill_colour <- TRUE
     border <- FALSE
-    if (!is.null(fill_by)) {
+    if (!is.null(colour_by)) {
         aes_args$fill <- "colour_by"
     }
     if(!is.null(add_border) && add_border && !is.null(colour_by)){
@@ -47,8 +47,8 @@
 
 
 # Adjusted function originally developed for scater package by Aaron Lun
-.get_point_args <- function (colour_by, shape_by, size_by, alpha = 0.65,
-                             size = NULL) 
+.get_point_args <- function(colour_by, shape_by, size_by, alpha = 0.65,
+                            size = NULL) 
 {
     aes_args <- list()
     fill_colour <- TRUE
@@ -141,10 +141,16 @@
 }
 
 #' @importFrom ggplot2 theme
-.add_legend <- function(plot_out, add_legend){
+.add_legend <- function(plot_out, add_legend, position = c("right","bottom")){
+    position <- match.arg(position)
     if(!add_legend){
         plot_out <- plot_out +
             theme(legend.position = "none")
+    } else {
+        if(position == "bottom"){
+            plot_out <- plot_out +
+                theme(legend.position = "bottom")
+        }
     }
     plot_out
 }
