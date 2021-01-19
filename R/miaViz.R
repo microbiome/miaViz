@@ -16,4 +16,5 @@ NULL
 #' @import ggplot2
 #' @importFrom rlang sym !! :=
 #' @importFrom dplyr %>%
+#' @importFrom BiocGenerics ncol nrow
 NULL

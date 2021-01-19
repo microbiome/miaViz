@@ -75,6 +75,35 @@
     return(list(args = geom_args, fill = fill_colour))
 }
 
+.get_line_args <- function(colour_by, linetype_by, size_by,
+                           alpha = 0.65,
+                           linetype = 1,
+                           size = NULL) 
+{
+    aes_args <- list()
+    if (!is.null(linetype_by)) {
+        aes_args$linetype <- "linetype_by"
+    }
+    if (!is.null(colour_by)) {
+        aes_args$colour <- "colour_by"
+    }
+    if (!is.null(size_by)) {
+        aes_args$size <- "size_by"
+    }
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes, alpha = alpha)
+    if (is.null(colour_by)) {
+        geom_args$colour <- "grey70"
+    }
+    if (is.null(linetype_by)) {
+        geom_args$linetype <- linetype
+    }
+    if (is.null(size_by)) {
+        geom_args$size <- size
+    }
+    return(list(args = geom_args))
+}
+
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
@@ -118,7 +147,8 @@
 }
 
 #' @importFrom ggplot2 coord_flip element_blank element_text
-.flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE){
+.flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE,
+                       angle_x_text = TRUE){
     if (flipped) {
         plot_out <- plot_out + 
             coord_flip()
@@ -132,7 +162,7 @@
             plot_out <- plot_out +
                 theme(axis.text.x = element_blank(),
                       axis.ticks.x = element_blank())
-        } else {
+        } else if(angle_x_text) {
             plot_out <- plot_out +
                 theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
