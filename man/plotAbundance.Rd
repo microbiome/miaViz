@@ -93,6 +93,7 @@ plotAbundance(se, abund_values="counts", rank = "Phylum", add_legend = FALSE)
 # If rank is set to NULL plotAbundance behaves like plotExpression
 plotAbundance(se, abund_values="counts", rank = NULL,
               features = head(rownames(se)))
+              
 # Factors can also be plotted and ordered by
 plotAbundance(se, abund_values="counts", rank = "Phylum",
               features = "SampleType",
