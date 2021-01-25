@@ -118,13 +118,11 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
         x <- mia:::.agg_for_prevalence(x, rank, ...)
         plot_data <- .get_prevalence_plot_data(x, abund_values, detections,
                                                prevalences, as_relative,
-                                               min_prevalence,
                                                BPPARAM)
         plot_data$colour_by <- plot_data$colour_by * 100
         .prevalence_plotter(plot_data, 
                             layout = "line",
-                            xlab = paste0("Detection ",
-                                          ifelse(as_relative," [%]","")),
+                            xlab = ifelse(as_relative,"Abundance [%]","Detection"),
                             ylab = "N",
                             colour_by = "Prevalence [%]",
                             ...)
@@ -213,8 +211,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
         plot_data$colour_by <- plot_data$colour_by * 100
         .prevalence_plotter(plot_data, 
                             layout = "heatmap",
-                            xlab = paste0("Detection ",
-                                          ifelse(as_relative," [%]","")),
+                            xlab = ifelse(as_relative,"Abundance [%]","Detection"),
                             ylab = ifelse(is.null(rank), "Features", rank),
                             colour_by = "Prevalence [%]",
                             ...)
