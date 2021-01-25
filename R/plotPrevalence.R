@@ -1,7 +1,7 @@
 #' Plot prevalence information
 #' 
-#' \code{plotPrevalence} and \code{plotTaxaPrevalence} visualize information on
-#' prevalence information.
+#' \code{plotPrevalence} and \code{plotTaxaPrevalence} visualize prevalence 
+#' information.
 #' 
 #' Whereas \code{plotPrevalence} procudes a line plot, \code{plotTaxaPrevalence}
 #' returns a heatmap. 
@@ -33,6 +33,10 @@
 #'   }
 #'   \item{additional arguments for plotting}
 #' }
+#' 
+#' @param min_prevalence a single numeric value to apply as a threshold for 
+#'   plotting. The threshold is applied per row and column.
+#'   (default: \code{min_prevalence = 0})
 #' 
 #' @param ndetections If \code{detections} is \code{NULL}, a number of breaks 
 #'   are calculated automatically. \code{as_relative} is then also regarded as 
@@ -114,7 +118,9 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
         x <- mia:::.agg_for_prevalence(x, rank, ...)
         plot_data <- .get_prevalence_plot_data(x, abund_values, detections,
                                                prevalences, as_relative,
+                                               min_prevalence,
                                                BPPARAM)
+        plot_data$colour_by <- plot_data$colour_by * 100
         .prevalence_plotter(plot_data, 
                             layout = "line",
                             xlab = paste0("Detection ",
@@ -167,6 +173,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                    abund_values = "counts",
                    as_relative = TRUE,
                    rank = taxonomyRanks(x)[1L],
+                   min_prevalence = 0,
                    BPPARAM = BiocParallel::SerialParam(),
                    ...){
         # input check
@@ -192,10 +199,18 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
             stop("If 'as_relative' == TRUE, detections' must be numeric ",
                  "values between 0 and 1.", call. = FALSE)
         }
+        if(length(min_prevalence) != 1 || !.is_numeric_string(min_prevalence)){
+            stop("'min_prevalence' must be single numeric values.",
+                 call. = FALSE)
+        }
         #
-        x <- mia:::.agg_for_prevalence(x, rank, ...)
+        x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, ...)
+        rownames(x) <- getTaxonomyLabels(x, make_unique = TRUE) 
         plot_data <- .get_prevalence_plot_matrix(x, abund_values, detections,
-                                                 as_relative, BPPARAM)
+                                                 as_relative, 
+                                                 min_prevalence,
+                                                 BPPARAM)
+        plot_data$colour_by <- plot_data$colour_by * 100
         .prevalence_plotter(plot_data, 
                             layout = "heatmap",
                             xlab = paste0("Detection ",
@@ -218,6 +233,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray rowSums
 .get_prevalence_plot_matrix <- function(x, abund_values, detections, 
                                         as_relative = TRUE, 
+                                        min_prevalence,
                                         BPPARAM = BiocParallel::SerialParam()){
     mat <- assay(x,abund_values)
     if(as_relative){
@@ -237,8 +253,14 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                     BPPARAM = BPPARAM)
     ans <- data.frame(ans)
     colnames(ans) <- detections
+    f <- ans >= min_prevalence
+    ans <- ans[rowSums(f) != 0,colSums(f) != 0,drop=FALSE]
+    if(any(dim(ans) == 0)){
+        stop("No data left after apply threshold 'min_prevalence'.",
+             call. = FALSE)
+    }
     lvls <- rownames(ans)[order(rowSums(ans))]
-    ans$ID <- rownames(mat)
+    ans$ID <- rownames(mat)[rowSums(f) != 0]
     ans <- ans %>%
         pivot_longer(!.data$ID, 
                      names_to = "detection",
@@ -300,7 +322,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                                      add_border = FALSE)
         plot_out <- plot_out +
             do.call(geom_raster, raster_args$args) +
-            scale_fill_distiller(palette = "RdBu", name = colour_by) +
+            scale_fill_distiller(palette = "RdYlBu", name = colour_by) +
             scale_y_discrete(expand = c(0,0))
         if(is.factor(plot_data$X)){
             plot_out <- plot_out + 

@@ -29,6 +29,7 @@ plotTaxaPrevalence(x, ...)
   abund_values = "counts",
   as_relative = TRUE,
   rank = taxonomyRanks(x)[1L],
+  min_prevalence = 0,
   BPPARAM = BiocParallel::SerialParam(),
   ...
 )
@@ -69,14 +70,18 @@ object specifying whether the UniFrac calculation should be parallelized.}
 \item{ndetections}{If \code{detections} is \code{NULL}, a number of breaks
 are calculated automatically. \code{as_relative} is then also regarded as
 \code{TRUE}.}
+
+\item{min_prevalence}{a single numeric value to apply as a threshold for
+plotting. The threshold is applied per row and column.
+(default: \code{min_prevalence = 0})}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one
 \code{prevalences} was defined.
 }
 \description{
-\code{plotPrevalence} and \code{plotTaxaPrevalence} visualize information on
-prevalence information.
+\code{plotPrevalence} and \code{plotTaxaPrevalence} visualize prevalence
+information.
 }
 \details{
 Whereas \code{plotPrevalence} procudes a line plot, \code{plotTaxaPrevalence}
