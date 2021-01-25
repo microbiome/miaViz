@@ -15,6 +15,7 @@ plotAbundance(x, ...)
   order_rank_by = c("name", "abund", "revabund"),
   order_sample_by = NULL,
   decreasing = TRUE,
+  use_relative = TRUE,
   layout = c("bar", "point"),
   one_facet = TRUE,
   ncol = 2,
@@ -51,6 +52,9 @@ plot by. If the value is not part of \code{features}, it will be added.
 \item{decreasing}{TRUE or FALSE: If the \code{order_sample_by} is defined and the
 values are numeric, should the values used to order in decreasing or
 increasing fashion? (default: \code{decreasing = FALSE})}
+
+\item{use_relative}{\code{TRUE} or \code{FALSE}: Should the relative values
+be calculated? (default: \code{use_relative = TRUE})}
 
 \item{layout}{Either \dQuote{bar} or \dQuote{point}.}
 
