@@ -30,6 +30,10 @@ plotTaxaPrevalence(x, ...)
   as_relative = TRUE,
   rank = taxonomyRanks(x)[1L],
   min_prevalence = 0,
+  layout = c("heatmap", "point"),
+  colour_by = NULL,
+  size_by = NULL,
+  shape_by = NULL,
   BPPARAM = BiocParallel::SerialParam(),
   ...
 )
@@ -74,6 +78,21 @@ are calculated automatically. \code{as_relative} is then also regarded as
 \item{min_prevalence}{a single numeric value to apply as a threshold for
 plotting. The threshold is applied per row and column.
 (default: \code{min_prevalence = 0})}
+
+\item{colour_by}{Specification of a feature to colour points by, see the
+\code{by} argument in
+\code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
+possible values. Only used with \code{layout = "point"}.}
+
+\item{size_by}{Specification of a feature to size points by, see the
+\code{by} argument in
+\code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
+possible values. Only used with \code{layout = "point"}.}
+
+\item{shape_by}{Specification of a feature to shape points by, see the
+\code{by} argument in
+\code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
+possible values. Only used with \code{layout = "point"}.}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one
@@ -108,6 +127,13 @@ plotTaxaPrevalence(GlobalPatterns, rank = "Phylum")
 # but this can be adjusted
 plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
                    detections = c(0, 0.001, 0.01, 0.1, 0.2))
+                   
+# point layout for plotTaxaPrevalence can be used to visualize by additional
+# information
+plotTaxaPrevalence(GlobalPatterns, rank = "Family", 
+                   layout="point",
+                   colour_by = "Phylum") +
+    scale_x_log10()
 }
 \seealso{
 \code{\link[mia:getPrevalence]{getPrevalence}},

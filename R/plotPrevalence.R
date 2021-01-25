@@ -24,7 +24,20 @@
 #' @param as_relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? Passed onto
 #'   \code{\link[mia:getPrevalence]{getPrevalence}}. (default: \code{TRUE})
-#' 
+#'   
+#' @param colour_by Specification of a feature to colour points by, see the 
+#'   \code{by} argument in 
+#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}.
+#' @param shape_by Specification of a feature to shape points by, see the 
+#'   \code{by} argument in 
+#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}.
+#' @param size_by Specification of a feature to size points by, see the 
+#'   \code{by} argument in 
+#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}.
+#'   
 #' @param rank,... additional arguments
 #' \itemize{
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to
@@ -79,6 +92,13 @@
 #' # but this can be adjusted
 #' plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
 #'                    detections = c(0, 0.001, 0.01, 0.1, 0.2))
+#'                    
+#' # point layout for plotTaxaPrevalence can be used to visualize by additional
+#' # information
+#' plotTaxaPrevalence(GlobalPatterns, rank = "Family", 
+#'                    layout="point",
+#'                    colour_by = "Phylum") +
+#'     scale_x_log10()
 NULL
 
 #' @rdname plotPrevalence
@@ -129,6 +149,16 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+#' @importFrom DelayedArray rowMeans
+#' @importFrom BiocGenerics ncol
+.get_prevalence_value <- function(d, mat){
+    rowSums(mat > d) / ncol(mat)
+}
+
+.get_prevalence_count <- function(d, p, mat){
+    sum(.get_prevalence_value(d, mat) >= p)
+}
+
 #' @importFrom BiocParallel bpmapply bpisup bpstart bpstop SerialParam
 #' @importFrom SummarizedExperiment assay
 .get_prevalence_plot_data <- function(x, abund_values, detections, prevalences,
@@ -138,15 +168,12 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
-    FUN_prevalences <- function(d, p, mat){
-        sum((rowSums(mat > d) / ncol(mat)) >= p)
-    }
     ans <- expand.grid(detection = detections, prevalence = prevalences)
     if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
         bpstart(BPPARAM)
         on.exit(bpstop(BPPARAM), add = TRUE)
     }
-    ans$n <- unlist(bpmapply(FUN_prevalences,
+    ans$n <- unlist(bpmapply(.get_prevalence_count,
                              ans$detection,
                              ans$prevalence,
                              MoreArgs = list(mat = mat),
@@ -172,6 +199,10 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                    as_relative = TRUE,
                    rank = taxonomyRanks(x)[1L],
                    min_prevalence = 0,
+                   layout = c("heatmap","point"),
+                   colour_by = NULL,
+                   size_by = NULL,
+                   shape_by = NULL,
                    BPPARAM = BiocParallel::SerialParam(),
                    ...){
         # input check
@@ -201,28 +232,100 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
             stop("'min_prevalence' must be single numeric values.",
                  call. = FALSE)
         }
+        layout <- match.arg(layout)
         #
         x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, ...)
         rownames(x) <- getTaxonomyLabels(x, make_unique = TRUE) 
-        plot_data <- .get_prevalence_plot_matrix(x, abund_values, detections,
-                                                 as_relative, 
-                                                 min_prevalence,
-                                                 BPPARAM)
-        plot_data$colour_by <- plot_data$colour_by * 100
+        if(layout == "point"){
+            if(!is.null(colour_by) && !.is_a_string(colour_by)){
+                stop("'colour_by' must be single character value or NULL.",
+                     call. = FALSE)
+            }
+            plot_data <- .get_prevalence_plot_point_data(x, abund_values, 
+                                                         as_relative)
+            vis_out <- .incorporate_prevalence_vis(plot_data,
+                                                   se = x,
+                                                   colour_by = colour_by,
+                                                   size_by = size_by,
+                                                   shape_by = shape_by)
+            plot_data <- vis_out$df
+            colour_by <- vis_out$colour_by
+            size_by <- vis_out$size_by
+            shape_by <- vis_out$shape_by
+            xlab <- paste0(ifelse(as_relative, "Rel. ", ""),"Abundance")
+            ylab <- paste0("Prevalence(",
+                           ifelse(is.null(rank), "Features", rank),
+                           ") [%]")
+        } else {
+            colour_by <- "Prevalence [%]"
+            plot_data <- .get_prevalence_plot_matrix(x, abund_values, detections,
+                                                     as_relative, 
+                                                     min_prevalence,
+                                                     BPPARAM)
+            plot_data$colour_by <- plot_data$colour_by * 100
+            xlab <- ifelse(as_relative,"Abundance [%]","Detection")
+            ylab <- ifelse(is.null(rank), "Features", rank)
+        }
         .prevalence_plotter(plot_data, 
-                            layout = "heatmap",
-                            xlab = ifelse(as_relative,"Abundance [%]","Detection"),
-                            ylab = ifelse(is.null(rank), "Features", rank),
-                            colour_by = "Prevalence [%]",
+                            layout = layout,
+                            xlab = xlab,
+                            ylab = ylab,
+                            colour_by = colour_by,
+                            size_by = size_by,
+                            shape_by = shape_by,
                             ...)
     }
 )
+
+
+#' @importFrom DelayedArray rowMeans
+#' @importFrom SummarizedExperiment assay
+.get_prevalence_plot_point_data <- function(x, abund_values,
+                                            as_relative = TRUE){
+    mat <- assay(x,abund_values)
+    if(as_relative){
+        mat <- mia:::.calc_rel_abund(mat)
+    }
+    ans <- data.frame(X = rowMeans(mat, na.rm = TRUE),
+                      Y = .get_prevalence_value(0, mat) * 100)
+    ans
+}
+
+#' @importFrom scater retrieveFeatureInfo
+.incorporate_prevalence_vis <- function(plot_data,
+                                        se = se,
+                                        colour_by = NULL,
+                                        size_by = NULL,
+                                        shape_by = NULL){
+    variables <- c(colour_by = colour_by,
+                   size_by = size_by,
+                   shape_by = shape_by)
+    if(!is.null(variables)){
+        for(i in seq_along(variables)){
+            # get data
+            feature_info <- retrieveFeatureInfo(se, variables[i],
+                                                search = "rowData")
+            # mirror back variable name, if a partial match was used
+            var_name <- names(variables)[i]
+            assign(var_name, 
+                   .get_new_var_name_value(get(var_name),
+                                           feature_info$name))
+            plot_data[,names(feature_info$name)] <- feature_info$value
+        }
+    }
+    return(list(df = plot_data,
+                colour_by = colour_by,
+                size_by = size_by,
+                shape_by = shape_by))
+}
+
 
 .is_continuous <- function(i){
     i <- sort(unique(i))
     z <- round(c(i[-1L],max(i)) - i,5L)
     length(unique(z[-length(z)])) == 1L
 }
+
 
 #' @importFrom BiocParallel bplapply bpisup bpstart bpstop SerialParam
 #' @importFrom SummarizedExperiment assay
@@ -236,16 +339,13 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
-    FUN_prevalences <- function(d, mat){
-        rowSums(mat > d) / ncol(mat)
-    }
     
     if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
         bpstart(BPPARAM)
         on.exit(bpstop(BPPARAM), add = TRUE)
     }
     ans <- bplapply(detections,
-                    FUN_prevalences,
+                    .get_prevalence_value,
                     mat = mat,
                     BPPARAM = BPPARAM)
     ans <- data.frame(ans)
@@ -280,6 +380,8 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                                 xlab = NULL,
                                 ylab = NULL,
                                 colour_by = NULL,
+                                size_by = NULL,
+                                shape_by = NULL,
                                 flipped = FALSE,
                                 add_legend = TRUE,
                                 point_alpha = 1,
@@ -314,7 +416,19 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                                           plot_data$colour_by,
                                           colour_by,
                                           fill = FALSE)
-    } else {
+    } else if(layout == "point"){
+        point_args <- .get_point_args(colour_by = colour_by, shape_by = shape_by,
+                                      size_by = size_by,
+                                      alpha = point_alpha,
+                                      size = point_size)
+        plot_out <- plot_out +
+            do.call(geom_point, point_args$args)
+        # resolve the colours
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          plot_data$colour_by,
+                                          colour_by,
+                                          fill = TRUE)
+    } else if(layout == "heatmap"){
         raster_args <- .get_bar_args(colour_by = colour_by, alpha = 1,
                                      add_border = FALSE)
         plot_out <- plot_out +
@@ -328,6 +442,8 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
             plot_out <- plot_out + 
                 scale_x_continuous(expand = c(0,0), n.breaks = 7L)
         }
+    } else {
+        stop("incompatible layout")
     }
     # theme
     plot_out <- plot_out +
