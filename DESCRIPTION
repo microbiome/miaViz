@@ -14,7 +14,7 @@ Depends:
     R (>= 4.0),
     SummarizedExperiment,
     TreeSummarizedExperiment,
-    mia (>= 0.98.27),
+    mia (>= 0.98.29),
     ggplot2
 Imports: 
     methods,
@@ -24,6 +24,7 @@ Imports:
     scater,
     ggtree,
     ggnewscale,
+    viridis,
     cowplot,
     tibble,
     tidytree,

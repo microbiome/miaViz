@@ -1,6 +1,48 @@
 
-.resolve_plot_colours <- scater:::.resolve_plot_colours
 .add_extra_guide <- scater:::.add_extra_guide
+
+# modified from scater function in scater package by Aaron Lun
+#' @importFrom ggplot2 scale_color_manual scale_fill_manual 
+#' @importFrom viridis scale_color_viridis scale_fill_viridis
+.resolve_plot_colours <- function (plot_out, colour_by, colour_by_name,
+                                   fill = FALSE,
+                                   na.translate = TRUE)
+{
+    if (is.null(colour_by)) {
+        return(plot_out)
+    }
+    if (fill) {
+        VIRIDFUN <- scale_fill_viridis
+        SCALEFUN <- scale_fill_manual
+    }
+    else {
+        VIRIDFUN <- scale_color_viridis
+        SCALEFUN <- scale_color_manual
+    }
+    if (is.numeric(colour_by)) {
+        plot_out <- plot_out + VIRIDFUN(name = colour_by_name)
+    }
+    else {
+        nlevs_colour_by <- nlevels(as.factor(colour_by))
+        if (nlevs_colour_by <= 10) {
+            plot_out <- plot_out + SCALEFUN(values = scater:::.get_palette("tableau10medium"),
+                                            name = colour_by_name,
+                                            na.translate = na.translate)
+        }
+        else {
+            if (nlevs_colour_by > 10 && nlevs_colour_by <= 20) {
+                plot_out <- plot_out + SCALEFUN(values = scater:::.get_palette("tableau20"),
+                                                name = colour_by_name,
+                                                na.translate = na.translate)
+            }
+            else {
+                plot_out <- plot_out + VIRIDFUN(name = colour_by_name,
+                                                discrete = TRUE)
+            }
+        }
+    }
+    plot_out
+}
 
 .na_replace_from_plot_data <- function(object,
                                        edge_size_by = NULL,

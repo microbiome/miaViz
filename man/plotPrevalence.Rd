@@ -32,6 +32,7 @@ plotPrevalentAbundance(x, ...)
   colour_by = NULL,
   size_by = NULL,
   shape_by = NULL,
+  label = NULL,
   ...
 )
 
@@ -96,6 +97,10 @@ possible values. Only used with \code{layout = "point"}.}
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
+
+\item{label}{a \code{logical}, \code{character} or \code{integer} vector
+for selecting labels from the rownames of \code{x}. If \code{rank} is not
+\code{NULL} the rownames might change. (default: \code{label = NULL})}
 
 \item{ndetections}{If \code{detections} is \code{NULL}, a number of breaks
 are calculated automatically. \code{as_relative} is then also regarded as

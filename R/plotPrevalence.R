@@ -38,6 +38,9 @@
 #'   \code{by} argument in 
 #'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
 #'   possible values. Only used with \code{layout = "point"}.
+#' @param label a \code{logical}, \code{character} or \code{integer} vector
+#'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
+#'   \code{NULL} the rownames might change. (default: \code{label = NULL})
 #'
 #' @param detections Detection thresholds for absence/presence. Either an
 #'   absolutes value compared directly to the values of \code{x} or a relative
@@ -205,20 +208,26 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
              colour_by = NULL,
              size_by = NULL,
              shape_by = NULL,
+             label = NULL,
              ...){
         # input check
         .check_abund_values(abund_values, x)
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
+        x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, relabel = TRUE,
+                                       ...)
+        label <- .norm_label(label, x)
         #
         plot_data <- .get_prevalence_plot_point_data(x, abund_values, 
-                                                     as_relative)
+                                                     as_relative = as_relative,
+                                                     label = label)
         vis_out <- .incorporate_prevalence_vis(plot_data,
                                                se = x,
                                                colour_by = colour_by,
                                                size_by = size_by,
-                                               shape_by = shape_by)
+                                               shape_by = shape_by,
+                                               label = label)
         plot_data <- vis_out$df
         colour_by <- vis_out$colour_by
         size_by <- vis_out$size_by
@@ -239,14 +248,18 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom DelayedArray rowMeans
 #' @importFrom SummarizedExperiment assay
-.get_prevalence_plot_point_data <- function(x, abund_values,
-                                            as_relative = TRUE){
+.get_prevalence_plot_point_data <- function(x, abund_values, as_relative = TRUE,
+                                            label = NULL){
     mat <- assay(x,abund_values)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
     ans <- data.frame(X = rowMeans(mat, na.rm = TRUE),
-                      Y = .get_prevalence_value(0, mat) * 100)
+                      Y = .get_prevalence_value(0, mat) * 100,
+                      label = rownames(mat))
+    if(!is.null(label)){
+        ans$label[!label] <- NA
+    }
     ans
 }
 
@@ -255,7 +268,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                                         se = se,
                                         colour_by = NULL,
                                         size_by = NULL,
-                                        shape_by = NULL){
+                                        shape_by = NULL,
+                                        label = NULL){
     variables <- c(colour_by = colour_by,
                    size_by = size_by,
                    shape_by = shape_by)
@@ -270,6 +284,10 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                    .get_new_var_name_value(get(var_name),
                                            feature_info$name))
             plot_data[,names(feature_info$name)] <- feature_info$value
+            if(!is.null(label)){
+                plot_data[,names(feature_info$name)][!label] <- 
+                    ifelse(names(variables[i]) == "colour_by",NA,"")
+            }
         }
     }
     return(list(df = plot_data,
@@ -326,8 +344,8 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         #
-        x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, ...)
-        rownames(x) <- getTaxonomyLabels(x, make_unique = TRUE) 
+        x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, relabel = TRUE,
+                                       ...)
         colour_by <- "Prevalence [%]"
         plot_data <- .get_prevalence_plot_matrix(x, abund_values, detections,
                                                  as_relative, 
@@ -454,7 +472,10 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
         plot_out <- .resolve_plot_colours(plot_out,
                                           plot_data$colour_by,
                                           colour_by,
-                                          fill = TRUE)
+                                          fill = TRUE,
+                                          na.translate = FALSE)
+        # add additional guides
+        plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
     } else if(layout == "heatmap"){
         raster_args <- .get_bar_args(colour_by = colour_by, alpha = 1,
                                      add_border = FALSE)
