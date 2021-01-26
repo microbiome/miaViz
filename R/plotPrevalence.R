@@ -285,8 +285,10 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                                            feature_info$name))
             plot_data[,names(feature_info$name)] <- feature_info$value
             if(!is.null(label)){
-                plot_data[,names(feature_info$name)][!label] <- 
-                    ifelse(names(variables[i]) == "colour_by",NA,"")
+                if(is.factor(feature_info$value) || 
+                   is.character(feature_info$value)){
+                    plot_data[,names(feature_info$name)][!label] <- NA
+                }
             }
         }
     }
