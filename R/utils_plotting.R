@@ -1,6 +1,48 @@
 
-.resolve_plot_colours <- scater:::.resolve_plot_colours
 .add_extra_guide <- scater:::.add_extra_guide
+
+# modified from scater function in scater package by Aaron Lun
+#' @importFrom ggplot2 scale_color_manual scale_fill_manual 
+#' @importFrom viridis scale_color_viridis scale_fill_viridis
+.resolve_plot_colours <- function (plot_out, colour_by, colour_by_name,
+                                   fill = FALSE,
+                                   na.translate = TRUE)
+{
+    if (is.null(colour_by)) {
+        return(plot_out)
+    }
+    if (fill) {
+        VIRIDFUN <- scale_fill_viridis
+        SCALEFUN <- scale_fill_manual
+    }
+    else {
+        VIRIDFUN <- scale_color_viridis
+        SCALEFUN <- scale_color_manual
+    }
+    if (is.numeric(colour_by)) {
+        plot_out <- plot_out + VIRIDFUN(name = colour_by_name)
+    }
+    else {
+        nlevs_colour_by <- nlevels(as.factor(colour_by))
+        if (nlevs_colour_by <= 10) {
+            plot_out <- plot_out + SCALEFUN(values = scater:::.get_palette("tableau10medium"),
+                                            name = colour_by_name,
+                                            na.translate = na.translate)
+        }
+        else {
+            if (nlevs_colour_by > 10 && nlevs_colour_by <= 20) {
+                plot_out <- plot_out + SCALEFUN(values = scater:::.get_palette("tableau20"),
+                                                name = colour_by_name,
+                                                na.translate = na.translate)
+            }
+            else {
+                plot_out <- plot_out + VIRIDFUN(name = colour_by_name,
+                                                discrete = TRUE)
+            }
+        }
+    }
+    plot_out
+}
 
 .na_replace_from_plot_data <- function(object,
                                        edge_size_by = NULL,
@@ -75,6 +117,35 @@
     return(list(args = geom_args, fill = fill_colour))
 }
 
+.get_line_args <- function(colour_by, linetype_by, size_by,
+                           alpha = 0.65,
+                           linetype = 1,
+                           size = NULL) 
+{
+    aes_args <- list()
+    if (!is.null(linetype_by)) {
+        aes_args$linetype <- "linetype_by"
+    }
+    if (!is.null(colour_by)) {
+        aes_args$colour <- "colour_by"
+    }
+    if (!is.null(size_by)) {
+        aes_args$size <- "size_by"
+    }
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes, alpha = alpha)
+    if (is.null(colour_by)) {
+        geom_args$colour <- "grey70"
+    }
+    if (is.null(linetype_by)) {
+        geom_args$linetype <- linetype
+    }
+    if (is.null(size_by)) {
+        geom_args$size <- size
+    }
+    return(list(args = geom_args))
+}
+
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
@@ -118,7 +189,8 @@
 }
 
 #' @importFrom ggplot2 coord_flip element_blank element_text
-.flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE){
+.flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE,
+                       angle_x_text = TRUE){
     if (flipped) {
         plot_out <- plot_out + 
             coord_flip()
@@ -132,7 +204,7 @@
             plot_out <- plot_out +
                 theme(axis.text.x = element_blank(),
                       axis.ticks.x = element_blank())
-        } else {
+        } else if(angle_x_text) {
             plot_out <- plot_out +
                 theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
