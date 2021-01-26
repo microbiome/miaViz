@@ -3,6 +3,8 @@
 \name{plotPrevalence}
 \alias{plotPrevalence}
 \alias{plotPrevalence,SummarizedExperiment-method}
+\alias{plotPrevalentAbundance}
+\alias{plotPrevalentAbundance,SummarizedExperiment-method}
 \alias{plotTaxaPrevalence}
 \alias{plotTaxaPrevalence,SummarizedExperiment-method}
 \title{Plot prevalence information}
@@ -20,20 +22,29 @@ plotPrevalence(x, ...)
   ...
 )
 
+plotPrevalentAbundance(x, ...)
+
+\S4method{plotPrevalentAbundance}{SummarizedExperiment}(
+  x,
+  rank = taxonomyRanks(x)[1L],
+  abund_values = "counts",
+  as_relative = TRUE,
+  colour_by = NULL,
+  size_by = NULL,
+  shape_by = NULL,
+  ...
+)
+
 plotTaxaPrevalence(x, ...)
 
 \S4method{plotTaxaPrevalence}{SummarizedExperiment}(
   x,
+  rank = taxonomyRanks(x)[1L],
+  abund_values = "counts",
   detections = NULL,
   ndetections = 20,
-  abund_values = "counts",
   as_relative = TRUE,
-  rank = taxonomyRanks(x)[1L],
   min_prevalence = 0,
-  layout = c("heatmap", "point"),
-  colour_by = NULL,
-  size_by = NULL,
-  shape_by = NULL,
   BPPARAM = BiocParallel::SerialParam(),
   ...
 )
@@ -71,14 +82,6 @@ on compositional (relative) abundances? Passed onto
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the UniFrac calculation should be parallelized.}
 
-\item{ndetections}{If \code{detections} is \code{NULL}, a number of breaks
-are calculated automatically. \code{as_relative} is then also regarded as
-\code{TRUE}.}
-
-\item{min_prevalence}{a single numeric value to apply as a threshold for
-plotting. The threshold is applied per row and column.
-(default: \code{min_prevalence = 0})}
-
 \item{colour_by}{Specification of a feature to colour points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
@@ -93,6 +96,14 @@ possible values. Only used with \code{layout = "point"}.}
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
+
+\item{ndetections}{If \code{detections} is \code{NULL}, a number of breaks
+are calculated automatically. \code{as_relative} is then also regarded as
+\code{TRUE}.}
+
+\item{min_prevalence}{a single numeric value to apply as a threshold for
+plotting. The threshold is applied per row and column.
+(default: \code{min_prevalence = 0})}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one
@@ -109,7 +120,7 @@ returns a heatmap.
 Agglomeration on different taxonomic levels is available through the
 \code{rank} argument.
 
-To exclude certain taxa, preprocess \code{x} to your likeing, for example
+To exclude certain taxa, preprocess \code{x} to your liking, for example
 with subsetting via \code{getPrevalentTaxa} or
 \code{agglomerateByPrevalence}.
 }
@@ -130,9 +141,8 @@ plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
                    
 # point layout for plotTaxaPrevalence can be used to visualize by additional
 # information
-plotTaxaPrevalence(GlobalPatterns, rank = "Family", 
-                   layout="point",
-                   colour_by = "Phylum") +
+plotPrevalentAbundance(GlobalPatterns, rank = "Family",
+                       colour_by = "Phylum") +
     scale_x_log10()
 }
 \seealso{
