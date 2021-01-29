@@ -77,6 +77,9 @@
         guide_args$size <- guide_legend(title = edge_size_by)
         plot_out <- plot_out + 
             do.call(guides, guide_args)
+    }
+    plot_out
+}
 
 .na_replace_from_plot_data <- function(object,
                                        edge_size_by = NULL,
