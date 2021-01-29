@@ -15,15 +15,19 @@ Depends:
     SummarizedExperiment,
     TreeSummarizedExperiment,
     mia (>= 0.98.16),
-    ggplot2
+    ggplot2,
+    ggraph
 Imports: 
     methods,
+    S4Vectors,
     scater,
     ggtree,
     ggnewscale,
     cowplot,
     tibble,
     tidytree,
+    tidygraph,
+    viridis,
     rlang,
     purrr,
     tidyr,

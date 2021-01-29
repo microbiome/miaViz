@@ -1,6 +1,84 @@
 
-.resolve_plot_colours <- scater:::.resolve_plot_colours
+.get_palette <- scater:::.get_palette
+# Adjusted function originally developed for scater package by Aaron Lun
+#' @importFrom viridis scale_fill_viridis scale_colour_viridis
+#' @importFrom ggplot2 scale_fill_manual scale_colour_manual
+.resolve_plot_colours <- function(plot_out, colour_by, colour_by_name,
+                                  fill = FALSE,
+                                  type = c("normal","edges"),
+                                  na.translate = TRUE) 
+{
+    if (is.null(colour_by)) {
+        return(plot_out)
+    }
+    type <- match.arg(type)
+    if(type == "normal"){
+        if (fill) {
+            VIRIDFUN <- scale_fill_viridis
+            SCALEFUN <- scale_fill_manual
+        }
+        else {
+            VIRIDFUN <- scale_colour_viridis
+            SCALEFUN <- scale_colour_manual
+        }
+    } else if(type == "edges") {
+        if (fill) {
+            VIRIDFUN <- scale_edge_fill_viridis
+            SCALEFUN <- scale_edge_fill_manual
+        }
+        else {
+            VIRIDFUN <- scale_edge_colour_viridis
+            SCALEFUN <- scale_edge_colour_manual
+        }
+    } else {
+        stop("Unrecognized colour type")
+    }
+    if (is.numeric(colour_by)) {
+        plot_out <- plot_out + VIRIDFUN(name = colour_by_name)
+    }
+    else {
+        nlevs_colour_by <- nlevels(as.factor(colour_by))
+        if (nlevs_colour_by <= 10) {
+            plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau10medium"), 
+                                            name = colour_by_name,
+                                            na.translate = na.translate)
+        }
+        else {
+            if (nlevs_colour_by > 10 && nlevs_colour_by <= 20) {
+                plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau20"), 
+                                                name = colour_by_name,
+                                                na.translate = na.translate)
+            }
+            else {
+                plot_out <- plot_out + VIRIDFUN(name = colour_by_name, 
+                                                discrete = TRUE,
+                                                na.translate = na.translate)
+            }
+        }
+    }
+    plot_out
+}
+
 .add_extra_guide <- scater:::.add_extra_guide
+
+.add_extra_guide_graph <- function(plot_out, edge_width_by){
+    guide_args <- list()
+    if (!is.null(edge_width_by)) {
+        guide_args$edge_width <- guide_legend(title = edge_width_by)
+        plot_out <- plot_out + 
+            do.call(guides, guide_args)
+    }
+    plot_out
+}
+.add_extra_guide_tree <- function(plot_out, edge_size_by){
+    guide_args <- list()
+    if (!is.null(edge_size_by)) {
+        guide_args$size <- guide_legend(title = edge_size_by)
+        plot_out <- plot_out + 
+            do.call(guides, guide_args)
+    }
+    plot_out
+}
 
 .na_replace_from_plot_data <- function(object,
                                        edge_size_by = NULL,
@@ -92,6 +170,16 @@
         geom_args$size <- size
     }
     return(list(args = geom_args))
+}
+
+.get_graph_edge_args <- function(edge_colour_by, edge_width_by, alpha = 1,
+                                 size = NULL){
+    edge_args <- .get_edge_args(edge_colour_by, edge_width_by, alpha, size)
+    if (!is.null(edge_width_by)) {
+        edge_args$args$mapping$edge_width <- sym("edge_width_by")
+        edge_args$args$mapping$size <- NULL
+    }
+    edge_args
 }
 
 .get_hightlight_args <- function(highlights, colour_highlights = FALSE,

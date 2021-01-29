@@ -59,7 +59,7 @@ plotColTree(object, ...)
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{...}{additional argument, currently not used.}
+\item{...}{additional arguments for plotting.}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
 the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
@@ -155,30 +155,31 @@ top_genus <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
                         top=100L,
                         abund_values="counts")
 #
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+x <- altExp(GlobalPatterns,"Genus")
+plotRowTree(x[rownames(x) \%in\% top_genus,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected")
 
 # plot with tip labels
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+plotRowTree(x[rownames(x) \%in\% top_genus,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",
             show_label = TRUE)
 # plot with selected labels
 labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
             "0.961.60" = TRUE)
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+plotRowTree(x[rownames(x) \%in\% top_genus,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",
             show_label = labels,
             layout="rectangular")
 
 # plot with labeled edges
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+plotRowTree(x[rownames(x) \%in\% top_genus,],
             edge_colour_by = "Phylum",
             tip_colour_by = "log_mean")
 # if edges are sized, colours might disappear depending on plotting device
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_genus,],
+plotRowTree(x[rownames(x) \%in\% top_genus,],
             edge_colour_by = "Phylum",
             edge_size_by = "detected",
             tip_colour_by = "log_mean")
