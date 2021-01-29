@@ -208,7 +208,7 @@ MELT_VALUES <- "Value"
     data <- data %>%
         as.data.frame() %>%
         mutate(rank = factor(rowData(x)[,rank], unique(rowData(x)[,rank]))) %>%
-        pivot_longer(cols = !rank,
+        pivot_longer(cols = !.data$rank,
                      names_to = MELT_NAME,
                      values_to = MELT_VALUES) %>%
         mutate(!!sym(MELT_NAME) := factor(!!sym(MELT_NAME), unique(!!sym(MELT_NAME)))) %>%

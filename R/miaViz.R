@@ -17,6 +17,7 @@ NULL
 #' @import ggraph
 #' @importFrom rlang sym !! :=
 #' @importFrom dplyr %>%
+#' @importFrom BiocGenerics ncol nrow
 NULL
 
 #' @title miaViz example data

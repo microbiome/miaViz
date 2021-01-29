@@ -16,3 +16,37 @@
 .is_numeric_string <- mia:::.is_numeric_string
 .is_function <- mia:::.is_function
 .get_name_in_parent <- mia:::.get_name_in_parent
+
+
+.norm_label <- function(label, x){
+    if(!is.null(label)){
+        if(is.numeric(label)){
+            n_v <- seq_len(nrow(x))
+            if(!all(label %in% n_v)){
+                stop("If 'label' is numeric, all values must be between 1 ",
+                     "and nrow(x). If rank is not NULL, the dimension might ",
+                     "change.",
+                     call. = FALSE)
+            }
+            label <- n_v %in% label
+        } else if(is.character(label)){
+            if(!all(label %in% rownames(x))){
+                stop("If 'label' is character, all values must be in ",
+                     "rownames(x). If rank is not NULL, the rownames might ",
+                     "change.",
+                     call. = FALSE)
+            }
+            label <- rownames(x) %in% label
+        } else if(is.logical(label)){
+            if(length(label) != nrow(x)){
+                stop("If 'label' is logical, length(label) == nrow(x) mut be ",
+                     "TRUE. If rank is not NULL, the rownames might ",
+                     "change.",
+                     call. = FALSE)
+            }
+        } else {
+            stop("'label' must be a vector.", call. = FALSE)
+        }
+    }
+    label
+}
