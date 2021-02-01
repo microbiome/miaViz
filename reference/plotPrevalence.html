@@ -75,7 +75,7 @@ information." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.8</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.9</span>
       </span>
     </div>
 
@@ -138,7 +138,7 @@ information.</p>
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>plotPrevalentAbundance</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  rank <span class='op'>=</span> <span class='fu'>taxonomyRanks</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span>,
+  rank <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   as_relative <span class='op'>=</span> <span class='cn'>TRUE</span>,
   colour_by <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -153,7 +153,7 @@ information.</p>
 <span class='co'># S4 method for SummarizedExperiment</span>
 <span class='fu'>plotTaxaPrevalence</span><span class='op'>(</span>
   <span class='va'>x</span>,
-  rank <span class='op'>=</span> <span class='fu'>taxonomyRanks</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span>,
+  rank <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/taxonomy-methods.html'>taxonomyRanks</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1L</span><span class='op'>]</span>,
   abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   detections <span class='op'>=</span> <span class='cn'>NULL</span>,
   ndetections <span class='op'>=</span> <span class='fl'>20</span>,
@@ -199,8 +199,8 @@ on compositional (relative) abundances? Passed onto
       <th>rank, ...</th>
       <td><p>additional arguments</p><ul>
 <li><p>If <code>!is.null(rank)</code> matching arguments are passed on to
-<code>agglomerateByRank</code>. See
-<code>?agglomerateByRank</code> for more details.</p></li>
+<code><a href='https://rdrr.io/pkg/mia/man/agglomerate-methods.html'>agglomerateByRank</a></code>. See
+<code><a href='https://rdrr.io/pkg/mia/man/agglomerate-methods.html'>?agglomerateByRank</a></code> for more details.</p></li>
 <li><p>additional arguments for plotting</p></li>
 </ul></td>
     </tr>
