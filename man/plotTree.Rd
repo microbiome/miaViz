@@ -59,7 +59,7 @@ plotColTree(object, ...)
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{...}{additional argument, currently not used.}
+\item{...}{additional arguments for plotting.}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
 the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
@@ -81,7 +81,7 @@ node labels will be plotted. (default: \code{show_highlights = FALSE})}
 If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
 \code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
 
-\item{add_legend}{logical scalar. Should legens be plotted?
+\item{add_legend}{logical scalar. Should legends be plotted?
 (default: \code{add_legend = TRUE})}
 
 \item{layout}{layout for the plotted tree. See

@@ -55,7 +55,7 @@ top_taxa <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
 
 Colour, size and shape of tree tips and nodes can be decorated based on data
 present in the `SE` object or by providing additional information via the 
-`other_fields` argument. Note that currently infromation for nodes have to be
+`other_fields` argument. Note that currently information for nodes have to be
 provided via the `other_fields` arguments.
 
 Data will be matched via the `node` or `label` argument depending on which was

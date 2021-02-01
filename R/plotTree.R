@@ -13,56 +13,72 @@
 #'   the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
 #'   has consequences on how data can be merged from \code{other_fields}. 
 #'   (default: \code{relabel_tree = FALSE})
+#'   
 #' @param show_label logical scalar or character vector. Should tip labels
 #'   be plotted or if a logical vector is provided, which labels should be 
 #'   shown? Only values corresponding to actual labels will be plotted. 
 #'   (default: \code{show_label = FALSE})
+#'   
 #' @param show_highlights logical scalar or character vector. Should highlights
 #'   around nodes and its decendents be plotted? If set \code{TRUE} this will be
 #'   limit do direct decendents of the rootnode. If a character vector is
 #'   provided, which nodes should be shown? Only values corresponding to actual
 #'   node labels will be plotted. (default: \code{show_highlights = FALSE})
+#'   
 #' @param colour_highlights Should the highlights be colour differently?
 #'   If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
 #'   \code{TRUE} as default. (default: \code{colour_highlights = FALSE})
-#' @param add_legend logical scalar. Should legens be plotted? 
+#'   
+#' @param add_legend logical scalar. Should legends be plotted? 
 #'   (default: \code{add_legend = TRUE})
+#'   
 #' @param layout layout for the plotted tree. See 
 #'   \code{\link[ggtree:ggtree]{ggtree}} for details.
+#'   
 #' @param edge_colour_by Specification of a column metadata field or a feature 
 #'   to colour tree edges by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
+#'   
 #' @param edge_size_by Specification of a column metadata field or a feature 
 #'   to size tree edges by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
+#'   
 #' @param tip_colour_by Specification of a column metadata field or a feature to
 #'   colour tree tips by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
+#'   
 #' @param tip_shape_by Specification of a column metadata field or a feature to
 #'   shape tree tips by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
+#'   
 #' @param tip_size_by Specification of a column metadata field or a feature to
 #'   size tree tips by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
+#'   
 #' @param node_colour_by Specification of a column metadata field or a feature to
 #'   colour tree nodes by. Must be a field from \code{other_fields}.
+#'   
 #' @param node_shape_by Specification of a column metadata field or a feature to
 #'   shape tree nodes by. Must be a field from \code{other_fields}.
+#'   
 #' @param node_size_by Specification of a column metadata field or a feature to
 #'   size tree nodes by. Must be a field from \code{other_fields}.
+#'   
 #' @param by_exprs_values A string or integer scalar specifying which assay to
 #'   obtain expression values from, for use in point aesthetics - see the 
 #'   \code{exprs_values} argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
+#'   
 #' @param other_fields a \code{data.frame} or coercible to one, with at least 
 #'   one type of id information. See details in
 #'   \code{\link[=treeData]{treeData}}.
-#' @param ... additional argument, currently not used.
+#'   
+#' @param ... additional arguments for plotting.
 #'
 #' @return a \code{\link{ggtree}} plot
 #' 
@@ -230,7 +246,8 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
                                          node_colour_by = node_colour_by,
                                          node_shape_by = node_shape_by,
                                          node_size_by = node_size_by,
-                                         by_exprs_values = by_exprs_values)
+                                         by_exprs_values = by_exprs_values,
+                                         type = "column")
         tree_data <- vis_out$df
         edge_colour_by <- vis_out$edge_colour_by
         edge_size_by <- vis_out$edge_size_by
@@ -305,7 +322,8 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                                          node_colour_by = node_colour_by,
                                          node_shape_by = node_shape_by,
                                          node_size_by = node_size_by,
-                                         by_exprs_values = by_exprs_values)
+                                         by_exprs_values = by_exprs_values,
+                                         type = "row")
         tree_data <- vis_out$df
         edge_colour_by <- vis_out$edge_colour_by
         edge_size_by <- vis_out$edge_size_by
@@ -564,8 +582,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                           colour_by = NULL,
                           shape_by = NULL,
                           size_by = NULL,
-                          tree_edge_alpha = 1,
-                          tree_edge_size = NULL,
+                          edge_alpha = 1,
+                          edge_size = NULL,
+                          edge_size_range = c(0.5,3),
                           point_alpha = 1,
                           point_size = 2){
     # assemble arg list
@@ -576,8 +595,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                  size = point_size)
     edge_out <- .get_edge_args(edge_colour_by,
                                edge_size_by,
-                               alpha = tree_edge_alpha,
-                               size = tree_edge_size)
+                               alpha = edge_alpha,
+                               size = edge_size)
     #
     if (!is.null(edge_colour_by) && anyNA(object$edge_colour_by)) {
         object <- groupOTU(object, split(object$node, object$edge_colour_by),
@@ -600,8 +619,13 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         do.call(geom_tree, edge_out$args) + 
         theme_tree()
     if (!is.null(edge_size_by)) {
-        plot_out <- plot_out + 
-            scale_size_identity(guide="legend", name = edge_size_by)
+        if(is.numeric(object$edge_size_by)){
+            SIZEFUN <- scale_size_continuous
+        } else {
+            SIZEFUN <- scale_size_discrete
+        }
+        plot_out <- .add_extra_guide_tree(plot_out, edge_size_by) +
+            SIZEFUN(range = edge_size_range)
     }
     # add tip and node points
     tip_point_FUN <- geom_tippoint
@@ -620,14 +644,16 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     if(!is.null(edge_colour_by)){
         plot_out <- .resolve_plot_colours(plot_out,
                                           object$edge_colour_by,
-                                          edge_colour_by)
+                                          edge_colour_by,
+                                          na.translate = FALSE)
     }
     # adjust point colours
     if(!is.null(colour_by)){
         plot_out <- .resolve_plot_colours(plot_out,
                                           object$colour_by,
                                           colour_by,
-                                          fill = point_out$fill)
+                                          fill = point_out$fill,
+                                          na.translate = FALSE)
     }
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
