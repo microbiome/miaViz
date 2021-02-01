@@ -625,8 +625,6 @@ setMethod("plotRowGraph",
 
 .theme_plotGraph <- function(plot){
     plot + 
-        theme_graph(base_family = ifelse(.Platform$OS.type != "windows",
-                                         "Arial Narrow",
-                                         ""),
+        theme_graph(base_family = "",
                     background = NA)
 }
