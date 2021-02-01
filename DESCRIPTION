@@ -31,7 +31,6 @@ Imports:
     tibble,
     tidytree,
     tidygraph,
-    viridis,
     rlang,
     purrr,
     tidyr,
