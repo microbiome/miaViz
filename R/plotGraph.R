@@ -354,9 +354,9 @@ setMethod("plotRowGraph",
             show_label <- TRUE
         } else {
             if(is.numeric(show_label)){
-                if(any(show_label != as.integer(show_label) ||
+                if(any(show_label != as.integer(show_label)) ||
                        min(show_label) < 1 ||
-                       max(show_label) > nrow(data))){
+                       max(show_label) > nrow(data)){
                     stop("If 'show_label' is numeric, values have to be whole ",
                          "numbers and must be between 1 and the number of nodes ",
                          "in the graph",
