@@ -1,7 +1,7 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 0.98.8
-Date: 2021-01-18
+Version: 0.98.9
+Date: 2021-02-01
 Authors@R: 
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -16,7 +16,7 @@ Depends:
     TreeSummarizedExperiment,
     mia (>= 0.98.29),
     ggplot2,
-    ggraph
+    ggraph (>= 2.0)
 Imports: 
     methods,
     S4Vectors,
