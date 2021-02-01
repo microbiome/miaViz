@@ -28,9 +28,14 @@
 #' @param add_legend logical scalar. Should legends be plotted? 
 #'   (default: \code{add_legend = TRUE})
 #'   
-#' @param layout layout for the plotted tree. See 
-#'   \code{\link[ggraph:ggraph]{ggtree}} for details. (default: 
+#' @param layout layout for the plotted graph. See 
+#'   \code{\link[ggraph:ggraph]{ggraph}} for details. (default: 
 #'   \code{layout = "kk"})
+#'   
+#' @param edge_type type of edge plotted on the graph. See 
+#'   \code{\link[ggraph:geom_edge_fan]{geom_edge_fan}} for details and other 
+#'   available geoms. (default: 
+#'   \code{edge_type = "fan"})
 #'   
 #' @param edge_colour_by Specification of a edge metadata field to use for 
 #'   setting colours of the edges.
@@ -146,7 +151,7 @@
 #'              name = "row_graph",
 #'              colour_by = "Phylum",
 #'              edge_colour_by = "weight",
-#'              edge_width_by = "weight", 
+#'              edge_width_by = "weight",
 #'              show_label = label_select)
 NULL
 
@@ -167,7 +172,7 @@ setGeneric("plotRowGraph", signature = c("x","y"),
             !is.numeric(show_label)) ||
             is.null(show_label)){
             stop("'show_label' must be either TRUE or FALSE or character ",
-                 "vector. Values should match the label of the tree.",
+                 "vector. Values should match the label of the graph.",
                  call. = FALSE)
         }
     }
@@ -176,6 +181,11 @@ setGeneric("plotRowGraph", signature = c("x","y"),
     }
 }
 
+.norm_layout_edge_type <- function(layout, edge_type){
+    edge_type <- match.arg(edge_type[1L], c("fan","link","arc","parallel"))
+    return(list(layout = layout,
+                edge_type = edge_type))
+}
 
 #' @rdname plotGraph
 #' @importFrom tidygraph as_tbl_graph
@@ -186,6 +196,7 @@ setMethod("plotColGraph",
              show_label = FALSE,
              add_legend = TRUE,
              layout = "kk",
+             edge_type = c("fan","link","arc","parallel"),
              edge_colour_by = NULL,
              edge_width_by = NULL,
              colour_by = NULL,
@@ -198,6 +209,7 @@ setMethod("plotColGraph",
                               show_label = show_label,
                               add_legend = add_legend,
                               layout = layout,
+                              edge_type = edge_type,
                               edge_colour_by = edge_colour_by,
                               edge_width_by = edge_width_by,
                               colour_by = colour_by,
@@ -215,7 +227,7 @@ setMethod("plotColGraph",
 #' @export
 setMethod("plotColGraph",
     signature = c(x = "SummarizedExperiment", y = "missing"),
-    function(x, y, name = "graph",...){
+    function(x, y, name = "graph", ...){
         graph <- metadata(x)[[name]]
         if(is.null(graph)){
             stop("No data found in metadata for key '",name,"'", call. = FALSE)
@@ -233,6 +245,7 @@ setMethod("plotRowGraph",
              show_label = FALSE,
              add_legend = TRUE,
              layout = "kk",
+             edge_type = c("fan","link","arc","parallel"),
              edge_colour_by = NULL,
              edge_width_by = NULL,
              colour_by = NULL,
@@ -245,6 +258,7 @@ setMethod("plotRowGraph",
                                show_label = show_label,
                                add_legend = add_legend,
                                layout = layout,
+                               edge_type = edge_type,
                                edge_colour_by = edge_colour_by,
                                edge_width_by = edge_width_by,
                                colour_by = colour_by,
@@ -275,6 +289,7 @@ setMethod("plotRowGraph",
                                    show_label = FALSE,
                                    add_legend = TRUE,
                                    layout = "kk",
+                                   edge_type = c("fan","link","arc","parallel"),
                                    edge_colour_by = NULL,
                                    edge_width_by = NULL,
                                    colour_by = NULL,
@@ -288,6 +303,9 @@ setMethod("plotRowGraph",
     # input check
     .check_graph_plot_switches(show_label = show_label,
                                add_legend = add_legend)
+    norm_out <- .norm_layout_edge_type(layout, edge_type)
+    layout <- norm_out$layout
+    edge_type <- norm_out$edge_type
     #
     graph_data <- .get_graph_data(x)
     label_out <- .add_graph_node_labels(graph_data, show_label)
@@ -311,6 +329,7 @@ setMethod("plotRowGraph",
     size_by <- vis_out$size_by
     .graph_plotter(graph_data,
                    layout = layout,
+                   edge_type = edge_type,
                    add_legend = add_legend,
                    show_label = show_label,
                    edge_colour_by = edge_colour_by,
@@ -531,6 +550,7 @@ setMethod("plotRowGraph",
 
 .graph_plotter <- function(object,
                            layout = "kk",
+                           edge_type = "fan",
                            algorithm = NULL,
                            add_legend = TRUE,
                            show_label = FALSE,
@@ -553,10 +573,9 @@ setMethod("plotRowGraph",
     edge_out <- .get_graph_edge_args(edge_colour_by,
                                      edge_width_by,
                                      alpha = edge_alpha,
-                                     size = edge_width)
-    if(show_label){
-        
-    }
+                                     size = edge_width,
+                                     edge_type)
+    edge_FUN <- match.fun(paste0("geom_edge_",edge_type))
     # beginn plotting
     if(!is.null(algorithm)){
         plot_out <- ggraph(object, layout = layout, algorithm = algorithm)
@@ -564,7 +583,7 @@ setMethod("plotRowGraph",
         plot_out <- ggraph(object, layout = layout)
     }
     plot_out <- plot_out +
-        do.call(geom_edge_link, edge_out$args) +
+        do.call(edge_FUN, edge_out$args) +
         do.call(geom_node_point, point_out$args)
     # add node labels
     plot_out <- .add_graph_labels(plot_out, show_label)

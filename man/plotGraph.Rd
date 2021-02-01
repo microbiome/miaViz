@@ -20,6 +20,7 @@ plotRowGraph(x, y, ...)
   show_label = FALSE,
   add_legend = TRUE,
   layout = "kk",
+  edge_type = c("fan", "link", "arc", "parallel"),
   edge_colour_by = NULL,
   edge_width_by = NULL,
   colour_by = NULL,
@@ -38,6 +39,7 @@ plotRowGraph(x, y, ...)
   show_label = FALSE,
   add_legend = TRUE,
   layout = "kk",
+  edge_type = c("fan", "link", "arc", "parallel"),
   edge_colour_by = NULL,
   edge_width_by = NULL,
   colour_by = NULL,
@@ -73,9 +75,13 @@ be plotted and if no labels are provided no labels will be shown. (default:
 \item{add_legend}{logical scalar. Should legends be plotted?
 (default: \code{add_legend = TRUE})}
 
-\item{layout}{layout for the plotted tree. See
-\code{\link[ggraph:ggraph]{ggtree}} for details. (default:
+\item{layout}{layout for the plotted graph. See
+\code{\link[ggraph:ggraph]{ggraph}} for details. (default:
 \code{layout = "kk"})}
+
+\item{edge_type}{type of edge plotted on the graph. See
+\code{\link[ggraph:geom_edge_fan]{geom_edge_fan}} for details. (default:
+\code{edge_type = "fan"})}
 
 \item{edge_colour_by}{Specification of a edge metadata field to use for
 setting colours of the edges.}
@@ -198,6 +204,6 @@ plotRowGraph(order,
              name = "row_graph",
              colour_by = "Phylum",
              edge_colour_by = "weight",
-             edge_width_by = "weight", 
+             edge_width_by = "weight",
              show_label = label_select)
 }

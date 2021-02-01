@@ -203,7 +203,7 @@
 }
 
 .get_graph_edge_args <- function(edge_colour_by, edge_width_by, alpha = 1,
-                                 size = NULL){
+                                 size = NULL, edge_type){
     edge_args <- .get_edge_args(edge_colour_by, edge_width_by, alpha, size)
     if (!is.null(edge_width_by)) {
         edge_args$args$mapping$edge_width <- sym("edge_width_by")
