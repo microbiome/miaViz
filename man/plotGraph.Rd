@@ -59,12 +59,18 @@ For the latter object a graph object must be stored in \code{metadata(x)$name}.}
 
 \item{...}{additional arguments for plotting.}
 
-\item{show_label}{logical scalar or character vector. Should tip labels
-be plotted or if a logical vector is provided, which labels should be
-shown? Only values corresponding to actual labels will be plotted.
-(default: \code{show_label = FALSE})}
+\item{show_label}{\code{logical} (scalar), \code{integer} or \code{character}
+vector. If a \code{logical} scalar is given, should tip labels be plotted
+or if a logical vector is provided, which labels should be shown? If an
+\code{integer} or \code{character} vector is provided, it will be converted
+to a logical vector. The \code{integer} values must be in the range of 1
+and number of nodes, whereas the values of a \code{character} vector must
+match values of a \code{label} or \code{name} column in the node data. In
+case of a \code{character} only values corresponding to actual labels will
+be plotted and if no labels are provided no labels will be shown. (default:
+\code{show_label = FALSE})}
 
-\item{add_legend}{logical scalar. Should legens be plotted?
+\item{add_legend}{logical scalar. Should legends be plotted?
 (default: \code{add_legend = TRUE})}
 
 \item{layout}{layout for the plotted tree. See
@@ -167,10 +173,31 @@ plotRowGraph(row_graph_order,
              edge_colour_by = "weight",
              edge_width_by = "weight")
 
-# plot the graph stored in the object
+# plot the graph stored in the object and include some labels
 plotRowGraph(order,
              name = "row_graph",
              colour_by = "Phylum",
              edge_colour_by = "weight",
-             edge_width_by = "weight")
+             edge_width_by = "weight", 
+             show_label = c("Sulfolobales","Spirochaetales",
+                            "Verrucomicrobiales"))
+                            
+# labls can also be included via selecting specific rownames of x/y
+plotRowGraph(order,
+             name = "row_graph",
+             colour_by = "Phylum",
+             edge_colour_by = "weight",
+             edge_width_by = "weight", 
+             show_label = c(1,10,50))
+             
+# labls can also be included via a logical vector, which has the same length
+# as nodes are present
+label_select <- rep(FALSE,nrow(order))
+label_select[c(1,10,50)] <-  TRUE
+plotRowGraph(order,
+             name = "row_graph",
+             colour_by = "Phylum",
+             edge_colour_by = "weight",
+             edge_width_by = "weight", 
+             show_label = label_select)
 }

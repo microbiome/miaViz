@@ -24,7 +24,7 @@ NULL
 #'
 #' @description
 #' These example data objects were prepared to serve as examples. See the 
-#' details for more infromation.
+#' details for more information.
 #' 
 #' @details
 #' For \code{*_graph} data:

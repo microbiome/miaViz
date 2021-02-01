@@ -29,7 +29,7 @@
 #'   If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
 #'   \code{TRUE} as default. (default: \code{colour_highlights = FALSE})
 #'   
-#' @param add_legend logical scalar. Should legens be plotted? 
+#' @param add_legend logical scalar. Should legends be plotted? 
 #'   (default: \code{add_legend = TRUE})
 #'   
 #' @param layout layout for the plotted tree. See 

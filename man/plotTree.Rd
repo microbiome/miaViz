@@ -81,7 +81,7 @@ node labels will be plotted. (default: \code{show_highlights = FALSE})}
 If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
 \code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
 
-\item{add_legend}{logical scalar. Should legens be plotted?
+\item{add_legend}{logical scalar. Should legends be plotted?
 (default: \code{add_legend = TRUE})}
 
 \item{layout}{layout for the plotted tree. See
