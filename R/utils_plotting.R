@@ -22,6 +22,7 @@
             VIRIDFUN <- scale_colour_viridis
             SCALEFUN <- scale_colour_manual
         }
+        option <- "D"
     } else if(type == "edges") {
         if (fill) {
             VIRIDFUN <- scale_edge_fill_viridis
@@ -31,11 +32,12 @@
             VIRIDFUN <- scale_edge_colour_viridis
             SCALEFUN <- scale_edge_colour_manual
         }
+        option <- "C"
     } else {
         stop("Unrecognized colour type")
     }
     if (is.numeric(colour_by)) {
-        plot_out <- plot_out + VIRIDFUN(name = colour_by_name)
+        plot_out <- plot_out + VIRIDFUN(name = colour_by_name, option = option)
     }
     else {
         nlevs_colour_by <- nlevels(as.factor(colour_by))
@@ -53,7 +55,8 @@
             else {
                 plot_out <- plot_out + VIRIDFUN(name = colour_by_name, 
                                                 discrete = TRUE,
-                                                na.translate = na.translate)
+                                                na.translate = na.translate,
+                                                option = option)
             }
         }
     }
@@ -208,6 +211,9 @@
     if (!is.null(edge_width_by)) {
         edge_args$args$mapping$edge_width <- sym("edge_width_by")
         edge_args$args$mapping$size <- NULL
+    } else {
+        edge_args$args$edge_width <- size
+        edge_args$args$size <- NULL
     }
     edge_args
 }

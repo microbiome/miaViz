@@ -80,7 +80,8 @@ be plotted and if no labels are provided no labels will be shown. (default:
 \code{layout = "kk"})}
 
 \item{edge_type}{type of edge plotted on the graph. See
-\code{\link[ggraph:geom_edge_fan]{geom_edge_fan}} for details. (default:
+\code{\link[ggraph:geom_edge_fan]{geom_edge_fan}} for details and other
+available geoms. (default:
 \code{edge_type = "fan"})}
 
 \item{edge_colour_by}{Specification of a edge metadata field to use for

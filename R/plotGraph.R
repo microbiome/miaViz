@@ -559,9 +559,9 @@ setMethod("plotRowGraph",
                            colour_by = NULL,
                            shape_by = NULL,
                            size_by = NULL,
-                           edge_alpha = 1,
-                           edge_width = NULL,
-                           edge_width_range = c(0.5,3),
+                           line_alpha = 1,
+                           line_width = NULL,
+                           line_width_range = c(0.5,3),
                            point_alpha = 1,
                            point_size = 2){
     # assemble arg list
@@ -572,8 +572,8 @@ setMethod("plotRowGraph",
                                  size = point_size)
     edge_out <- .get_graph_edge_args(edge_colour_by,
                                      edge_width_by,
-                                     alpha = edge_alpha,
-                                     size = edge_width,
+                                     alpha = line_alpha,
+                                     size = line_width,
                                      edge_type)
     edge_FUN <- match.fun(paste0("geom_edge_",edge_type))
     # beginn plotting
@@ -604,7 +604,7 @@ setMethod("plotRowGraph",
             SIZEFUN <- scale_edge_width_discrete
         }
         plot_out <- .add_extra_guide_graph(plot_out, edge_width_by) +
-            SIZEFUN(range = edge_width_range)
+            SIZEFUN(range = line_width_range)
     }
     # adjust point colours
     if(!is.null(colour_by)){
