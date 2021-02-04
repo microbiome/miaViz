@@ -582,9 +582,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                           colour_by = NULL,
                           shape_by = NULL,
                           size_by = NULL,
-                          edge_alpha = 1,
-                          edge_size = NULL,
-                          edge_size_range = c(0.5,3),
+                          line_alpha = 1,
+                          line_width = NULL,
+                          line_width_range = c(0.5,3),
                           point_alpha = 1,
                           point_size = 2){
     # assemble arg list
@@ -595,8 +595,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                  size = point_size)
     edge_out <- .get_edge_args(edge_colour_by,
                                edge_size_by,
-                               alpha = edge_alpha,
-                               size = edge_size)
+                               alpha = line_alpha,
+                               size = line_width)
     #
     if (!is.null(edge_colour_by) && anyNA(object$edge_colour_by)) {
         object <- groupOTU(object, split(object$node, object$edge_colour_by),
@@ -625,7 +625,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
             SIZEFUN <- scale_size_discrete
         }
         plot_out <- .add_extra_guide_tree(plot_out, edge_size_by) +
-            SIZEFUN(range = edge_size_range)
+            SIZEFUN(range = line_width_range)
     }
     # add tip and node points
     tip_point_FUN <- geom_tippoint
