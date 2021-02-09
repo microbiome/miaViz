@@ -33,6 +33,7 @@ plotPrevalentAbundance(x, ...)
   size_by = NULL,
   shape_by = NULL,
   label = NULL,
+  facet_by = FALSE,
   ...
 )
 
@@ -102,6 +103,10 @@ possible values. Only used with \code{layout = "point"}.}
 for selecting labels from the rownames of \code{x}. If \code{rank} is not
 \code{NULL} the rownames might change. (default: \code{label = NULL})}
 
+\item{facet_by}{Specification of a feature to create facets.
+Argument can only be used in function getPrevalentAbundance. Value of argument
+must be in taxonomicRanks of \code{x}.}
+
 \item{ndetections}{If \code{detections} is \code{NULL}, a number of breaks
 are calculated automatically. \code{as_relative} is then also regarded as
 \code{TRUE}.}
@@ -148,6 +153,12 @@ plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
 # information
 plotPrevalentAbundance(GlobalPatterns, rank = "Family",
                        colour_by = "Phylum") +
+    scale_x_log10()
+
+# When using function plotPrevalentAbundace, it is possible to create facets
+# with 'facet_by'.
+plotPrevalentAbundance(GlobalPatterns, rank = "Family",
+                       colour_by = "Phylum", facet_by = "Kingdom") +
     scale_x_log10()
 }
 \seealso{

@@ -38,6 +38,11 @@
 #'   \code{by} argument in 
 #'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
 #'   possible values. Only used with \code{layout = "point"}.
+#'   
+#' @param facet_by Specification of a feature to create facets.
+#' Argument can only be used in function getPrevalentAbundance. Value of argument
+#' must be in taxonomicRanks of \code{x}.
+#' 
 #' @param label a \code{logical}, \code{character} or \code{integer} vector
 #'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
 #'   \code{NULL} the rownames might change. (default: \code{label = NULL})
@@ -100,6 +105,12 @@
 #' # information
 #' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
 #'                        colour_by = "Phylum") +
+#'     scale_x_log10()
+#' 
+#' # When using function plotPrevalentAbundace, it is possible to create facets
+#' # with 'facet_by'.
+#' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
+#'                        colour_by = "Phylum", facet_by = "Kingdom") +
 #'     scale_x_log10()
 NULL
 
@@ -209,12 +220,19 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
              size_by = NULL,
              shape_by = NULL,
              label = NULL,
+             facet_by = FALSE,
              ...){
         # input check
         .check_abund_values(abund_values, x)
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
+        # Check facet_by. It is FALSE by default, but user can specify it, but 
+        # the value must be in taxonomyRanks.
+        if(!(facet_by == FALSE || facet_by %in% taxonomyRanks(x))){
+            stop("'facet_by' must be in taxonomyRanks.",  call. = FALSE)
+        }
+        
         x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, relabel = TRUE,
                                        ...)
         label <- .norm_label(label, x)
@@ -235,7 +253,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         xlab <- paste0(ifelse(as_relative, "Rel. ", ""),"Abundance")
         ylab <- paste0("Prevalence(", ifelse(is.null(rank), "Features", rank),
                        ") [%]")
-        .prevalence_plotter(plot_data, 
+        plot <- .prevalence_plotter(plot_data, 
                             layout = "point",
                             xlab = xlab,
                             ylab = ylab,
@@ -243,6 +261,23 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                             size_by = size_by,
                             shape_by = shape_by,
                             ...)
+        
+        
+        # If facet_by is not FALSE, user has specified it. Adds the facets to the plot.
+        if(facet_by != FALSE){
+            plot <- plot + 
+                # Changes the theme so the plot is easier to read. Adds e.g. outlines
+                theme_bw() +
+                theme(plot.background=element_blank(), 
+                      panel.grid.major=element_blank(),
+                      panel.grid.minor=element_blank(), 
+                      panel.background=element_blank(),
+                ) +
+                # Create facets
+                facet_wrap(~as.factor(rowData(x)[[facet_by]])) 
+        }
+        
+        return(plot)
     }
 )
 
