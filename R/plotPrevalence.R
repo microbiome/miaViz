@@ -245,11 +245,13 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                                                colour_by = colour_by,
                                                size_by = size_by,
                                                shape_by = shape_by,
-                                               label = label)
+                                               label = label,
+                                               facet_by = facet_by)
         plot_data <- vis_out$df
         colour_by <- vis_out$colour_by
         size_by <- vis_out$size_by
         shape_by <- vis_out$shape_by
+        facet_by <- vis_out$facet_by
         xlab <- paste0(ifelse(as_relative, "Rel. ", ""),"Abundance")
         ylab <- paste0("Prevalence(", ifelse(is.null(rank), "Features", rank),
                        ") [%]")
@@ -261,8 +263,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                             size_by = size_by,
                             shape_by = shape_by,
                             ...)
-        
-        
+
         # If facet_by is not NULL, user has specified it. Adds the facets to the plot.
         if(!is.null(facet_by)){
             plot <- plot + 
@@ -274,7 +275,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                       panel.background=element_blank(),
                 ) +
                 # Create facets
-                facet_wrap(~as.factor(rowData(x)[[facet_by]])) 
+                facet_wrap(~as.factor(rowData(x)[["Kingdom"]])) 
         }
         
         return(plot)
@@ -304,10 +305,12 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                                         colour_by = NULL,
                                         size_by = NULL,
                                         shape_by = NULL,
-                                        label = NULL){
+                                        label = NULL,
+                                        facet_by = NULL){
     variables <- c(colour_by = colour_by,
                    size_by = size_by,
-                   shape_by = shape_by)
+                   shape_by = shape_by,
+                   facet_by = facet_by)
     if(!is.null(variables)){
         for(i in seq_along(variables)){
             # get data
@@ -330,7 +333,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     return(list(df = plot_data,
                 colour_by = colour_by,
                 size_by = size_by,
-                shape_by = shape_by))
+                shape_by = shape_by,
+                facet_by = facet_by))
 }
 
 ################################################################################
