@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 0.98.12
+Version: 0.98.11
 Date: 2021-02-04
 Authors@R: 
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
