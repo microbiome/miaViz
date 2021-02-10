@@ -33,7 +33,7 @@ plotPrevalentAbundance(x, ...)
   size_by = NULL,
   shape_by = NULL,
   label = NULL,
-  facet_by = FALSE,
+  facet_by = NULL,
   ...
 )
 
@@ -103,9 +103,9 @@ possible values. Only used with \code{layout = "point"}.}
 for selecting labels from the rownames of \code{x}. If \code{rank} is not
 \code{NULL} the rownames might change. (default: \code{label = NULL})}
 
-\item{facet_by}{Specification of a feature to create facets.
-Argument can only be used in function getPrevalentAbundance. Value of argument
-must be in taxonomicRanks of \code{x}.}
+\item{facet_by}{Taxonomic rank to facet the plot by.
+Value must be of \code{taxonomyRanks(x)}
+Argument can only be used in function plotPrevalentAbundance.}
 
 \item{ndetections}{If \code{detections} is \code{NULL}, a number of breaks
 are calculated automatically. \code{as_relative} is then also regarded as

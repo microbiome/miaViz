@@ -39,9 +39,9 @@
 #'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
 #'   possible values. Only used with \code{layout = "point"}.
 #'   
-#' @param facet_by Specification of a feature to create facets.
-#' Argument can only be used in function getPrevalentAbundance. Value of argument
-#' must be in taxonomicRanks of \code{x}.
+#' @param facet_by Taxonomic rank to facet the plot by. 
+#' Value must be of \code{taxonomyRanks(x)}
+#' Argument can only be used in function plotPrevalentAbundance. 
 #' 
 #' @param label a \code{logical}, \code{character} or \code{integer} vector
 #'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
@@ -220,7 +220,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
              size_by = NULL,
              shape_by = NULL,
              label = NULL,
-             facet_by = FALSE,
+             facet_by = NULL,
              ...){
         # input check
         .check_abund_values(abund_values, x)
@@ -229,7 +229,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         }
         # Check facet_by. It is FALSE by default, but user can specify it, but 
         # the value must be in taxonomyRanks.
-        if(!(facet_by == FALSE || facet_by %in% taxonomyRanks(x))){
+        if(!(is.null(facet_by) || facet_by %in% taxonomyRanks(x))){
             stop("'facet_by' must be in taxonomyRanks.",  call. = FALSE)
         }
         
@@ -263,8 +263,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                             ...)
         
         
-        # If facet_by is not FALSE, user has specified it. Adds the facets to the plot.
-        if(facet_by != FALSE){
+        # If facet_by is not NULL, user has specified it. Adds the facets to the plot.
+        if(!is.null(facet_by)){
             plot <- plot + 
                 # Changes the theme so the plot is easier to read. Adds e.g. outlines
                 theme_bw() +
