@@ -267,15 +267,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         # If facet_by is not NULL, user has specified it. Adds the facets to the plot.
         if(!is.null(facet_by)){
             plot <- plot + 
-                # Changes the theme so the plot is easier to read. Adds e.g. outlines
-                theme_bw() +
-                theme(plot.background=element_blank(), 
-                      panel.grid.major=element_blank(),
-                      panel.grid.minor=element_blank(), 
-                      panel.background=element_blank(),
-                ) +
                 # Create facets
-                facet_wrap(~as.factor(rowData(x)[["Kingdom"]])) 
+                facet_wrap(vars(!!sym("facet_by")))
         }
         
         return(plot)
