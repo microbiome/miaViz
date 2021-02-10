@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.12</span>
       </span>
     </div>
 
@@ -91,7 +91,7 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>
 <span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>
-<span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQC.html">addPerFeatureQC</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html">addPerFeatureQC</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span>
 <span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">log_mean</span> <span class="op">&lt;-</span>
     <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span>
 <span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;-</span> 
@@ -108,6 +108,10 @@
             tip_size_by <span class="op">=</span> <span class="st">"detected"</span><span class="op">)</span>
 <span class="co">#&gt; Warning in .numeric_ij(ij = i, x = x, dim = "row"): For rows/cols with the same</span>
 <span class="co">#&gt; name, only one is output</span>
+<span class="co">#&gt; Warning in convertNode(tree = track, node = oldAlias): Multiple nodes are found</span>
+<span class="co">#&gt; to have the same label.</span>
+<span class="co">#&gt; Warning in convertNode(tree = value, node = nlk$nodeLab[iRep]): Multiple nodes</span>
+<span class="co">#&gt; are found to have the same label.</span>
 <span class="co">#&gt; Warning: `mutate_()` is deprecated as of dplyr 0.7.0.</span>
 <span class="co">#&gt; Please use `mutate()` instead.</span>
 <span class="co">#&gt; See vignette('programming') for more help</span>
@@ -125,7 +129,11 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
             tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,
             show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
 <span class="co">#&gt; Warning in .numeric_ij(ij = i, x = x, dim = "row"): For rows/cols with the same</span>
-<span class="co">#&gt; name, only one is output</span></code></pre></div>
+<span class="co">#&gt; name, only one is output</span>
+<span class="co">#&gt; Warning in convertNode(tree = track, node = oldAlias): Multiple nodes are found</span>
+<span class="co">#&gt; to have the same label.</span>
+<span class="co">#&gt; Warning in convertNode(tree = value, node = nlk$nodeLab[iRep]): Multiple nodes</span>
+<span class="co">#&gt; are found to have the same label.</span></code></pre></div>
 <div class="figure">
 <img src="miaViz_files/figure-html/plot2-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Tip labels of the tree are shown as well." width="3000"><p class="caption">
 Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Tip labels of the tree are shown as well.
@@ -142,7 +150,11 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
             show_label <span class="op">=</span> <span class="va">labels</span>,
             layout<span class="op">=</span><span class="st">"rectangular"</span><span class="op">)</span>
 <span class="co">#&gt; Warning in .numeric_ij(ij = i, x = x, dim = "row"): For rows/cols with the same</span>
-<span class="co">#&gt; name, only one is output</span></code></pre></div>
+<span class="co">#&gt; name, only one is output</span>
+<span class="co">#&gt; Warning in convertNode(tree = track, node = oldAlias): Multiple nodes are found</span>
+<span class="co">#&gt; to have the same label.</span>
+<span class="co">#&gt; Warning in convertNode(tree = value, node = nlk$nodeLab[iRep]): Multiple nodes</span>
+<span class="co">#&gt; are found to have the same label.</span></code></pre></div>
 <div class="figure">
 <img src="miaViz_files/figure-html/plot3-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown." width="3000"><p class="caption">
 Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown.
@@ -154,7 +166,11 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
             edge_colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,
             tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span>
 <span class="co">#&gt; Warning in .numeric_ij(ij = i, x = x, dim = "row"): For rows/cols with the same</span>
-<span class="co">#&gt; name, only one is output</span></code></pre></div>
+<span class="co">#&gt; name, only one is output</span>
+<span class="co">#&gt; Warning in convertNode(tree = track, node = oldAlias): Multiple nodes are found</span>
+<span class="co">#&gt; to have the same label.</span>
+<span class="co">#&gt; Warning in convertNode(tree = value, node = nlk$nodeLab[iRep]): Multiple nodes</span>
+<span class="co">#&gt; are found to have the same label.</span></code></pre></div>
 <div class="figure">
 <img src="miaViz_files/figure-html/plot4-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and edges labeled Kingdom (colour) and prevalence (size)" width="3000"><p class="caption">
 Tree plot using ggtree with tip labels decorated by mean abundance (colour) and edges labeled Kingdom (colour) and prevalence (size)

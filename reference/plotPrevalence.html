@@ -75,7 +75,7 @@ information." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.11</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.12</span>
       </span>
     </div>
 
@@ -145,6 +145,7 @@ information.</p>
   size_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   shape_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   label <span class='op'>=</span> <span class='cn'>NULL</span>,
+  facet_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   <span class='va'>...</span>
 <span class='op'>)</span>
 
@@ -238,6 +239,12 @@ for selecting labels from the rownames of <code>x</code>. If <code>rank</code> i
 <code>NULL</code> the rownames might change. (default: <code>label = NULL</code>)</p></td>
     </tr>
     <tr>
+      <th>facet_by</th>
+      <td><p>Taxonomic rank to facet the plot by.
+Value must be of <code><a href='https://rdrr.io/pkg/mia/man/taxonomy-methods.html'>taxonomyRanks(x)</a></code>
+Argument can only be used in function plotPrevalentAbundance.</p></td>
+    </tr>
+    <tr>
       <th>ndetections</th>
       <td><p>If <code>detections</code> is <code>NULL</code>, a number of breaks
 are calculated automatically. <code>as_relative</code> is then also regarded as
@@ -290,7 +297,13 @@ with subsetting via <code>getPrevalentTaxa</code> or
 <span class='fu'>plotPrevalentAbundance</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Family"</span>,
                        colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span> <span class='op'>+</span>
     <span class='fu'>scale_x_log10</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='img'><img src='plotPrevalence-5.png' alt='' width='3000' height='2100' /></div></pre>
+</div><div class='img'><img src='plotPrevalence-5.png' alt='' width='3000' height='2100' /></div><div class='input'>
+<span class='co'># When using function plotPrevalentAbundace, it is possible to create facets</span>
+<span class='co'># with 'facet_by'.</span>
+<span class='fu'>plotPrevalentAbundance</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Family"</span>,
+                       colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span>, facet_by <span class='op'>=</span> <span class='st'>"Kingdom"</span><span class='op'>)</span> <span class='op'>+</span>
+    <span class='fu'>scale_x_log10</span><span class='op'>(</span><span class='op'>)</span>
+</div><div class='img'><img src='plotPrevalence-6.png' alt='' width='3000' height='2100' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
