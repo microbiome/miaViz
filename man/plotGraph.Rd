@@ -68,9 +68,9 @@ or if a logical vector is provided, which labels should be shown? If an
 to a logical vector. The \code{integer} values must be in the range of 1
 and number of nodes, whereas the values of a \code{character} vector must
 match values of a \code{label} or \code{name} column in the node data. In
-case of a \code{character} only values corresponding to actual labels will
-be plotted and if no labels are provided no labels will be shown. (default:
-\code{show_label = FALSE})}
+case of a \code{character} vector only values corresponding to actual
+labels will be plotted and if no labels are provided no labels will be
+shown. (default: \code{show_label = FALSE})}
 
 \item{add_legend}{logical scalar. Should legends be plotted?
 (default: \code{add_legend = TRUE})}

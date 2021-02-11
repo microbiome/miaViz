@@ -7,7 +7,8 @@
 .resolve_plot_colours <- function(plot_out, colour_by, colour_by_name,
                                   fill = FALSE,
                                   type = c("normal","edges"),
-                                  na.translate = TRUE) 
+                                  na.translate = TRUE,
+                                  na.value = NA) 
 {
     if (is.null(colour_by)) {
         return(plot_out)
@@ -37,26 +38,30 @@
         stop("Unrecognized colour type")
     }
     if (is.numeric(colour_by)) {
-        plot_out <- plot_out + VIRIDFUN(name = colour_by_name, option = option)
+        plot_out <- plot_out + VIRIDFUN(name = colour_by_name, option = option,
+                                        na.value = na.value)
     }
     else {
         nlevs_colour_by <- nlevels(as.factor(colour_by))
         if (nlevs_colour_by <= 10) {
             plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau10medium"), 
                                             name = colour_by_name,
-                                            na.translate = na.translate)
+                                            na.translate = na.translate,
+                                            na.value = na.value)
         }
         else {
             if (nlevs_colour_by > 10 && nlevs_colour_by <= 20) {
                 plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau20"), 
                                                 name = colour_by_name,
-                                                na.translate = na.translate)
+                                                na.translate = na.translate,
+                                                na.value = na.value)
             }
             else {
                 plot_out <- plot_out + VIRIDFUN(name = colour_by_name, 
                                                 discrete = TRUE,
                                                 na.translate = na.translate,
-                                                option = option)
+                                                option = option,
+                                                na.value = na.value)
             }
         }
     }
@@ -216,29 +221,6 @@
         edge_args$args$size <- NULL
     }
     edge_args
-}
-
-.get_hightlight_args <- function(highlights, colour_highlights = FALSE,
-                                 extendto = 0.52){
-    aes_args <- list()
-    aes_args$subset <- paste0("node %in% c(",paste(highlights, collapse = ","),
-                              ")")
-    if (colour_highlights) {
-        aes_args$fill <- ~label
-    }
-    new_aes <- do.call(aes_, aes_args)
-    geom_args <- list(mapping = new_aes)
-    geom_args$extendto = extendto
-    if (!colour_highlights) {
-        geom_args$fill <- "grey70"
-    }
-    if (colour_highlights) {
-        geom_args$colour <- "grey40"
-    }
-    if (!colour_highlights) {
-        geom_args$colour <- "grey20"
-    }
-    return(list(args = geom_args))
 }
 
 #' @importFrom ggplot2 coord_flip element_blank element_text

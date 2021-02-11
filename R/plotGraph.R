@@ -21,9 +21,9 @@
 #'   to a logical vector. The \code{integer} values must be in the range of 1
 #'   and number of nodes, whereas the values of a \code{character} vector must
 #'   match values of a \code{label} or \code{name} column in the node data. In
-#'   case of a \code{character} only values corresponding to actual labels will
-#'   be plotted and if no labels are provided no labels will be shown. (default:
-#'   \code{show_label = FALSE})
+#'   case of a \code{character} vector only values corresponding to actual
+#'   labels will be plotted and if no labels are provided no labels will be
+#'   shown. (default: \code{show_label = FALSE})
 #' 
 #' @param add_legend logical scalar. Should legends be plotted? 
 #'   (default: \code{add_legend = TRUE})
@@ -65,6 +65,7 @@
 #'   
 #' @param other_fields Additional fields to include in the node information
 #'   without plotting them.
+#'   
 #' @param ... additional arguments for plotting.
 #' 
 #' @details:
@@ -171,8 +172,9 @@ setGeneric("plotRowGraph", signature = c("x","y"),
         if( (!is.logical(show_label) && !is.character(show_label) && 
             !is.numeric(show_label)) ||
             is.null(show_label)){
-            stop("'show_label' must be either TRUE or FALSE or character ",
-                 "vector. Values should match the label of the graph.",
+            stop("'show_label' must be either TRUE or FALSE or logical, ",
+                 "integer or character ",
+                 "vector. Character alues should match the label of the graph.",
                  call. = FALSE)
         }
     }
@@ -357,20 +359,24 @@ setMethod("plotRowGraph",
             activate("nodes") %>%
             mutate(label = .data$name)
     }
-    if(!("label" %in% .colnames_tbl_graph(graph_data, "nodes"))){
-        show_label <- FALSE
-    }
     
     if(!is.logical(show_label) || length(show_label) > 1L) {
         data <- graph_data %>% 
             activate("nodes") %>%
             as_tibble()
-         if(is.character(show_label) && 
+        if(is.character(show_label) && 
                   length(show_label) == nrow(data)) {
             graph_data <- graph_data %>% 
                 activate("nodes") %>%
                 mutate(label = show_label)
             show_label <- TRUE
+        } else if(!("label" %in% .colnames_tbl_graph(graph_data, "nodes"))){
+            warning("If 'show_label' is a character vector with length != ",
+                    "number of nodes in the graph or a logical/integer ",
+                    "vector, a 'name' or 'label' column must exist in the ",
+                    "graph data.",
+                    call. = FALSE)
+            show_label <- FALSE
         } else {
             if(is.numeric(show_label)){
                 if(any(show_label != as.integer(show_label)) ||
@@ -385,12 +391,6 @@ setMethod("plotRowGraph",
                 label[show_label] <- TRUE
                 show_label <- label
             } else if(is.character(show_label)) {
-                if(!("label" %in% .colnames_tbl_graph(graph_data, "nodes"))){
-                    stop("If 'show_label' is a character with length != ",
-                         "number of nodes in the graph, a 'name' or 'label' ",
-                         "column must exist.",
-                         call. = FALSE)
-                }
                 show_label <- data$label %in% show_label
             }
             if(is.logical(show_label) &&
@@ -544,10 +544,6 @@ setMethod("plotRowGraph",
                 size_by = size_by))
 }
 
-.merge_graph_vis_data <- function(graph_data, feature_info){
-    
-}
-
 .graph_plotter <- function(object,
                            layout = "kk",
                            edge_type = "fan",
@@ -563,7 +559,8 @@ setMethod("plotRowGraph",
                            line_width = NULL,
                            line_width_range = c(0.5,3),
                            point_alpha = 1,
-                           point_size = 2){
+                           point_size = 2,
+                           point_size_range = c(1,4)){
     # assemble arg list
     point_out <- .get_point_args(colour_by,
                                  shape_by,
@@ -605,6 +602,15 @@ setMethod("plotRowGraph",
         }
         plot_out <- .add_extra_guide_graph(plot_out, edge_width_by) +
             SIZEFUN(range = line_width_range)
+    }
+    if(!is.null(size_by)){
+        if(is.numeric(object %>% activate("nodes") %>% pull("size_by"))){
+            SIZEFUN <- scale_size_continuous
+        } else {
+            SIZEFUN <- scale_size_discrete
+        }
+        plot_out <- plot_out +
+            SIZEFUN(range = point_size_range)
     }
     # adjust point colours
     if(!is.null(colour_by)){

@@ -14,20 +14,16 @@
 #'   has consequences on how data can be merged from \code{other_fields}. 
 #'   (default: \code{relabel_tree = FALSE})
 #'   
-#' @param show_label logical scalar or character vector. Should tip labels
-#'   be plotted or if a logical vector is provided, which labels should be 
-#'   shown? Only values corresponding to actual labels will be plotted. 
-#'   (default: \code{show_label = FALSE})
-#'   
-#' @param show_highlights logical scalar or character vector. Should highlights
-#'   around nodes and its decendents be plotted? If set \code{TRUE} this will be
-#'   limit do direct decendents of the rootnode. If a character vector is
-#'   provided, which nodes should be shown? Only values corresponding to actual
-#'   node labels will be plotted. (default: \code{show_highlights = FALSE})
-#'   
-#' @param colour_highlights Should the highlights be colour differently?
-#'   If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
-#'   \code{TRUE} as default. (default: \code{colour_highlights = FALSE})
+#' @param show_label,show_highlights,show_highlight_label \code{logical}
+#'   (scalar), \code{integer} or \code{character} vector. If a \code{logical}
+#'   scalar is given, should tip labels be plotted or if a logical vector is
+#'   provided, which labels should be shown? If an \code{integer} or
+#'   \code{character} vector is provided, it will be converted to a logical
+#'   vector. The \code{integer} values must be in the range of 1 and number of
+#'   nodes, whereas the values of a \code{character} vector must match values of
+#'   the \code{label} column in the node data. In case of a \code{character}
+#'   vector only values corresponding to actual labels will be plotted and if no
+#'   labels are provided no labels will be shown. (default: \code{FALSE})
 #'   
 #' @param add_legend logical scalar. Should legends be plotted? 
 #'   (default: \code{add_legend = TRUE})
@@ -69,14 +65,17 @@
 #' @param node_size_by Specification of a column metadata field or a feature to
 #'   size tree nodes by. Must be a field from \code{other_fields}.
 #'   
+#' @param colour_highlights_by Should the highlights be colour differently?
+#'   If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
+#'   \code{TRUE} as default. (default: \code{colour_highlights = FALSE})
+#'   
 #' @param by_exprs_values A string or integer scalar specifying which assay to
 #'   obtain expression values from, for use in point aesthetics - see the 
 #'   \code{exprs_values} argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
 #'   
-#' @param other_fields a \code{data.frame} or coercible to one, with at least 
-#'   one type of id information. See details in
-#'   \code{\link[=treeData]{treeData}}.
+#' @param other_fields Additional fields to include in the node information
+#'   without plotting them.
 #'   
 #' @param ... additional arguments for plotting.
 #'
@@ -84,6 +83,10 @@
 #' 
 #' @seealso
 #' \code{\link[mia:splitByRanks]{splitByRanks}}
+#'
+#' @details 
+#' If \code{show_label} or \code{show_highlight_label} have the same length
+#' as the number of nodes, the vector will be used to relabel the nodes.
 #'
 #' @name plotTree
 #'
@@ -166,39 +169,6 @@ setGeneric("plotColTree", signature = c("object"),
            function(object, ...)
                standardGeneric("plotColTree"))
 
-.check_tree_plot_switches <- function(relabel_tree,
-                                      show_label, 
-                                      show_highlights,
-                                      colour_highlights,
-                                      add_legend){
-    if(!.is_a_bool(relabel_tree)){
-        stop("'relabel_tree' must be either TRUE or FALSE.", call. = FALSE)
-    }
-    if(!.is_a_bool(show_label)){
-        if( (!is.logical(show_label) && !is.character(show_label)) ||
-            is.null(show_label)){
-            stop("'show_label' must be either TRUE or FALSE or character ",
-                 "vector. Values should match the label of the tree.",
-                 call. = FALSE)
-        }
-    }
-    if(!.is_a_bool(show_highlights)){
-        if( (!is.logical(show_highlights) && !is.character(show_highlights)) ||
-            is.null(show_highlights)){
-            stop("'show_highlights' must be either TRUE or FALSE or character ",
-                 "vector. Values should match the label of the tree.",
-                 call. = FALSE)
-        }
-    }
-    if(!.is_a_bool(colour_highlights)){
-        stop("'colour_highlights' must be either TRUE or FALSE.",
-             call. = FALSE)
-    }
-    if(!.is_a_bool(add_legend)){
-        stop("'add_legend' must be either TRUE or FALSE.", call. = FALSE)
-    }
-}
-
 #' @rdname plotTree
 #' @export
 setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
@@ -206,7 +176,8 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
              relabel_tree = FALSE,
              show_label = FALSE,
              show_highlights = FALSE,
-             colour_highlights = FALSE,
+             show_highlight_label = FALSE,
+             order_tree = FALSE,
              add_legend = TRUE,
              layout = "circular",
              edge_colour_by = NULL,
@@ -217,62 +188,31 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
              node_colour_by = NULL,
              node_shape_by = NULL,
              node_size_by = NULL,
+             colour_highlights_by = NULL,
              by_exprs_values = "counts",
              other_fields = list(),
              ...){
-        # input check
-        if(is.null(colTree(object))){
-          stop("colTree(object) is empty.", call. = FALSE)
-        }
-        .check_tree_plot_switches(relabel_tree = relabel_tree,
-                                  show_label = show_label,
-                                  show_highlights = show_highlights,
-                                  colour_highlights = colour_highlights,
-                                  add_legend = add_legend)
-        #
-        tree_out <- .get_trimed_object_and_tree(object, type = "column",
-                                                relabel = relabel_tree)
-        object <- tree_out$object
-        tree <- tree_out$tree
-        tree_data <- .get_tree_data(combineTreeData(tree, other_fields))
-        #
-        vis_out <- .incorporate_tree_vis(tree_data,
-                                         se = object,
-                                         edge_colour_by = edge_colour_by,
-                                         edge_size_by = edge_size_by,
-                                         tip_colour_by = tip_colour_by,
-                                         tip_shape_by = tip_shape_by,
-                                         tip_size_by = tip_size_by,
-                                         node_colour_by = node_colour_by,
-                                         node_shape_by = node_shape_by,
-                                         node_size_by = node_size_by,
-                                         by_exprs_values = by_exprs_values,
-                                         type = "column")
-        tree_data <- vis_out$df
-        edge_colour_by <- vis_out$edge_colour_by
-        edge_size_by <- vis_out$edge_size_by
-        colour_by <- vis_out$colour_by
-        shape_by <- vis_out$shape_by
-        size_by <- vis_out$size_by
-        show_tips <- any(!vapply(c(tip_colour_by, tip_shape_by, tip_size_by),
-                                 is.null, logical(1)))
-        show_nodes <- any(!vapply(c(node_colour_by, node_shape_by, node_size_by),
-                                  is.null, logical(1)))
-        #
-        .tree_plotter(tree_data,
-                      layout = layout,
-                      add_legend = add_legend,
-                      show_label = show_label,
-                      show_highlights = show_highlights,
-                      colour_highlights = colour_highlights,
-                      show_tips = show_tips,
-                      show_nodes = show_nodes,
-                      edge_colour_by = edge_colour_by,
-                      edge_size_by = edge_size_by,
-                      colour_by = colour_by,
-                      shape_by = shape_by,
-                      size_by = size_by,
-                      ...)
+        .plot_row_column_tree(object,
+                              relabel_tree = relabel_tree,
+                              show_label = show_label,
+                              show_highlights = show_highlights,
+                              show_highlight_label = show_highlight_label,
+                              order_tree = order_tree,
+                              add_legend = add_legend,
+                              layout = layout,
+                              edge_colour_by = edge_colour_by,
+                              edge_size_by = edge_size_by,
+                              tip_colour_by = tip_colour_by,
+                              tip_shape_by = tip_shape_by,
+                              tip_size_by = tip_size_by,
+                              node_colour_by = node_colour_by,
+                              node_shape_by = node_shape_by,
+                              node_size_by = node_size_by,
+                              colour_highlights_by = colour_highlights_by,
+                              by_exprs_values = by_exprs_values,
+                              other_fields = other_fields,
+                              type = "column",
+                              ...)
     }
 )
 #' @rdname plotTree
@@ -282,7 +222,8 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
              relabel_tree = FALSE,
              show_label = FALSE,
              show_highlights = FALSE,
-             colour_highlights = FALSE,
+             show_highlight_label = FALSE,
+             order_tree = FALSE,
              add_legend = TRUE,
              layout = "circular",
              edge_colour_by = NULL,
@@ -293,69 +234,183 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
              node_colour_by = NULL,
              node_shape_by = NULL,
              node_size_by = NULL,
+             colour_highlights_by = NULL,
              by_exprs_values = "counts",
              other_fields = list(),
              ...){
-        # input check
-        if(is.null(rowTree(object))){
-          stop("rowTree(object) is empty.", call. = FALSE)
-        }
-        .check_tree_plot_switches(relabel_tree = relabel_tree,
-                                  show_label = show_label,
-                                  show_highlights = show_highlights,
-                                  colour_highlights = colour_highlights,
-                                  add_legend = add_legend)
-        #
-        tree_out <- .get_trimed_object_and_tree(object, type = "row",
-                                                relabel = relabel_tree)
-        object <- tree_out$object
-        tree <- tree_out$tree
-        tree_data <- .get_tree_data(combineTreeData(tree, other_fields))
-        #
-        vis_out <- .incorporate_tree_vis(tree_data,
-                                         se = object,
-                                         edge_colour_by = edge_colour_by,
-                                         edge_size_by = edge_size_by,
-                                         tip_colour_by = tip_colour_by,
-                                         tip_shape_by = tip_shape_by,
-                                         tip_size_by = tip_size_by,
-                                         node_colour_by = node_colour_by,
-                                         node_shape_by = node_shape_by,
-                                         node_size_by = node_size_by,
-                                         by_exprs_values = by_exprs_values,
-                                         type = "row")
-        tree_data <- vis_out$df
-        edge_colour_by <- vis_out$edge_colour_by
-        edge_size_by <- vis_out$edge_size_by
-        colour_by <- vis_out$colour_by
-        shape_by <- vis_out$shape_by
-        size_by <- vis_out$size_by
-        show_tips <- any(!vapply(c(tip_colour_by, tip_shape_by, tip_size_by),
-                                 is.null, logical(1)))
-        show_nodes <- any(!vapply(c(node_colour_by, node_shape_by, node_size_by),
-                                  is.null, logical(1)))
-        #
-        .tree_plotter(tree_data,
-                      layout = layout,
-                      add_legend = add_legend,
-                      show_label = show_label,
-                      show_highlights = show_highlights,
-                      colour_highlights = colour_highlights,
-                      show_tips = show_tips,
-                      show_nodes = show_nodes,
-                      edge_colour_by = edge_colour_by,
-                      edge_size_by = edge_size_by,
-                      colour_by = colour_by,
-                      shape_by = shape_by,
-                      size_by = size_by,
-                      ...)
+        .plot_row_column_tree(object,
+                              relabel_tree = relabel_tree,
+                              show_label = show_label,
+                              show_highlights = show_highlights,
+                              show_highlight_label = show_highlight_label,
+                              order_tree = order_tree,
+                              add_legend = add_legend,
+                              layout = layout,
+                              edge_colour_by = edge_colour_by,
+                              edge_size_by = edge_size_by,
+                              tip_colour_by = tip_colour_by,
+                              tip_shape_by = tip_shape_by,
+                              tip_size_by = tip_size_by,
+                              node_colour_by = node_colour_by,
+                              node_shape_by = node_shape_by,
+                              node_size_by = node_size_by,
+                              colour_highlights_by = colour_highlights_by,
+                              by_exprs_values = by_exprs_values,
+                              other_fields = other_fields,
+                              type = "row",
+                              ...)
     }
 )
+
+.check_tree_plot_switches <- function(relabel_tree,
+                                      order_tree,
+                                      show_label, 
+                                      show_highlights,
+                                      show_highlight_label,
+                                      add_legend){
+    if(!.is_a_bool(relabel_tree)){
+        stop("'relabel_tree' must be either TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(order_tree)){
+        stop("'order_tree' must be either TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(show_label)){
+        if( (!is.logical(show_label) && !is.character(show_label) &&
+             !is.numeric(show_label)) ||
+            is.null(show_label)){
+            stop("'show_label' must be either TRUE or FALSE or logical, ",
+                 "integer or character ",
+                 "vector. Character alues should match the label of the tree.",
+                 call. = FALSE)
+        }
+    }
+    if(!.is_a_bool(show_highlights)){
+        if( (!is.logical(show_highlights) && !is.character(show_highlights) &&
+             !is.numeric(show_highlights)) ||
+            is.null(show_highlights)){
+            stop("'show_label' must be either TRUE or FALSE or logical, ",
+                 "integer or character ",
+                 "vector. Character alues should match the label of the tree.",
+                 call. = FALSE)
+        }
+    }
+    if(!.is_a_bool(show_highlight_label)){
+        if( (!is.logical(show_highlight_label) && !is.character(show_highlight_label) &&
+             !is.numeric(show_highlight_label)) ||
+            is.null(show_highlight_label)){
+            stop("'show_highlight_label' must be either TRUE or FALSE or logical, ",
+                 "integer or character ",
+                 "vector. Character alues should match the label of the tree.",
+                 call. = FALSE)
+        }
+    }
+    if(!.is_a_bool(add_legend)){
+        stop("'add_legend' must be either TRUE or FALSE.", call. = FALSE)
+    }
+}
+
+.plot_row_column_tree <- function(object,
+                                  relabel_tree = FALSE,
+                                  show_label = FALSE,
+                                  show_highlights = FALSE,
+                                  show_highlight_label = FALSE,
+                                  order_tree = FALSE,
+                                  add_legend = TRUE,
+                                  layout = "circular",
+                                  edge_colour_by = NULL,
+                                  edge_size_by = NULL,
+                                  tip_colour_by = NULL,
+                                  tip_shape_by = NULL,
+                                  tip_size_by = NULL,
+                                  node_colour_by = NULL,
+                                  node_shape_by = NULL,
+                                  node_size_by = NULL,
+                                  colour_highlights_by = NULL,
+                                  by_exprs_values = "counts",
+                                  other_fields = list(),
+                                  type = c("row","column"),
+                                  ...){
+    type <- match.arg(type)
+    # input check
+    FUN <- switch(type,
+                  row = "rowTree",
+                  column = "colTree")
+    if(is.null(do.call(FUN,list(object)))){
+        stop(FUN,"(object) is empty.", call. = FALSE)
+    }
+    .check_tree_plot_switches(relabel_tree = relabel_tree,
+                              order_tree = order_tree,
+                              show_label = show_label,
+                              show_highlights = show_highlights,
+                              show_highlight_label = show_highlight_label,
+                              add_legend = add_legend)
+    #
+    tree_out <- .get_trimed_object_and_tree(object,
+                                            type = type,
+                                            relabel = relabel_tree,
+                                            order = order_tree)
+    object <- tree_out$object
+    tree <- tree_out$tree
+    tree_data <- .get_tree_data(tree)
+    label_out <- .add_tree_node_labels(tree_data, show_label)
+    tree_data <- label_out$df
+    show_label <- label_out$show_label
+    label_out <- .add_tree_highlights(tree_data, show_highlights)
+    tree_data <- label_out$df
+    show_highlights <- label_out$show_highlights
+    label_out <- .add_tree_highlight_labels(tree_data, show_highlight_label)
+    tree_data <- label_out$df
+    show_highlight_label <- label_out$show_highlight_label
+    #
+    vis_out <- .incorporate_tree_vis(tree_data,
+                                     se = object,
+                                     edge_colour_by = edge_colour_by,
+                                     edge_size_by = edge_size_by,
+                                     tip_colour_by = tip_colour_by,
+                                     tip_shape_by = tip_shape_by,
+                                     tip_size_by = tip_size_by,
+                                     node_colour_by = node_colour_by,
+                                     node_shape_by = node_shape_by,
+                                     node_size_by = node_size_by,
+                                     colour_highlights_by = colour_highlights_by,
+                                     by_exprs_values = by_exprs_values,
+                                     other_fields = other_fields,
+                                     type = type)
+    tree_data <- vis_out$df
+    edge_colour_by <- vis_out$edge_colour_by
+    edge_size_by <- vis_out$edge_size_by
+    colour_by <- vis_out$colour_by
+    shape_by <- vis_out$shape_by
+    size_by <- vis_out$size_by
+    colour_highlights_by <- vis_out$colour_highlights_by
+    show_tips <- any(!vapply(c(tip_colour_by, tip_shape_by, tip_size_by),
+                             is.null, logical(1)))
+    show_nodes <- any(!vapply(c(node_colour_by, node_shape_by, node_size_by),
+                              is.null, logical(1)))
+    #
+    .tree_plotter(tree_data,
+                  layout = layout,
+                  add_legend = add_legend,
+                  show_label = show_label,
+                  show_highlights = show_highlights,
+                  show_highlight_label = show_highlight_label,
+                  show_tips = show_tips,
+                  show_nodes = show_nodes,
+                  edge_colour_by = edge_colour_by,
+                  edge_size_by = edge_size_by,
+                  colour_by = colour_by,
+                  shape_by = shape_by,
+                  size_by = size_by,
+                  colour_highlights_by = colour_highlights_by,
+                  ...)
+}
+
 
 #' @importFrom ape keep.tip as.phylo
 #' @importFrom tidytree as_tibble 
 .get_trimed_object_and_tree <- function(object, type = c("row","columns"),
-                                        relabel = FALSE){
+                                        relabel = FALSE,
+                                        order = FALSE){
     type <- match.arg(type)
     tree_FUN <- switch(type, row = rowTree, column = colTree, stop("."))
     links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
@@ -401,9 +456,192 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     list(object = object, tree = tree)
 }
 
+################################################################################
+## TODO refactor the next three functions into one
+
+#' @importFrom tidygraph activate
+#' @importFrom dplyr mutate
+.add_tree_node_labels <- function(tree_data, show_label){
+    if("label" %in% colnames(tree_data)){
+        tree_data <- tree_data %>%
+            mutate(node_label = .data$label)
+    }
+    
+    if(!is.logical(show_label) || length(show_label) > 1L) {
+        if(is.character(show_label) && 
+           length(show_label) == nrow(tree_data)) {
+            tree_data <- tree_data %>% 
+                mutate(node_label = show_label)
+            show_label <- TRUE
+        } else if(!("node_label" %in% colnames(tree_data))){
+            warning("If 'show_label' is a character with length != ",
+                    "number of nodes in the graph or a logical/integer ",
+                    "vector, a 'label' ",
+                    "column must exist in the tree data.",
+                    call. = FALSE)
+            show_label <- FALSE
+        } else {
+            if(is.numeric(show_label)){
+                if(any(show_label != as.integer(show_label)) ||
+                   min(show_label) < 1 ||
+                   max(show_label) > nrow(tree_data)){
+                    stop("If 'show_label' is numeric, values have to be whole ",
+                         "numbers and must be between 1 and the number of nodes ",
+                         "in the graph",
+                         call. = FALSE)
+                }
+                label <- rep(FALSE, nrow(tree_data))
+                label[tree_data$node %in% show_label] <- TRUE
+                show_label <- label
+            } else if(is.character(show_label)) {
+                show_label <- tree_data$node_label %in% show_label
+            }
+            if(is.logical(show_label) &&
+               length(show_label) != nrow(tree_data)){
+                stop("If 'show_label' is logical, it must have the length as ",
+                     "nodes are in the graph.",
+                     call. = FALSE)
+            }
+            tree_data <- tree_data %>% 
+                mutate(node_label = ifelse(show_label, node_label, NA_character_))
+            show_label <- TRUE
+        }
+        if(all(is.na(tree_data %>% pull("node_label")))){
+            show_label <- FALSE
+            warning("No labels to plot.", call. = FALSE)
+        }
+    } else if(is.logical(show_label) && length(show_label) == 1L &&
+              !show_label) {
+        tree_data <- tree_data %>% 
+            mutate(node_label = FALSE)
+    }
+    return(list(df = tree_data,
+                show_label = show_label))
+}
+
+#' @importFrom tidygraph activate
+#' @importFrom dplyr mutate
+.add_tree_highlights <- function(tree_data, show_highlights){
+    tree_data$highlight <- FALSE
+    
+    if(!is.logical(show_highlights) || length(show_highlights) > 1L) {
+        if(is.numeric(show_highlights)){
+            if(any(show_highlights != as.integer(show_highlights)) ||
+               min(show_highlights) < 1 ||
+               max(show_highlights) > nrow(tree_data)){
+                stop("If 'show_highlights' is numeric, values have to be whole ",
+                     "numbers and must be between 1 and the number of nodes ",
+                     "in the graph",
+                     call. = FALSE)
+            }
+            label <- rep(FALSE, nrow(tree_data))
+            label[tree_data$node %in% show_highlights] <- TRUE
+            show_highlights <- label
+        } else if(is.character(show_highlights)) {
+            show_highlights <- tree_data$label %in% show_highlights
+        }
+        if(is.logical(show_highlights) &&
+           length(show_highlights) != nrow(tree_data)){
+            stop("If 'show_highlights' is logical, it must have the length as ",
+                 "nodes are in the graph.",
+                 call. = FALSE)
+        }
+        tree_data <- tree_data %>% 
+            mutate(highlight = show_highlights)
+        show_highlights <- TRUE
+        if(!any(tree_data %>% pull("highlight"))){
+            show_highlights <- FALSE
+            warning("No highlights to plot.", call. = FALSE)
+        }
+    } else if(is.logical(show_highlights) && length(show_highlights) == 1L &&
+              show_highlights){
+        tree_data$highlight <- TRUE
+    }
+    return(list(df = tree_data,
+                show_highlights = show_highlights))
+}
+
+#' @importFrom tidygraph activate
+#' @importFrom dplyr mutate
+.add_tree_highlight_labels <- function(tree_data, show_highlight_label){
+    if(!any(tree_data$highlight)){
+        show_highlight_label <- FALSE
+        return(list(df = tree_data,
+                    show_highlight_label = show_highlight_label))
+    }
+    
+    if("label" %in% colnames(tree_data)){
+        tree_data <- tree_data %>%
+            mutate(highlight_label = .data$label)
+    }
+    if(!is.logical(show_highlight_label) || 
+       length(show_highlight_label) > 1L) {
+        if(is.character(show_highlight_label) && 
+           length(show_highlight_label) == nrow(tree_data)) {
+            tree_data <- tree_data %>% 
+                mutate(highlight_label = show_highlight_label)
+            show_highlight_label <- TRUE
+        } else if(!("highlight_label" %in% colnames(tree_data))){
+            warning("If 'show_highlight_label' is a character with length != ",
+                    "number of nodes in the graph or a logical/integer ",
+                    "vector, a 'label' column must exist in the tree data.",
+                    call. = FALSE)
+            show_highlight_label <- FALSE
+        } else {
+            if(is.numeric(show_highlight_label)){
+                if(any(show_highlight_label != as.integer(show_highlight_label)) ||
+                   min(show_highlight_label) < 1 ||
+                   max(show_highlight_label) > nrow(tree_data)){
+                    stop("If 'show_highlight_label' is numeric, values have ",
+                         "to be whole numbers and must be between 1 and the ",
+                         "number of nodes in the graph",
+                         call. = FALSE)
+                }
+                label <- rep(FALSE, nrow(tree_data))
+                label[tree_data$node %in% show_highlight_label] <- TRUE
+                show_highlight_label <- label
+            } else if(is.character(show_highlight_label)) {
+                show_highlight_label <- 
+                    tree_data$highlight_label %in% show_highlight_label
+            }
+            if(is.logical(show_highlight_label) &&
+               length(show_highlight_label) != nrow(tree_data)){
+                stop("If 'show_highlight_label' is logical, it must have the ",
+                     "length as nodes are in the graph.",
+                     call. = FALSE)
+            }
+            tree_data <- tree_data %>% 
+                mutate(highlight_label = ifelse(show_highlight_label &
+                                                    tree_data$highlight,
+                                                highlight_label,
+                                                NA_character_))
+            show_highlight_label <- TRUE
+        }
+        if(!any(tree_data %>% pull("highlight")) ||
+           all(is.na(tree_data %>% pull("highlight_label")))){
+            show_highlight_label <- FALSE
+            warning("No highlights to label.", call. = FALSE)
+        }
+    } else if(is.logical(show_highlight_label) &&
+              length(show_highlight_label) == 1L &&
+              !show_highlight_label){
+        tree_data <- tree_data %>%
+            mutate(highlight_label = NA_character_)
+    }
+    return(list(df = tree_data,
+                show_highlight_label = show_highlight_label))
+}
+
+## TODO END
+################################################################################
+
 #' @importFrom tibble tibble
-.get_feature_info <- function(by, se, FUN, exprs_values){
-    feature_info <- FUN(se, by = by, exprs_values = exprs_values)
+.get_feature_info <- function(by, se, FUN, exprs_values, var_name){
+    feature_info <- try(FUN(se, by = by, exprs_values = exprs_values),
+                        silent = TRUE)
+    if(is(feature_info,"try-error")){
+        stop(feature_info, "for '",var_name,"'", call. = FALSE)
+    }
     feature_info <- tibble(!!sym(feature_info$name) := feature_info$value)
     feature_info
 }
@@ -437,9 +675,14 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                   node_colour_by,
                                   node_shape_by,
                                   node_size_by,
+                                  colour_highlights_by,
                                   by_exprs_values = "counts",
+                                  other_fields = other_fields,
                                   type = c("row","column")){
-    
+    type <- match.arg(type)
+    type_FUN <- switch(type,
+                       row = scater::retrieveFeatureInfo,
+                       column = scater::retrieveCellInfo)
     variables <- c(edge_colour_by = edge_colour_by,
                    edge_size_by = edge_size_by,
                    tip_colour_by = tip_colour_by,
@@ -447,12 +690,14 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                    tip_size_by = tip_size_by,
                    node_colour_by = node_colour_by,
                    node_shape_by = node_shape_by,
-                   node_size_by = node_size_by)
+                   node_size_by = node_size_by,
+                   colour_highlights_by = colour_highlights_by)
     edge_colour_by <- NULL
     edge_size_by <- NULL
     colour_by <- NULL
     shape_by <- NULL
     size_by <- NULL
+    colour_highlights_by <- NULL
     if(!is.null(variables)){
         # remove any variables values, which are already available and
         # rename columns by their usage
@@ -475,18 +720,17 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
             }
         }
         if(length(variables) > 0L){
-            type <- match.arg(type)
-            type_FUN <- switch(type,
-                               row = scater::retrieveFeatureInfo,
-                               column = scater::retrieveCellInfo)
             feature_info <- vector(mode = "list", length = length(variables))
             for(i in seq_along(variables)){
                 # get data
+                var_name <- names(variables)[i]
                 feature_info[[i]] <-
                     .get_feature_info(variables[i], se = se,
-                                      FUN = type_FUN, exprs_values = by_exprs_values)
+                                      FUN = type_FUN,
+                                      exprs_values = by_exprs_values,
+                                      var_name = var_name)
                 # mirror back variable name, if a partial match was used
-                var_name <- gsub("tip_|node_","",names(variables)[i])
+                var_name <- gsub("tip_|node_","",var_name)
                 assign(var_name, 
                        .get_new_var_name_value(get(var_name),
                                                colnames(feature_info[[i]])))
@@ -501,12 +745,22 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         }
         tree_data <- .merge_tip_node_tree_data(tree_data)
     }
+    if(length(other_fields) != 0L){
+        for (o in other_fields) {
+            other <- type_FUN(se, o, exprs_values = by_exprs_values)
+            other <- other %>%
+                mutate(label = rownames(se)) %>%
+                relocate("label")
+            tree_data <- .merge_tree_vis_data(tree_data, other)
+        }
+    }
     return(list(df = tree_data,
                 edge_colour_by = edge_colour_by,
                 edge_size_by = edge_size_by,
                 colour_by = colour_by,
                 shape_by = shape_by,
-                size_by = size_by))
+                size_by = size_by,
+                colour_highlights_by = colour_highlights_by))
 }
 
 .merge_tip_node_tree_data <- function(tree_data){
@@ -548,7 +802,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         size_by <- tree_data$node_size_by
     }
     #
-    tree_data <- tree_data[,cn[!grepl("tip_|node_",cn)]]
+    tree_data <- tree_data[,cn[!grepl("tip_|node_",cn) | cn == "node_label"]]
     tree_data$colour_by <- colour_by
     tree_data$shape_by <- shape_by
     tree_data$size_by <- size_by
@@ -560,9 +814,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     if(anyDuplicated(tree_data$label) || anyDuplicated(feature_info$label)){
         stop(".")
     }
-    tree_data <- tree_data %>%
+    tree_data %>%
         left_join(feature_info, by = "label")
-    tree_data
 }
 
 #' @importFrom tidytree as.treedata
@@ -574,7 +827,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                           add_legend = TRUE,
                           show_label = FALSE,
                           show_highlights = FALSE,
-                          colour_highlights = FALSE,
+                          show_highlight_label = FALSE,
                           show_tips = FALSE,
                           show_nodes = FALSE,
                           edge_colour_by = NULL,
@@ -582,22 +835,16 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                           colour_by = NULL,
                           shape_by = NULL,
                           size_by = NULL,
+                          colour_highlights_by = NULL,
                           line_alpha = 1,
                           line_width = NULL,
                           line_width_range = c(0.5,3),
                           point_alpha = 1,
-                          point_size = 2){
-    # assemble arg list
-    point_out <- .get_point_args(colour_by,
-                                 shape_by,
-                                 size_by,
-                                 alpha = point_alpha,
-                                 size = point_size)
-    edge_out <- .get_edge_args(edge_colour_by,
-                               edge_size_by,
-                               alpha = line_alpha,
-                               size = line_width)
-    #
+                          point_size = 2,
+                          point_size_range = c(1,4),
+                          label_font_size = 3,
+                          highlight_font_size = 3){
+    # cleanup
     if (!is.null(edge_colour_by) && anyNA(object$edge_colour_by)) {
         object <- groupOTU(object, split(object$node, object$edge_colour_by),
                            group_name = "group")
@@ -612,49 +859,33 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     # start plotting
     plot_out <- ggtree(tidytree::as.treedata(object), layout = layout)
     # add highlights
-    plot_out <- .add_tree_highlights(plot_out, show_highlights,
-                                     colour_highlights)
+    plot_out <- 
+        .plot_tree_plot_highlights(plot_out, 
+                                  show_highlights,
+                                  show_highlight_label,
+                                  colour_highlights_by,
+                                  highlight_font_size = highlight_font_size)
     # add tree and adjust edges
-    plot_out <- plot_out +
-        do.call(geom_tree, edge_out$args) + 
-        theme_tree()
-    if (!is.null(edge_size_by)) {
-        if(is.numeric(object$edge_size_by)){
-            SIZEFUN <- scale_size_continuous
-        } else {
-            SIZEFUN <- scale_size_discrete
-        }
-        plot_out <- .add_extra_guide_tree(plot_out, edge_size_by) +
-            SIZEFUN(range = line_width_range)
-    }
+    plot_out <- .plot_tree_edges(plot_out,
+                                 edge_colour_by,
+                                 edge_size_by,
+                                 line_alpha,
+                                 line_width,
+                                 line_width_range)
     # add tip and node points
-    tip_point_FUN <- geom_tippoint
-    node_point_FUN <- geom_nodepoint
-    if(show_tips){
-        plot_out <- plot_out +
-            do.call(tip_point_FUN, point_out$args)
-    }
-    if(show_nodes){
-        plot_out <- plot_out +
-            do.call(node_point_FUN, point_out$args)
-    }
+    plot_out <- .plot_tree_node_points(plot_out,
+                                       show_tips,
+                                       show_nodes,
+                                       colour_by,
+                                       shape_by,
+                                       size_by,
+                                       point_alpha,
+                                       point_size,
+                                       point_size_range)
     # add tip and node labels
-    plot_out <- .add_tree_labels(plot_out, show_label)
-    # adjust edge colours
-    if(!is.null(edge_colour_by)){
-        plot_out <- .resolve_plot_colours(plot_out,
-                                          object$edge_colour_by,
-                                          edge_colour_by,
-                                          na.translate = FALSE)
-    }
-    # adjust point colours
-    if(!is.null(colour_by)){
-        plot_out <- .resolve_plot_colours(plot_out,
-                                          object$colour_by,
-                                          colour_by,
-                                          fill = point_out$fill,
-                                          na.translate = FALSE)
-    }
+    plot_out <- .plot_tree_node_labels(plot_out,
+                                       show_label,
+                                       label_font_size)
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
     # add theme
@@ -667,61 +898,200 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     plot_out
 }
 
-#' @importFrom ggtree geom_highlight
+.get_hightlight_args <- function(nodes,
+                                 colour_highlights_by = NULL){
+    aes_args <- list()
+    aes_args$subset <- paste0("node %in% c(",paste(nodes, collapse = ","),")")
+    aes_args$extendto <- ~highlight_extendto
+    if(!is.null(colour_highlights_by)) {
+        aes_args$fill <- ~colour_highlights_by
+    }
+    new_aes <- do.call(aes_, aes_args)
+    geom_args <- list(mapping = new_aes)
+    geom_args$colour <- "grey20"
+    if (is.null(colour_highlights_by)) {
+        geom_args$fill <- "grey70"
+    }
+    return(list(args = geom_args))
+}
+
+calculate_highlight_extendto <- function(highlight_data){
+    highlight_data %>%
+        mutate(highlight_extendto = (max(x) - x) / 1.5 + max(x) + 0.07)
+}
+
+calculate_highlight_label_text_offset <- function(label_data){
+    label_data %>%
+        mutate(highlight_offset = highlight_extendto - max(x) + 0.015 - 0.07)
+}
+
+#' @importFrom dplyr filter pull
+#' @importFrom ggtree geom_highlight geom_cladelab
 #' @importFrom ggnewscale new_scale_fill new_scale_colour
 #' @importFrom tidytree rootnode
-.add_tree_highlights <- function(plot_out, show_highlights = FALSE,
-                                 colour_highlights = FALSE){
-    if(length(show_highlights) == 1L && is.logical(show_highlights) &&
-       show_highlights){
-        rootnode <- tidytree::rootnode(plot_out$data)
-        f <- plot_out$data$parent == rootnode$node &
-            plot_out$data$node != rootnode$node
-        show_highlights <- plot_out$data$label[f]
-        colour_highlights <- TRUE
-    }
-    if(length(show_highlights) >= 1L) {
-        m <- plot_out$data$label %in% show_highlights
-        highlights <- plot_out$data$node[m]
-        if(length(highlights) > 0L){
-            # add tip and node labels
-            hl_args <- .get_hightlight_args(highlights,
-                                            colour_highlights)
-            plot_out <- plot_out +
-                do.call(geom_highlight, hl_args$args)
-            plot_out <- .resolve_plot_colours(plot_out,
-                                              plot_out$data$label[m],
-                                              "",
-                                              fill = TRUE)
+.plot_tree_plot_highlights <- function(plot_out,
+                                       show_highlights,
+                                       show_highlight_label,
+                                       colour_highlights_by,
+                                       highlight_font_size){
+    highlight_data <- calculate_highlight_extendto(plot_out$data)
+    highlight_data <- plot_out$data <- 
+        calculate_highlight_label_text_offset(highlight_data)
+    if(show_highlights && nrow(highlight_data) > 0L){
+        # rootnode <- tidytree::rootnode(plot_out$data)
+        # f <- plot_out$data$parent == rootnode$node &
+        #     plot_out$data$node != rootnode$node
+        # show_highlights <- plot_out$data$label[f]
+        # colour_highlights <- TRUE
+        
+        highlight_nodes <- highlight_data %>% 
+            dplyr::filter(.data$highlight) %>%
+            pull("node")
+        hl_args <- .get_hightlight_args(highlight_nodes,
+                                        colour_highlights_by)
+        plot_out <- plot_out +
+            do.call(geom_highlight, hl_args$args)
+        if(!is.null(colour_highlights_by)){
+            plot_out <- 
+                .resolve_plot_colours(plot_out,
+                                      highlight_data %>%
+                                          filter(.data$node %in% highlight_nodes) %>%
+                                          pull("colour_highlights_by"),
+                                      colour_highlights_by,
+                                      fill = TRUE,
+                                      na.value = "grey70")
             plot_out <- plot_out + 
                 new_scale_fill() +
                 new_scale_colour()
+        }
+        if(show_highlight_label){
+            highlight_label_nodes <- highlight_data %>% 
+                dplyr::filter(.data$highlight,
+                              !is.na(.data$highlight_label)) %>%
+                pull("node")
+            if(length(highlight_label_nodes) > 0L){
+                subset <- paste0("node %in% c(",
+                                 paste(highlight_label_nodes, collapse = ","),
+                                 ")")
+                mapping <- aes_(subset = subset,
+                                node = ~node,
+                                label = ~highlight_label,
+                                offset.text = ~highlight_offset)
+                plot_out <- plot_out +
+                    geom_cladelab(mapping = mapping,
+                                  hjust = 0.5,
+                                  angle = "auto",
+                                  horizontal = FALSE, 
+                                  barsize = 0,
+                                  fontsize = highlight_font_size)
+            }
         }
     }
     plot_out
 }
 
-#' @importFrom ggtree geom_tiplab geom_nodelab
-.add_tree_labels <- function(plot_out, show_label){
-    if(length(show_label) == 1L && is.logical(show_label) &&
-       show_label){
+.plot_tree_edges <- function(plot_out,
+                             edge_colour_by,
+                             edge_size_by,
+                             line_alpha,
+                             line_width,
+                             line_width_range){
+    
+    # assemble arg list
+    edge_out <- .get_edge_args(edge_colour_by,
+                               edge_size_by,
+                               alpha = line_alpha,
+                               size = line_width)
+    
+    
+    plot_out <- plot_out +
+        do.call(geom_tree, edge_out$args) + 
+        theme_tree()
+    if (!is.null(edge_size_by)) {
+        if(is.numeric(object$edge_size_by)){
+            SIZEFUN <- scale_size_continuous
+        } else {
+            SIZEFUN <- scale_size_discrete
+        }
+        plot_out <- .add_extra_guide_tree(plot_out, edge_size_by) +
+            SIZEFUN(range = line_width_range)
+    }
+    # adjust edge colours
+    if(!is.null(edge_colour_by)){
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          plot_out$data$edge_colour_by,
+                                          edge_colour_by,
+                                          na.translate = FALSE)
+    }
+    plot_out
+}
+
+.plot_tree_node_points <- function(plot_out,
+                                   show_tips,
+                                   show_nodes,
+                                   colour_by,
+                                   shape_by,
+                                   size_by,
+                                   point_alpha,
+                                   point_size,
+                                   point_size_range){
+    point_out <- .get_point_args(colour_by,
+                                 shape_by,
+                                 size_by,
+                                 alpha = point_alpha,
+                                 size = point_size)
+    tip_point_FUN <- geom_tippoint
+    node_point_FUN <- geom_nodepoint
+    if(show_tips){
         plot_out <- plot_out +
-            geom_tiplab(offset = .02)
-    } else if(length(show_label) > 1L) {
-        m <- plot_out$data$label %in% show_label
-        nodes <- plot_out$data$node[m]
-        f_tip <- plot_out$data$node %in% nodes & plot_out$data$isTip
-        f_node <- plot_out$data$node %in% nodes & !plot_out$data$isTip
+            do.call(tip_point_FUN, point_out$args)
+    }
+    if(show_nodes){
+        plot_out <- plot_out +
+            do.call(node_point_FUN, point_out$args)
+    }
+    if(any(c(show_tips,show_nodes)) && !is.null(size_by)){
+        if(is.numeric(plot_out$data$size_by)){
+            SIZEFUN <- scale_size_continuous
+        } else {
+            SIZEFUN <- scale_size_discrete
+        }
+        plot_out <- plot_out +
+            SIZEFUN(range = point_size_range)
+    }
+    # adjust point colours
+    if(!is.null(colour_by)){
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          plot_out$data$colour_by,
+                                          colour_by,
+                                          fill = point_out$fill,
+                                          na.translate = FALSE)
+    }
+    plot_out
+}
+
+#' @importFrom ggtree geom_tiplab geom_nodelab
+.plot_tree_node_labels <- function(plot_out,
+                                   show_label,
+                                   label_font_size = 3){
+    if(show_label){
+        data <- plot_out$data
+        label_data <- plot_out$data %>% drop_na(.data$node_label)
+        
+        f_tip <- data$node %in% label_data$node & data$isTip
+        f_node <- data$node %in% label_data$node & !data$isTip
         if(any(f_tip)){
             # add tip labels
             plot_out <- plot_out +
                 geom_tiplab(mapping = aes_string(subset = f_tip),
-                            offset = .02)
+                            offset = .02,
+                            size = label_font_size)
         }
         if(any(f_node)){
             # add node labels
             plot_out <- plot_out +
-                geom_nodelab(mapping = aes_string(subset = f_node))
+                geom_nodelab(mapping = aes_string(subset = f_node),
+                             size = label_font_size)
         }
     }
     plot_out

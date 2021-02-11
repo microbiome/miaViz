@@ -17,7 +17,8 @@ plotColTree(object, ...)
   relabel_tree = FALSE,
   show_label = FALSE,
   show_highlights = FALSE,
-  colour_highlights = FALSE,
+  show_highlight_label = FALSE,
+  order_tree = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -28,6 +29,7 @@ plotColTree(object, ...)
   node_colour_by = NULL,
   node_shape_by = NULL,
   node_size_by = NULL,
+  colour_highlights_by = NULL,
   by_exprs_values = "counts",
   other_fields = list(),
   ...
@@ -38,7 +40,8 @@ plotColTree(object, ...)
   relabel_tree = FALSE,
   show_label = FALSE,
   show_highlights = FALSE,
-  colour_highlights = FALSE,
+  show_highlight_label = FALSE,
+  order_tree = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -49,6 +52,7 @@ plotColTree(object, ...)
   node_colour_by = NULL,
   node_shape_by = NULL,
   node_size_by = NULL,
+  colour_highlights_by = NULL,
   by_exprs_values = "counts",
   other_fields = list(),
   ...
@@ -66,20 +70,16 @@ the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
 has consequences on how data can be merged from \code{other_fields}.
 (default: \code{relabel_tree = FALSE})}
 
-\item{show_label}{logical scalar or character vector. Should tip labels
-be plotted or if a logical vector is provided, which labels should be
-shown? Only values corresponding to actual labels will be plotted.
-(default: \code{show_label = FALSE})}
-
-\item{show_highlights}{logical scalar or character vector. Should highlights
-around nodes and its decendents be plotted? If set \code{TRUE} this will be
-limit do direct decendents of the rootnode. If a character vector is
-provided, which nodes should be shown? Only values corresponding to actual
-node labels will be plotted. (default: \code{show_highlights = FALSE})}
-
-\item{colour_highlights}{Should the highlights be colour differently?
-If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
-\code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
+\item{show_label, show_highlights, show_highlight_label}{\code{logical}
+(scalar), \code{integer} or \code{character} vector. If a \code{logical}
+scalar is given, should tip labels be plotted or if a logical vector is
+provided, which labels should be shown? If an \code{integer} or
+\code{character} vector is provided, it will be converted to a logical
+vector. The \code{integer} values must be in the range of 1 and number of
+nodes, whereas the values of a \code{character} vector must match values of
+the \code{label} column in the node data. In case of a \code{character}
+vector only values corresponding to actual labels will be plotted and if no
+labels are provided no labels will be shown. (default: \code{FALSE})}
 
 \item{add_legend}{logical scalar. Should legends be plotted?
 (default: \code{add_legend = TRUE})}
@@ -121,14 +121,17 @@ shape tree nodes by. Must be a field from \code{other_fields}.}
 \item{node_size_by}{Specification of a column metadata field or a feature to
 size tree nodes by. Must be a field from \code{other_fields}.}
 
+\item{colour_highlights_by}{Should the highlights be colour differently?
+If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
+\code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
+
 \item{by_exprs_values}{A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 \code{exprs_values} argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.}
 
-\item{other_fields}{a \code{data.frame} or coercible to one, with at least
-one type of id information. See details in
-\code{\link[=treeData]{treeData}}.}
+\item{other_fields}{Additional fields to include in the node information
+without plotting them.}
 }
 \value{
 a \code{\link{ggtree}} plot
@@ -138,6 +141,10 @@ Based on the stored data in a \code{TreeSummarizedExperiment} a tree can
 be plotted. From the \code{rowData}, the \code{assays} as well as the
 \code{colData} information can be taken for enriching the tree plots with
 additional information.
+}
+\details{
+If \code{show_label} or \code{show_highlight_label} have the same length
+as the number of nodes, the vector will be used to relabel the nodes.
 }
 \examples{
 library(scater)
