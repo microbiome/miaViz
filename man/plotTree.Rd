@@ -15,6 +15,7 @@ plotColTree(object, ...)
 \S4method{plotColTree}{TreeSummarizedExperiment}(
   object,
   relabel_tree = FALSE,
+  remove_levels = FALSE,
   show_label = FALSE,
   show_highlights = FALSE,
   show_highlight_label = FALSE,
@@ -38,6 +39,7 @@ plotColTree(object, ...)
 \S4method{plotRowTree}{TreeSummarizedExperiment}(
   object,
   relabel_tree = FALSE,
+  remove_levels = FALSE,
   show_label = FALSE,
   show_highlights = FALSE,
   show_highlight_label = FALSE,
@@ -66,9 +68,11 @@ object.}
 \item{...}{additional arguments for plotting.}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
-the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
-has consequences on how data can be merged from \code{other_fields}.
+the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?
 (default: \code{relabel_tree = FALSE})}
+
+\item{remove_levels}{logical scalar, Should taxonomic level information
+be removed from labels? (default: \code{relabel_tree = FALSE})}
 
 \item{show_label, show_highlights, show_highlight_label}{\code{logical}
 (scalar), \code{integer} or \code{character} vector. If a \code{logical}

@@ -10,9 +10,11 @@
 #'   object.
 #'
 #' @param relabel_tree logical scalar, Should the tip labels be relabeled using 
-#'   the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
-#'   has consequences on how data can be merged from \code{other_fields}. 
+#'   the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?  
 #'   (default: \code{relabel_tree = FALSE})
+#'   
+#' @param remove_levels logical scalar, Should taxonomic level information
+#'   be removed from labels? (default: \code{relabel_tree = FALSE})
 #'   
 #' @param show_label,show_highlights,show_highlight_label \code{logical}
 #'   (scalar), \code{integer} or \code{character} vector. If a \code{logical}
@@ -183,6 +185,7 @@ setGeneric("plotColTree", signature = c("object"),
 setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
     function(object,
              relabel_tree = FALSE,
+             remove_levels = FALSE,
              show_label = FALSE,
              show_highlights = FALSE,
              show_highlight_label = FALSE,
@@ -203,6 +206,7 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
              ...){
         .plot_row_column_tree(object,
                               relabel_tree = relabel_tree,
+                              remove_levels = remove_levels,
                               show_label = show_label,
                               show_highlights = show_highlights,
                               show_highlight_label = show_highlight_label,
@@ -229,6 +233,7 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
 setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     function(object,
              relabel_tree = FALSE,
+             remove_levels = FALSE,
              show_label = FALSE,
              show_highlights = FALSE,
              show_highlight_label = FALSE,
@@ -249,6 +254,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
              ...){
         .plot_row_column_tree(object,
                               relabel_tree = relabel_tree,
+                              remove_levels = remove_levels,
                               show_label = show_label,
                               show_highlights = show_highlights,
                               show_highlight_label = show_highlight_label,
@@ -272,6 +278,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 )
 
 .check_tree_plot_switches <- function(relabel_tree,
+                                      remove_levels,
                                       order_tree,
                                       show_label, 
                                       show_highlights,
@@ -279,6 +286,9 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                                       add_legend){
     if(!.is_a_bool(relabel_tree)){
         stop("'relabel_tree' must be either TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(remove_levels)){
+        stop("'remove_levels' must be either TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(order_tree)){
         stop("'order_tree' must be either TRUE or FALSE.", call. = FALSE)
@@ -320,6 +330,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 
 .plot_row_column_tree <- function(object,
                                   relabel_tree = FALSE,
+                                  remove_levels = FALSE,
                                   show_label = FALSE,
                                   show_highlights = FALSE,
                                   show_highlight_label = FALSE,
@@ -348,6 +359,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
         stop(FUN,"(object) is empty.", call. = FALSE)
     }
     .check_tree_plot_switches(relabel_tree = relabel_tree,
+                              remove_levels = remove_levels,
                               order_tree = order_tree,
                               show_label = show_label,
                               show_highlights = show_highlights,
@@ -361,13 +373,14 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     object <- tree_out$object
     tree <- tree_out$tree
     tree_data <- .get_tree_data(tree)
-    label_out <- .add_tree_node_labels(tree_data, show_label)
+    label_out <- .add_tree_node_labels(tree_data, show_label, remove_levels)
     tree_data <- label_out$df
     show_label <- label_out$show_label
     label_out <- .add_tree_highlights(tree_data, show_highlights)
     tree_data <- label_out$df
     show_highlights <- label_out$show_highlights
-    label_out <- .add_tree_highlight_labels(tree_data, show_highlight_label)
+    label_out <- .add_tree_highlight_labels(tree_data, show_highlight_label,
+                                            remove_levels)
     tree_data <- label_out$df
     show_highlight_label <- label_out$show_highlight_label
     #
@@ -496,9 +509,19 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 ################################################################################
 ## TODO refactor the next three functions into one
 
+.remove_taxonomic_level_from_labels <- function(labels){
+    for(rank in TAXONOMY_RANKS){
+        labels <- gsub(rank,"",labels,ignore.case = TRUE)
+    }
+    labels <- gsub("^:","",labels)
+    labels
+}
+
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
-.add_tree_node_labels <- function(tree_data, show_label){
+.add_tree_node_labels <- function(tree_data,
+                                  show_label,
+                                  remove_levels = FALSE){
     if("label" %in% colnames(tree_data)){
         tree_data <- tree_data %>%
             mutate(node_label = .data$label)
@@ -552,6 +575,10 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
         tree_data <- tree_data %>% 
             mutate(node_label = FALSE)
     }
+    if(remove_levels){
+        tree_data$node_label <- 
+            .remove_taxonomic_level_from_labels(tree_data$node_label)
+    }
     return(list(df = tree_data,
                 show_label = show_label))
 }
@@ -600,7 +627,9 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
-.add_tree_highlight_labels <- function(tree_data, show_highlight_label){
+.add_tree_highlight_labels <- function(tree_data,
+                                       show_highlight_label,
+                                       remove_levels = FALSE){
     if(!any(tree_data$highlight)){
         show_highlight_label <- FALSE
         return(list(df = tree_data,
@@ -664,6 +693,10 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
               !show_highlight_label){
         tree_data <- tree_data %>%
             mutate(highlight_label = NA_character_)
+    }
+    if(remove_levels){
+        tree_data$highlight_label <- 
+            .remove_taxonomic_level_from_labels(tree_data$highlight_label)
     }
     return(list(df = tree_data,
                 show_highlight_label = show_highlight_label))
@@ -895,6 +928,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                          size_by)
     # start plotting
     plot_out <- ggtree(tidytree::as.treedata(object), layout = layout)
+    # abbreviate if necessary
+    # needs to be done before highlights labels get added
+    plot_out <- .add_tree_label_abbreviations(plot_out)
     # add highlights
     plot_out <- 
         .plot_tree_plot_highlights(plot_out, 
@@ -931,6 +967,68 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     if (!add_legend) {
         plot_out <- plot_out +
             theme(legend.position = "none")
+    }
+    plot_out
+}
+
+.add_tree_label_abbreviations <- function(plot_out){
+    abbreviate_node_label <- FALSE
+    abbreviate_highlight_label <- FALSE
+    if("highlight_label" %in% colnames(plot_out$data) &&
+       any(!is.na(plot_out$data$highlight_label))){
+        abbreviate_node_label <- TRUE
+    }
+    # TODO figure out, which highlight labels are overlapping
+    if("highlight_label" %in% colnames(plot_out$data) &&
+       any(!is.na(plot_out$data$highlight_label))){
+        abbreviate_highlight_label <- TRUE
+    }
+    #
+    abbr <- data.frame(text=c(), abbr=c())
+    if(abbreviate_node_label){
+        labels <- plot_out$data$node_label
+        labels <- labels[!is.na(labels)]
+        abbr <- rbind(abbr,
+                      data.frame(text = labels,
+                                 abbr = NA)) 
+    }
+    if(abbreviate_highlight_label){
+        labels <- plot_out$data$highlight_label
+        labels <- labels[!is.na(labels)]
+        abbr <- rbind(abbr,
+                      data.frame(text = labels,
+                                 abbr = NA)) 
+    }
+    if(nrow(abbr) > 0L){
+        abbr <- unique(abbr)
+        abbr$abbr <- abbreviate(gsub("[_]|[-][ ]","",abbr$text),
+                                minlength = 1,
+                                dot = TRUE)
+        if(abbreviate_node_label){
+            labels <- plot_out$data$node_label
+            f <- !is.na(labels)
+            m <- match(labels[f],abbr$text)
+            plot_out$data$node_label[f] <- abbr$abbr[m]
+        }
+        if(abbreviate_highlight_label){
+            labels <- plot_out$data$highlight_label
+            f <- !is.na(labels)
+            m <- match(labels[f],abbr$text)
+            plot_out$data$highlight_label[f] <- abbr$abbr[m]
+        }
+        keywidth <- max(1.5,max(nchar(abbr$abbr)) * 0.2)
+        guide <- guide_legend(title = "Abbreviations",
+                              keywidth = keywidth,
+                              keyheight = 0.75,
+                              label.theme = element_text(size = 8),
+                              override.aes = list(fill = "transparent"),
+                              ncol = 1)
+        plot_out <- plot_out + 
+            scale_discrete_identity(aesthetics = "label",
+                                    name = "Abbreviations:",
+                                    breaks = abbr$abbr,
+                                    labels = abbr$text,
+                                    guide = guide)
     }
     plot_out
 }
@@ -1122,14 +1220,16 @@ calculate_highlight_label_text_offset <- function(label_data){
         if(any(f_tip)){
             # add tip labels
             plot_out <- plot_out +
-                geom_tiplab(mapping = aes_string(subset = f_tip),
-                            offset = .02,
+                geom_tiplab(mapping = aes_string(subset = f_tip,
+                                                 label = "node_label"),
+                            offset = 0.01,
                             size = label_font_size)
         }
         if(any(f_node)){
             # add node labels
             plot_out <- plot_out +
-                geom_nodelab(mapping = aes_string(subset = f_node),
+                geom_nodelab(mapping = aes_string(subset = f_node,
+                                                  label = "node_label"),
                              size = label_font_size)
         }
     }
@@ -1141,5 +1241,6 @@ calculate_highlight_label_text_offset <- function(label_data){
         theme(legend.background = element_rect(fill = "transparent",colour = NA),
               legend.box.background = element_rect(fill = "transparent",colour = NA),
               panel.background = element_rect(fill = "transparent",colour = NA),
-              plot.background = element_rect(fill = "transparent",colour = NA))
+              plot.background = element_rect(fill = "transparent",colour = NA),
+              legend.text = element_text(size = 8))
 }
