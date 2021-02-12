@@ -84,8 +84,7 @@ Please not that currently `ggtree` only can plot node labels in a rectangular
 layout.
 
 ```{r plot3, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown."}
-labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
-            "0.961.60" = TRUE)
+labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
 plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",

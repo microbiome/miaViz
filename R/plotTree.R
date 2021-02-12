@@ -117,8 +117,7 @@
 #'             tip_size_by = "detected",
 #'             show_label = TRUE)
 #' # plot with selected labels
-#' labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
-#'             "0.961.60" = TRUE)
+#' labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
 #' plotRowTree(x[rownames(x) %in% top_genus,],
 #'             tip_colour_by = "log_mean",
 #'             tip_size_by = "detected",
@@ -153,6 +152,16 @@
 #'           })
 #' x <- unsplitByRanks(GlobalPatterns)
 #' x <- addTaxonomyTree(x)
+#' 
+#' highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
+#'                 "Family:Pseudomonadaceae","Order:Bifidobacteriales")
+#' plotRowTree(x[rowData(x)$Phylum %in% top_phyla,],
+#'             tip_colour_by = "log_mean",
+#'             node_colour_by = "log_mean",
+#'             show_highlights = highlights,
+#'             show_highlight_label = highlights,
+#'             colour_highlights_by = "Phylum")
+#' 
 #' plotRowTree(x[rowData(x)$Phylum %in% top_phyla,],
 #'             edge_colour_by = "Phylum",
 #'             edge_size_by = "detected",
@@ -453,7 +462,35 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
         tree_data$label[m] <- new_node_labels
         tree <- as.phylo(tree_data)
     }
+    if(order){
+        tree <- .order_tree(tree)
+    }
     list(object = object, tree = tree)
+}
+
+.get_ordered_tree_labels <- function(tree_data, node){
+    children <- child(tree_data, node)
+    if(nrow(children) == 0L){
+        return("")
+    }
+    labels <- children$label
+    add_labels <- lapply(children$node, 
+                         .get_ordered_tree_labels, 
+                         tree_data = tree_data)
+    add_labels <- unlist(add_labels)
+    if(length(add_labels) == 0L){
+        add_labels <- ""
+    }
+    paste(labels, add_labels, sep ="__:__")
+}
+
+.order_tree <- function(tree){
+    tree_data <- tidytree::as_tibble(tree)
+    root_node <- rootnode(tree_data)
+    o <- order(.get_ordered_tree_labels(tree_data, root_node$node))
+    contraint <- tree$tip.label[o]
+    tree <- ape::rotateConstr(tree, rev(contraint))
+    tree
 }
 
 ################################################################################
@@ -982,8 +1019,13 @@ calculate_highlight_label_text_offset <- function(label_data){
                                   hjust = 0.5,
                                   angle = "auto",
                                   horizontal = FALSE, 
-                                  barsize = 0,
+                                  barsize = NA,
                                   fontsize = highlight_font_size)
+                ################################################################
+                # fix for geom_segment getting added by geom_cladelab even
+                # though barsize = na
+                plot_out$layers <- plot_out$layers[-length(plot_out$layers)]
+                ################################################################
             }
         }
     }
@@ -996,19 +1038,16 @@ calculate_highlight_label_text_offset <- function(label_data){
                              line_alpha,
                              line_width,
                              line_width_range){
-    
     # assemble arg list
     edge_out <- .get_edge_args(edge_colour_by,
                                edge_size_by,
                                alpha = line_alpha,
                                size = line_width)
-    
-    
     plot_out <- plot_out +
         do.call(geom_tree, edge_out$args) + 
         theme_tree()
     if (!is.null(edge_size_by)) {
-        if(is.numeric(object$edge_size_by)){
+        if(is.numeric(plot_out$data$edge_size_by)){
             SIZEFUN <- scale_size_continuous
         } else {
             SIZEFUN <- scale_size_discrete

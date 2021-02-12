@@ -173,8 +173,7 @@ plotRowTree(x[rownames(x) \%in\% top_genus,],
             tip_size_by = "detected",
             show_label = TRUE)
 # plot with selected labels
-labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
-            "0.961.60" = TRUE)
+labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
 plotRowTree(x[rownames(x) \%in\% top_genus,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",
@@ -209,6 +208,16 @@ altExps(GlobalPatterns) <-
           })
 x <- unsplitByRanks(GlobalPatterns)
 x <- addTaxonomyTree(x)
+
+highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
+                "Family:Pseudomonadaceae","Order:Bifidobacteriales")
+plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
+            tip_colour_by = "log_mean",
+            node_colour_by = "log_mean",
+            show_highlights = highlights,
+            show_highlight_label = highlights,
+            colour_highlights_by = "Phylum")
+
 plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
             edge_colour_by = "Phylum",
             edge_size_by = "detected",
