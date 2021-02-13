@@ -277,13 +277,17 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     }
 )
 
-.check_tree_plot_switches <- function(relabel_tree,
+.check_tree_plot_switches <- function(layout,
+                                      relabel_tree,
                                       remove_levels,
                                       order_tree,
                                       show_label, 
                                       show_highlights,
                                       show_highlight_label,
                                       add_legend){
+    if(!.is_a_string(layout)){
+        stop("'layout' must be a single character value.", call. = FALSE)
+    }
     if(!.is_a_bool(relabel_tree)){
         stop("'relabel_tree' must be either TRUE or FALSE.", call. = FALSE)
     }
@@ -358,7 +362,8 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     if(is.null(do.call(FUN,list(object)))){
         stop(FUN,"(object) is empty.", call. = FALSE)
     }
-    .check_tree_plot_switches(relabel_tree = relabel_tree,
+    .check_tree_plot_switches(layout = layout,
+                              relabel_tree = relabel_tree,
                               remove_levels = remove_levels,
                               order_tree = order_tree,
                               show_label = show_label,
@@ -410,7 +415,13 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     show_nodes <- any(!vapply(c(node_colour_by, node_shape_by, node_size_by),
                               is.null, logical(1)))
     #
-    .tree_plotter(tree_data,
+    object <- .create_treedata_for_plotting(tree_data,
+                                            tree,
+                                            edge_colour_by,
+                                            edge_size_by,
+                                            shape_by,
+                                            size_by)
+    .tree_plotter(object,
                   layout = layout,
                   add_legend = add_legend,
                   show_label = show_label,
@@ -481,6 +492,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     list(object = object, tree = tree)
 }
 
+#' @importFrom tidytree child
 .get_ordered_tree_labels <- function(tree_data, node){
     children <- child(tree_data, node)
     if(nrow(children) == 0L){
@@ -497,6 +509,8 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     paste(labels, add_labels, sep ="__:__")
 }
 
+#' @importFrom tidytree rootnode as_tibble
+#' @importFrom ape rotateConstr
 .order_tree <- function(tree){
     tree_data <- tidytree::as_tibble(tree)
     root_node <- rootnode(tree_data)
@@ -888,7 +902,39 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         left_join(feature_info, by = "label")
 }
 
+# due to a bug in ggtree/tidytree the treedata object needs to be contructed
+# in seperate step
+# 
+# also there is some data wrangling needed
 #' @importFrom tidytree as.treedata
+.create_treedata_for_plotting <- function(tree_data,
+                                          tree,
+                                          edge_colour_by,
+                                          edge_size_by,
+                                          shape_by,
+                                          size_by){
+    # cleanup
+    if (!is.null(edge_colour_by) && anyNA(tree_data$edge_colour_by)) {
+        tree_data <- groupOTU(tree_data, 
+                              split(tree_data$node, tree_data$edge_colour_by),
+                              group_name = "group")
+        f_zero <- tree_data$group != 0
+        f_zero <- f_zero[!is.na(f_zero)]
+        tree_data$edge_colour_by[f_zero] <- 
+            as.character(tree_data$group[f_zero])
+    }
+    tree_data <- .na_replace_from_plot_data(tree_data,
+                                            edge_size_by,
+                                            shape_by,
+                                            size_by)
+    object <- tidytree::as.treedata(tree_data)
+    # tree needs to be restored since the original leave/tip/node orientation
+    # is not compatible with ladderiez = FALSE
+    object@phylo <- tree
+    #
+    object
+}
+
 #' @importFrom ggplot2 scale_size_identity
 #' @importFrom ggtree ggtree geom_tree geom_tippoint geom_nodepoint groupOTU
 #'   theme_tree
@@ -914,30 +960,18 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                           point_size_range = c(1,4),
                           label_font_size = 3,
                           highlight_font_size = 3){
-    # cleanup
-    if (!is.null(edge_colour_by) && anyNA(object$edge_colour_by)) {
-        object <- groupOTU(object, split(object$node, object$edge_colour_by),
-                           group_name = "group")
-        f_zero <- object$group != 0
-        f_zero <- f_zero[!is.na(f_zero)]
-        object$edge_colour_by[f_zero] <- as.character(object$group[f_zero])
-    }
-    object <- .na_replace_from_plot_data(object,
-                                         edge_size_by,
-                                         shape_by,
-                                         size_by)
     # start plotting
-    plot_out <- ggtree(tidytree::as.treedata(object), layout = layout)
-    # abbreviate if necessary
-    # needs to be done before highlights labels get added
-    plot_out <- .add_tree_label_abbreviations(plot_out)
+    plot_out <- ggtree(object,
+                       ladderize = FALSE,
+                       layout = layout)
     # add highlights
     plot_out <- 
         .plot_tree_plot_highlights(plot_out, 
-                                  show_highlights,
-                                  show_highlight_label,
-                                  colour_highlights_by,
-                                  highlight_font_size = highlight_font_size)
+                                   layout,
+                                   show_highlights,
+                                   show_highlight_label,
+                                   colour_highlights_by,
+                                   highlight_font_size = highlight_font_size)
     # add tree and adjust edges
     plot_out <- .plot_tree_edges(plot_out,
                                  edge_colour_by,
@@ -961,6 +995,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                        label_font_size)
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
+    # add abbreviation guide
+    plot_out <- .add_abbr_guide(plot_out)
     # add theme
     plot_out <- .theme_plotTree(plot_out)
     # optionally hide legends
@@ -971,64 +1007,34 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     plot_out
 }
 
-.add_tree_label_abbreviations <- function(plot_out){
-    abbreviate_node_label <- FALSE
-    abbreviate_highlight_label <- FALSE
-    if("highlight_label" %in% colnames(plot_out$data) &&
-       any(!is.na(plot_out$data$highlight_label))){
-        abbreviate_node_label <- TRUE
+.add_label_abbreviations <- function(plot_out,
+                                     label_col,
+                                     subset = NULL){
+    non_abbr_text_col <- paste0("abbr_",label_col)
+    if(is.null(subset)){
+        subset <- seq_len(nrow(plot_out$data))
     }
-    # TODO figure out, which highlight labels are overlapping
-    if("highlight_label" %in% colnames(plot_out$data) &&
-       any(!is.na(plot_out$data$highlight_label))){
-        abbreviate_highlight_label <- TRUE
+    subset <- seq_len(nrow(plot_out$data)) %in% subset
+    # initialize column if not present
+    if(!(non_abbr_text_col %in% colnames(plot_out$data))){
+        plot_out$data[,non_abbr_text_col] <- NA_character_
     }
     #
-    abbr <- data.frame(text=c(), abbr=c())
-    if(abbreviate_node_label){
-        labels <- plot_out$data$node_label
-        labels <- labels[!is.na(labels)]
-        abbr <- rbind(abbr,
-                      data.frame(text = labels,
-                                 abbr = NA)) 
-    }
-    if(abbreviate_highlight_label){
-        labels <- plot_out$data$highlight_label
-        labels <- labels[!is.na(labels)]
-        abbr <- rbind(abbr,
-                      data.frame(text = labels,
-                                 abbr = NA)) 
-    }
-    if(nrow(abbr) > 0L){
-        abbr <- unique(abbr)
-        abbr$abbr <- abbreviate(gsub("[_]|[-][ ]","",abbr$text),
-                                minlength = 1,
-                                dot = TRUE)
-        if(abbreviate_node_label){
-            labels <- plot_out$data$node_label
-            f <- !is.na(labels)
-            m <- match(labels[f],abbr$text)
-            plot_out$data$node_label[f] <- abbr$abbr[m]
-        }
-        if(abbreviate_highlight_label){
-            labels <- plot_out$data$highlight_label
-            f <- !is.na(labels)
-            m <- match(labels[f],abbr$text)
-            plot_out$data$highlight_label[f] <- abbr$abbr[m]
-        }
-        keywidth <- max(1.5,max(nchar(abbr$abbr)) * 0.2)
-        guide <- guide_legend(title = "Abbreviations",
-                              keywidth = keywidth,
-                              keyheight = 0.75,
-                              label.theme = element_text(size = 8),
-                              override.aes = list(fill = "transparent"),
-                              ncol = 1)
-        plot_out <- plot_out + 
-            scale_discrete_identity(aesthetics = "label",
-                                    name = "Abbreviations:",
-                                    breaks = abbr$abbr,
-                                    labels = abbr$text,
-                                    guide = guide)
+    text <- plot_out$data[subset,label_col,drop=TRUE]
+    if(length(text) > 0L){
+        # save text
+        bak_text <- text
+        # abbreviate with unique element
+        u_text <- unique(text)
+        abbr <- abbreviate(gsub("[_]|[-][ ]","",u_text),
+                           minlength = 1,
+                           dot = TRUE)
+        # reflate to original positions
+        abbr <- abbr[match(text, u_text)]
+        # exchange label
+        plot_out$data[subset,label_col] <- abbr
+        # exchange original text
+        plot_out$data[subset,non_abbr_text_col] <- bak_text
     }
     plot_out
 }
@@ -1050,14 +1056,113 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     return(list(args = geom_args))
 }
 
-calculate_highlight_extendto <- function(highlight_data){
-    highlight_data %>%
-        mutate(highlight_extendto = (max(x) - x) / 1.5 + max(x) + 0.07)
+.get_cladelab_args <- function(nodes,
+                               layout,
+                               highlight_font_size){
+    aes_args <- list()
+    aes_args$subset <- paste0("node %in% c(",paste(nodes, collapse = ","), ")")
+    aes_args$node <- ~node
+    aes_args$label <- ~highlight_label
+    aes_args$offset.text <- ~highlight_offset
+    new_aes <- do.call(aes_, aes_args)
+    geom_args <- list(mapping = new_aes)
+    if(layout %in% c("fan","circular","radial")){
+        geom_args$hjust <- 0.5
+        geom_args$angle <- "auto"
+        geom_args$horizontal <- FALSE
+    } else if(layout %in% c("inward_circular")){
+        geom_args$hjust <- 0.5
+        geom_args$angle <- "auto"
+        geom_args$horizontal <- FALSE
+    }
+    geom_args$barsize <- NA
+    geom_args$fontsize <- highlight_font_size
+    return(list(args = geom_args))
 }
 
-calculate_highlight_label_text_offset <- function(label_data){
-    label_data %>%
-        mutate(highlight_offset = highlight_extendto - max(x) + 0.015 - 0.07)
+#' @importFrom dplyr mutate
+.calc_highlight_extendto <- function(highlight_data,
+                                     layout) {
+    if(layout %in% c("fan","circular","radial")){
+        ans <- highlight_data %>%
+            mutate(highlight_extendto = (max(x) - x) / 1.5,
+                   highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
+                   highlight_extendto = highlight_extendto + max(x) + 0.07)
+    } else if(layout %in% c("rectangular","slanted","ellipse","roundrect")){
+        ans <- highlight_data %>%
+            mutate(highlight_extendto = (max(x) - x) / 1.5,
+                   highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
+                   highlight_extendto = highlight_extendto + max(x) + 0.01)
+    } else if(layout %in% c("dendrogram")){
+        warning("highlights with layout `dendrogram` are buggy.")
+        ans <- highlight_data %>%
+            mutate(highlight_extendto = x / 1.5,
+                   highlight_extendto = (highlight_extendto - 0.01) * -1)
+    } else if(layout %in% c("inward_circular")){
+        warning("highlights with layout `inward_circular` are buggy.")
+        ans <- highlight_data %>%
+            mutate(highlight_extendto = (max(x) - x) / 1.5,
+                   highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
+                   highlight_extendto = highlight_extendto + max(x) + 0.07,
+                   highlight_extendto = highlight_extendto * -1)
+    } else {
+        ans <- highlight_data %>% 
+            mutate(highlight_extendto = x)
+    }
+    ans
+}
+
+#' @importFrom dplyr mutate
+.calc_highlight_label_text_offset <- function(label_data,
+                                              layout){
+    if(layout %in% c("fan","circular","radial")){
+        ans <- label_data %>%
+            mutate(highlight_offset = highlight_extendto - max(x) + 0.015 - 0.07)
+    } else if(layout %in% c("rectangular","slanted","ellipse","roundrect")){
+        ans <- label_data %>%
+            mutate(highlight_offset = highlight_extendto - max(x) - 0.01)
+    } else if(layout %in% c("dendrogram")){
+        ans <- label_data %>%
+            mutate(highlight_offset = highlight_extendto - 0.1)
+    } else if(layout %in% c("inward_circular")){
+        ans <- label_data %>%
+            mutate(highlight_offset = (highlight_extendto *-1) - max(x) - 0.022)
+    } else {
+        ans <- label_data %>% 
+            mutate(highlight_offset = highlight_extendto)
+    }
+    ans
+}
+
+.get_overlapping_highlight_labels <- function(plot_out,
+                                              highlight_label_nodes,
+                                              layout,
+                                              highlight_font_size){
+    # get position of labels
+    cl_args <- .get_cladelab_args(highlight_label_nodes,
+                                  layout,
+                                  highlight_font_size)
+    plot_test <- plot_out +
+        do.call(geom_cladelab, cl_args$args)
+    plot_test <- ggplot_build(plot_test)$data
+    # get expected labels
+    labels <- plot_out$data[plot_out$data$node %in% highlight_label_nodes,]
+    m <- match(labels$node, highlight_label_nodes)
+    labels <- labels[m, "highlight_label",drop=TRUE]
+    # get element of test plot, which matches the expected labels
+    f <- vapply(plot_test,
+                function(d){
+                    "label" %in% colnames(d) &
+                        all(labels %in% d$label)
+                },logical(1))
+    # if no unambiguous result can be found abbreviate all labels
+    if(sum(f) != 1L){
+        return(rep(TRUE,length(highlight_label_nodes)))
+    }
+    #
+    plot_test <- plot_test[[which(f)]]
+    # Well how to do this????
+    return(rep(FALSE,length(highlight_label_nodes)))
 }
 
 #' @importFrom dplyr filter pull
@@ -1065,23 +1170,21 @@ calculate_highlight_label_text_offset <- function(label_data){
 #' @importFrom ggnewscale new_scale_fill new_scale_colour
 #' @importFrom tidytree rootnode
 .plot_tree_plot_highlights <- function(plot_out,
+                                       layout,
                                        show_highlights,
                                        show_highlight_label,
                                        colour_highlights_by,
                                        highlight_font_size){
-    highlight_data <- calculate_highlight_extendto(plot_out$data)
-    highlight_data <- plot_out$data <- 
-        calculate_highlight_label_text_offset(highlight_data)
-    if(show_highlights && nrow(highlight_data) > 0L){
-        # rootnode <- tidytree::rootnode(plot_out$data)
-        # f <- plot_out$data$parent == rootnode$node &
-        #     plot_out$data$node != rootnode$node
-        # show_highlights <- plot_out$data$label[f]
-        # colour_highlights <- TRUE
-        
-        highlight_nodes <- highlight_data %>% 
-            dplyr::filter(.data$highlight) %>%
-            pull("node")
+    plot_out$data <- .calc_highlight_extendto(plot_out$data, layout)
+    plot_out$data <- .calc_highlight_label_text_offset(plot_out$data, layout)
+    if(show_highlights && nrow(plot_out$data) > 0L){
+        if(layout %in% c("daylight","ape")){
+            warning("highlights not supported  for layout '",layout,"'",
+                    call. = FALSE)
+            return(plot_out)
+        }
+        subset <- plot_out$data$highlight
+        highlight_nodes <- plot_out$data[subset,"node",drop=TRUE]
         hl_args <- .get_hightlight_args(highlight_nodes,
                                         colour_highlights_by)
         plot_out <- plot_out +
@@ -1089,9 +1192,9 @@ calculate_highlight_label_text_offset <- function(label_data){
         if(!is.null(colour_highlights_by)){
             plot_out <- 
                 .resolve_plot_colours(plot_out,
-                                      highlight_data %>%
-                                          filter(.data$node %in% highlight_nodes) %>%
-                                          pull("colour_highlights_by"),
+                                      plot_out$data[subset,
+                                                    "colour_highlights_by",
+                                                    drop=TRUE],
                                       colour_highlights_by,
                                       fill = TRUE,
                                       na.value = "grey70")
@@ -1100,25 +1203,24 @@ calculate_highlight_label_text_offset <- function(label_data){
                 new_scale_colour()
         }
         if(show_highlight_label){
-            highlight_label_nodes <- highlight_data %>% 
-                dplyr::filter(.data$highlight,
-                              !is.na(.data$highlight_label)) %>%
-                pull("node")
+            subset <- plot_out$data$highlight & 
+                !is.na(plot_out$data$highlight_label)
+            highlight_label_nodes <- plot_out$data[subset,"node",drop=TRUE]
             if(length(highlight_label_nodes) > 0L){
-                subset <- paste0("node %in% c(",
-                                 paste(highlight_label_nodes, collapse = ","),
-                                 ")")
-                mapping <- aes_(subset = subset,
-                                node = ~node,
-                                label = ~highlight_label,
-                                offset.text = ~highlight_offset)
+                subset_abbr <- .get_overlapping_highlight_labels(plot_out,
+                                                                 highlight_label_nodes,
+                                                                 layout,
+                                                                 highlight_font_size)
+                subset[!subset_abbr] <- FALSE
+                plot_out <- .add_label_abbreviations(plot_out,
+                                                     "highlight_label",
+                                                     which(subset))
+                
+                cl_args <- .get_cladelab_args(highlight_label_nodes,
+                                              layout,
+                                              highlight_font_size)
                 plot_out <- plot_out +
-                    geom_cladelab(mapping = mapping,
-                                  hjust = 0.5,
-                                  angle = "auto",
-                                  horizontal = FALSE, 
-                                  barsize = NA,
-                                  fontsize = highlight_font_size)
+                    do.call(geom_cladelab, cl_args$args)
                 ################################################################
                 # fix for geom_segment getting added by geom_cladelab even
                 # though barsize = na
@@ -1214,7 +1316,7 @@ calculate_highlight_label_text_offset <- function(label_data){
     if(show_label){
         data <- plot_out$data
         label_data <- plot_out$data %>% drop_na(.data$node_label)
-        
+        #
         f_tip <- data$node %in% label_data$node & data$isTip
         f_node <- data$node %in% label_data$node & !data$isTip
         if(any(f_tip)){
@@ -1226,12 +1328,48 @@ calculate_highlight_label_text_offset <- function(label_data){
                             size = label_font_size)
         }
         if(any(f_node)){
+            if("highlight_label" %in% colnames(plot_out$data) &&
+               any(!is.na(plot_out$data$highlight_label))){
+                plot_out <- .add_label_abbreviations(plot_out,
+                                                     "node_label")
+            }
             # add node labels
             plot_out <- plot_out +
                 geom_nodelab(mapping = aes_string(subset = f_node,
                                                   label = "node_label"),
                              size = label_font_size)
         }
+    }
+    plot_out
+}
+
+.add_abbr_guide <- function(plot_out){
+    FUN <- function(col,data){
+        abbr_col <- paste0("abbr_",col)
+        if(!all(c(col, abbr_col) %in% colnames(data))){
+            return(NULL)
+        }
+        ans <- data[!is.na(data[,abbr_col,drop=TRUE]),c(col,abbr_col)]
+        colnames(ans) <- c("abbr","text")
+        ans
+    }
+    abbr <- lapply(c("node_label","highlight_label"),FUN,plot_out$data)
+    abbr <- abbr[!vapply(abbr,is.null,logical(1))]
+    abbr <- Reduce(rbind,abbr)
+    if(nrow(abbr) > 0L){
+        keywidth <- max(1.5,max(nchar(abbr$abbr)) * 0.2)
+        guide <- guide_legend(title = "Abbreviations",
+                              keywidth = keywidth,
+                              keyheight = 0.75,
+                              label.theme = element_text(size = 8),
+                              override.aes = list(fill = "transparent"),
+                              ncol = 1)
+        plot_out <- plot_out + 
+            scale_discrete_identity(aesthetics = "label",
+                                    name = "Abbreviations:",
+                                    breaks = abbr$abbr,
+                                    labels = abbr$text,
+                                    guide = guide)
     }
     plot_out
 }
