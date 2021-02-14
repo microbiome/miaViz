@@ -1134,6 +1134,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     ans
 }
 
+
+
 .get_overlapping_highlight_labels <- function(plot_out,
                                               highlight_label_nodes,
                                               layout,
@@ -1160,7 +1162,16 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         return(rep(TRUE,length(highlight_label_nodes)))
     }
     #
-    plot_test <- plot_test[[which(f)]]
+    # plot_test <- plot_test[[which(f)]]
+    # boxes <- data.frame(.get_boxes(plot_test$x,
+    #                                plot_test$y,
+    #                                plot_test$label,
+    #                                plot_test$angle,
+    #                                plot_test$size,
+    #                                plot_test$hjust,
+    #                                plot_test$vjust))
+    
+    
     # Well how to do this????
     return(rep(FALSE,length(highlight_label_nodes)))
 }
