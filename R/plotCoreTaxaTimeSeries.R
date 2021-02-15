@@ -62,6 +62,7 @@ setMethod("plotCoreTaxaTimeSeries", signature = c(x = "SummarizedExperiment"),
               # Input check
               # Check abund_values
               .check_abund_values(abund_values, x)
+              # Other checks
               ###############################################
               
               
@@ -70,7 +71,6 @@ setMethod("plotCoreTaxaTimeSeries", signature = c(x = "SummarizedExperiment"),
               # Load moving pictures, it includes time points
               
               #devtools::load_all()
-              library(dplyr)
               
               mp <- moving_pictures
               # Create TSE from it
@@ -86,8 +86,9 @@ setMethod("plotCoreTaxaTimeSeries", signature = c(x = "SummarizedExperiment"),
               core_taxa
               
               
-              # Melt data to get a data frame PROBLEM: when creating molted df, it does not include colData, all values are NA.
-              # I am not yet 100 % sure that TSE[core_taxa] works as intended. Problem in meltAssay?
+              # Melt data to get a data frame PROBLEM: when creating molted df, it does not include colData, all values are NA. Problem in meltAssay?
+              # I am not yet 100 % sure that TSE[core_taxa] works as intended. The purpose of this is to take only those taxa that are in the core taxa. 
+              # It seems to work, but I have to check more carefully and with other data
               molten_se <- mia::meltAssay(TSE[core_taxa],
                                           add_row_data = TRUE,
                                           add_col_data = TRUE,
