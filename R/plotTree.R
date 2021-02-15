@@ -13,19 +13,24 @@
 #'   the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?  
 #'   (default: \code{relabel_tree = FALSE})
 #'   
+#' @param order_tree logical scalar, Should the tree be ordered based on 
+#'   alphabetic order of taxonomic levels?  
+#'   (default: \code{order_tree = FALSE})
+#'   
 #' @param remove_levels logical scalar, Should taxonomic level information
 #'   be removed from labels? (default: \code{relabel_tree = FALSE})
 #'   
-#' @param show_label,show_highlights,show_highlight_label \code{logical}
-#'   (scalar), \code{integer} or \code{character} vector. If a \code{logical}
-#'   scalar is given, should tip labels be plotted or if a logical vector is
-#'   provided, which labels should be shown? If an \code{integer} or
-#'   \code{character} vector is provided, it will be converted to a logical
-#'   vector. The \code{integer} values must be in the range of 1 and number of
-#'   nodes, whereas the values of a \code{character} vector must match values of
-#'   the \code{label} column in the node data. In case of a \code{character}
-#'   vector only values corresponding to actual labels will be plotted and if no
-#'   labels are provided no labels will be shown. (default: \code{FALSE})
+#' @param show_label,show_highlights,show_highlight_label,abr_label
+#'   \code{logical} (scalar), \code{integer} or \code{character} vector. If a
+#'   \code{logical} scalar is given, should tip labels be plotted or if a
+#'   logical vector is provided, which labels should be shown? If an
+#'   \code{integer} or \code{character} vector is provided, it will be converted
+#'   to a logical vector. The \code{integer} values must be in the range of 1
+#'   and number of nodes, whereas the values of a \code{character} vector must
+#'   match values of the \code{label} column in the node data. In case of a
+#'   \code{character} vector only values corresponding to actual labels will be
+#'   plotted and if no labels are provided no labels will be shown. (default:
+#'   \code{FALSE})
 #'   
 #' @param add_legend logical scalar. Should legends be plotted? 
 #'   (default: \code{add_legend = TRUE})
@@ -185,11 +190,12 @@ setGeneric("plotColTree", signature = c("object"),
 setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
     function(object,
              relabel_tree = FALSE,
+             order_tree = FALSE,
              remove_levels = FALSE,
              show_label = FALSE,
              show_highlights = FALSE,
              show_highlight_label = FALSE,
-             order_tree = FALSE,
+             abbr_label = FALSE,
              add_legend = TRUE,
              layout = "circular",
              edge_colour_by = NULL,
@@ -206,11 +212,12 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
              ...){
         .plot_row_column_tree(object,
                               relabel_tree = relabel_tree,
+                              order_tree = order_tree,
                               remove_levels = remove_levels,
                               show_label = show_label,
                               show_highlights = show_highlights,
                               show_highlight_label = show_highlight_label,
-                              order_tree = order_tree,
+                              abbr_label = abbr_label,
                               add_legend = add_legend,
                               layout = layout,
                               edge_colour_by = edge_colour_by,
@@ -233,11 +240,12 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
 setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     function(object,
              relabel_tree = FALSE,
+             order_tree = FALSE,
              remove_levels = FALSE,
              show_label = FALSE,
              show_highlights = FALSE,
              show_highlight_label = FALSE,
-             order_tree = FALSE,
+             abbr_label = FALSE,
              add_legend = TRUE,
              layout = "circular",
              edge_colour_by = NULL,
@@ -254,11 +262,12 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
              ...){
         .plot_row_column_tree(object,
                               relabel_tree = relabel_tree,
+                              order_tree = order_tree,
                               remove_levels = remove_levels,
                               show_label = show_label,
                               show_highlights = show_highlights,
                               show_highlight_label = show_highlight_label,
-                              order_tree = order_tree,
+                              abbr_label = abbr_label,
                               add_legend = add_legend,
                               layout = layout,
                               edge_colour_by = edge_colour_by,
@@ -284,6 +293,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                                       show_label, 
                                       show_highlights,
                                       show_highlight_label,
+                                      abbr_label,
                                       add_legend){
     if(!.is_a_string(layout)){
         stop("'layout' must be a single character value.", call. = FALSE)
@@ -327,6 +337,16 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                  call. = FALSE)
         }
     }
+    if(!.is_a_bool(abbr_label)){
+        if( (!is.logical(abbr_label) && !is.character(abbr_label) &&
+             !is.numeric(abbr_label)) ||
+            is.null(abbr_label)){
+            stop("'abbr_label' must be either TRUE or FALSE or logical, ",
+                 "integer or character ",
+                 "vector. Character alues should match the label of the tree.",
+                 call. = FALSE)
+        }
+    }
     if(!.is_a_bool(add_legend)){
         stop("'add_legend' must be either TRUE or FALSE.", call. = FALSE)
     }
@@ -334,11 +354,12 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 
 .plot_row_column_tree <- function(object,
                                   relabel_tree = FALSE,
+                                  order_tree = FALSE,
                                   remove_levels = FALSE,
                                   show_label = FALSE,
                                   show_highlights = FALSE,
                                   show_highlight_label = FALSE,
-                                  order_tree = FALSE,
+                                  abbr_label = FALSE,
                                   add_legend = TRUE,
                                   layout = "circular",
                                   edge_colour_by = NULL,
@@ -369,6 +390,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                               show_label = show_label,
                               show_highlights = show_highlights,
                               show_highlight_label = show_highlight_label,
+                              abbr_label = abbr_label,
                               add_legend = add_legend)
     #
     tree_out <- .get_trimed_object_and_tree(object,
@@ -427,6 +449,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                   show_label = show_label,
                   show_highlights = show_highlights,
                   show_highlight_label = show_highlight_label,
+                  abbr_label = abbr_label,
                   show_tips = show_tips,
                   show_nodes = show_nodes,
                   edge_colour_by = edge_colour_by,
@@ -435,6 +458,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                   shape_by = shape_by,
                   size_by = size_by,
                   colour_highlights_by = colour_highlights_by,
+                  order_tree = order_tree,
                   ...)
 }
 
@@ -516,7 +540,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     root_node <- rootnode(tree_data)
     o <- order(.get_ordered_tree_labels(tree_data, root_node$node))
     contraint <- tree$tip.label[o]
-    tree <- ape::rotateConstr(tree, rev(contraint))
+    tree <- ape::rotateConstr(tree, contraint)
     tree
 }
 
@@ -646,6 +670,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                                        remove_levels = FALSE){
     if(!any(tree_data$highlight)){
         show_highlight_label <- FALSE
+        tree_data$highlight_label <- FALSE
         return(list(df = tree_data,
                     show_highlight_label = show_highlight_label))
     }
@@ -944,6 +969,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                           show_label = FALSE,
                           show_highlights = FALSE,
                           show_highlight_label = FALSE,
+                          abbr_label = FALSE,
                           show_tips = FALSE,
                           show_nodes = FALSE,
                           edge_colour_by = NULL,
@@ -952,6 +978,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                           shape_by = NULL,
                           size_by = NULL,
                           colour_highlights_by = NULL,
+                          order_tree = FALSE,
                           line_alpha = 1,
                           line_width = NULL,
                           line_width_range = c(0.5,3),
@@ -962,7 +989,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                           highlight_font_size = 3){
     # start plotting
     plot_out <- ggtree(object,
-                       ladderize = FALSE,
+                       ladderize = !order_tree,
                        layout = layout)
     # add highlights
     plot_out <- 
@@ -970,6 +997,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                    layout,
                                    show_highlights,
                                    show_highlight_label,
+                                   abbr_label,
                                    colour_highlights_by,
                                    highlight_font_size = highlight_font_size)
     # add tree and adjust edges
@@ -992,6 +1020,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     # add tip and node labels
     plot_out <- .plot_tree_node_labels(plot_out,
                                        show_label,
+                                       abbr_label,
                                        label_font_size)
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
@@ -1086,12 +1115,12 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     if(layout %in% c("fan","circular","radial")){
         ans <- highlight_data %>%
             mutate(highlight_extendto = (max(x) - x) / 1.5,
-                   highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
+                   #highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
                    highlight_extendto = highlight_extendto + max(x) + 0.07)
     } else if(layout %in% c("rectangular","slanted","ellipse","roundrect")){
         ans <- highlight_data %>%
             mutate(highlight_extendto = (max(x) - x) / 1.5,
-                   highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
+                   #highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
                    highlight_extendto = highlight_extendto + max(x) + 0.01)
     } else if(layout %in% c("dendrogram")){
         warning("highlights with layout `dendrogram` are buggy.")
@@ -1102,7 +1131,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         warning("highlights with layout `inward_circular` are buggy.")
         ans <- highlight_data %>%
             mutate(highlight_extendto = (max(x) - x) / 1.5,
-                   highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
+                   #highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
                    highlight_extendto = highlight_extendto + max(x) + 0.07,
                    highlight_extendto = highlight_extendto * -1)
     } else {
@@ -1134,48 +1163,6 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     ans
 }
 
-
-
-.get_overlapping_highlight_labels <- function(plot_out,
-                                              highlight_label_nodes,
-                                              layout,
-                                              highlight_font_size){
-    # get position of labels
-    cl_args <- .get_cladelab_args(highlight_label_nodes,
-                                  layout,
-                                  highlight_font_size)
-    plot_test <- plot_out +
-        do.call(geom_cladelab, cl_args$args)
-    plot_test <- ggplot_build(plot_test)$data
-    # get expected labels
-    labels <- plot_out$data[plot_out$data$node %in% highlight_label_nodes,]
-    m <- match(labels$node, highlight_label_nodes)
-    labels <- labels[m, "highlight_label",drop=TRUE]
-    # get element of test plot, which matches the expected labels
-    f <- vapply(plot_test,
-                function(d){
-                    "label" %in% colnames(d) &
-                        all(labels %in% d$label)
-                },logical(1))
-    # if no unambiguous result can be found abbreviate all labels
-    if(sum(f) != 1L){
-        return(rep(TRUE,length(highlight_label_nodes)))
-    }
-    #
-    # plot_test <- plot_test[[which(f)]]
-    # boxes <- data.frame(.get_boxes(plot_test$x,
-    #                                plot_test$y,
-    #                                plot_test$label,
-    #                                plot_test$angle,
-    #                                plot_test$size,
-    #                                plot_test$hjust,
-    #                                plot_test$vjust))
-    
-    
-    # Well how to do this????
-    return(rep(FALSE,length(highlight_label_nodes)))
-}
-
 #' @importFrom dplyr filter pull
 #' @importFrom ggtree geom_highlight geom_cladelab
 #' @importFrom ggnewscale new_scale_fill new_scale_colour
@@ -1184,6 +1171,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                        layout,
                                        show_highlights,
                                        show_highlight_label,
+                                       abbr_label,
                                        colour_highlights_by,
                                        highlight_font_size){
     plot_out$data <- .calc_highlight_extendto(plot_out$data, layout)
@@ -1218,15 +1206,13 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                 !is.na(plot_out$data$highlight_label)
             highlight_label_nodes <- plot_out$data[subset,"node",drop=TRUE]
             if(length(highlight_label_nodes) > 0L){
-                subset_abbr <- .get_overlapping_highlight_labels(plot_out,
-                                                                 highlight_label_nodes,
-                                                                 layout,
-                                                                 highlight_font_size)
+                subset_abbr <- 
+                    plot_out$data[,"highlight_label",drop=TRUE] %in%
+                    abbr_label
                 subset[!subset_abbr] <- FALSE
                 plot_out <- .add_label_abbreviations(plot_out,
                                                      "highlight_label",
                                                      which(subset))
-                
                 cl_args <- .get_cladelab_args(highlight_label_nodes,
                                               layout,
                                               highlight_font_size)
@@ -1234,7 +1220,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                     do.call(geom_cladelab, cl_args$args)
                 ################################################################
                 # fix for geom_segment getting added by geom_cladelab even
-                # though barsize = na
+                # though barsize = NA
                 plot_out$layers <- plot_out$layers[-length(plot_out$layers)]
                 ################################################################
             }
@@ -1323,6 +1309,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 #' @importFrom ggtree geom_tiplab geom_nodelab
 .plot_tree_node_labels <- function(plot_out,
                                    show_label,
+                                   abbr_label,
                                    label_font_size = 3){
     if(show_label){
         data <- plot_out$data
@@ -1330,6 +1317,18 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         #
         f_tip <- data$node %in% label_data$node & data$isTip
         f_node <- data$node %in% label_data$node & !data$isTip
+        # if("highlight_label" %in% colnames(plot_out$data) &&
+        #    any(!is.na(plot_out$data$highlight_label))){
+        #     plot_out <- .add_label_abbreviations(plot_out,
+        #                                          "node_label")
+        # }
+        subset <- !is.na(plot_out$data$node_label)
+        subset_abbr <- plot_out$data[,"node_label",drop=TRUE] %in%
+            abbr_label
+        subset[!subset_abbr] <- FALSE
+        plot_out <- .add_label_abbreviations(plot_out,
+                                             "node_label",
+                                             which(subset))
         if(any(f_tip)){
             # add tip labels
             plot_out <- plot_out +
@@ -1339,11 +1338,6 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                             size = label_font_size)
         }
         if(any(f_node)){
-            if("highlight_label" %in% colnames(plot_out$data) &&
-               any(!is.na(plot_out$data$highlight_label))){
-                plot_out <- .add_label_abbreviations(plot_out,
-                                                     "node_label")
-            }
             # add node labels
             plot_out <- plot_out +
                 geom_nodelab(mapping = aes_string(subset = f_node,
@@ -1367,7 +1361,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     abbr <- lapply(c("node_label","highlight_label"),FUN,plot_out$data)
     abbr <- abbr[!vapply(abbr,is.null,logical(1))]
     abbr <- Reduce(rbind,abbr)
-    if(nrow(abbr) > 0L){
+    if(!is.null(abbr) && nrow(abbr) > 0L){
         keywidth <- max(1.5,max(nchar(abbr$abbr)) * 0.2)
         guide <- guide_legend(title = "Abbreviations",
                               keywidth = keywidth,

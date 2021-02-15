@@ -15,11 +15,12 @@ plotColTree(object, ...)
 \S4method{plotColTree}{TreeSummarizedExperiment}(
   object,
   relabel_tree = FALSE,
+  order_tree = FALSE,
   remove_levels = FALSE,
   show_label = FALSE,
   show_highlights = FALSE,
   show_highlight_label = FALSE,
-  order_tree = FALSE,
+  abbr_label = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -39,11 +40,12 @@ plotColTree(object, ...)
 \S4method{plotRowTree}{TreeSummarizedExperiment}(
   object,
   relabel_tree = FALSE,
+  order_tree = FALSE,
   remove_levels = FALSE,
   show_label = FALSE,
   show_highlights = FALSE,
   show_highlight_label = FALSE,
-  order_tree = FALSE,
+  abbr_label = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -71,19 +73,23 @@ object.}
 the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?
 (default: \code{relabel_tree = FALSE})}
 
+\item{order_tree}{logical scalar, Should the tree be ordered based on
+alphabetic order of taxonomic levels?
+(default: \code{order_tree = FALSE})}
+
 \item{remove_levels}{logical scalar, Should taxonomic level information
 be removed from labels? (default: \code{relabel_tree = FALSE})}
 
-\item{show_label, show_highlights, show_highlight_label}{\code{logical}
-(scalar), \code{integer} or \code{character} vector. If a \code{logical}
-scalar is given, should tip labels be plotted or if a logical vector is
-provided, which labels should be shown? If an \code{integer} or
-\code{character} vector is provided, it will be converted to a logical
-vector. The \code{integer} values must be in the range of 1 and number of
-nodes, whereas the values of a \code{character} vector must match values of
-the \code{label} column in the node data. In case of a \code{character}
-vector only values corresponding to actual labels will be plotted and if no
-labels are provided no labels will be shown. (default: \code{FALSE})}
+\item{show_label, show_highlights, show_highlight_label, abr_label}{\code{logical} (scalar), \code{integer} or \code{character} vector. If a
+\code{logical} scalar is given, should tip labels be plotted or if a
+logical vector is provided, which labels should be shown? If an
+\code{integer} or \code{character} vector is provided, it will be converted
+to a logical vector. The \code{integer} values must be in the range of 1
+and number of nodes, whereas the values of a \code{character} vector must
+match values of the \code{label} column in the node data. In case of a
+\code{character} vector only values corresponding to actual labels will be
+plotted and if no labels are provided no labels will be shown. (default:
+\code{FALSE})}
 
 \item{add_legend}{logical scalar. Should legends be plotted?
 (default: \code{add_legend = TRUE})}
