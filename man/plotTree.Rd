@@ -80,7 +80,7 @@ alphabetic order of taxonomic levels?
 \item{remove_levels}{logical scalar, Should taxonomic level information
 be removed from labels? (default: \code{relabel_tree = FALSE})}
 
-\item{show_label, show_highlights, show_highlight_label, abr_label}{\code{logical} (scalar), \code{integer} or \code{character} vector. If a
+\item{show_label, show_highlights, show_highlight_label, abbr_label}{\code{logical} (scalar), \code{integer} or \code{character} vector. If a
 \code{logical} scalar is given, should tip labels be plotted or if a
 logical vector is provided, which labels should be shown? If an
 \code{integer} or \code{character} vector is provided, it will be converted

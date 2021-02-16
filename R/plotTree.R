@@ -20,7 +20,7 @@
 #' @param remove_levels logical scalar, Should taxonomic level information
 #'   be removed from labels? (default: \code{relabel_tree = FALSE})
 #'   
-#' @param show_label,show_highlights,show_highlight_label,abr_label
+#' @param show_label,show_highlights,show_highlight_label,abbr_label
 #'   \code{logical} (scalar), \code{integer} or \code{character} vector. If a
 #'   \code{logical} scalar is given, should tip labels be plotted or if a
 #'   logical vector is provided, which labels should be shown? If an
@@ -603,7 +603,9 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                      call. = FALSE)
             }
             tree_data <- tree_data %>% 
-                mutate(node_label = ifelse(show_label, node_label, NA_character_))
+                mutate(node_label = ifelse(show_label,
+                                           .data$node_label,
+                                           NA_character_))
             show_label <- TRUE
         }
         if(all(is.na(tree_data %>% pull("node_label")))){
@@ -720,7 +722,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
             tree_data <- tree_data %>% 
                 mutate(highlight_label = ifelse(show_highlight_label &
                                                     tree_data$highlight,
-                                                highlight_label,
+                                                .data$highlight_label,
                                                 NA_character_))
             show_highlight_label <- TRUE
         }
@@ -1116,29 +1118,29 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                      layout) {
     if(layout %in% c("fan","circular","radial")){
         ans <- highlight_data %>%
-            mutate(highlight_extendto = (max(x) - x) / 1.5,
-                   #highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
-                   highlight_extendto = highlight_extendto + max(x) + 0.07)
+            mutate(highlight_extendto = (max(.data$x) - .data$x) / 1.5,
+                   #highlight_extendto = .data$highlight_extendto - min(.data$highlight_extendto[.data$highlight]),
+                   highlight_extendto = .data$highlight_extendto + max(.data$x) + 0.07)
     } else if(layout %in% c("rectangular","slanted","ellipse","roundrect")){
         ans <- highlight_data %>%
-            mutate(highlight_extendto = (max(x) - x) / 1.5,
-                   #highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
-                   highlight_extendto = highlight_extendto + max(x) + 0.01)
+            mutate(highlight_extendto = (max(.data$x) - .data$x) / 1.5,
+                   #highlight_extendto = .data$highlight_extendto - min(.data$highlight_extendto[.data$highlight]),
+                   highlight_extendto = .data$highlight_extendto + max(.data$x) + 0.01)
     } else if(layout %in% c("dendrogram")){
         warning("highlights with layout `dendrogram` are buggy.")
         ans <- highlight_data %>%
-            mutate(highlight_extendto = x / 1.5,
-                   highlight_extendto = (highlight_extendto - 0.01) * -1)
+            mutate(highlight_extendto = .data$x / 1.5,
+                   highlight_extendto = (.data$highlight_extendto - 0.01) * -1)
     } else if(layout %in% c("inward_circular")){
         warning("highlights with layout `inward_circular` are buggy.")
         ans <- highlight_data %>%
-            mutate(highlight_extendto = (max(x) - x) / 1.5,
-                   #highlight_extendto = highlight_extendto - min(highlight_extendto[highlight]),
-                   highlight_extendto = highlight_extendto + max(x) + 0.07,
-                   highlight_extendto = highlight_extendto * -1)
+            mutate(highlight_extendto = (max(.data$x) - .data$x) / 1.5,
+                   #highlight_extendto = .data$highlight_extendto - min(.data$highlight_extendto[.data$highlight]),
+                   highlight_extendto = .data$highlight_extendto + max(.data$x) + 0.07,
+                   highlight_extendto = .data$highlight_extendto * -1)
     } else {
         ans <- highlight_data %>% 
-            mutate(highlight_extendto = x)
+            mutate(highlight_extendto = .data$x)
     }
     ans
 }
@@ -1148,19 +1150,19 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                               layout){
     if(layout %in% c("fan","circular","radial")){
         ans <- label_data %>%
-            mutate(highlight_offset = highlight_extendto - max(x) + 0.015 - 0.07)
+            mutate(highlight_offset = .data$highlight_extendto - max(.data$x) + 0.015 - 0.07)
     } else if(layout %in% c("rectangular","slanted","ellipse","roundrect")){
         ans <- label_data %>%
-            mutate(highlight_offset = highlight_extendto - max(x) - 0.01)
+            mutate(highlight_offset = .data$highlight_extendto - max(.data$x) - 0.01)
     } else if(layout %in% c("dendrogram")){
         ans <- label_data %>%
-            mutate(highlight_offset = highlight_extendto - 0.1)
+            mutate(highlight_offset = .data$highlight_extendto - 0.1)
     } else if(layout %in% c("inward_circular")){
         ans <- label_data %>%
-            mutate(highlight_offset = (highlight_extendto *-1) - max(x) - 0.022)
+            mutate(highlight_offset = (.data$highlight_extendto *-1) - max(.data$x) - 0.022)
     } else {
         ans <- label_data %>% 
-            mutate(highlight_offset = highlight_extendto)
+            mutate(highlight_offset = .data$highlight_extendto)
     }
     ans
 }
