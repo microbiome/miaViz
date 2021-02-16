@@ -517,20 +517,17 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 }
 
 #' @importFrom tidytree child
-.get_ordered_tree_labels <- function(tree_data, node){
+.get_tree_labels_for_ordering <- function(tree_data, node){
     children <- child(tree_data, node)
     if(nrow(children) == 0L){
         return("")
     }
     labels <- children$label
     add_labels <- lapply(children$node, 
-                         .get_ordered_tree_labels, 
+                         .get_tree_labels_for_ordering, 
                          tree_data = tree_data)
-    add_labels <- unlist(add_labels)
-    if(length(add_labels) == 0L){
-        add_labels <- ""
-    }
-    paste(labels, add_labels, sep ="__:__")
+    unlist(mapply(paste,labels,add_labels,sep="__:__",SIMPLIFY = FALSE),
+           use.names = FALSE)
 }
 
 #' @importFrom tidytree rootnode as_tibble
@@ -538,9 +535,14 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 .order_tree <- function(tree){
     tree_data <- tidytree::as_tibble(tree)
     root_node <- rootnode(tree_data)
-    o <- order(.get_ordered_tree_labels(tree_data, root_node$node))
-    contraint <- tree$tip.label[o]
-    tree <- ape::rotateConstr(tree, contraint)
+    labels <- paste0("__:__",
+                     .get_tree_labels_for_ordering(tree_data, root_node$node))
+    tip_labels <- regmatches(labels,regexec(".*__:__(.+?)__:__$",labels))
+    tip_labels <- vapply(tip_labels,"[",character(1),2L)
+    o <- order(labels,
+               decreasing = TRUE)
+    contraint <- tip_labels[o]
+    tree <- ape::rotateConstr(tree, rev(contraint))
     tree
 }
 
@@ -1362,6 +1364,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     abbr <- abbr[!vapply(abbr,is.null,logical(1))]
     abbr <- Reduce(rbind,abbr)
     if(!is.null(abbr) && nrow(abbr) > 0L){
+        abbr <- abbr[order(abbr$text),]
         keywidth <- max(1.5,max(nchar(abbr$abbr)) * 0.2)
         guide <- guide_legend(title = "Abbreviations",
                               keywidth = keywidth,
