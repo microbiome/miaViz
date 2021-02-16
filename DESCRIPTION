@@ -1,11 +1,11 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
 Version: 0.98.12
-Date: 2021-02-15
 Authors@R: 
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
-             comment = c(ORCID = "0000-0001-5064-0928")))
+             comment = c(ORCID = "0000-0001-5064-0928")),
+      person(given = "Tuomas", family = "Borman", role = c("ctb")))
 Description: What the package does (one paragraph).
 License: GPL-3
 Encoding: UTF-8
