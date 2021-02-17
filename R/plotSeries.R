@@ -1,6 +1,6 @@
-#' Plot Core Taxa Time Series
+#' Plot Series
 #'
-#' Function that plots cor taxa against time.
+#' Function that plots core taxa against time. #####################################
 #'
 #' @param x
 #' A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -11,17 +11,21 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to be plotted.
 #'
-#' @param timepoints_column
+#' @param x_axis
 #'  A single character value for selecting the column from 
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} 
-#'  that includes time points. 
+#'  that will specify values of x-axis. 
 #'  
-#' @param core_taxa_size
-#' An integer value specifying the number of species in core taxa. By default, it 
-#' is 5.
+#' @param x_axis
+#'  A single character value for selecting the taxa from 
+#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}. 
+#'  This parameter specifies taxa whose abundances will be plotted.
+#'  
+#'  @param rank a single character defining a taxonomic rank, that is used to
+#'  agglomerate the data. Must be a value of \code{taxonomicRanks()} function.
 #'
 #' @details
-#' Creates a plot where core taxa is presented against time. 
+#' Creates a plot where core taxa is presented against time. ###############################
 #'
 #'
 #' @references
@@ -30,7 +34,7 @@
 #' @return
 #' Returns plot###############################
 #'
-#' @name plotCoreTaxaTimeSeries
+#' @name plotSeries
 #' @export
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
@@ -41,29 +45,85 @@
 #'
 NULL
 
-#' @rdname plotCoreTaxaTimeSeries
+#' @rdname plotSeries
 #' @export
-setGeneric("plotCoreTaxaTimeSeries", signature = c("x"),
+setGeneric("plotSeries", signature = c("x"),
            function(x,
-                    abund_values = "counts",
-                    timepoints_column = NULL,
-                    core_taxa_size = 5)
-               standardGeneric("plotCoreTaxaTimeSeries"))
+                    abund_values = NULL,
+                    x_axis = NULL,
+                    y_axis = NULL)
+               standardGeneric("plotSeries"))
 
 
-#' @rdname plotCoreTaxaTimeSeries
+#' @rdname plotSeries
 #' @export
-setMethod("plotCoreTaxaTimeSeries", signature = c(x = "SummarizedExperiment"),
+setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
           function(x,
-                   abund_values = "counts",
-                   timepoints_column = NULL,
-                   core_taxa_size = 5){
+                   abund_values = NULL,
+                   x_axis = NULL,
+                   y_axis = NULL){
               
-              # Input check
+              ###################### Input check #######################
               # Check abund_values
               .check_abund_values(abund_values, x)
-              # Other checks
-              ###############################################
+              
+              # Check x_axis
+              if( !(x_axis %in% names(colData(x))) ){
+                  stop("'x_axis' must be a name of column of colData(x)", call. = FALSE)
+              }
+              
+              # Check y_axis
+              if(!(y_axis %in% rownames(x)) ){
+                  stop("'y_axis' must be in rownames(x).", call. = FALSE)
+              }
+              
+              # Check rank
+              # IF rank is not null, it has been specified by user
+              if( !is.null(rank) ){
+                  if(!.is_non_empty_string(rank)){
+                      stop("'rank' must be an non empty single character value,
+                           and it must be one of taxonomyRanks(x).",
+                           call. = FALSE)
+                  }
+                  .check_taxonomic_rank(rank, x)
+              }
+              ##############################################
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
+              
               
               
               # Nothing ready yet #############################
