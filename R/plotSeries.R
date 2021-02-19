@@ -109,14 +109,17 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
               # Get assay data
               assay <- .get_assay_data(x, abund_values, y)
               
+              #####################################################
               colour_by <- "Kingdom"
               linetype_by <- NULL
               size_by <- NULL
+              ##########################################################
+              
               # Fetch series and features data as a list. 
               series_and_features_data <- .incorporate_series_vis(object, X, colour_by, linetype_by, size_by)
               
               series_data <- series_and_features_data$series_data$value
-              features_data <- series_and_features_data$features_data
+              feature_data <- series_and_features_data$feature_data
               
               melted_data <- .melt_series_data(assay, series_and_features_data)
               
@@ -128,11 +131,10 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
 .get_assay_data <- function(object, abund_values, y){
     
     # Gets warning or error if too many taxa are selected. 
-    if(length(y) > 10 ){
-        warning("Over 10 taxa selected.", call. = FALSE)
-    }
     if(length(y) > 20 ){
         stop("Over 20 taxa selected. 20 or under allowed.", call. = FALSE)
+    } else if (length(y) > 10 ){
+        warning("Over 10 taxa selected.", call. = FALSE)
     }
     
     # Take only those taxa that are specified by 'y'
@@ -177,14 +179,14 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
                     # Store values
                     feature_data <- data.frame(feature_info$value)
                     # Name the column by parameter name, like "colour_by"
-                    colnames(feature_data["feature_info.value"]) <- feature_info$name
+                    names(feature_data)[names(feature_data) == "feature_info.value"] <- feature_info$name
                 }
                 else{
                     
                     # Store values to data frame that already exist
                     feature_data <- cbind(feature_data, feature_info$value)
                     # Name the column by parameter name, like "colour_by"
-                    colnames(feature_data["feature_info.value"]) <- feature_info$name
+                    names(feature_data)[names(feature_data) == "feature_info.value"] <- feature_info$name
                 }
             }
         }
@@ -210,6 +212,8 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     # Add series data to the data frame
     plot_data <- cbind(plot_data, X = series_data)
     
+    # Fills the column with values
+    plot_data <- cbind(plot_data, colour_by = rep(feature_data$feature_info.value, nrow(plot_data)/length(feature_data$feature_info.value)))
     # Feature data should be merged with this data frame
 }
 
