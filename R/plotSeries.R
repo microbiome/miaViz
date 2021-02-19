@@ -79,7 +79,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
                   # Check rank
                   .check_taxonomic_rank(rank, x)
                   
-                  x <- agglomerateByRank(object, rank = rank)
+                  object <- agglomerateByRank(object, rank = rank)
                   
                   
                   ######################## should be removed?
@@ -107,13 +107,16 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
               }
               
               # Get assay data
-              assay <- .get_assay_data(object, abund_values, y)
+              assay <- .get_assay_data(x, abund_values, y)
               
+              colour_by <- "Kingdom"
+              linetype_by <- NULL
+              size_by <- NULL
               # Fetch series and features data as a list. 
-              series_and_features_data <- .incorporate_series_vis(assay, object, X, colour_by, linetype_by, size_by)
+              series_and_features_data <- .incorporate_series_vis(object, X, colour_by, linetype_by, size_by)
               
-              series_data <- series_and_features_data$series_data
-              features_data <- series_and_features_data$series_data
+              series_data <- series_and_features_data$series_data$value
+              features_data <- series_and_features_data$features_data
               
               melted_data <- .melt_series_data(assay, series_and_features_data)
               
@@ -170,16 +173,18 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
                 
                 # If feature_data dataframe does not exist, create one
                 if(!exists("feature_data")){
+                    
                     # Store values
                     feature_data <- data.frame(feature_info$value)
                     # Name the column by parameter name, like "colour_by"
-                    colnames(feature_data["feature_info$value"]) <- feature_info$name
+                    colnames(feature_data["feature_info.value"]) <- feature_info$name
                 }
                 else{
+                    
                     # Store values to data frame that already exist
                     feature_data <- cbind(feature_data, feature_info$value)
                     # Name the column by parameter name, like "colour_by"
-                    colnames(feature_data["feature_info$value"]) <- feature_info$name
+                    colnames(feature_data["feature_info.value"]) <- feature_info$name
                 }
             }
         }
@@ -197,8 +202,14 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
 
 
 
-.melt_series_data <- function(assay, data){
+.melt_series_data <- function(assay, abund_values, series_data){
     
+    # Melt assay table 
+    plot_data <- as.data.frame(assay) %>% pivot_longer(colnames(assay), names_to = "sample", values_to = "Y")
     
+    # Add series data to the data frame
+    plot_data <- cbind(plot_data, X = series_data)
+    
+    # Feature data should be merged with this data frame
 }
 
