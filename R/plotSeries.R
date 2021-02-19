@@ -109,8 +109,13 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
               # Get assay data
               assay <- .get_assay_data(object, abund_values, y)
               
-              data <- .incorporate_series_vis(assay, object, X, colour_by, linetype_by, size_by)
+              # Fetch series and features data as a list. 
+              series_and_features_data <- .incorporate_series_vis(assay, object, X, colour_by, linetype_by, size_by)
               
+              series_data <- series_and_features_data$series_data
+              features_data <- series_and_features_data$series_data
+              
+              melted_data <- .melt_series_data(assay, series_and_features_data)
               
           }
 )
@@ -135,10 +140,9 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     return(assay)
 }
 
-.incorporate_series_vis <- function(assay, se, X, colour_by, linetype_by, size_by){
+.incorporate_series_vis <- function(object, X, colour_by, linetype_by, size_by){
     
-    # Stores the variables, se is the object
-    
+    # Stores the variables
     variables <- c(X = X, 
                    colour_by = colour_by,
                    linetype_by = linetype_by,
@@ -150,32 +154,50 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
         # Loops through variables
         for(i in seq_along(variables)){
             
-            # If the variable is in colData
-            if( variables[i] %in% names(colData(se)) ){
+            # If the variable is in colData, it is the series data
+            if( variables[i] %in% names(colData(object)) ){
+                
                 # Retrieve series x-axis points from colData
-                feature_info <- retrieveCellInfo(se, variables[1], search = "colData")
+                series_data <- retrieveCellInfo(object, variables[i], search = "colData")
+                # mirror back variable name, if a partial match was used
+                series_data$name <- names(variables)[i]
             }
             else{
                 # get data from rowData
-                feature_info <- retrieveFeatureInfo(se, variables[i],
-                                                    search = "rowData")
+                feature_info <- retrieveFeatureInfo(object, variables[i], search = "rowData")
+                # mirror back variable name, if a partial match was used
+                feature_info$name <- names(variables)[i]
+                
+                # If feature_data dataframe does not exist, create one
+                if(!exists("feature_data")){
+                    # Store values
+                    feature_data <- data.frame(feature_info$value)
+                    # Name the column by parameter name, like "colour_by"
+                    colnames(feature_data["feature_info$value"]) <- feature_info$name
+                }
+                else{
+                    # Store values to data frame that already exist
+                    feature_data <- cbind(feature_data, feature_info$value)
+                    # Name the column by parameter name, like "colour_by"
+                    colnames(feature_data["feature_info$value"]) <- feature_info$name
+                }
             }
-            # mirror back variable name, if a partial match was used
-            var_name <- names(variables)[i]
-            
         }
     }
     
-    return(list(df = assay,
-                X = X,
-                colour_by = colour_by,
-                linetype_by = linetype_by,
-                size_by = size_by))
+    # If feature_data exists, add feature_data in addition to series_data
+    if(exists("feature_data")){
+        returned_list <- list(series_data = series_data, feature_data = feature_data)
+    }# If it does not exist, just add the series_data
+    else{
+        returned_list <- list(series_data = series_data)
+    }
+    return(returned_list)
 }
 
 
 
-.melt_series_data <- function(){
+.melt_series_data <- function(assay, data){
     
     
 }
