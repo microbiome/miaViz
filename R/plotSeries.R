@@ -74,74 +74,109 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
                   stop("'x_axis' must be a name of column of colData(x)", call. = FALSE)
               }
               
+              # If rank is not null, data will be agglomerated by rank
+              if( !is.null(rank) ){
+                  # Check rank
+                  .check_taxonomic_rank(rank, x)
+                  
+                  x <- agglomerateByRank(object, rank = rank)
+                  
+                  
+                  ######################## should be removed?
+                  # Rownames are now changed, so y-axis must be checked again
+                  # Check y_axis
+                  if (!is.null(y)){
+                      if(!(y_axis %in% rownames(object)) ){
+                          stop("'y' does not match with rownames(x). 
+                          Data is agglomerated by 'rank', and rownames(object) are
+                          also changed in relation to 'rank'. Check that 'y'
+                          match with agglomerated data.", call. = FALSE)
+                      }
+                  }##########################################
+              }
+              
               # Check y_axis
               # If y_axis is not null, user has specified it
               if (!is.null(y_axis)){
                   if(!(y_axis %in% rownames(x)) ){
                       stop("'y_axis' must be in rownames(x).", call. = FALSE)
                   }
+              }# If it is null, assign rownames
+              else{
+                  y <- rownames(object)
               }
               
+              # Get assay data
+              assay <- .get_assay_data(object, abund_values, y)
               
-              # Check rank
-              # IF rank is not null, it has been specified by user
-              if( !is.null(rank) ){
-                  if(!.is_non_empty_string(rank)){
-                      stop("'rank' must be an non empty single character value,
-                           and it must be one of taxonomyRanks(x).",
-                           call. = FALSE)
-                  }
-                  .check_taxonomic_rank(rank, x)
-              }
-              ##############################################
-              
-              # If rank is not null, data will be agglomerated by rank
-              if( !is.null(rank) ){
-                  x <- agglomerateByRank(x, rank = rank)
-                  
-                  # Rownames are now changed, so y-axis must be checked again
-                  # Check y_axis
-                  if (!is.null(y_axis)){
-                      if(!(y_axis %in% rownames(x)) ){
-                          stop("'y-axis' does not match to rownames(x). 
-                          Data is agglomerated by 'rank', and rownames(x) are
-                          also changed in relation to 'rank'. Check that 'y-axis'
-                          match to agglomerated data.", call. = FALSE)
-                      }
-                  }
-              }
-              
-              # If y_axis is not null, take only those taxa into account that user
-              # is specified
-              if( !is.null(y_axis) ){
-                  x <- x[y_axis]
-              }
-              
-              # Melt data
-              melted_data <- meltAssay(x, add_col_data = TRUE, add_row_data = TRUE)
-              color_by = "Kingdom"
-              line_by = "FeatureID"
-              
-              # # Take only those columns that are needed
-              # melted_data <- melted_data[, c("FeatureID", abund_values, x_axis)]
-              
-              ggplot2::ggplot(melted_data) + 
-                  ggplot2::geom_line(
-                      ggplot2::aes_string(x = x_axis, y = abund_values, 
-                                          color = color_by, linetype = line_by))
-              
-              
-                  #     ) +
-                  # theme_bw() + 
-                  # theme(legend.position="top") + 
-                  # xlab(x_axis) + 
-                  # ylab(abund_values) + 
-                  # scale_color_brewer("Core ASVs",palette = "Paired") +
-                  # guides(col = guide_legend(ncol = 3, nrow = 3))
-              
-              
+              data <- .incorporate_series_vis(assay, object, X, colour_by, linetype_by, size_by)
               
               
           }
 )
+
+################## HELP FUNCTIONS ##########################
+
+.get_assay_data <- function(object, abund_values, y){
+    
+    # Gets warning or error if too many taxa are selected. 
+    if(length(y) > 10 ){
+        warning("Over 10 taxa selected.", call. = FALSE)
+    }
+    if(length(y) > 20 ){
+        stop("Over 20 taxa selected. 20 or under allowed.", call. = FALSE)
+    }
+    
+    # Take only those taxa that are specified by 'y'
+    sub_object <- object[y]
+    
+    assay <- assay(sub_object, abund_values)
+    
+    return(assay)
+}
+
+.incorporate_series_vis <- function(assay, se, X, colour_by, linetype_by, size_by){
+    
+    # Stores the variables, se is the object
+    
+    variables <- c(X = X, 
+                   colour_by = colour_by,
+                   linetype_by = linetype_by,
+                   size_by = size_by)
+    
+    # If variables there are variables
+    if(!is.null(variables)){
+        
+        # Loops through variables
+        for(i in seq_along(variables)){
+            
+            # If the variable is in colData
+            if( variables[i] %in% names(colData(se)) ){
+                # Retrieve series x-axis points from colData
+                feature_info <- retrieveCellInfo(se, variables[1], search = "colData")
+            }
+            else{
+                # get data from rowData
+                feature_info <- retrieveFeatureInfo(se, variables[i],
+                                                    search = "rowData")
+            }
+            # mirror back variable name, if a partial match was used
+            var_name <- names(variables)[i]
+            
+        }
+    }
+    
+    return(list(df = assay,
+                X = X,
+                colour_by = colour_by,
+                linetype_by = linetype_by,
+                size_by = size_by))
+}
+
+
+
+.melt_series_data <- function(){
+    
+    
+}
 
