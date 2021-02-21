@@ -11,18 +11,25 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #'   to be plotted.
 #'
-#' @param x_axis
+#' @param x
 #'  A single character value for selecting the column from 
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} 
 #'  that will specify values of x-axis. 
 #'  
-#' @param x_axis
+#' @param y
 #'  A single character value for selecting the taxa from 
 #'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}. 
 #'  This parameter specifies taxa whose abundances will be plotted.
 #'  
-#'  @param rank a single character defining a taxonomic rank, that is used to
+#' @param rank a single character defining a taxonomic rank, that is used to
 #'  agglomerate the data. Must be a value of \code{taxonomicRanks()} function.
+#'  
+#' @param colour_by
+#'  
+#' @param size_by
+#'  
+#' @param linetype_by
+#'  
 #'
 #' @details
 #' Creates a plot where core taxa is presented against time. ###############################
@@ -47,37 +54,43 @@ NULL
 
 #' @rdname plotSeries
 #' @export
-setGeneric("plotSeries", signature = c("x"),
-           function(x,
-                    abund_values = NULL,
-                    x_axis = NULL,
-                    y_axis = NULL,
-                    rank = NULL)
+setGeneric("plotSeries", signature = c("object"),
+           function(object,
+                    abund_values,
+                    x,
+                    y = NULL,
+                    rank = NULL,
+                    colour_by = NULL,
+                    size_by = NULL,
+                    linetype_by = NULL)
                standardGeneric("plotSeries"))
 
 
 #' @rdname plotSeries
 #' @export
-setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   abund_values = NULL,
-                   x_axis = NULL,
-                   y_axis = NULL,
-                   rank = NULL){
+setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
+          function(object,
+                   abund_values,
+                   x,
+                   y = NULL,
+                   rank = NULL,
+                   colour_by = NULL,
+                   size_by = NULL,
+                   linetype_by = NULL){
               
               ###################### Input check #######################
               # Check abund_values
-              .check_abund_values(abund_values, x)
+              .check_abund_values(abund_values, object)
               
               # Check x_axis
-              if( !(x_axis %in% names(colData(x))) ){
-                  stop("'x_axis' must be a name of column of colData(x)", call. = FALSE)
+              if( !(x %in% names(colData(object))) ){
+                  stop("'x' must be a name of column of colData(object)", call. = FALSE)
               }
               
               # If rank is not null, data will be agglomerated by rank
               if( !is.null(rank) ){
                   # Check rank
-                  .check_taxonomic_rank(rank, x)
+                  .check_taxonomic_rank(rank, object)
                   
                   object <- agglomerateByRank(object, rank = rank)
                   
@@ -86,7 +99,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
                   # Rownames are now changed, so y-axis must be checked again
                   # Check y_axis
                   if (!is.null(y)){
-                      if(!(y_axis %in% rownames(object)) ){
+                      if(!(y %in% rownames(object)) ){
                           stop("'y' does not match with rownames(x). 
                           Data is agglomerated by 'rank', and rownames(object) are
                           also changed in relation to 'rank'. Check that 'y'
@@ -97,9 +110,9 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
               
               # Check y_axis
               # If y_axis is not null, user has specified it
-              if (!is.null(y_axis)){
-                  if(!(y_axis %in% rownames(x)) ){
-                      stop("'y_axis' must be in rownames(x).", call. = FALSE)
+              if (!is.null(y)){
+                  if(!(y %in% rownames(object)) ){
+                      stop("'y' must be in rownames(x).", call. = FALSE)
                   }
               }# If it is null, assign rownames
               else{
@@ -107,21 +120,31 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
               }
               
               # Get assay data
-              assay <- .get_assay_data(x, abund_values, y)
-              
-              #####################################################
-              colour_by <- "Kingdom"
-              linetype_by <- NULL
-              size_by <- NULL
-              ##########################################################
+              assay <- .get_assay_data(object, abund_values, y)
               
               # Fetch series and features data as a list. 
-              series_and_features_data <- .incorporate_series_vis(object, X, colour_by, linetype_by, size_by)
-              
+              series_and_features_data <- .incorporate_series_vis(object, x, colour_by, linetype_by, size_by)
+              # Splits it to individual datas
               series_data <- series_and_features_data$series_data$value
               feature_data <- series_and_features_data$feature_data
               
-              melted_data <- .melt_series_data(assay, series_and_features_data)
+              # Melts the data
+              melted_data <- .melt_series_data(assay, series_data, feature_data)
+              
+              plot_data <- data.frame(x = melted_data$x, y = melted_data$y)
+              colour_by <- melted_data$colour_by
+              size_by <- melted_data$size_by
+              size_by <- melted_data$size_by
+              xlab <- paste0(x)
+              ylab <- paste0("Abundance ", abund_values)
+              
+              plot <- .series_plotter(plot_data, 
+                                          xlab = xlab,
+                                          ylab = ylab,
+                                          colour_by = colour_by,
+                                          size_by = size_by)
+              
+              return(plot)
               
           }
 )
@@ -145,10 +168,10 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     return(assay)
 }
 
-.incorporate_series_vis <- function(object, X, colour_by, linetype_by, size_by){
+.incorporate_series_vis <- function(object, x, colour_by, linetype_by, size_by){
     
     # Stores the variables
-    variables <- c(X = X, 
+    variables <- c(x = x, 
                    colour_by = colour_by,
                    linetype_by = linetype_by,
                    size_by = size_by)
@@ -202,18 +225,45 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     return(returned_list)
 }
 
-
-
-.melt_series_data <- function(assay, abund_values, series_data){
+.melt_series_data <- function(assay, series_data, feature_data){
     
     # Melt assay table 
-    plot_data <- as.data.frame(assay) %>% pivot_longer(colnames(assay), names_to = "sample", values_to = "Y")
+    melted_data <- as.data.frame(assay) %>% pivot_longer(colnames(assay), names_to = "sample", values_to = "y")
     
     # Add series data to the data frame
-    plot_data <- cbind(plot_data, X = series_data)
+    melted_data <- cbind(melted_data, x = series_data)
     
-    # Fills the column with values
-    plot_data <- cbind(plot_data, colour_by = rep(feature_data$feature_info.value, nrow(plot_data)/length(feature_data$feature_info.value)))
-    # Feature data should be merged with this data frame
+    # If feature_data is not null
+    if( !is.null(feature_data) ){
+        # Loops through feature_data
+        for( i in ncol(feature_data) ){
+            # Assigns feature data to data points
+            melted_data <- cbind(melted_data, feature = rep(feature_data[[i]], nrow(melted_data)/length(feature_data[[i]])))
+            # Renames the column
+            names(melted_data)[names(melted_data) == "feature"] <- names(feature_data)[i]
+        }
+    }
+    
+    return(melted_data)
 }
 
+.series_plotter <- function(plot_data,
+                            xlab = NULL,
+                            ylab = NULL,
+                            colour_by = NULL,
+                            size_by = NULL,
+                            
+                            flipped = FALSE,
+                            add_legend = TRUE,
+                            point_alpha = 1,
+                            point_size = 2,
+                            line_alpha = 1,
+                            line_type = NULL,
+                            line_size = 1,
+                            ...){
+    
+    plot_out <- ggplot(plot_data) + geom_line(aes(x = x, y = y, color = colour_by)) +
+        labs(x = xlab, y = ylab) 
+    
+    
+}
