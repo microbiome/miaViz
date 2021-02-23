@@ -15,9 +15,12 @@ plotColTree(object, ...)
 \S4method{plotColTree}{TreeSummarizedExperiment}(
   object,
   relabel_tree = FALSE,
+  order_tree = FALSE,
+  remove_levels = FALSE,
   show_label = FALSE,
   show_highlights = FALSE,
-  colour_highlights = FALSE,
+  show_highlight_label = FALSE,
+  abbr_label = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -28,6 +31,7 @@ plotColTree(object, ...)
   node_colour_by = NULL,
   node_shape_by = NULL,
   node_size_by = NULL,
+  colour_highlights_by = NULL,
   by_exprs_values = "counts",
   other_fields = list(),
   ...
@@ -36,9 +40,12 @@ plotColTree(object, ...)
 \S4method{plotRowTree}{TreeSummarizedExperiment}(
   object,
   relabel_tree = FALSE,
+  order_tree = FALSE,
+  remove_levels = FALSE,
   show_label = FALSE,
   show_highlights = FALSE,
-  colour_highlights = FALSE,
+  show_highlight_label = FALSE,
+  abbr_label = FALSE,
   add_legend = TRUE,
   layout = "circular",
   edge_colour_by = NULL,
@@ -49,6 +56,7 @@ plotColTree(object, ...)
   node_colour_by = NULL,
   node_shape_by = NULL,
   node_size_by = NULL,
+  colour_highlights_by = NULL,
   by_exprs_values = "counts",
   other_fields = list(),
   ...
@@ -62,24 +70,26 @@ object.}
 \item{...}{additional arguments for plotting.}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
-the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}? This
-has consequences on how data can be merged from \code{other_fields}.
+the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?
 (default: \code{relabel_tree = FALSE})}
 
-\item{show_label}{logical scalar or character vector. Should tip labels
-be plotted or if a logical vector is provided, which labels should be
-shown? Only values corresponding to actual labels will be plotted.
-(default: \code{show_label = FALSE})}
+\item{order_tree}{logical scalar, Should the tree be ordered based on
+alphabetic order of taxonomic levels?
+(default: \code{order_tree = FALSE})}
 
-\item{show_highlights}{logical scalar or character vector. Should highlights
-around nodes and its decendents be plotted? If set \code{TRUE} this will be
-limit do direct decendents of the rootnode. If a character vector is
-provided, which nodes should be shown? Only values corresponding to actual
-node labels will be plotted. (default: \code{show_highlights = FALSE})}
+\item{remove_levels}{logical scalar, Should taxonomic level information
+be removed from labels? (default: \code{relabel_tree = FALSE})}
 
-\item{colour_highlights}{Should the highlights be colour differently?
-If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
-\code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
+\item{show_label, show_highlights, show_highlight_label, abbr_label}{\code{logical} (scalar), \code{integer} or \code{character} vector. If a
+\code{logical} scalar is given, should tip labels be plotted or if a
+logical vector is provided, which labels should be shown? If an
+\code{integer} or \code{character} vector is provided, it will be converted
+to a logical vector. The \code{integer} values must be in the range of 1
+and number of nodes, whereas the values of a \code{character} vector must
+match values of the \code{label} column in the node data. In case of a
+\code{character} vector only values corresponding to actual labels will be
+plotted and if no labels are provided no labels will be shown. (default:
+\code{FALSE})}
 
 \item{add_legend}{logical scalar. Should legends be plotted?
 (default: \code{add_legend = TRUE})}
@@ -121,14 +131,17 @@ shape tree nodes by. Must be a field from \code{other_fields}.}
 \item{node_size_by}{Specification of a column metadata field or a feature to
 size tree nodes by. Must be a field from \code{other_fields}.}
 
+\item{colour_highlights_by}{Should the highlights be colour differently?
+If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
+\code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
+
 \item{by_exprs_values}{A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 \code{exprs_values} argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.}
 
-\item{other_fields}{a \code{data.frame} or coercible to one, with at least
-one type of id information. See details in
-\code{\link[=treeData]{treeData}}.}
+\item{other_fields}{Additional fields to include in the node information
+without plotting them.}
 }
 \value{
 a \code{\link{ggtree}} plot
@@ -138,6 +151,10 @@ Based on the stored data in a \code{TreeSummarizedExperiment} a tree can
 be plotted. From the \code{rowData}, the \code{assays} as well as the
 \code{colData} information can be taken for enriching the tree plots with
 additional information.
+}
+\details{
+If \code{show_label} or \code{show_highlight_label} have the same length
+as the number of nodes, the vector will be used to relabel the nodes.
 }
 \examples{
 library(scater)
@@ -166,8 +183,7 @@ plotRowTree(x[rownames(x) \%in\% top_genus,],
             tip_size_by = "detected",
             show_label = TRUE)
 # plot with selected labels
-labels <- c("Genus:Providencia" = TRUE, "Genus:Morganella" = FALSE,
-            "0.961.60" = TRUE)
+labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
 plotRowTree(x[rownames(x) \%in\% top_genus,],
             tip_colour_by = "log_mean",
             tip_size_by = "detected",
@@ -202,6 +218,16 @@ altExps(GlobalPatterns) <-
           })
 x <- unsplitByRanks(GlobalPatterns)
 x <- addTaxonomyTree(x)
+
+highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
+                "Family:Pseudomonadaceae","Order:Bifidobacteriales")
+plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
+            tip_colour_by = "log_mean",
+            node_colour_by = "log_mean",
+            show_highlights = highlights,
+            show_highlight_label = highlights,
+            colour_highlights_by = "Phylum")
+
 plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
             edge_colour_by = "Phylum",
             edge_size_by = "detected",
