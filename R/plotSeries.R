@@ -1,45 +1,39 @@
 #' Plot Series
 #'
-#' Function that plots core taxa against time. #####################################
+#' This function plots series data.
 #'
-#' @param x
+#' @param object
 #' A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #'
 #' @param abund_values
 #' A single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
-#'   to be plotted.
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
+#' to be plotted.
 #'
 #' @param x
-#'  A single character value for selecting the column from 
-#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} 
-#'  that will specify values of x-axis. 
+#' A single character value for selecting the column from 
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} 
+#' that will specify values of x-axis. 
 #'  
 #' @param y
-#'  A single character value for selecting the taxa from 
-#'  \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}. 
-#'  This parameter specifies taxa whose abundances will be plotted.
+#' A single character value for selecting the taxa from 
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}. 
+#' This parameter specifies taxa whose abundances will be plotted.
 #'  
-#' @param rank a single character defining a taxonomic rank, that is used to
-#'  agglomerate the data. Must be a value of \code{taxonomicRanks()} function.
+#' @param rank a single character value defining a taxonomic rank, that is used to
+#' agglomerate the data. Must be a value of \code{taxonomicRanks()} function.
 #'  
 #' @param colour_by
-#'  
-#' @param size_by
-#'  
-#' @param linetype_by
-#'  
+#' a single character value defining a taxonomic rank, that is used to color plot. 
+#' Must be a value of \code{taxonomicRanks()} function.
 #'
 #' @details
-#' Creates a plot where core taxa is presented against time. ###############################
-#'
-#'
-#' @references
-#' Add here.#####################################
+#' This function creates series plot, where x-axis includes e.g. time points, and
+#' y-axis abundances of selected taxa.
 #'
 #' @return
-#' Returns plot###############################
+#' A \code{ggplot2} object 
 #'
 #' @name plotSeries
 #' @export
@@ -47,8 +41,16 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
-#' data(esophagus)
-#' x <- esophagus
+#' x <- microbiomeDataSets::SilvermanAGutData()
+#' # Plots 2 most abudant taxa, which are colore by their family
+#' plotSeries(x, abund_values = "counts", x = "DAY_ORDER", y = mia::getTopTaxa(x, 2), colour_by = "Family")
+#' 
+#' # Counts relative abundances
+#' x <- mia::transformCounts(x, method = "relabundance")
+#' 
+#' # Plots relative abundances of phylums
+#' plotSeries(x, abund_values = "relabundance", x = "DAY_ORDER", rank = "Phylum", colour_by = "Phylum")
+#' 
 #'
 NULL
 
@@ -82,7 +84,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               # Check abund_values
               .check_abund_values(abund_values, object)
               
-              # Check x_axis
+              # Check x
               if( !(x %in% names(colData(object))) ){
                   stop("'x' must be a name of column of colData(object)", call. = FALSE)
               }
@@ -92,57 +94,47 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   # Check rank
                   .check_taxonomic_rank(rank, object)
                   
+                  # Agglomerates the object
                   object <- agglomerateByRank(object, rank = rank)
                   
-                  
-                  ######################## should be removed?
-                  # Rownames are now changed, so y-axis must be checked again
-                  # Check y_axis
-                  if (!is.null(y)){
-                      if(!(y %in% rownames(object)) ){
-                          stop("'y' does not match with rownames(x). 
-                          Data is agglomerated by 'rank', and rownames(object) are
-                          also changed in relation to 'rank'. Check that 'y'
-                          match with agglomerated data.", call. = FALSE)
-                      }
-                  }##########################################
               }
               
               # Check y_axis
               # If y_axis is not null, user has specified it
               if (!is.null(y)){
-                  if(!(y %in% rownames(object)) ){
-                      stop("'y' must be in rownames(x).", call. = FALSE)
+                  if(!all( is.element(y, rownames(object)) ) ){
+                      stop("'y' must be in rownames(x). If 'rank' was used,
+                           check that 'y' matches agglomerated data.", call. = FALSE)
                   }
-              }# If it is null, assign rownames
-              else{
-                  y <- rownames(object)
+                  # Select taxa that user has specified
+                  object <- object[y]
               }
               
               # Get assay data
-              assay <- .get_assay_data(object, abund_values, y)
+              assay <- .get_assay_data(object, abund_values)
               
               # Fetch series and features data as a list. 
               series_and_features_data <- .incorporate_series_vis(object, x, colour_by, linetype_by, size_by)
-              # Splits it to individual datas
+              # Divides it to series and feature data
               series_data <- series_and_features_data$series_data$value
               feature_data <- series_and_features_data$feature_data
               
               # Melts the data
               melted_data <- .melt_series_data(assay, series_data, feature_data)
               
+              # Creates variables for series_plotter
               plot_data <- data.frame(x = melted_data$x, y = melted_data$y)
+              colour_by_title <- colour_by
               colour_by <- melted_data$colour_by
-              size_by <- melted_data$size_by
-              size_by <- melted_data$size_by
               xlab <- paste0(x)
-              ylab <- paste0("Abundance ", abund_values)
+              ylab <- paste0(abund_values)
               
+              # Plots the data
               plot <- .series_plotter(plot_data, 
                                           xlab = xlab,
                                           ylab = ylab,
                                           colour_by = colour_by,
-                                          size_by = size_by)
+                                          colour_by_title = colour_by_title)
               
               return(plot)
               
@@ -151,19 +143,17 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 
 ################## HELP FUNCTIONS ##########################
 
-.get_assay_data <- function(object, abund_values, y){
+.get_assay_data <- function(object, abund_values){
     
     # Gets warning or error if too many taxa are selected. 
-    if(length(y) > 20 ){
+    if( length(rownames(object)) > 20 ){
         stop("Over 20 taxa selected. 20 or under allowed.", call. = FALSE)
-    } else if (length(y) > 10 ){
+    } else if ( length(rownames(object)) > 10 ){
         warning("Over 10 taxa selected.", call. = FALSE)
     }
     
-    # Take only those taxa that are specified by 'y'
-    sub_object <- object[y]
-    
-    assay <- assay(sub_object, abund_values)
+    # Retrieves the assay
+    assay <- assay(object, abund_values)
     
     return(assay)
 }
@@ -195,7 +185,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                 feature_info <- retrieveFeatureInfo(object, variables[i], search = "rowData")
                 # mirror back variable name, if a partial match was used
                 feature_info$name <- names(variables)[i]
-                
+
                 # If feature_data dataframe does not exist, create one
                 if(!exists("feature_data")){
                     
@@ -205,16 +195,15 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                     names(feature_data)[names(feature_data) == "feature_info.value"] <- feature_info$name
                 }
                 else{
-                    
                     # Store values to data frame that already exist
                     feature_data <- cbind(feature_data, feature_info$value)
                     # Name the column by parameter name, like "colour_by"
-                    names(feature_data)[names(feature_data) == "feature_info.value"] <- feature_info$name
+                    names(feature_data)[names(feature_data) == "feature_info$value"] <- feature_info$name
                 }
             }
         }
     }
-    
+
     # If feature_data exists, add feature_data in addition to series_data
     if(exists("feature_data")){
         returned_list <- list(series_data = series_data, feature_data = feature_data)
@@ -251,19 +240,12 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                             xlab = NULL,
                             ylab = NULL,
                             colour_by = NULL,
-                            size_by = NULL,
-                            
-                            flipped = FALSE,
-                            add_legend = TRUE,
-                            point_alpha = 1,
-                            point_size = 2,
-                            line_alpha = 1,
-                            line_type = NULL,
-                            line_size = 1,
+                            colour_by_title = NULL,
                             ...){
-    
+    # Creates the plot
     plot_out <- ggplot(plot_data) + geom_line(aes(x = x, y = y, color = colour_by)) +
-        labs(x = xlab, y = ylab) 
+        labs(x = xlab, y = ylab, color = colour_by_title)
     
+    return(plot_out)
     
 }

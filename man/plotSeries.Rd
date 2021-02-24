@@ -28,6 +28,9 @@ plotSeries(
 )
 }
 \arguments{
+\item{object}{A \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+object.}
+
 \item{abund_values}{A single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to be plotted.}
@@ -40,31 +43,34 @@ that will specify values of x-axis.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
 This parameter specifies taxa whose abundances will be plotted.}
 
-\item{rank}{a single character defining a taxonomic rank, that is used to
+\item{rank}{a single character value defining a taxonomic rank, that is used to
 agglomerate the data. Must be a value of \code{taxonomicRanks()} function.}
 
-\item{colour_by}{}
-
-\item{size_by}{}
-
-\item{linetype_by}{}
+\item{colour_by}{a single character value defining a taxonomic rank, that is used to color plot.
+Must be a value of \code{taxonomicRanks()} function.}
 }
 \value{
-Returns plot###############################
+A \code{ggplot2} object
 }
 \description{
-Function that plots core taxa against time. #####################################
+This function plots series data.
 }
 \details{
-Creates a plot where core taxa is presented against time. ###############################
+This function creates series plot, where x-axis includes e.g. time points, and
+y-axis abundances of selected taxa.
 }
 \examples{
-data(esophagus)
-x <- esophagus
+x <- microbiomeDataSets::SilvermanAGutData()
+# Plots 2 most abudant taxa, which are colore by their family
+plotSeries(x, abund_values = "counts", x = "DAY_ORDER", y = mia::getTopTaxa(x, 2), colour_by = "Family")
 
-}
-\references{
-Add here.#####################################
+# Counts relative abundances
+x <- mia::transformCounts(x, method = "relabundance")
+
+# Plots relative abundances of phylums
+plotSeries(x, abund_values = "relabundance", x = "DAY_ORDER", rank = "Phylum", colour_by = "Phylum")
+
+
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
