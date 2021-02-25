@@ -137,7 +137,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               melted_data <- .melt_series_data(assay, series_data, feature_data)
               
               # Creates variables for series_plotter
-              plot_data <- data.frame(x = melted_data$x, y = melted_data$y)
+              plot_data <- melted_data
               colour_by_title <- colour_by
               colour_by <- melted_data$colour_by
               linetype_by_title <- linetype_by
@@ -261,10 +261,45 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                             colour_by_title = NULL,
                             linetype_by = NULL,
                             linetype_by_title = NULL,
+                            add_legend = TRUE,
+                            point_alpha = 1,
+                            point_size = 2,
+                            line_alpha = 1,
+                            line_size = 1,
                             ...){
-    # Creates the plot
-    plot_out <- ggplot(plot_data) + geom_line(aes(x = x, y = y, color = colour_by, linetype = linetype_by)) +
-        labs(x = xlab, y = ylab, color = colour_by_title, linetype = linetype_by_title)
+    
+    # Creates a "draft" of a plot
+    plot_out <- ggplot(plot_data, aes_string(x = "x", y = "y")) +
+        labs(x = xlab, y = ylab)
+    
+    # Fetch arguments of line
+    line_args <- .get_line_args(colour_by = colour_by,
+                                linetype_by = linetype_by,
+                                size_by = NULL,
+                                alpha = line_alpha,
+                                size = line_size)
+    
+    line_args$args$mapping$group <- sym("colour_by")
+    
+    # Adds arguments to the plot
+    plot_out <- plot_out +
+        do.call(geom_line, line_args$args)
+    
+    # resolve the colours
+    plot_out <- .resolve_plot_colours(plot_out,
+                                      plot_data$colour_by,
+                                      colour_by,
+                                      fill = TRUE)
+    plot_out <- .resolve_plot_colours(plot_out,
+                                      plot_data$colour_by,
+                                      colour_by,
+                                      fill = FALSE)
+    
+    # Changes theme
+    plot_out <- plot_out +
+        theme_classic()
+    # Adds legend
+    plot_out <- .add_legend(plot_out, add_legend)
     
     return(plot_out)
     
