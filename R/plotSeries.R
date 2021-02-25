@@ -27,6 +27,10 @@
 #' @param colour_by
 #' a single character value defining a taxonomic rank, that is used to color plot. 
 #' Must be a value of \code{taxonomicRanks()} function.
+#' 
+#' @param linetype_by
+#' a single character value defining a taxonomic rank, that is used to divide taxa to
+#' different line types. Must be a value of \code{taxonomicRanks()} function.
 #'
 #' @details
 #' This function creates series plot, where x-axis includes e.g. time points, and
@@ -99,8 +103,8 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   
               }
               
-              # Check y_axis
-              # If y_axis is not null, user has specified it
+              # Check y
+              # If y is not null, user has specified it
               if (!is.null(y)){
                   if(!all( is.element(y, rownames(object)) ) ){
                       stop("'y' must be in rownames(x). If 'rank' was used,
@@ -108,6 +112,16 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   }
                   # Select taxa that user has specified
                   object <- object[y]
+              }
+              
+              # Check colour_by
+              if( !is.null(colour_by) ){
+                  .check_taxonomic_rank(colour_by, object)
+              }
+              
+              # Check linetype_by
+              if( !is.null(linetype_by) ){
+                  .check_taxonomic_rank(linetype_by, object)
               }
               
               # Get assay data
@@ -126,15 +140,19 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               plot_data <- data.frame(x = melted_data$x, y = melted_data$y)
               colour_by_title <- colour_by
               colour_by <- melted_data$colour_by
+              linetype_by_title <- linetype_by
+              linetype_by <- melted_data$linetype_by
               xlab <- paste0(x)
               ylab <- paste0(abund_values)
               
               # Plots the data
               plot <- .series_plotter(plot_data, 
-                                          xlab = xlab,
-                                          ylab = ylab,
-                                          colour_by = colour_by,
-                                          colour_by_title = colour_by_title)
+                                      xlab = xlab,
+                                      ylab = ylab,
+                                      colour_by_title = colour_by_title,
+                                      colour_by = colour_by,
+                                      linetype_by_title = linetype_by_title,
+                                      linetype_by = linetype_by)
               
               return(plot)
               
@@ -225,7 +243,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     # If feature_data is not null
     if( !is.null(feature_data) ){
         # Loops through feature_data
-        for( i in ncol(feature_data) ){
+        for( i in 1:ncol(feature_data) ){
             # Assigns feature data to data points
             melted_data <- cbind(melted_data, feature = rep(feature_data[[i]], nrow(melted_data)/length(feature_data[[i]])))
             # Renames the column
@@ -241,10 +259,12 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                             ylab = NULL,
                             colour_by = NULL,
                             colour_by_title = NULL,
+                            linetype_by = NULL,
+                            linetype_by_title = NULL,
                             ...){
     # Creates the plot
-    plot_out <- ggplot(plot_data) + geom_line(aes(x = x, y = y, color = colour_by)) +
-        labs(x = xlab, y = ylab, color = colour_by_title)
+    plot_out <- ggplot(plot_data) + geom_line(aes(x = x, y = y, color = colour_by, linetype = linetype_by)) +
+        labs(x = xlab, y = ylab, color = colour_by_title, linetype = linetype_by_title)
     
     return(plot_out)
     

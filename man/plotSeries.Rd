@@ -48,6 +48,9 @@ agglomerate the data. Must be a value of \code{taxonomicRanks()} function.}
 
 \item{colour_by}{a single character value defining a taxonomic rank, that is used to color plot.
 Must be a value of \code{taxonomicRanks()} function.}
+
+\item{linetype_by}{a single character value defining a taxonomic rank, that is used to divide taxa to
+different line types. Must be a value of \code{taxonomicRanks()} function.}
 }
 \value{
 A \code{ggplot2} object
