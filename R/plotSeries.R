@@ -11,12 +11,12 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 #' to be plotted.
 #'
-#' @param x
+#' @param X
 #' A single character value for selecting the column from 
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} 
 #' that will specify values of x-axis. 
 #'  
-#' @param y
+#' @param Y
 #' A single character value for selecting the taxa from 
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}. 
 #' This parameter specifies taxa whose abundances will be plotted.
@@ -47,13 +47,13 @@
 #' @examples
 #' x <- microbiomeDataSets::SilvermanAGutData()
 #' # Plots 2 most abudant taxa, which are colore by their family
-#' plotSeries(x, abund_values = "counts", x = "DAY_ORDER", y = mia::getTopTaxa(x, 2), colour_by = "Family")
+#' plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 2), colour_by = "Family")
 #' 
 #' # Counts relative abundances
 #' x <- mia::transformCounts(x, method = "relabundance")
 #' 
 #' # Plots relative abundances of phylums
-#' plotSeries(x, abund_values = "relabundance", x = "DAY_ORDER", rank = "Phylum", colour_by = "Phylum")
+#' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", colour_by = "Phylum")
 #' 
 #'
 NULL
@@ -63,8 +63,8 @@ NULL
 setGeneric("plotSeries", signature = c("object"),
            function(object,
                     abund_values,
-                    x,
-                    y = NULL,
+                    X,
+                    Y = NULL,
                     rank = NULL,
                     colour_by = NULL,
                     size_by = NULL,
@@ -77,8 +77,8 @@ setGeneric("plotSeries", signature = c("object"),
 setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
           function(object,
                    abund_values,
-                   x,
-                   y = NULL,
+                   X,
+                   Y = NULL,
                    rank = NULL,
                    colour_by = NULL,
                    size_by = NULL,
@@ -88,9 +88,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               # Check abund_values
               .check_abund_values(abund_values, object)
               
-              # Check x
-              if( !(x %in% names(colData(object))) ){
-                  stop("'x' must be a name of column of colData(object)", call. = FALSE)
+              # Check X
+              if( !(X %in% names(colData(object))) ){
+                  stop("'X' must be a name of column of colData(object)", call. = FALSE)
               }
               
               # If rank is not null, data will be agglomerated by rank
@@ -103,15 +103,15 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   
               }
               
-              # Check y
-              # If y is not null, user has specified it
-              if (!is.null(y)){
-                  if(!all( is.element(y, rownames(object)) ) ){
-                      stop("'y' must be in rownames(x). If 'rank' was used,
-                           check that 'y' matches agglomerated data.", call. = FALSE)
+              # Check Y
+              # If Y is not null, user has specified it
+              if (!is.null(Y)){
+                  if(!all( is.element(Y, rownames(object)) ) ){
+                      stop("'Y' must be in rownames(x). If 'rank' was used,
+                           check that 'Y' matches agglomerated data.", call. = FALSE)
                   }
                   # Select taxa that user has specified
-                  object <- object[y]
+                  object <- object[Y]
               }
               
               # Check colour_by
@@ -128,7 +128,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               assay <- .get_assay_data(object, abund_values)
               
               # Fetch series and features data as a list. 
-              series_and_features_data <- .incorporate_series_vis(object, x, colour_by, linetype_by, size_by)
+              series_and_features_data <- .incorporate_series_vis(object, X, colour_by, linetype_by, size_by)
               # Divides it to series and feature data
               series_data <- series_and_features_data$series_data$value
               feature_data <- series_and_features_data$feature_data
@@ -142,7 +142,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               colour_by <- melted_data$colour_by
               linetype_by_title <- linetype_by
               linetype_by <- melted_data$linetype_by
-              xlab <- paste0(x)
+              xlab <- paste0(X)
               ylab <- paste0(abund_values)
               
               # Plots the data
@@ -176,10 +176,10 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     return(assay)
 }
 
-.incorporate_series_vis <- function(object, x, colour_by, linetype_by, size_by){
+.incorporate_series_vis <- function(object, X, colour_by, linetype_by, size_by){
     
     # Stores the variables
-    variables <- c(x = x, 
+    variables <- c(X = X, 
                    colour_by = colour_by,
                    linetype_by = linetype_by,
                    size_by = size_by)
@@ -235,10 +235,10 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 .melt_series_data <- function(assay, series_data, feature_data){
     
     # Melt assay table 
-    melted_data <- as.data.frame(assay) %>% pivot_longer(colnames(assay), names_to = "sample", values_to = "y")
+    melted_data <- as.data.frame(assay) %>% pivot_longer(colnames(assay), names_to = "sample", values_to = "Y")
     
     # Add series data to the data frame
-    melted_data <- cbind(melted_data, x = series_data)
+    melted_data <- cbind(melted_data, X = series_data)
     
     # If feature_data is not null
     if( !is.null(feature_data) ){
@@ -269,7 +269,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                             ...){
     
     # Creates a "draft" of a plot
-    plot_out <- ggplot(plot_data, aes_string(x = "x", y = "y")) +
+    plot_out <- ggplot(plot_data, aes_string(x = "X", y = "Y")) +
         labs(x = xlab, y = ylab)
     
     # Fetch arguments of line
