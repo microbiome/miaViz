@@ -26,11 +26,13 @@
 #'  
 #' @param colour_by
 #' a single character value defining a taxonomic rank, that is used to color plot. 
-#' Must be a value of \code{taxonomicRanks()} function.
+#' Must be a value of \code{taxonomicRanks()} function or 
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.
 #' 
 #' @param linetype_by
 #' a single character value defining a taxonomic rank, that is used to divide taxa to
-#' different line types. Must be a value of \code{taxonomicRanks()} function.
+#' different line types. Must be a value of \code{taxonomicRanks()} function or 
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.
 #'
 #' @details
 #' This function creates series plot, where x-axis includes e.g. time points, and
@@ -53,7 +55,7 @@
 #' x <- mia::transformCounts(x, method = "relabundance")
 #' 
 #' # Plots relative abundances of phylums
-#' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", colour_by = "Phylum")
+#' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", linetype_by = "SampleType")
 #' 
 #'
 NULL
@@ -116,25 +118,32 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               
               # Check colour_by
               if( !is.null(colour_by) ){
-                  .check_taxonomic_rank(colour_by, object)
+                  if( !(colour_by %in% taxonomyRanks(object) || colour_by %in% names(colData(object))) ){
+                      stop("'colour_by' must be value of taxonomyRanks(x) or colData(x).", 
+                           call. = FALSE)
+                  }
               }
               
               # Check linetype_by
               if( !is.null(linetype_by) ){
-                  .check_taxonomic_rank(linetype_by, object)
+                  if( !(linetype_by %in% taxonomyRanks(object) || linetype_by %in% names(colData(object))) ){
+                      stop("'colour_by' must be value of taxonomyRanks(x) or colData(x).", 
+                           call. = FALSE)
+                  }
               }
               
               # Get assay data
               assay <- .get_assay_data(object, abund_values)
               
-              # Fetch series and features data as a list. 
-              series_and_features_data <- .incorporate_series_vis(object, X, colour_by, linetype_by, size_by)
-              # Divides it to series and feature data
-              series_data <- series_and_features_data$series_data$value
-              feature_data <- series_and_features_data$feature_data
+              # Fetch sample and features data as a list. 
+              sample_and_features_data <- .incorporate_series_vis(object, X, colour_by, linetype_by, size_by)
+              # Divides it to sample and feature data
+              sample_data <- sample_and_features_data$sample_data
+              feature_data <- sample_and_features_data$feature_data
               
               # Melts the data
-              melted_data <- .melt_series_data(assay, series_data, feature_data)
+              melted_data <- .melt_series_data(assay, sample_data, feature_data)
+              
               
               # Creates variables for series_plotter
               plot_data <- melted_data
@@ -194,9 +203,24 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
             if( variables[i] %in% names(colData(object)) ){
                 
                 # Retrieve series x-axis points from colData
-                series_data <- retrieveCellInfo(object, variables[i], search = "colData")
+                sample_info <- retrieveCellInfo(object, variables[i], search = "colData")
                 # mirror back variable name, if a partial match was used
-                series_data$name <- names(variables)[i]
+                sample_info$name <- names(variables)[i]
+                
+                # If feature_data dataframe does not exist, create one
+                if(!exists("sample_data")){
+                    
+                    # Store values
+                    sample_data <- data.frame(sample_info$value)
+                    # Name the column by parameter name, like "colour_by"
+                    names(sample_data)[names(sample_data) == "sample_info.value"] <- sample_info$name
+                }
+                else{
+                    # Store values to data frame that already exist
+                    sample_data <- cbind(sample_data, sample_info$value)
+                    # Name the column by parameter name, like "colour_by"
+                    names(sample_data)[names(sample_data) == "sample_info$value"] <- sample_info$name
+                }
             }
             else{
                 # get data from rowData
@@ -224,21 +248,21 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 
     # If feature_data exists, add feature_data in addition to series_data
     if(exists("feature_data")){
-        returned_list <- list(series_data = series_data, feature_data = feature_data)
+        returned_list <- list(sample_data = sample_data, feature_data = feature_data)
     }# If it does not exist, just add the series_data
     else{
-        returned_list <- list(series_data = series_data)
+        returned_list <- list(sample_data = sample_data)
     }
     return(returned_list)
 }
 
-.melt_series_data <- function(assay, series_data, feature_data){
+.melt_series_data <- function(assay, sample_data, feature_data){
     
     # Melt assay table 
     melted_data <- as.data.frame(assay) %>% pivot_longer(colnames(assay), names_to = "sample", values_to = "Y")
     
     # Add series data to the data frame
-    melted_data <- cbind(melted_data, X = series_data)
+    melted_data <- cbind(melted_data, sample_data)
     
     # If feature_data is not null
     if( !is.null(feature_data) ){
@@ -299,7 +323,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     plot_out <- plot_out +
         theme_classic()
     # Adds legend
-    plot_out <- .add_legend(plot_out, add_legend)
+    #plot_out <- .add_legend(plot_out, add_legend)
     
     return(plot_out)
     

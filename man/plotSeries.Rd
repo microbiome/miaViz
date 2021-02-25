@@ -8,8 +8,8 @@
 plotSeries(
   object,
   abund_values,
-  x,
-  y = NULL,
+  X,
+  Y = NULL,
   rank = NULL,
   colour_by = NULL,
   size_by = NULL,
@@ -19,8 +19,8 @@ plotSeries(
 \S4method{plotSeries}{SummarizedExperiment}(
   object,
   abund_values,
-  x,
-  y = NULL,
+  X,
+  Y = NULL,
   rank = NULL,
   colour_by = NULL,
   size_by = NULL,
@@ -35,11 +35,11 @@ object.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}}
 to be plotted.}
 
-\item{x}{A single character value for selecting the column from
+\item{X}{A single character value for selecting the column from
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}
 that will specify values of x-axis.}
 
-\item{y}{A single character value for selecting the taxa from
+\item{Y}{A single character value for selecting the taxa from
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
 This parameter specifies taxa whose abundances will be plotted.}
 
@@ -47,10 +47,12 @@ This parameter specifies taxa whose abundances will be plotted.}
 agglomerate the data. Must be a value of \code{taxonomicRanks()} function.}
 
 \item{colour_by}{a single character value defining a taxonomic rank, that is used to color plot.
-Must be a value of \code{taxonomicRanks()} function.}
+Must be a value of \code{taxonomicRanks()} function or
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.}
 
 \item{linetype_by}{a single character value defining a taxonomic rank, that is used to divide taxa to
-different line types. Must be a value of \code{taxonomicRanks()} function.}
+different line types. Must be a value of \code{taxonomicRanks()} function or
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.}
 }
 \value{
 A \code{ggplot2} object
@@ -65,13 +67,13 @@ y-axis abundances of selected taxa.
 \examples{
 x <- microbiomeDataSets::SilvermanAGutData()
 # Plots 2 most abudant taxa, which are colore by their family
-plotSeries(x, abund_values = "counts", x = "DAY_ORDER", y = mia::getTopTaxa(x, 2), colour_by = "Family")
+plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 2), colour_by = "Family")
 
 # Counts relative abundances
 x <- mia::transformCounts(x, method = "relabundance")
 
 # Plots relative abundances of phylums
-plotSeries(x, abund_values = "relabundance", x = "DAY_ORDER", rank = "Phylum", colour_by = "Phylum")
+plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", linetype_by = "SampleType")
 
 
 }
