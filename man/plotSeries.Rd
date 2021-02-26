@@ -50,6 +50,9 @@ agglomerate the data. Must be a value of \code{taxonomicRanks()} function.}
 Must be a value of \code{taxonomicRanks()} function or
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.}
 
+\item{size_by}{a single character value defining a taxonomic rank, that is used to divide taxa to
+different line size types. Must be a value of \code{taxonomicRanks()} function.}
+
 \item{linetype_by}{a single character value defining a taxonomic rank, that is used to divide taxa to
 different line types. Must be a value of \code{taxonomicRanks()} function.}
 }
@@ -73,6 +76,10 @@ x <- mia::transformCounts(x, method = "relabundance")
 
 # Plots relative abundances of phylums
 plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", colour_by = "SampleType", linetype_by = "Phylum")
+
+# In addition to 'colour_by and linetype_by', 'size_by' can also be used to group taxa.
+plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 5), colour_by = "Family", size_by = "Phylum") +
+    scale_size_discrete(range=c(0.5, 2))
 
 
 }

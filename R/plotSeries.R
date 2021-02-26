@@ -32,6 +32,10 @@
 #' @param linetype_by
 #' a single character value defining a taxonomic rank, that is used to divide taxa to
 #' different line types. Must be a value of \code{taxonomicRanks()} function.
+#' 
+#' @param size_by
+#' a single character value defining a taxonomic rank, that is used to divide taxa to
+#' different line size types. Must be a value of \code{taxonomicRanks()} function.
 #'
 #' @details
 #' This function creates series plot, where x-axis includes e.g. time points, and
@@ -55,6 +59,10 @@
 #' 
 #' # Plots relative abundances of phylums
 #' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", colour_by = "SampleType", linetype_by = "Phylum")
+#' 
+#' # In addition to 'colour_by and linetype_by', 'size_by' can also be used to group taxa.
+#' plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 5), colour_by = "Family", size_by = "Phylum") +
+#'     scale_size_discrete(range=c(0.5, 2))
 #' 
 #'
 NULL
@@ -108,8 +116,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               # If Y is not null, user has specified it
               if (!is.null(Y)){
                   if(!all( is.element(Y, rownames(object)) ) ){
-                      stop("'Y' must be in rownames(x). If 'rank' was used,
-                           check that 'Y' matches agglomerated data.", call. = FALSE)
+                      stop("'Y' must be in rownames(x). 
+                      If 'rank' was used, check that 'Y' matches agglomerated data.", 
+                           call. = FALSE)
                   }
                   # Select taxa that user has specified
                   object <- object[Y]
@@ -126,7 +135,15 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               # Check linetype_by
               if( !is.null(linetype_by) ){
                   if( !(linetype_by %in% taxonomyRanks(object)) ){
-                      stop("'colour_by' must be value of taxonomyRanks(x).", 
+                      stop("'linetype_by' must be value of taxonomyRanks(x).", 
+                           call. = FALSE)
+                  }
+              }
+              
+              # Check size_by
+              if( !is.null(size_by) ){
+                  if( !(size_by %in% taxonomyRanks(object)) ){
+                      stop("'size_by' must be value of taxonomyRanks(x).", 
                            call. = FALSE)
                   }
               }
@@ -149,6 +166,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               colour_by <- melted_data$colour_by
               linetype_by_title <- linetype_by
               linetype_by <- melted_data$linetype_by
+              size_by <- melted_data$size_by
               xlab <- paste0(X)
               ylab <- paste0(abund_values)
               
@@ -159,7 +177,8 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                                       colour_by_title = colour_by_title,
                                       colour_by = colour_by,
                                       linetype_by_title = linetype_by_title,
-                                      linetype_by = linetype_by)
+                                      linetype_by = linetype_by,
+                                      size_by = size_by)
               
               return(plot)
               
@@ -283,6 +302,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                             colour_by_title = NULL,
                             linetype_by = NULL,
                             linetype_by_title = NULL,
+                            size_by = NULL,
                             add_legend = TRUE,
                             point_alpha = 1,
                             point_size = 2,
@@ -298,7 +318,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     # Fetch arguments of line
     line_args <- .get_line_args(colour_by = colour_by,
                                 linetype_by = linetype_by,
-                                size_by = NULL,
+                                size_by = size_by,
                                 alpha = line_alpha,
                                 linetype = line_type,
                                 size = line_size)
