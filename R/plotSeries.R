@@ -55,7 +55,7 @@
 #' x <- mia::transformCounts(x, method = "relabundance")
 #' 
 #' # Plots relative abundances of phylums
-#' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", linetype_by = "SampleType")
+#' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", linetype_by = "Phylum")
 #' 
 #'
 NULL
@@ -310,10 +310,6 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         do.call(geom_line, line_args$args)
     
     # resolve the colours
-    plot_out <- .resolve_plot_colours(plot_out,
-                                      plot_data$colour_by,
-                                      colour_by,
-                                      fill = TRUE)
     plot_out <- .resolve_plot_colours(plot_out,
                                       plot_data$colour_by,
                                       colour_by,

@@ -73,7 +73,7 @@ plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 2
 x <- mia::transformCounts(x, method = "relabundance")
 
 # Plots relative abundances of phylums
-plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", linetype_by = "SampleType")
+plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", linetype_by = "Phylum")
 
 
 }
