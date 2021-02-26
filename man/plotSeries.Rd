@@ -51,8 +51,7 @@ Must be a value of \code{taxonomicRanks()} function or
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.}
 
 \item{linetype_by}{a single character value defining a taxonomic rank, that is used to divide taxa to
-different line types. Must be a value of \code{taxonomicRanks()} function or
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.}
+different line types. Must be a value of \code{taxonomicRanks()} function.}
 }
 \value{
 A \code{ggplot2} object
@@ -73,7 +72,7 @@ plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 2
 x <- mia::transformCounts(x, method = "relabundance")
 
 # Plots relative abundances of phylums
-plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", linetype_by = "Phylum")
+plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", colour_by = "SampleType", linetype_by = "Phylum")
 
 
 }

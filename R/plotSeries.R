@@ -31,8 +31,7 @@
 #' 
 #' @param linetype_by
 #' a single character value defining a taxonomic rank, that is used to divide taxa to
-#' different line types. Must be a value of \code{taxonomicRanks()} function or 
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.
+#' different line types. Must be a value of \code{taxonomicRanks()} function.
 #'
 #' @details
 #' This function creates series plot, where x-axis includes e.g. time points, and
@@ -55,7 +54,7 @@
 #' x <- mia::transformCounts(x, method = "relabundance")
 #' 
 #' # Plots relative abundances of phylums
-#' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", linetype_by = "Phylum")
+#' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", colour_by = "SampleType", linetype_by = "Phylum")
 #' 
 #'
 NULL
@@ -126,8 +125,8 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               
               # Check linetype_by
               if( !is.null(linetype_by) ){
-                  if( !(linetype_by %in% taxonomyRanks(object) || linetype_by %in% names(colData(object))) ){
-                      stop("'colour_by' must be value of taxonomyRanks(x) or colData(x).", 
+                  if( !(linetype_by %in% taxonomyRanks(object)) ){
+                      stop("'colour_by' must be value of taxonomyRanks(x).", 
                            call. = FALSE)
                   }
               }
@@ -143,7 +142,6 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               
               # Melts the data
               melted_data <- .melt_series_data(assay, sample_data, feature_data)
-              
               
               # Creates variables for series_plotter
               plot_data <- melted_data
@@ -289,6 +287,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                             point_alpha = 1,
                             point_size = 2,
                             line_alpha = 1,
+                            line_type = NULL,
                             line_size = 1,
                             ...){
     
@@ -301,9 +300,10 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                                 linetype_by = linetype_by,
                                 size_by = NULL,
                                 alpha = line_alpha,
+                                linetype = line_type,
                                 size = line_size)
     
-    line_args$args$mapping$group <- sym("colour_by")
+    #line_args$args$mapping$group <- sym("colour_by")
     
     # Adds arguments to the plot
     plot_out <- plot_out +
