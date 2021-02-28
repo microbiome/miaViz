@@ -156,9 +156,11 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               # Divides it to sample and feature data
               sample_data <- sample_and_features_data$sample_data
               feature_data <- sample_and_features_data$feature_data
+              # Gets rownames
+              rownames <- rownames(object)
               
               # Melts the data
-              melted_data <- .melt_series_data(assay, sample_data, feature_data)
+              melted_data <- .melt_series_data(assay, sample_data, feature_data, rownames)
               
               # Creates variables for series_plotter
               plot_data <- melted_data
@@ -244,7 +246,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                 feature_info <- retrieveFeatureInfo(object, variables[i], search = "rowData")
                 # mirror back variable name, if a partial match was used
                 feature_info$name <- names(variables)[i]
-
+                
                 # If feature_data dataframe does not exist, create one
                 if(!exists("feature_data")){
                     
@@ -262,7 +264,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
             }
         }
     }
-
+    
     # If feature_data exists, add feature_data in addition to series_data
     if(exists("feature_data")){
         returned_list <- list(sample_data = sample_data, feature_data = feature_data)
@@ -273,22 +275,32 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     return(returned_list)
 }
 
-.melt_series_data <- function(assay, sample_data, feature_data){
+.melt_series_data <- function(assay, sample_data, feature_data, rownames){
     
     # Melt assay table 
     melted_data <- as.data.frame(assay) %>% pivot_longer(colnames(assay), names_to = "sample", values_to = "Y")
     
-    # Add series data to the data frame
-    melted_data <- cbind(melted_data, sample_data)
+    # Add rowname information. Repeat as many times there are samples
+    melted_data <- cbind(melted_data, feature = rep(rownames, each = nrow(melted_data)/length(rownames)))
+    
+    # Loops through sample_data
+    for( i in 1:ncol(sample_data) ){
+        # Assigns sample data to data points. When there are more sample-taxa combinations than different sample data values,
+        # sample data is repeated as many times there are taxa
+        melted_data <- cbind(melted_data, temp_name = rep(sample_data[[i]], nrow(melted_data)/length(sample_data[[i]])))
+        # Renames the column
+        names(melted_data)[names(melted_data) == "temp_name"] <- names(sample_data)[i]
+    }
     
     # If feature_data is not null
     if( !is.null(feature_data) ){
         # Loops through feature_data
         for( i in 1:ncol(feature_data) ){
-            # Assigns feature data to data points
-            melted_data <- cbind(melted_data, feature = rep(feature_data[[i]], nrow(melted_data)/length(feature_data[[i]])))
+            # Assigns feature data to data points. When there are more sample-taxa combinations than feature values,
+            # features are repeated as many times there are samples
+            melted_data <- cbind(melted_data, temp_name = rep(feature_data[[i]], each = nrow(melted_data)/length(feature_data[[i]])))
             # Renames the column
-            names(melted_data)[names(melted_data) == "feature"] <- names(feature_data)[i]
+            names(melted_data)[names(melted_data) == "temp_name"] <- names(feature_data)[i]
         }
     }
     
@@ -323,7 +335,8 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                                 linetype = line_type,
                                 size = line_size)
     
-    #line_args$args$mapping$group <- sym("colour_by")
+    # Add information, what column is used to group observations
+    line_args$args$mapping$group <- sym("feature")
     
     # Adds arguments to the plot
     plot_out <- plot_out +
