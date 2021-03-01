@@ -57,14 +57,16 @@
 #' # Counts relative abundances
 #' x <- mia::transformCounts(x, method = "relabundance")
 #' 
+#' # Selects taxa
+#' taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
+#' 
 #' # Plots relative abundances of phylums
-#' plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", colour_by = "SampleType", linetype_by = "Phylum")
+#' plotSeries(x[taxa], abund_values = "relabundance", X = "DAY_ORDER", colour_by = "Family", linetype_by = "Phylum")
 #' 
 #' # In addition to 'colour_by and linetype_by', 'size_by' can also be used to group taxa.
 #' plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 5), colour_by = "Family", size_by = "Phylum") +
 #'     scale_size_discrete(range=c(0.5, 2))
 #' 
-#'
 NULL
 
 #' @rdname plotSeries
@@ -94,10 +96,10 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                    linetype_by = NULL){
               
               ###################### Input check #######################
-              # Check abund_values
+              # Checks abund_values
               .check_abund_values(abund_values, object)
               
-              # Check X
+              # Checks X
               if( !(X %in% names(colData(object))) ){
                   stop("'X' must be a name of column of colData(object)", call. = FALSE)
               }
@@ -112,7 +114,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   
               }
               
-              # Check Y
+              # Checks Y
               # If Y is not null, user has specified it
               if (!is.null(Y)){
                   if(!all( is.element(Y, rownames(object)) ) ){
@@ -124,7 +126,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   object <- object[Y]
               }
               
-              # Check colour_by
+              # Checks colour_by
               if( !is.null(colour_by) ){
                   if( !(colour_by %in% taxonomyRanks(object) || colour_by %in% names(colData(object))) ){
                       stop("'colour_by' must be value of taxonomyRanks(x) or colData(x).", 
@@ -132,7 +134,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   }
               }
               
-              # Check linetype_by
+              # Checks linetype_by
               if( !is.null(linetype_by) ){
                   if( !(linetype_by %in% taxonomyRanks(object)) ){
                       stop("'linetype_by' must be value of taxonomyRanks(x).", 
@@ -140,7 +142,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   }
               }
               
-              # Check size_by
+              # Checks size_by
               if( !is.null(size_by) ){
                   if( !(size_by %in% taxonomyRanks(object)) ){
                       stop("'size_by' must be value of taxonomyRanks(x).", 
@@ -148,10 +150,10 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                   }
               }
               
-              # Get assay data
+              # Gets assay data
               assay <- .get_assay_data(object, abund_values)
               
-              # Fetch sample and features data as a list. 
+              # Fetches sample and features data as a list. 
               sample_and_features_data <- .incorporate_series_vis(object, X, colour_by, linetype_by, size_by)
               # Divides it to sample and feature data
               sample_data <- sample_and_features_data$sample_data
@@ -164,9 +166,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               
               # Creates variables for series_plotter
               plot_data <- melted_data
-              colour_by_title <- colour_by
               colour_by <- melted_data$colour_by
-              linetype_by_title <- linetype_by
               linetype_by <- melted_data$linetype_by
               size_by <- melted_data$size_by
               xlab <- paste0(X)
@@ -176,9 +176,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
               plot <- .series_plotter(plot_data, 
                                       xlab = xlab,
                                       ylab = ylab,
-                                      colour_by_title = colour_by_title,
                                       colour_by = colour_by,
-                                      linetype_by_title = linetype_by_title,
                                       linetype_by = linetype_by,
                                       size_by = size_by)
               
@@ -311,9 +309,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                             xlab = NULL,
                             ylab = NULL,
                             colour_by = NULL,
-                            colour_by_title = NULL,
                             linetype_by = NULL,
-                            linetype_by_title = NULL,
                             size_by = NULL,
                             add_legend = TRUE,
                             point_alpha = 1,
@@ -351,8 +347,16 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     # Changes theme
     plot_out <- plot_out +
         theme_classic()
-    # Adds legend
-    #plot_out <- .add_legend(plot_out, add_legend)
+    
+    # Change legend titles
+    plot_out<- plot_out + guides(col=guide_legend("Colour"),
+                              linetype=guide_legend("Linetype"),
+                              size=guide_legend("Size"))
+    
+    # To choose if legend is kept, and its position
+    plot_out <- .add_legend(plot_out, add_legend)
+    
+    
     
     return(plot_out)
     
