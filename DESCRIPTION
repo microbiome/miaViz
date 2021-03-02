@@ -35,7 +35,8 @@ Imports:
     purrr,
     tidyr,
     dplyr,
-    ape
+    ape,
+    microbiomeDataSets
 Suggests:
     knitr,
     rmarkdown,

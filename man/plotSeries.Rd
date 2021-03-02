@@ -46,7 +46,7 @@ This parameter specifies taxa whose abundances will be plotted.}
 \item{rank}{a single character value defining a taxonomic rank, that is used to
 agglomerate the data. Must be a value of \code{taxonomicRanks()} function.}
 
-\item{colour_by}{a single character value defining a taxonomic rank, that is used to color plot.
+\item{colour_by}{a single character value defining a feature, that is used to color plot.
 Must be a value of \code{taxonomicRanks()} function or
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.}
 
@@ -69,18 +69,23 @@ y-axis abundances of selected taxa.
 \examples{
 x <- microbiomeDataSets::SilvermanAGutData()
 # Plots 2 most abudant taxa, which are colore by their family
-plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 2), colour_by = "Family")
+plotSeries(x, abund_values = "counts", X = "DAY_ORDER", 
+           Y = mia::getTopTaxa(x, 2), colour_by = "Family")
 
 # Counts relative abundances
 x <- mia::transformCounts(x, method = "relabundance")
 
+# Selects taxa
+taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
+
 # Plots relative abundances of phylums
-plotSeries(x, abund_values = "relabundance", X = "DAY_ORDER", rank = "Phylum", colour_by = "SampleType", linetype_by = "Phylum")
+plotSeries(x[taxa], abund_values = "relabundance", X = "DAY_ORDER", 
+           colour_by = "Family", linetype_by = "Phylum")
 
-# In addition to 'colour_by and linetype_by', 'size_by' can also be used to group taxa.
-plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 5), colour_by = "Family", size_by = "Phylum") +
-    scale_size_discrete(range=c(0.5, 2))
-
+# In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
+plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 5), 
+           colour_by = "Family", size_by = "Phylum") +
+           scale_size_discrete(range=c(0.5, 2))
 
 }
 \author{

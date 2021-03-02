@@ -25,7 +25,7 @@
 #' agglomerate the data. Must be a value of \code{taxonomicRanks()} function.
 #'  
 #' @param colour_by
-#' a single character value defining a taxonomic rank, that is used to color plot. 
+#' a single character value defining a feature, that is used to color plot. 
 #' Must be a value of \code{taxonomicRanks()} function or 
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.
 #' 
@@ -52,7 +52,8 @@
 #' @examples
 #' x <- microbiomeDataSets::SilvermanAGutData()
 #' # Plots 2 most abudant taxa, which are colore by their family
-#' plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 2), colour_by = "Family")
+#' plotSeries(x, abund_values = "counts", X = "DAY_ORDER", 
+#'            Y = mia::getTopTaxa(x, 2), colour_by = "Family")
 #' 
 #' # Counts relative abundances
 #' x <- mia::transformCounts(x, method = "relabundance")
@@ -61,11 +62,13 @@
 #' taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
 #' 
 #' # Plots relative abundances of phylums
-#' plotSeries(x[taxa], abund_values = "relabundance", X = "DAY_ORDER", colour_by = "Family", linetype_by = "Phylum")
+#' plotSeries(x[taxa], abund_values = "relabundance", X = "DAY_ORDER", 
+#'            colour_by = "Family", linetype_by = "Phylum")
 #' 
-#' # In addition to 'colour_by and linetype_by', 'size_by' can also be used to group taxa.
-#' plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 5), colour_by = "Family", size_by = "Phylum") +
-#'     scale_size_discrete(range=c(0.5, 2))
+#' # In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
+#' plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 5), 
+#'            colour_by = "Family", size_by = "Phylum") +
+#'            scale_size_discrete(range=c(0.5, 2))
 #' 
 NULL
 
@@ -210,49 +213,47 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                    linetype_by = linetype_by,
                    size_by = size_by)
     
-    # If variables there are variables
+    # If there are variables
     if(!is.null(variables)){
         
         # Loops through variables
         for(i in seq_along(variables)){
             
-            # If the variable is in colData, it is the series data
+            # If the variable is in colData
             if( variables[i] %in% names(colData(object)) ){
                 
-                # Retrieve series x-axis points from colData
+                # Retrieves series x-axis points from colData
                 sample_info <- retrieveCellInfo(object, variables[i], search = "colData")
-                # mirror back variable name, if a partial match was used
+                # Mirrors back variable name, if a partial match was used
                 sample_info$name <- names(variables)[i]
                 
-                # If feature_data dataframe does not exist, create one
+                # If sample_data data frame does not exist, create one
                 if(!exists("sample_data")){
-                    
-                    # Store values
+                    # Stores values
                     sample_data <- data.frame(sample_info$value)
-                    # Name the column by parameter name, like "colour_by"
+                    # Names the column by parameter name, like "colour_by"
                     names(sample_data)[names(sample_data) == "sample_info.value"] <- sample_info$name
-                }
+                } # If sample_data data frame already exists
                 else{
-                    # Store values to data frame that already exist
+                    # Stores values to data frame that already exist
                     sample_data <- cbind(sample_data, sample_info$value)
-                    # Name the column by parameter name, like "colour_by"
+                    # Names the column by parameter name, like "colour_by"
                     names(sample_data)[names(sample_data) == "sample_info$value"] <- sample_info$name
                 }
             }
             else{
-                # get data from rowData
+                # Gets data from rowData
                 feature_info <- retrieveFeatureInfo(object, variables[i], search = "rowData")
-                # mirror back variable name, if a partial match was used
+                # Mirrors back variable name, if a partial match was used
                 feature_info$name <- names(variables)[i]
                 
-                # If feature_data dataframe does not exist, create one
+                # If feature_data data frame does not exist, create one
                 if(!exists("feature_data")){
-                    
                     # Store values
                     feature_data <- data.frame(feature_info$value)
                     # Name the column by parameter name, like "colour_by"
                     names(feature_data)[names(feature_data) == "feature_info.value"] <- feature_info$name
-                }
+                } # If feature_data data frame already exists
                 else{
                     # Store values to data frame that already exist
                     feature_data <- cbind(feature_data, feature_info$value)
@@ -263,10 +264,10 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         }
     }
     
-    # If feature_data exists, add feature_data in addition to series_data
+    # If feature_data exists, add feature_data + sample_data
     if(exists("feature_data")){
         returned_list <- list(sample_data = sample_data, feature_data = feature_data)
-    }# If it does not exist, just add the series_data
+    }# If it does not exist, just add the sample_data
     else{
         returned_list <- list(sample_data = sample_data)
     }
@@ -275,16 +276,16 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 
 .melt_series_data <- function(assay, sample_data, feature_data, rownames){
     
-    # Melt assay table 
+    # Melts assay table
     melted_data <- as.data.frame(assay) %>% pivot_longer(colnames(assay), names_to = "sample", values_to = "Y")
     
-    # Add rowname information. Repeat as many times there are samples
+    # Adds rowname information. Repeats as many times there are samples. Repeats 1st element x times, then 2nd element x times...
     melted_data <- cbind(melted_data, feature = rep(rownames, each = nrow(melted_data)/length(rownames)))
     
     # Loops through sample_data
     for( i in 1:ncol(sample_data) ){
         # Assigns sample data to data points. When there are more sample-taxa combinations than different sample data values,
-        # sample data is repeated as many times there are taxa
+        # sample data is repeated as many times there are taxa. Repeats whole list x times.
         melted_data <- cbind(melted_data, temp_name = rep(sample_data[[i]], nrow(melted_data)/length(sample_data[[i]])))
         # Renames the column
         names(melted_data)[names(melted_data) == "temp_name"] <- names(sample_data)[i]
@@ -295,7 +296,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         # Loops through feature_data
         for( i in 1:ncol(feature_data) ){
             # Assigns feature data to data points. When there are more sample-taxa combinations than feature values,
-            # features are repeated as many times there are samples
+            # features are repeated as many times there are samples. Repeats 1st element x times, then 2nd element x times...
             melted_data <- cbind(melted_data, temp_name = rep(feature_data[[i]], each = nrow(melted_data)/length(feature_data[[i]])))
             # Renames the column
             names(melted_data)[names(melted_data) == "temp_name"] <- names(feature_data)[i]
@@ -323,7 +324,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     plot_out <- ggplot(plot_data, aes_string(x = "X", y = "Y")) +
         labs(x = xlab, y = ylab)
     
-    # Fetch arguments of line
+    # Fetches arguments of line
     line_args <- .get_line_args(colour_by = colour_by,
                                 linetype_by = linetype_by,
                                 size_by = size_by,
@@ -331,14 +332,14 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                                 linetype = line_type,
                                 size = line_size)
     
-    # Add information, what column is used to group observations
+    # Adds information, what column is used to group observations. Feature includes rownames.
     line_args$args$mapping$group <- sym("feature")
     
     # Adds arguments to the plot
     plot_out <- plot_out +
         do.call(geom_line, line_args$args)
     
-    # resolve the colours
+    # Resolves the colours
     plot_out <- .resolve_plot_colours(plot_out,
                                       plot_data$colour_by,
                                       colour_by,
@@ -348,15 +349,13 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     plot_out <- plot_out +
         theme_classic()
     
-    # Change legend titles
+    # Changes legend titles
     plot_out<- plot_out + guides(col=guide_legend("Colour"),
                               linetype=guide_legend("Linetype"),
                               size=guide_legend("Size"))
     
     # To choose if legend is kept, and its position
     plot_out <- .add_legend(plot_out, add_legend)
-    
-    
     
     return(plot_out)
     
