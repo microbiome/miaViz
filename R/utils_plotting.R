@@ -186,6 +186,23 @@
     return(list(args = geom_args))
 }
 
+.get_ribbon_args <- function(colour_by,
+                             alpha = 0.3) 
+{
+    aes_args <- list()
+    aes_args$ymin <- "Y - sd"
+    aes_args$ymax <- "Y + sd"
+    if (!is.null(colour_by)) {
+        aes_args$fill <- "colour_by"
+    }
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes, alpha = alpha)
+    if (is.null(colour_by)) {
+        geom_args$fill <- "grey70"
+    }
+    return(list(args = geom_args))
+}
+
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
