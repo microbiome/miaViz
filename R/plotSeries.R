@@ -32,6 +32,8 @@
 #' @param size_by a single character value defining a taxonomic rank, that is
 #'   used to divide taxa to different line size types. Must be a value of
 #'   \code{taxonomicRanks()} function.
+#'   
+#' @param ... additional parameters for plotting
 #'
 #' @details
 #' This function creates series plot, where x-axis includes e.g. time points, and
