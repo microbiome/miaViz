@@ -68,13 +68,13 @@ test_that("plot series", {
         assay_mean_value = mean(assays(tse)$counts[taxa, sample_names], na.rm = TRUE)
         assay_sd_value = sd(assays(tse)$counts[taxa, sample_names], na.rm = TRUE)
         
-        # Get value from melted data. Convert hem to double, because they are characters
+        # Get value from melted data. Convert them to double, because they are characters
         melted_assay_sd_value <- as.double(melted[melted[, "feature"] == taxa, ][melted[melted[, "feature"] == taxa, ]["X"] == timepoint[,1]][3])
         melted_assay_mean_value <- as.double(melted[melted[, "feature"] == taxa, ][melted[melted[, "feature"] == taxa, ]["X"] == timepoint[,1]][4])
         
         ######### Expect that assay data is melted correctly ########
-        expect_equal(round(melted_assay_mean_value, 7), round(assay_mean_value,7))
-        expect_equal(round(melted_assay_sd_value, 7), round(assay_sd_value), 7)
+        expect_equal(round(melted_assay_mean_value, 6), round(assay_mean_value,6))
+        expect_equal(round(melted_assay_sd_value, 6), round(assay_sd_value), 6)
         
         # Phylum was chosen to be value of colour_by
         rowData_colour_by_value <- rowData(tse)[taxa, "Phylum"]
