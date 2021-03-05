@@ -46,9 +46,8 @@ This parameter specifies taxa whose abundances will be plotted.}
 to agglomerate the data. Must be a value of \code{taxonomicRanks()}
 function.}
 
-\item{colour_by}{a single character value defining a feature, that is used to
-color plot. Must be a value of \code{taxonomicRanks()} function or
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.}
+\item{colour_by}{a single character value defining a taxonomic rank, that is used to
+color plot. Must be a value of \code{taxonomicRanks()} function.}
 
 \item{size_by}{a single character value defining a taxonomic rank, that is
 used to divide taxa to different line size types. Must be a value of

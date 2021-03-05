@@ -22,9 +22,8 @@
 #'   to agglomerate the data. Must be a value of \code{taxonomicRanks()} 
 #'   function.
 #'  
-#' @param colour_by a single character value defining a feature, that is used to
-#'   color plot. Must be a value of \code{taxonomicRanks()} function or
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}}.
+#' @param colour_by a single character value defining a taxonomic rank, that is used to
+#'   color plot. Must be a value of \code{taxonomicRanks()} function.
 #' 
 #' @param linetype_by a single character value defining a taxonomic rank, that
 #'   is used to divide taxa to different line types. Must be a value of
