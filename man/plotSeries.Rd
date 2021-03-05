@@ -87,16 +87,6 @@ object <- transformCounts(object, method = "relabundance")
 
 # Selects taxa
 taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
-<<<<<<< HEAD
-
-# Plots relative abundances of phylums
-plotSeries(x[taxa], abund_values = "relabundance", X = "DAY_ORDER", colour_by = "Family", linetype_by = "Phylum")
-
-# In addition to 'colour_by and linetype_by', 'size_by' can also be used to group taxa.
-plotSeries(x, abund_values = "counts", X = "DAY_ORDER", Y = mia::getTopTaxa(x, 5), colour_by = "Family", size_by = "Phylum") +
-    scale_size_discrete(range=c(0.5, 2))
-
-=======
 
 # Plots relative abundances of phylums
 plotSeries(object[taxa,],
@@ -113,7 +103,6 @@ plotSeries(object,
            size_by = "Phylum",
            abund_values = "counts") +
            scale_size_discrete(range=c(0.5, 2))
->>>>>>> aa8271fafba2c50004aa7f67709fc8aac2a75f01
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
