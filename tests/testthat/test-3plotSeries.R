@@ -73,8 +73,8 @@ test_that("plot series", {
         melted_assay_mean_value <- as.double(melted[melted[, "feature"] == taxa, ][melted[melted[, "feature"] == taxa, ]["X"] == timepoint[,1]][4])
         
         ######### Expect that assay data is melted correctly ########
-        expect_equal(round(melted_assay_mean_value, 6), round(assay_mean_value,6))
-        expect_equal(round(melted_assay_sd_value, 6), round(assay_sd_value), 6)
+        expect_equal(round(melted_assay_mean_value, 2), round(assay_mean_value,2))
+        expect_equal(round(melted_assay_sd_value, 2), round(assay_sd_value), 2)
         
         # Phylum was chosen to be value of colour_by
         rowData_colour_by_value <- rowData(tse)[taxa, "Phylum"]
