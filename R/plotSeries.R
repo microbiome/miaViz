@@ -8,7 +8,7 @@
 #'
 #' @param abund_values a single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   plotted.
+#'   plotted. (default: \code{abund_values = "counts"})
 #'
 #' @param x a single character value for selecting the column from
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} that

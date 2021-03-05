@@ -59,7 +59,7 @@ is used to divide taxa to different line types. Must be a value of
 
 \item{abund_values}{a single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-plotted.}
+plotted. (default: \code{abund_values = "counts"})}
 }
 \value{
 A \code{ggplot2} object
