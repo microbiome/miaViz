@@ -77,7 +77,7 @@ additional information." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.12</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.13</span>
       </span>
     </div>
 
@@ -131,9 +131,12 @@ additional information.</p>
 <span class='fu'>plotColTree</span><span class='op'>(</span>
   <span class='va'>object</span>,
   relabel_tree <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  order_tree <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  remove_levels <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show_label <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show_highlights <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  colour_highlights <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  show_highlight_label <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  abbr_label <span class='op'>=</span> <span class='cn'>FALSE</span>,
   add_legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   layout <span class='op'>=</span> <span class='st'>"circular"</span>,
   edge_colour_by <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -144,6 +147,7 @@ additional information.</p>
   node_colour_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   node_shape_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   node_size_by <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colour_highlights_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   by_exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   other_fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
   <span class='va'>...</span>
@@ -153,9 +157,12 @@ additional information.</p>
 <span class='fu'>plotRowTree</span><span class='op'>(</span>
   <span class='va'>object</span>,
   relabel_tree <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  order_tree <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  remove_levels <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show_label <span class='op'>=</span> <span class='cn'>FALSE</span>,
   show_highlights <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  colour_highlights <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  show_highlight_label <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  abbr_label <span class='op'>=</span> <span class='cn'>FALSE</span>,
   add_legend <span class='op'>=</span> <span class='cn'>TRUE</span>,
   layout <span class='op'>=</span> <span class='st'>"circular"</span>,
   edge_colour_by <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -166,6 +173,7 @@ additional information.</p>
   node_colour_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   node_shape_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   node_size_by <span class='op'>=</span> <span class='cn'>NULL</span>,
+  colour_highlights_by <span class='op'>=</span> <span class='cn'>NULL</span>,
   by_exprs_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   other_fields <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
   <span class='va'>...</span>
@@ -187,30 +195,32 @@ object.</p></td>
     <tr>
       <th>relabel_tree</th>
       <td><p>logical scalar, Should the tip labels be relabeled using
-the output of <code><a href='https://rdrr.io/pkg/mia/man/taxonomy-methods.html'>getTaxonomyLabels(object, with_rank = TRUE)</a></code>? This
-has consequences on how data can be merged from <code>other_fields</code>.
+the output of <code><a href='https://rdrr.io/pkg/mia/man/taxonomy-methods.html'>getTaxonomyLabels(object, with_rank = TRUE)</a></code>?
 (default: <code>relabel_tree = FALSE</code>)</p></td>
     </tr>
     <tr>
-      <th>show_label</th>
-      <td><p>logical scalar or character vector. Should tip labels
-be plotted or if a logical vector is provided, which labels should be
-shown? Only values corresponding to actual labels will be plotted.
-(default: <code>show_label = FALSE</code>)</p></td>
+      <th>order_tree</th>
+      <td><p>logical scalar, Should the tree be ordered based on
+alphabetic order of taxonomic levels?
+(default: <code>order_tree = FALSE</code>)</p></td>
     </tr>
     <tr>
-      <th>show_highlights</th>
-      <td><p>logical scalar or character vector. Should highlights
-around nodes and its decendents be plotted? If set <code>TRUE</code> this will be
-limit do direct decendents of the rootnode. If a character vector is
-provided, which nodes should be shown? Only values corresponding to actual
-node labels will be plotted. (default: <code>show_highlights = FALSE</code>)</p></td>
+      <th>remove_levels</th>
+      <td><p>logical scalar, Should taxonomic level information
+be removed from labels? (default: <code>relabel_tree = FALSE</code>)</p></td>
     </tr>
     <tr>
-      <th>colour_highlights</th>
-      <td><p>Should the highlights be colour differently?
-If <code>show_highlights = TRUE</code>, <code>colour_highlights</code> will be set to
-<code>TRUE</code> as default. (default: <code>colour_highlights = FALSE</code>)</p></td>
+      <th>show_label, show_highlights, show_highlight_label, abbr_label</th>
+      <td><p><code>logical</code> (scalar), <code>integer</code> or <code>character</code> vector. If a
+<code>logical</code> scalar is given, should tip labels be plotted or if a
+logical vector is provided, which labels should be shown? If an
+<code>integer</code> or <code>character</code> vector is provided, it will be converted
+to a logical vector. The <code>integer</code> values must be in the range of 1
+and number of nodes, whereas the values of a <code>character</code> vector must
+match values of the <code>label</code> column in the node data. In case of a
+<code>character</code> vector only values corresponding to actual labels will be
+plotted and if no labels are provided no labels will be shown. (default:
+<code>FALSE</code>)</p></td>
     </tr>
     <tr>
       <th>add_legend</th>
@@ -273,6 +283,12 @@ shape tree nodes by. Must be a field from <code>other_fields</code>.</p></td>
 size tree nodes by. Must be a field from <code>other_fields</code>.</p></td>
     </tr>
     <tr>
+      <th>colour_highlights_by</th>
+      <td><p>Should the highlights be colour differently?
+If <code>show_highlights = TRUE</code>, <code>colour_highlights</code> will be set to
+<code>TRUE</code> as default. (default: <code>colour_highlights = FALSE</code>)</p></td>
+    </tr>
+    <tr>
       <th>by_exprs_values</th>
       <td><p>A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
@@ -281,22 +297,25 @@ obtain expression values from, for use in point aesthetics - see the
     </tr>
     <tr>
       <th>other_fields</th>
-      <td><p>a <code>data.frame</code> or coercible to one, with at least
-one type of id information. See details in
-<code><a href='treeData.html'>treeData</a></code>.</p></td>
+      <td><p>Additional fields to include in the node information
+without plotting them.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p>a <code>ggtree</code> plot</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>If <code>show_label</code> or <code>show_highlight_label</code> have the same length
+as the number of nodes, the vector will be used to relabel the nodes.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/mia/man/splitByRanks.html'>splitByRanks</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://bioconductor.org/packages/scater/'>scater</a></span><span class='op'>)</span>
-<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'>mia</span><span class='op'>)</span>
+<span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='https://github.com/FelixErnst/mia'>mia</a></span><span class='op'>)</span>
 <span class='co'># preparation of some data</span>
 <span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
 <span class='fu'>altExps</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/splitByRanks.html'>splitByRanks</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
@@ -314,19 +333,16 @@ one type of id information. See details in
 <span class='fu'>plotRowTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>top_genus</span>,<span class='op'>]</span>,
             tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
             tip_size_by <span class='op'>=</span> <span class='st'>"detected"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: `mutate_()` is deprecated as of dplyr 0.7.0.</span>
+</div><div class='output co'>#&gt; <span class='warning'>Warning: `mutate_()` was deprecated in dplyr 0.7.0.</span>
 #&gt; <span class='warning'>Please use `mutate()` instead.</span>
-#&gt; <span class='warning'>See vignette('programming') for more help</span>
-#&gt; <span class='warning'><span style='color: #555555;'>This warning is displayed once every 8 hours.</span><span></span>
-#&gt; <span class='warning'></span><span style='color: #555555;'>Call `lifecycle::last_warnings()` to see where this warning was generated.</span><span></span></div><div class='img'><img src='plotTree-1.png' alt='' width='3000' height='2100' /></div><div class='input'>
+#&gt; <span class='warning'>See vignette('programming') for more help</span></div><div class='img'><img src='plotTree-1.png' alt='' width='3000' height='2100' /></div><div class='input'>
 <span class='co'># plot with tip labels</span>
 <span class='fu'>plotRowTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>top_genus</span>,<span class='op'>]</span>,
             tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
             tip_size_by <span class='op'>=</span> <span class='st'>"detected"</span>,
             show_label <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div><div class='img'><img src='plotTree-2.png' alt='' width='3000' height='2100' /></div><div class='input'><span class='co'># plot with selected labels</span>
-<span class='va'>labels</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Genus:Providencia"</span> <span class='op'>=</span> <span class='cn'>TRUE</span>, <span class='st'>"Genus:Morganella"</span> <span class='op'>=</span> <span class='cn'>FALSE</span>,
-            <span class='st'>"0.961.60"</span> <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>labels</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Genus:Providencia"</span>, <span class='st'>"Genus:Morganella"</span>, <span class='st'>"0.961.60"</span><span class='op'>)</span>
 <span class='fu'>plotRowTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span> <span class='op'>%in%</span> <span class='va'>top_genus</span>,<span class='op'>]</span>,
             tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
             tip_size_by <span class='op'>=</span> <span class='st'>"detected"</span>,
@@ -361,12 +377,22 @@ one type of id information. See details in
           <span class='op'>}</span><span class='op'>)</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/splitByRanks.html'>unsplitByRanks</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
 <span class='va'>x</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/pkg/mia/man/taxonomy-methods.html'>addTaxonomyTree</a></span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: The root is added with label 'ALL'</span></div><div class='input'><span class='fu'>plotRowTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='fu'>rowData</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Phylum</span> <span class='op'>%in%</span> <span class='va'>top_phyla</span>,<span class='op'>]</span>,
+</div><div class='output co'>#&gt; <span class='warning'>Warning: The root is added with label 'ALL'</span></div><div class='input'>
+<span class='va'>highlights</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"Phylum:Firmicutes"</span>,<span class='st'>"Phylum:Bacteroidetes"</span>,
+                <span class='st'>"Family:Pseudomonadaceae"</span>,<span class='st'>"Order:Bifidobacteriales"</span><span class='op'>)</span>
+<span class='fu'>plotRowTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='fu'>rowData</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Phylum</span> <span class='op'>%in%</span> <span class='va'>top_phyla</span>,<span class='op'>]</span>,
+            tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
+            node_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
+            show_highlights <span class='op'>=</span> <span class='va'>highlights</span>,
+            show_highlight_label <span class='op'>=</span> <span class='va'>highlights</span>,
+            colour_highlights_by <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotTree-6.png' alt='' width='3000' height='2100' /></div><div class='input'>
+<span class='fu'>plotRowTree</span><span class='op'>(</span><span class='va'>x</span><span class='op'>[</span><span class='fu'>rowData</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Phylum</span> <span class='op'>%in%</span> <span class='va'>top_phyla</span>,<span class='op'>]</span>,
             edge_colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span>,
             edge_size_by <span class='op'>=</span> <span class='st'>"detected"</span>,
             tip_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span>,
             node_colour_by <span class='op'>=</span> <span class='st'>"log_mean"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotTree-6.png' alt='' width='3000' height='2100' /></div></span></pre>
+</div><div class='img'><img src='plotTree-7.png' alt='' width='3000' height='2100' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
