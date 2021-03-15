@@ -20,7 +20,10 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Preface
+`miaViz` implements plotting function to work with `TreeSummarizedExperiment`
+and related objects in a context of microbiome analysis. For more general
+plotting function on `SummarizedExperiment` the `scater` packages several 
+options, such as `plotColData`, `plotExpression` and `plotRowData`.
 
 ```{r setup, message=FALSE}
 library(miaViz)
