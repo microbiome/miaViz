@@ -1,6 +1,7 @@
 
 context("plot graph")
 test_that("plot graph", {
+    library(tidygraph)
     # .check_graph_plot_switches
     expect_error(miaViz:::.check_graph_plot_switches(),
                  'argument "show_label" is missing')
