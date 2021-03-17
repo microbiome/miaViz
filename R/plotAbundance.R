@@ -52,7 +52,10 @@
 #' 
 #' @param ... additional parameters for plotting
 #'
-#' @return a \code{\link[ggplot2:ggplot]{ggplot}} object
+#' @return 
+#' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of 
+#' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `features` are added to 
+#' the plot. 
 #'
 #' @name plotAbundance
 #'
@@ -100,7 +103,6 @@ setGeneric("plotAbundance", signature = c("x"),
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
              rank = taxonomyRanks(x)[1],
-             abund_values = "relabundance",
              features = NULL,
              order_rank_by = c("name","abund","revabund"),
              order_sample_by = NULL,
@@ -110,6 +112,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
              one_facet = TRUE,
              ncol = 2,
              scales = "fixed",
+             abund_values = "counts",
              ...){
         # input checks
         if(nrow(x) == 0L){
@@ -170,8 +173,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                                                   order_sample_by,
                                                   xlab = "Samples",
                                                   ...)
-            plot_out <- .combine_plots(c(list(plot_out), plot_feature_out),
-                                       ...)
+            plot_out <- c(list(abundance = plot_out), plot_feature_out)
         } else {
             if (!one_facet) {
                 plot_out <- plot_out + 
