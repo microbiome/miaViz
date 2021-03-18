@@ -241,4 +241,52 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 
 # Plotting of serial data
 
+```{r}
+library(microbiomeDataSets)
+silverman <- SilvermanAGutData()
+taxa <- getTopTaxa(silverman, 2)
+```
 
+Data from samples collected along time can be visualized using `plotSeries`.
+The `x` argument is used to reference data from the `colData` to use as 
+descriptor for ordering the data. The `y` argument selects the feature to show.
+Since plotting a lot of features is not advised a maximum of 20 features can 
+plotted at the same time.
+ 
+```{r}
+plotSeries(silverman,
+           x = "DAY_ORDER",
+           y = taxa,
+           colour_by = "Family")
+```
+If replicated data is present, data is automatically used for calculation of the
+`mean` and `sd` and plotted as a range. Data from different assays can be used
+for plotting via the `abund_values`.
+
+```{r}
+plotSeries(silverman[taxa,],
+           x = "DAY_ORDER",
+           colour_by = "Family",
+           linetype_by = "Phylum",
+           abund_values = "relabundance")
+```
+
+Additional variables can be used to modify line type aesthetics.
+
+```{r}
+plotSeries(silverman,
+           x = "DAY_ORDER",
+           y = getTopTaxa(silverman, 5),
+           colour_by = "Family",
+           linetype_by = "Phylum",
+           abund_values = "counts")
+```
+
+# Session info
+
+```{r}
+sessionInfo()
+```
+
+
+# References

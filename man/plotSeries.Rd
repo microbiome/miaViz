@@ -101,8 +101,7 @@ plotSeries(object,
            y = getTopTaxa(object, 5), 
            colour_by = "Family",
            size_by = "Phylum",
-           abund_values = "counts") +
-           scale_size_discrete(range=c(0.5, 2))
+           abund_values = "counts")
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
