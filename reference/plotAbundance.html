@@ -76,7 +76,7 @@ assay used by default is expected to be in the slot &amp;#8216;relabundance&amp;
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.98.14</span>
       </span>
     </div>
 
@@ -127,7 +127,6 @@ assay used by default is expected to be in the slot &#8216;relabundance&#8217;.<
 <span class='fu'>plotAbundance</span><span class='op'>(</span>
   <span class='va'>x</span>,
   rank <span class='op'>=</span> <span class='fu'>taxonomyRanks</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>[</span><span class='fl'>1</span><span class='op'>]</span>,
-  abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span>,
   features <span class='op'>=</span> <span class='cn'>NULL</span>,
   order_rank_by <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"name"</span>, <span class='st'>"abund"</span>, <span class='st'>"revabund"</span><span class='op'>)</span>,
   order_sample_by <span class='op'>=</span> <span class='cn'>NULL</span>,
@@ -137,6 +136,7 @@ assay used by default is expected to be in the slot &#8216;relabundance&#8217;.<
   one_facet <span class='op'>=</span> <span class='cn'>TRUE</span>,
   ncol <span class='op'>=</span> <span class='fl'>2</span>,
   scales <span class='op'>=</span> <span class='st'>"fixed"</span>,
+  abund_values <span class='op'>=</span> <span class='st'>"counts"</span>,
   <span class='va'>...</span>
 <span class='op'>)</span></pre>
 
@@ -157,11 +157,6 @@ object.</p></td>
       <th>rank</th>
       <td><p>a single <code>character</code> value defining the taxonomic rank to
 use. Must be a value of <code>taxonomyRanks(x)</code>.</p></td>
-    </tr>
-    <tr>
-      <th>abund_values</th>
-      <td><p>a <code>character</code> value defining which assay data to
-use. (default: <code>abund_values = "relabundance"</code>)</p></td>
     </tr>
     <tr>
       <th>features</th>
@@ -211,11 +206,18 @@ columns should be for plotting the different facets and <code>scales</code> is
 used to define the behavior of the scales of each facet. Both values are
 passed onto <code><a href='https://ggplot2.tidyverse.org/reference/facet_wrap.html'>facet_wrap</a></code>.</p></td>
     </tr>
+    <tr>
+      <th>abund_values</th>
+      <td><p>a <code>character</code> value defining which assay data to
+use. (default: <code>abund_values = "relabundance"</code>)</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code> object</p>
+    <p>a <code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code> object or list of
+<code><a href='https://ggplot2.tidyverse.org/reference/ggplot.html'>ggplot</a></code> objects, if <code>features</code> are added to
+the plot.</p>
     <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
 
     <p>Subsetting to rows of interested and ordering of those is expected to be done
@@ -239,7 +241,7 @@ features present.</p>
 <span class='fu'>plotAbundance</span><span class='op'>(</span><span class='va'>se</span>, abund_values<span class='op'>=</span><span class='st'>"counts"</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,
               features <span class='op'>=</span> <span class='st'>"SampleType"</span>,
               order_sample_by <span class='op'>=</span> <span class='st'>"SampleType"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotAbundance-4.png' alt='' width='3000' height='2100' /></div></pre>
+</div><div class='output co'>#&gt; $abundance</div><div class='img'><img src='plotAbundance-4.png' alt='' width='3000' height='2100' /></div><div class='output co'>#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
