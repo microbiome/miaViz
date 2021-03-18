@@ -244,6 +244,7 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 ```{r}
 library(microbiomeDataSets)
 silverman <- SilvermanAGutData()
+silverman <- transformCounts(silverman, method = "relabundance")
 taxa <- getTopTaxa(silverman, 2)
 ```
 
