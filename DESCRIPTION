@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 0.98.13
+Version: 0.98.14
 Authors@R: 
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
@@ -41,7 +41,8 @@ Suggests:
     knitr,
     rmarkdown,
     BiocStyle,
-    testthat
+    testthat,
+    patchwork
 Remotes: 
     github::FelixErnst/mia
 Roxygen: list(markdown = TRUE)

@@ -20,10 +20,104 @@ knitr::opts_chunk$set(
 )
 ```
 
-## Preface
+`miaViz` implements plotting function to work with `TreeSummarizedExperiment`
+and related objects in a context of microbiome analysis. For more general
+plotting function on `SummarizedExperiment` objects the `scater` package offers
+several options, such as `plotColData`, `plotExpression` and `plotRowData`.
 
 ```{r setup, message=FALSE}
 library(miaViz)
+data(GlobalPatterns) # From mia
+```
+
+# Abundance plotting
+
+in contrast to other fields of sequencing based fields of research for which
+expression of genes is usually studied, microbiome research uses the more 
+term ~Abundance~ to described the numeric data measured and analyzed.
+Technically, especially in context of `SummarizedExperiment` objects, there is
+no difference. Therefore `plotExpression` can be used to plot `Abundance` data.
+
+`plotAbundance` can be used as well and as long as `rank` is set `NULL`, it
+behaves as `plotExpression`.
+
+```{r}
+plotAbundance(GlobalPatterns, rank = NULL, 
+              features = "549322", abund_values = "counts")
+```
+
+However, if the `rank` is set not `NULL` a bar plot is returned. At the same
+time the `features` argument can be set to `NULL` (default).
+
+```{r}
+GlobalPatterns <- transformCounts(GlobalPatterns, method = "relabundance")
+```
+
+```{r}
+plotAbundance(GlobalPatterns, rank = "Kingdom", abund_values = "relabundance")
+```
+
+With subsetting to selected features the plot can be fine tuned.
+
+```{r}
+prev_phylum <- getPrevalentTaxa(GlobalPatterns, rank = "Phylum",
+                                detection = 0.01)
+```
+
+```{r}
+plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
+              rank = "Phylum",
+              abund_values = "relabundance")
+```
+
+The `features` argument is reused for plotting data along the different samples.
+In the next example the ~SampleType~ is plotted along the samples. In this case 
+the result is a list, which can combined using external tools, for example
+`patchwork`. 
+
+```{r}
+library(patchwork)
+plots <- plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
+                       features = "SampleType",
+                       rank = "Phylum",
+                       abund_values = "relabundance")
+plots$abundance / plots$SampleType +
+     plot_layout(heights = c(9, 1))
+```
+
+# Prevalence plotting
+
+To visualize prevalence within the dataset, two functions are available,
+`plotTaxaPrevalence`, `plotPrevalenceAbundance` and `plotPrevalence`.
+
+
+`plotTaxaPrevalence` produces a so-called landscape plot, which
+visualizes the prevalence of samples across abundance thresholds.
+
+```{r}
+plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
+                   detections = c(0, 0.001, 0.01, 0.1, 0.2))
+```
+
+`plotPrevalenceAbundance` plot the prevalence depending on the mean relative 
+abundance on the chosen taxonomic level.
+
+```{r}
+plotPrevalentAbundance(GlobalPatterns, rank = "Family",
+                       colour_by = "Phylum") +
+    scale_x_log10()
+```
+
+`plotPrevalence` plot the number of samples and their prevalence across 
+different abundance thresholds. Abundance steps can be adjusted using the 
+`detections` argument, whereas the analyzed prevalence steps is set using the
+`prevalences` argument.
+
+```{r}
+plotPrevalence(GlobalPatterns,
+               rank = "Phylum",
+               detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
+               prevalences = seq(0.1, 1, 0.1))
 ```
 
 # Tree plotting
@@ -40,7 +134,6 @@ library(scater)
 library(mia)
 ```
 ```{r}
-data(GlobalPatterns)
 altExp(GlobalPatterns,"Genus") <- agglomerateByRank(GlobalPatterns,"Genus")
 altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
 rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
@@ -100,3 +193,101 @@ plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
             tip_colour_by = "log_mean")
 ```
 
+# Graph plotting
+
+Similar to tree data, graph data can also be plotted in conjunction with
+`SummarizedExperiment` objects. Since the graph data in itself cannot be stored
+in a specialized slot, a graph object can be provided separately or as an 
+element from the `metedata`.
+
+Here we load an example graph. As graph data, all objects types accepted by
+`as_tbl_graph` from the `tidygraph` package are supported. 
+
+```{r}
+data(col_graph)
+```
+
+In the following examples, the `weight` data is automatically generated from the
+graph data. The `SummarizedExperiment` provided is required to have overlapping
+rownames with the node names of the graph. Using this link the graph plot
+can incorporated data from the `SummarizedExperiment`.
+
+```{r}
+plotColGraph(col_graph,
+             altExp(GlobalPatterns,"Genus"),
+             colour_by = "SampleType",
+             edge_colour_by = "weight",
+             edge_width_by = "weight",
+             show_label = TRUE)
+```
+
+As mentioned the graph data can be provided from the `metadata` of the 
+`SummarizedExperiment`.
+
+```{r}
+metadata(altExp(GlobalPatterns,"Genus"))$graph <- col_graph
+```
+
+This produces the same plot as shown above.
+
+```{r include=FALSE}
+plotColGraph(altExp(GlobalPatterns,"Genus"),
+             name = "graph",
+             colour_by = "SampleType",
+             edge_colour_by = "weight",
+             edge_width_by = "weight",
+             show_label = TRUE)
+```
+
+# Plotting of serial data
+
+```{r}
+library(microbiomeDataSets)
+silverman <- SilvermanAGutData()
+silverman <- transformCounts(silverman, method = "relabundance")
+taxa <- getTopTaxa(silverman, 2)
+```
+
+Data from samples collected along time can be visualized using `plotSeries`.
+The `x` argument is used to reference data from the `colData` to use as 
+descriptor for ordering the data. The `y` argument selects the feature to show.
+Since plotting a lot of features is not advised a maximum of 20 features can 
+plotted at the same time.
+ 
+```{r}
+plotSeries(silverman,
+           x = "DAY_ORDER",
+           y = taxa,
+           colour_by = "Family")
+```
+If replicated data is present, data is automatically used for calculation of the
+`mean` and `sd` and plotted as a range. Data from different assays can be used
+for plotting via the `abund_values`.
+
+```{r}
+plotSeries(silverman[taxa,],
+           x = "DAY_ORDER",
+           colour_by = "Family",
+           linetype_by = "Phylum",
+           abund_values = "relabundance")
+```
+
+Additional variables can be used to modify line type aesthetics.
+
+```{r}
+plotSeries(silverman,
+           x = "DAY_ORDER",
+           y = getTopTaxa(silverman, 5),
+           colour_by = "Family",
+           linetype_by = "Phylum",
+           abund_values = "counts")
+```
+
+# Session info
+
+```{r}
+sessionInfo()
+```
+
+
+# References

@@ -166,8 +166,7 @@ setGeneric("plotColGraph", signature = c("x","y"),
 setGeneric("plotRowGraph", signature = c("x","y"),
            function(x, y, ...) standardGeneric("plotRowGraph"))
 
-.check_graph_plot_switches <- function(show_label = FALSE,
-                                       add_legend = TRUE){
+.check_graph_plot_switches <- function(show_label, add_legend){
     if(!.is_a_bool(show_label)){
         if( (!is.logical(show_label) && !is.character(show_label) && 
             !is.numeric(show_label)) ||

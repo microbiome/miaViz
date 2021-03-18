@@ -10,7 +10,6 @@ plotAbundance(x, ...)
 \S4method{plotAbundance}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  abund_values = "relabundance",
   features = NULL,
   order_rank_by = c("name", "abund", "revabund"),
   order_sample_by = NULL,
@@ -20,6 +19,7 @@ plotAbundance(x, ...)
   one_facet = TRUE,
   ncol = 2,
   scales = "fixed",
+  abund_values = "counts",
   ...
 )
 }
@@ -32,9 +32,6 @@ object.}
 
 \item{rank}{a single \code{character} value defining the taxonomic rank to
 use. Must be a value of \code{taxonomyRanks(x)}.}
-
-\item{abund_values}{a \code{character} value defining which assay data to
-use. (default: \code{abund_values = "relabundance"})}
 
 \item{features}{data \code{colData} to be plotted below the abundance plot.
 Continuous numeric values will be plotted as point, whereas factors and
@@ -67,9 +64,14 @@ be disregarded.}
 columns should be for plotting the different facets and \code{scales} is
 used to define the behavior of the scales of each facet. Both values are
 passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.}
+
+\item{abund_values}{a \code{character} value defining which assay data to
+use. (default: \code{abund_values = "relabundance"})}
 }
 \value{
-a \code{\link[ggplot2:ggplot]{ggplot}} object
+a \code{\link[ggplot2:ggplot]{ggplot}} object or list of
+\code{\link[ggplot2:ggplot]{ggplot}} objects, if \code{features} are added to
+the plot.
 }
 \description{
 \code{plotAbundance} plots the abundance on a selected taxonomic rank.

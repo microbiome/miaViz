@@ -278,17 +278,3 @@
     }
     plot_out
 }
-
-#' @importFrom cowplot plot_grid
-.combine_plots <- function(plots, flipped = FALSE, ...){
-    if(flipped){
-        plot_out <- plot_grid(plotlist = rev(plots), nrow=1, align="h",
-                              axis = "tb",
-                              rel_widths = c(rep(1, length(plots) - 1L), 2))
-    } else {
-        plot_out <- plot_grid(plotlist = plots, ncol=1, align="v",
-                              axis = "lr",
-                              rel_heights = c(2, rep(1, length(plots) - 1L)))
-    }
-    plot_out
-}
