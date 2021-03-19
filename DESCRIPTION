@@ -1,13 +1,17 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 0.98.14
+Version: 0.99.0
 Authors@R: 
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
              email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
       person(given = "Tuomas", family = "Borman", role = c("ctb")))
-Description: What the package does (one paragraph).
-License: GPL-3
+Description: 
+    miaViz implements plotting function to work with TreeSummarizedExperiment
+    and related objects in a context of microbiome analysis. Among others this 
+    includes plotting tree, graph and microbiome series data.
+biocViews: Microbiome, Software, Visualization
+License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
 LazyData: false
 Depends:
@@ -19,6 +23,7 @@ Depends:
     ggraph (>= 2.0)
 Imports: 
     methods,
+    stats,
     S4Vectors,
     BiocGenerics,
     BiocParallel,
@@ -27,7 +32,6 @@ Imports:
     ggtree,
     ggnewscale,
     viridis,
-    cowplot,
     tibble,
     tidytree,
     tidygraph,
@@ -35,16 +39,14 @@ Imports:
     purrr,
     tidyr,
     dplyr,
-    ape,
-    microbiomeDataSets
+    ape
 Suggests:
     knitr,
     rmarkdown,
     BiocStyle,
     testthat,
-    patchwork
-Remotes: 
-    github::FelixErnst/mia
+    patchwork,
+    microbiomeDataSets
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 VignetteBuilder: knitr

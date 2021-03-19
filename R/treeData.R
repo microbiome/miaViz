@@ -13,10 +13,6 @@
 #'   
 #' @param ... additional arguments, currently not used.
 #'
-#' @return a \code{data.frame} for the accessor and the modified
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object
-#'
 #' @details
 #' To match information to nodes, the id information in \code{other_fields} are used.
 #' These can either be a column, named \sQuote{node} or \sQuote{label}
@@ -27,6 +23,10 @@
 #'
 #' The result of the accessors, \code{rowTreeData} and \code{colTreeData},
 #' contain at least a \sQuote{node} and \sQuote{label} column.
+#'
+#' @return a \code{data.frame} for the accessor and the modified
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#'   object
 #'
 #' @name treeData
 #'

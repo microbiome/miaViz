@@ -67,6 +67,14 @@
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the UniFrac calculation should be parallelized.
 #' 
+#' @details 
+#' Agglomeration on different taxonomic levels is available through the 
+#' \code{rank} argument. 
+#' 
+#' To exclude certain taxa, preprocess \code{x} to your liking, for example 
+#' with subsetting via \code{getPrevalentTaxa} or 
+#' \code{agglomerateByPrevalence}.
+#' 
 #' @return 
 #' A \code{ggplot2} object or \code{plotly} object, if more than one 
 #' \code{prevalences} was defined.
@@ -77,14 +85,6 @@
 #' \code{\link[mia:agglomerate-methods]{agglomerateByRank}}
 #' 
 #' @name plotPrevalence
-#' 
-#' @details 
-#' Agglomeration on different taxonomic levels is available through the 
-#' \code{rank} argument. 
-#' 
-#' To exclude certain taxa, preprocess \code{x} to your liking, for example 
-#' with subsetting via \code{getPrevalentTaxa} or 
-#' \code{agglomerateByPrevalence}.
 #' 
 #' @examples 
 #' data(GlobalPatterns, package = "mia")

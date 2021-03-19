@@ -86,14 +86,14 @@
 #'   
 #' @param ... additional arguments for plotting.
 #'
+#' @details 
+#' If \code{show_label} or \code{show_highlight_label} have the same length
+#' as the number of nodes, the vector will be used to relabel the nodes.
+#'
 #' @return a \code{\link{ggtree}} plot
 #' 
 #' @seealso
 #' \code{\link[mia:splitByRanks]{splitByRanks}}
-#'
-#' @details 
-#' If \code{show_label} or \code{show_highlight_label} have the same length
-#' as the number of nodes, the vector will be used to relabel the nodes.
 #'
 #' @name plotTree
 #'

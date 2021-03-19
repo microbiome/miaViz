@@ -117,6 +117,9 @@ without plotting them.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 the key for subsetting the \code{metadata(x)} to a graph object.}
 }
+\value{
+a \code{\link{ggtree}} plot
+}
 \description{
 \code{plotGraph} plots an \code{igraph} object with additional information
 matched from a \code{SummarizedExperiment} object for the nodes only.

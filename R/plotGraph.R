@@ -73,6 +73,8 @@
 #' graph types which can be converted by \code{tidygraph::as_tbl_graph} can
 #' be used.
 #' 
+#' @return a \code{\link{ggtree}} plot
+#' 
 #' @name plotGraph
 #' 
 #' @examples
