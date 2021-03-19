@@ -15,10 +15,10 @@ License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
 LazyData: false
 Depends:
-    R (>= 4.0),
+    R (>= 4.1),
     SummarizedExperiment,
     TreeSummarizedExperiment,
-    mia (>= 0.98.29),
+    mia (>= 0.99.0),
     ggplot2,
     ggraph (>= 2.0)
 Imports: 
