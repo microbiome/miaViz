@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Articles • miaViz</title>
+<title>Plotting Dirichlet-Multinomial Mixture Model data — plotDMN • miaViz</title>
 
 
 <!-- jquery -->
@@ -41,7 +41,8 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Articles" />
+<meta property="og:title" content="Plotting Dirichlet-Multinomial Mixture Model data — plotDMN" />
+<meta property="og:description" content="To plot DMN fits generated with mia use plotDMNFit." />
 
 
 
@@ -60,7 +61,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-article-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -107,18 +108,64 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Articles</h1>
+    <h1>Plotting Dirichlet-Multinomial Mixture Model data</h1>
+    
+    <div class="hidden name"><code>plotDMN.Rd</code></div>
     </div>
 
-    <div class="section ">
-      <h3>All vignettes</h3>
-      <p class="section-desc"></p>
-
-      <dl>
-        <dt><a href="miaViz.html">miaViz</a></dt>
-        <dd></dt>
-      </dl>
+    <div class="ref-description">
+    <p>To plot DMN fits generated with <code>mia</code> use <code>plotDMNFit</code>.</p>
     </div>
+
+    <pre class="usage"><span class='fu'>plotDMNFit</span><span class='op'>(</span><span class='va'>x</span>, name <span class='op'>=</span> <span class='st'>"DMN"</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"laplace"</span>, <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span><span class='op'>)</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>plotDMNFit</span><span class='op'>(</span><span class='va'>x</span>, name <span class='op'>=</span> <span class='st'>"DMN"</span>, type <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='st'>"laplace"</span>, <span class='st'>"AIC"</span>, <span class='st'>"BIC"</span><span class='op'>)</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>x</th>
+      <td><p>a
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code>
+object contain the DMN data in <code>metadata</code>.</p></td>
+    </tr>
+    <tr>
+      <th>name</th>
+      <td><p>the name to store the result in
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/RangedSummarizedExperiment-class.html'>metadata</a></code></p></td>
+    </tr>
+    <tr>
+      <th>type</th>
+      <td><p>the type of measure for access the goodness of fit. One of
+&#8216;laplace&#8217;, &#8216;AIC&#8217; or &#8216;BIC&#8217;.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>optional arguments not used.</p></td>
+    </tr>
+    </table>
+
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p><code>plotDMNFit</code> returns a <code>ggplot2</code> plot.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/mia/man/calculateDMN.html'>calculateDMN</a></code></p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>dmn_se</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'>metadata</span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; [1] "DMN"</div><div class='input'>
+<span class='co'># plot the fit</span>
+<span class='fu'>plotDMNFit</span><span class='op'>(</span><span class='va'>dmn_se</span>, type <span class='op'>=</span> <span class='st'>"laplace"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotDMN-1.png' alt='' width='3000' height='2100' /></div></pre>
+  </div>
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
