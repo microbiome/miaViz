@@ -25,9 +25,21 @@ and related objects in a context of microbiome analysis. For more general
 plotting function on `SummarizedExperiment` objects the `scater` package offers
 several options, such as `plotColData`, `plotExpression` and `plotRowData`.
 
+# Installation
+
+To install `miaViz`, install `BiocManager` first, if it is not installed.
+Afterwards use the `install` function from `BiocManager` and load `miaViz`.
+
+```{r}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("miaViz")
+```
+
 ```{r setup, message=FALSE}
 library(miaViz)
-data(GlobalPatterns) # From mia
+data(GlobalPatterns, package = "mia")
 ```
 
 # Abundance plotting
