@@ -37,6 +37,7 @@ setGeneric("plotDMNFit", signature = "x",
                standardGeneric("plotDMNFit"))
 
 #' @rdname plotDMN
+#' @importFrom DirichletMultinomial mixture
 #' @importFrom ggplot2 ggplot aes_string geom_point geom_line theme_bw labs
 #' @export
 setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
