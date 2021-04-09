@@ -107,7 +107,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
              ...){
         ###################### Input check #######################
         # Checks abund_values
-        .check_abund_values(abund_values, object)
+        .check_assay_present(abund_values, object)
         
         # Checks X
         if( !.is_a_string(x) ||

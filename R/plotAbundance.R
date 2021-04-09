@@ -118,7 +118,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         if(nrow(x) == 0L){
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         # if rank is set to NULL, default to plotExpression 
         if(is.null(rank)){
             plot <- plotExpression(x, features = features, 

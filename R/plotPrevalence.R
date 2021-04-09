@@ -142,7 +142,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
             stop("'prevalences' must be numeric values between 0 and 1.",
                  call. = FALSE)
         }
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -223,7 +223,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
              facet_by = NULL,
              ...){
         # input check
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -365,7 +365,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
             detections <- seq(0,1,length.out = ndetections + 1L)
             as_relative <- TRUE
         }
-        .check_abund_values(abund_values, x)
+        .check_assay_present(abund_values, x)
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
