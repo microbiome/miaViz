@@ -84,7 +84,8 @@
 #' @param other_fields Additional fields to include in the node information
 #'   without plotting them.
 #'   
-#' @param ... additional arguments for plotting.
+#' @param ... additional arguments for plotting. See 
+#'   \code{\link{mia-plot-args}} for more details
 #'
 #' @details 
 #' If \code{show_label} or \code{show_highlight_label} have the same length
@@ -1246,15 +1247,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     plot_out <- plot_out +
         do.call(geom_tree, edge_out$args) + 
         theme_tree()
-    if (!is.null(edge_size_by)) {
-        if(is.numeric(plot_out$data$edge_size_by)){
-            SIZEFUN <- scale_size_continuous
-        } else {
-            SIZEFUN <- scale_size_discrete
-        }
-        plot_out <- .add_extra_guide_tree(plot_out, edge_size_by) +
-            SIZEFUN(range = line_width_range)
-    }
+    plot_out <- .add_extra_guide_tree(plot_out,
+                                      edge_size_by,
+                                      line_width_range)
     # adjust edge colours
     if(!is.null(edge_colour_by)){
         plot_out <- .resolve_plot_colours(plot_out,

@@ -67,7 +67,8 @@ plotColTree(object, ...)
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 object.}
 
-\item{...}{additional arguments for plotting.}
+\item{...}{additional arguments for plotting. See
+\code{\link{mia-plot-args}} for more details}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
 the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?

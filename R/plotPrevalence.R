@@ -16,7 +16,8 @@
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
-#'   \item{additional arguments for plotting}
+#'   \item{additional arguments for plotting. See 
+#'   \code{\link{mia-plot-args}} for more details}
 #' }
 #'   
 #' @param abund_values a \code{character} value defining which assay data to
@@ -467,8 +468,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                                 point_size = 2,
                                 line_alpha = 1,
                                 line_type = NULL,
-                                line_size = 1,
-                                ...){
+                                line_size = 1){
     plot_out <- ggplot(plot_data, aes_string(x = "X", y = "Y")) +
         labs(x = xlab, y = ylab)
     if(layout == "line"){

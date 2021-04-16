@@ -50,7 +50,8 @@
 #'   used to define the behavior of the scales of each facet. Both values are 
 #'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
 #' 
-#' @param ... additional parameters for plotting
+#' @param ... additional parameters for plotting. See 
+#'   \code{\link{mia-plot-args}} for more details
 #'
 #' @return 
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of 

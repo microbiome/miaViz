@@ -66,7 +66,8 @@
 #' @param other_fields Additional fields to include in the node information
 #'   without plotting them.
 #'   
-#' @param ... additional arguments for plotting.
+#' @param ... additional arguments for plotting. See 
+#'   \code{\link{mia-plot-args}} for more details
 #' 
 #' @details:
 #' Internally \code{tidygraph} and \code{ggraph} are used. Therefore, all 

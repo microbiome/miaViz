@@ -33,7 +33,8 @@
 #'   used to divide taxa to different line size types. Must be a value of
 #'   \code{taxonomicRanks()} function.
 #'   
-#' @param ... additional parameters for plotting
+#' @param ... additional parameters for plotting. See 
+#'   \code{\link{mia-plot-args}} for more details
 #'
 #' @details
 #' This function creates series plot, where x-axis includes e.g. time points, and
