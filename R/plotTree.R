@@ -551,9 +551,8 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 
 .remove_taxonomic_level_from_labels <- function(labels){
     for(rank in TAXONOMY_RANKS){
-        labels <- gsub(rank,"",labels,ignore.case = TRUE)
+        labels <- gsub(paste0(rank,":"),"",labels,ignore.case = TRUE)
     }
-    labels <- gsub("^:","",labels)
     labels
 }
 
