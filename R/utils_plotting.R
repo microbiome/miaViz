@@ -1,3 +1,103 @@
+#' Additional arguments for plotting
+#' 
+#' To be able to fine tune plotting, several additional plotting arguments are
+#' available. These are described on this page.
+#' 
+#' @section Tree plotting:
+#' 
+#' \describe{
+#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tree edges. Defaults to \code{1}.}
+#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of 
+#'     an edge. Defaults to NULL to use default of the \code{ggtree} package}
+#'   \item{\code{line_width_range}:}{Two numeric values, the range for plotting
+#'     dynamic edge widths in. Defaults to \code{c(0.5,3)}.}
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tips. Defaults to \code{1}.}
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'     default size of tips Defaults to \code{2.}.}
+#'   \item{\code{point_size_range}:}{Two numeric values, the range for plotting
+#'     dynamic tip sizes in. Defaults to \code{c(1,4)}.}
+#'   \item{\code{label_font_size}:}{Numeric scalar, font size for the tip and 
+#'     node labels. Default to \code{3}.}
+#'   \item{\code{highlight_font_size}:}{Numeric scalar, font size for the 
+#'     highlight labels. Default to \code{3}.}
+#' }
+#' 
+#' @section Graph plotting:
+#' 
+#' \describe{
+#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tree edges. Defaults to \code{1}.}
+#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of 
+#'     an edge. Defaults to NULL to use default of the \code{ggraph} package}
+#'   \item{\code{line_width_range}:}{Two numeric values, the range for plotting
+#'     dynamic edge widths in. Defaults to \code{c(0.5,3)}.}
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tips. Defaults to \code{1}.}
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'     default size of tips Defaults to \code{2.}.}
+#'   \item{\code{point_size_range}:}{Two numeric values, the range for plotting
+#'     dynamic tip sizes in. Defaults to \code{c(1,4)}.}
+#' }
+#' 
+#' @section Abundance plotting:
+#' 
+#' \describe{
+#'   \item{\code{flipped}:}{Logical scalar. Should the plot be flipped. Defaults
+#'     to \code{FALSE}.}
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'     Defaults to \code{TRUE}.}
+#'   \item{\code{add_x_text}:}{Logical scalar. Should x tick labels be plotted?
+#'     Defaults to \code{FALSE}.}
+#'   \item{\code{add_border}:}{Logical scalar. Should border of bars be plotted?
+#'     Defaults to \code{FALSE}.}
+#'   \item{\code{bar_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the bars. Defaults to \code{1}.}
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tips. Defaults to \code{1}.}
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'     default size of tips Defaults to \code{2.}.}
+#' }
+#' 
+#' @section Prevalence plotting:
+#' 
+#' \describe{
+#'   \item{\code{flipped}:}{Logical scalar, specifying whether the plot should
+#'     be flipped. Defaults to \code{FALSE}.}
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'     Defaults to \code{TRUE}.}
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tips. Defaults to \code{1}.}
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'     default size of tips Defaults to \code{2.}.}
+#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tree edges. Defaults to \code{1}.}
+#'   \item{\code{line_type}:}{Numeric scalar, specifying the default line type.
+#'     Defaults to NULL to use default of the \code{ggplot2} package}
+#'   \item{\code{line_size}:}{Numeric scalar, specifying the default width of 
+#'     a line. Defaults to NULL to use default of the \code{ggplot2} package}
+#' }
+#' 
+#' @section Series plotting:
+#' 
+#' \describe{
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'     Defaults to \code{TRUE}.}
+#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tree edges. Defaults to \code{1}.}
+#'   \item{\code{line_type}:}{Numeric scalar, specifying the default line type.
+#'     Defaults to NULL to use default of the \code{ggplot2} package}
+#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of 
+#'     a line. Defaults to NULL to use default of the \code{ggplot2} package}
+#'   \item{\code{line_width_range}:}{Two numeric values, the range for plotting
+#'     dynamic line widths in. Defaults to \code{c(0.5,3)}.}
+#'   \item{\code{ribbon_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the ribbon. Defaults to \code{0.3}.}
+#' }
+#' 
+#' @name mia-plot-args
+NULL
 
 
 .get_palette <- scater:::.get_palette
@@ -79,12 +179,18 @@
     }
     plot_out
 }
-.add_extra_guide_tree <- function(plot_out, edge_size_by){
-    guide_args <- list()
+
+#' @importFrom ggnewscale new_scale
+.add_extra_guide_tree <- function(plot_out, edge_size_by, line_width_range){
     if (!is.null(edge_size_by)) {
-        guide_args$size <- guide_legend(title = edge_size_by)
+        if(is.numeric(plot_out$data$edge_size_by)){
+            SIZEFUN <- scale_size_continuous
+        } else {
+            SIZEFUN <- scale_size_discrete
+        }
         plot_out <- plot_out + 
-            do.call(guides, guide_args)
+            SIZEFUN(name = edge_size_by, range = line_width_range) +
+            new_scale("size")
     }
     plot_out
 }

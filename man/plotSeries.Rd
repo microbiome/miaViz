@@ -61,7 +61,8 @@ is used to divide taxa to different line types. Must be a value of
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 plotted. (default: \code{abund_values = "counts"})}
 
-\item{...}{additional parameters for plotting}
+\item{...}{additional parameters for plotting. See
+\code{\link{mia-plot-args}} for more details}
 }
 \value{
 A \code{ggplot2} object

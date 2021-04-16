@@ -28,7 +28,8 @@ plotAbundance(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{...}{additional parameters for plotting}
+\item{...}{additional parameters for plotting. See
+\code{\link{mia-plot-args}} for more details}
 
 \item{rank}{a single \code{character} value defining the taxonomic rank to
 use. Must be a value of \code{taxonomyRanks(x)}.}
