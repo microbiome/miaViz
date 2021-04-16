@@ -943,7 +943,9 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                           shape_by,
                                           size_by){
     # cleanup
-    if (!is.null(edge_colour_by) && anyNA(tree_data$edge_colour_by)) {
+    if (!is.null(edge_colour_by) && 
+        anyNA(tree_data$edge_colour_by) &&
+        !is.numeric(tree_data$edge_colour_by)) {
         tree_data <- groupOTU(tree_data, 
                               split(tree_data$node, tree_data$edge_colour_by),
                               group_name = "group")
