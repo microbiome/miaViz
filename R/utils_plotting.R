@@ -346,6 +346,16 @@ NULL
     edge_args
 }
 
+.get_rect_args <- function(colour_by, alpha = 1, colour = "black"){
+    aes_args <- list()
+    if (!is.null(colour_by)) {
+        aes_args$fill <- "colour_by"
+    }
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes, alpha = alpha, colour = colour)
+    return(list(args = geom_args))
+}
+
 #' @importFrom ggplot2 coord_flip element_blank element_text
 .flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE,
                        angle_x_text = TRUE){
