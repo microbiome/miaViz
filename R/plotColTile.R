@@ -17,10 +17,9 @@
 #'   Alternatively, an \link{AsIs} vector or data.frame, see 
 #'   \code{?\link{retrieveFeatureInfo}} or \code{?\link{retrieveCellInfo}}. Must
 #'   result in a returned \code{character} or \code{factor} vector.
-#'   
-#' @param factor_x_by 
 #'  
-#' @param factor_y_by 
+#' @param ... additional arguments for plotting. See 
+#'   \code{\link{mia-plot-args}} for more details
 #' 
 #' @return 
 #' A \code{ggplot2} object or \code{plotly} object, if more than one 
@@ -47,20 +46,16 @@ setGeneric("plotRowTile", signature = c("object"),
 #' @rdname plotColTile
 #' @export
 setMethod("plotColTile", signature = c("SummarizedExperiment"),
-    function(object, x, y, factor_x_by = NULL, factor_y_by = NULL, ...){
-        .plot_tile_data(object, type = "column", x, y, 
-                        factor_x_by = factor_x_by, factor_y_by = factor_y_by,
-                        ...)
+    function(object, x, y, ...){
+        .plot_tile_data(object, type = "column", x, y, ...)
     }
 )
 
 #' @rdname plotColTile
 #' @export
 setMethod("plotRowTile", signature = c("SummarizedExperiment"),
-    function(object, x, y, factor_x_by = NULL, factor_y_by = NULL, ...){
-        .plot_tile_data(object, type = "row", x, y, 
-                        factor_x_by = factor_x_by, factor_y_by = factor_y_by,
-                        ...)
+    function(object, x, y, ...){
+        .plot_tile_data(object, type = "row", x, y, ...)
     }
 )
 
@@ -94,26 +89,15 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
 }
 
 #' @importFrom dplyr group_by mutate summarise left_join ungroup n
-.summarise_tile_data <- function(data,
-                                 type,
-                                 factor_x_by = NULL,
-                                 factor_y_by = NULL){
+.summarise_tile_data <- function(object,
+                                 data,
+                                 type){
     retrieve_FUN <- switch(type,
                            "row" = retrieveFeatureInfo,
                            "column" = retrieveCellInfo)
     retrieve_search <- switch(type,
                               "row" = "rowData",
                               "column" = "colData")
-    if(!is.null(factor_x_by)){
-        faxtor_x_by_out <- retrieve_FUN(object, factor_x_by,
-                                        search = retrieve_search)
-    }
-    if(!is.null(factor_y_by)){
-        faxtor_y_by_out <- retrieve_FUN(object, factor_y_by,
-                                        search = retrieve_search)
-    }
-    
-    
     x_group <- data %>% 
         group_by(.data$X) %>% 
         summarise(group_n = n()) %>%
@@ -136,18 +120,15 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
                             type = c("row", "column"),
                             x,
                             y,
-                            factor_x_by,
-                            factor_y_by,
                             ...){
     type <- match.arg(type)
     tile_out <- .get_tile_data(object, type, x, y)
     tile_data <- tile_out$data
     xlab <- tile_out$x_lab
     ylab <- tile_out$y_lab
-    tile_data <- .summarise_tile_data(tile_data,
-                                      type,
-                                      factor_x_by,
-                                      factor_y_by)
+    tile_data <- .summarise_tile_data(object,
+                                      tile_data,
+                                      type)
     tile_data$colour_by <- tile_data$Y
     .tile_plotter(tile_data,
                   xlab = xlab,
@@ -169,7 +150,7 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
                           ylab,
                           rect_alpha = 1,
                           rect_colour = "black",
-                          na.value = "gre80"){
+                          na.value = "grey80"){
     coord <- .get_xcoord_mid(data)
     # get plotting arguments for rect
     rect_args <- .get_rect_args(colour_by = ylab, 
@@ -201,6 +182,8 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
                                       fill = TRUE,
                                       na.value = na.value)
     # add legend
+    plot_out <- plot_out +
+        theme_classic()
     if (!add_legend) {
         plot_out <- plot_out + theme(legend.position = "none")
     }

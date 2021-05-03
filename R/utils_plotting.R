@@ -96,9 +96,21 @@
 #'     transparency of the ribbon. Defaults to \code{0.3}.}
 #' }
 #' 
+#' @section Tile plotting:
+#' 
+#' \describe{
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'     Defaults to \code{TRUE}.}
+#'   \item{\code{rect_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the areas. Defaults to \code{1}.}
+#'   \item{\code{rect_colour}:}{Character scalar, specfiying the colour to use
+#'     for colouring the borders of the areas. Defaults to \code{"black"}.}
+#'   \item{\code{na.value}:}{Character scalar, specfiying the colour to use
+#'     for \code{NA} values. Defaults to \code{"grey80"}.}
+#' }
+#' 
 #' @name mia-plot-args
 NULL
-
 
 .get_palette <- scater:::.get_palette
 # Adjusted function originally developed for scater package by Aaron Lun

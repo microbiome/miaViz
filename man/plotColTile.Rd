@@ -11,9 +11,9 @@ plotColTile(object, x, y, ...)
 
 plotRowTile(object, x, y, ...)
 
-\S4method{plotColTile}{SummarizedExperiment}(object, x, y, factor_x_by = NULL, factor_y_by = NULL, ...)
+\S4method{plotColTile}{SummarizedExperiment}(object, x, y, ...)
 
-\S4method{plotRowTile}{SummarizedExperiment}(object, x, y, factor_x_by = NULL, factor_y_by = NULL, ...)
+\S4method{plotRowTile}{SummarizedExperiment}(object, x, y, ...)
 }
 \arguments{
 \item{object}{a
@@ -30,9 +30,8 @@ Alternatively, an \link{AsIs} vector or data.frame, see
 \code{?\link{retrieveFeatureInfo}} or \code{?\link{retrieveCellInfo}}. Must
 result in a returned \code{character} or \code{factor} vector.}
 
-\item{factor_x_by}{}
-
-\item{factor_y_by}{}
+\item{...}{additional arguments for plotting. See
+\code{\link{mia-plot-args}} for more details}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one
