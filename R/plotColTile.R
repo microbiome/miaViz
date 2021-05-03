@@ -181,7 +181,7 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
                                       ylab,
                                       fill = TRUE,
                                       na.value = na.value)
-    # add legend
+    # add legend and theme
     plot_out <- plot_out +
         theme_classic()
     if (!add_legend) {
