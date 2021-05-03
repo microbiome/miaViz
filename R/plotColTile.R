@@ -168,7 +168,8 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
                           xlab,
                           ylab,
                           rect_alpha = 1,
-                          rect_colour = "black"){
+                          rect_colour = "black",
+                          na.value = "gre80"){
     coord <- .get_xcoord_mid(data)
     # get plotting arguments for rect
     rect_args <- .get_rect_args(colour_by = ylab, 
@@ -197,7 +198,8 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
     plot_out <- .resolve_plot_colours(plot_out,
                                       data$colour_by,
                                       ylab,
-                                      fill = TRUE)
+                                      fill = TRUE,
+                                      na.value = na.value)
     # add legend
     if (!add_legend) {
         plot_out <- plot_out + theme(legend.position = "none")
