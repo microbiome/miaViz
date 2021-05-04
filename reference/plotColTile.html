@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • miaViz</title>
+<title>Plot factor data as tiles — plotColTile • miaViz</title>
 
 
 <!-- jquery -->
@@ -41,7 +41,10 @@
   <link href="../extra.css" rel="stylesheet">
   
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Plot factor data as tiles — plotColTile" />
+<meta property="og:description" content="Relative relations of two grouping can be visualized by plotting tiles with
+relative sizes. plotColTile and plotRowTile can be used for
+this." />
 
 
 
@@ -60,7 +63,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -105,102 +108,70 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Plot factor data as tiles</h1>
+    
+    <div class="hidden name"><code>plotColTile.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Relative relations of two grouping can be visualized by plotting tiles with
+relative sizes. <code>plotColTile</code> and <code>plotRowTile</code> can be used for
+this.</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>plotColTile</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="mia-datasets.html">col_graph</a></code> <code><a href="mia-datasets.html">row_graph</a></code> <code><a href="mia-datasets.html">row_graph_order</a></code> </p>
-        </td>
-        <td><p>miaViz example data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="mia-plot-args.html">mia-plot-args</a></code> </p>
-        </td>
-        <td><p>Additional arguments for plotting</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="miaViz-package.html">miaViz-package</a></code> </p>
-        </td>
-        <td><p>miaViz - Microbiome Analysis Plotting and Visualization</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plotAbundance.html">plotAbundance()</a></code> </p>
-        </td>
-        <td><p>Plotting abundance data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plotColTile.html">plotColTile()</a></code> <code><a href="plotColTile.html">plotRowTile()</a></code> </p>
-        </td>
-        <td><p>Plot factor data as tiles</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plotDMN.html">plotDMNFit()</a></code> </p>
-        </td>
-        <td><p>Plotting Dirichlet-Multinomial Mixture Model data</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plotGraph.html">plotColGraph()</a></code> <code><a href="plotGraph.html">plotRowGraph()</a></code> </p>
-        </td>
-        <td><p>Plotting igraph objects with information from a <code>SummarizedExperiment</code></p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plotPrevalence.html">plotPrevalence()</a></code> <code><a href="plotPrevalence.html">plotPrevalentAbundance()</a></code> <code><a href="plotPrevalence.html">plotTaxaPrevalence()</a></code> </p>
-        </td>
-        <td><p>Plot prevalence information</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plotSeries.html">plotSeries()</a></code> </p>
-        </td>
-        <td><p>Plot Series</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="plotTree.html">plotRowTree()</a></code> <code><a href="plotTree.html">plotColTree()</a></code> </p>
-        </td>
-        <td><p>Plotting tree information enriched with information</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="treeData.html">rowTreeData()</a></code> <code><a href="treeData.html">colTreeData()</a></code> <code><a href="treeData.html">`rowTreeData&lt;-`()</a></code> <code><a href="treeData.html">`colTreeData&lt;-`()</a></code> <code><a href="treeData.html">combineTreeData()</a></code> <code><a href="treeData.html">combineTreeData()</a></code> </p>
-        </td>
-        <td><p>Adding information to tree data in <code>TreeSummarizedExperiment</code></p></td>
-      </tr>
-    </tbody>
+<span class='fu'>plotRowTile</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>plotColTile</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span>
+
+<span class='co'># S4 method for SummarizedExperiment</span>
+<span class='fu'>plotRowTile</span><span class='op'>(</span><span class='va'>object</span>, <span class='va'>x</span>, <span class='va'>y</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>object</th>
+      <td><p>a
+<code><a href='https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html'>SummarizedExperiment</a></code>
+object.</p></td>
+    </tr>
+    <tr>
+      <th>x</th>
+      <td><p>String specifying the column-level metadata field to show on the x-axis.
+Alternatively, an <a href='https://rdrr.io/r/base/AsIs.html'>AsIs</a> vector or data.frame, see
+<code>?retrieveFeatureInfo</code> or <code>?retrieveCellInfo</code>. Must
+result in a returned <code>character</code> or <code>factor</code> vector.</p></td>
+    </tr>
+    <tr>
+      <th>y</th>
+      <td><p>String specifying the column-level metadata to show on the y-axis.
+Alternatively, an <a href='https://rdrr.io/r/base/AsIs.html'>AsIs</a> vector or data.frame, see
+<code>?retrieveFeatureInfo</code> or <code>?retrieveCellInfo</code>. Must
+result in a returned <code>character</code> or <code>factor</code> vector.</p></td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td><p>additional arguments for plotting. See
+<code><a href='mia-plot-args.html'>mia-plot-args</a></code> for more details</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A <code>ggplot2</code> object or <code>plotly</code> object, if more than one
+<code>prevalences</code> was defined.</p>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
+<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
+<span class='fu'>plotColTile</span><span class='op'>(</span><span class='va'>se</span>,<span class='st'>"SampleType"</span>,<span class='st'>"Primer"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotColTile-1.png' alt='' width='3000' height='2100' /></div></pre>
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
