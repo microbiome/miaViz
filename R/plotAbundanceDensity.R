@@ -98,7 +98,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
 
 .incorporate_density_data <- function(object, abund_values, n, colour_by){
     # Gets the assay
-    abundance_table <- assay(object, abund_values, withDimnames=FALSE)
+    abundance_table <- assay(object, abund_values)
     # Gets the most abundant taxa
     top_taxa <- getTopTaxa(object, n)
     # Subsets abundance table  by taking taxa of highest abundance
@@ -125,7 +125,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         # Mirrors back the variable name, if a partial match was used
         colour_by <- colour_out$name
         # Adds information to the data frame that includes all density data
-        density_data$colour_by <- colour_out$val[density_data$sample]
+        density_data$colour_by <- colour_out$value[density_data$sample]
         # Specifies aesthetic
         aesthetic <- aes_string(y = "taxa", x = "value", colour = "colour_by")
     } else {
