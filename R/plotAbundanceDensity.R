@@ -65,7 +65,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         # Checks abund_values
         .check_assay_present(abund_values, object)
         # Checks n
-        if( !(length(n)==1 && n%%1==0 && n>0) ){
+        if( !(length(n)==1 && is.numeric(n) && n%%1==0 && n>0) ){
             stop("'n' must be a positive integer.", call. = FALSE)
         }
         # Checks colour_by
