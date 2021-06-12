@@ -178,20 +178,4 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
     # flip
     plot_out <- .flip_plot(plot_out, flipped, add_x_text)
     return(plot_out)
-    
-    
-    
-    # # Creates the plot and annotations. 
-    # plot_out <- ggplot(density_data, aesthetic) + geom_point(alpha = point_alpha, shape = point_shape)
-    # plot_out <- plot_out + xlab(abund_values) + ylab("Feature")  + theme_bw(text_size) +
-    #     theme(axis.text.x = element_text(colour = text_colour),
-    #           axis.text.y = element_text(colour = text_colour),
-    #           axis.title.x = element_text(colour = text_colour),
-    #           axis.title.y = element_text(colour = text_colour),
-    #           title = element_text(colour = text_colour))
-    # 
-    # if (!is.null(density_data$colour_by)) {
-    #     plot_out <- .resolve_plot_colours(plot_out, density_data$colour_by, colour_by)
-    # }
-    # return(plot_out)
 }
