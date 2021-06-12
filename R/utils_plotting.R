@@ -253,7 +253,7 @@ NULL
 
 # Adjusted function originally developed for scater package by Aaron Lun
 .get_point_args <- function(colour_by, shape_by, size_by, alpha = 0.65,
-                            size = NULL) 
+                            size = NULL, shape = 21) 
 {
     aes_args <- list()
     fill_colour <- TRUE
@@ -272,7 +272,7 @@ NULL
         geom_args$fill <- "grey70"
     }
     if (is.null(shape_by)) {
-        geom_args$shape <- 21
+        geom_args$shape <- shape
     }
     if (is.null(size_by)) {
         geom_args$size <- size

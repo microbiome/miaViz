@@ -83,13 +83,14 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                                                        colour_by = colour_by)
         # Extracts the density data and aesthetic from the list
         density_data <- density_data_list$density_data
-        aesthetic <- density_data_list$aesthetic
+        colour_by <- density_data_list$colour_by
         
         # Gets the plot from plotter
         plot_out <- .density_plotter(density_data = density_data, 
-                                     aesthetic = aesthetic,
-                                     abund_values = abund_values, 
-                                     colour_by = colour_by)
+                                     xlab = "Taxa",
+                                     ylab = abund_values,
+                                     colour_by = colour_by,
+                                     ...)
         return(plot_out)
     }
 )
@@ -98,66 +99,99 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
 
 .incorporate_density_data <- function(object, abund_values, n, colour_by){
     # Gets the assay
-    abundance_table <- assay(object, abund_values)
+    mat <- assay(object, abund_values)
     # Gets the most abundant taxa
     top_taxa <- getTopTaxa(object, n)
     # Subsets abundance table  by taking taxa of highest abundance
-    abundance_table_subset <- abundance_table[top_taxa, , drop=FALSE]
-    
-    # Converts top taxa names to factor
-    top_taxa <- factor(top_taxa, rev(top_taxa))
-    
-    # Creates a data frame that includes sample names, taxa names as factors,
-    # and abundance values
-    density_data <- data.frame(
-        # Sample data = sample 1 is repeated n(taxa) times, sample 2 repeated n(taxaa) times...
-        sample = rep(seq_len(ncol(abundance_table_subset)), each = nrow(abundance_table_subset)), 
-        # taxa data = taxa 1, taxa 2,.. taxa n, taxa 1, taxa 2,... taxa n, as many times as there are samples
-        taxa = rep(top_taxa, ncol(abundance_table_subset)),
-        # Values grom abundance table
-        value = as.numeric(abundance_table_subset)
-    )
-    
-    # Gets coloring information if 'colour_by' is not NULL, otherwise specifies just aesthetic
+    mat <- mat[top_taxa, , drop=FALSE]
+    # melt the data
+    density_data <- t(mat) %>%
+        as.data.frame() %>%
+        rownames_to_column("Sample") 
+    # Gets coloring information if 'colour_by' is not NULL
     if (!is.null(colour_by)) {
         # Gets information from colData
         colour_out <- retrieveCellInfo(object, colour_by)
         # Mirrors back the variable name, if a partial match was used
         colour_by <- colour_out$name
         # Adds information to the data frame that includes all density data
-        density_data$colour_by <- colour_out$value[density_data$sample]
-        # Specifies aesthetic
-        aesthetic <- aes_string(y = "taxa", x = "value", colour = "colour_by")
-    } else {
-        # Specifies aesthetic, when colour_by is not used
-        aesthetic <- aes_string(y = "taxa", x = "value")
+        density_data$colour_by <- colour_out$value
     }
+    cols <- c("Sample","colour_by")[c("Sample","colour_by") %in% colnames(density_data)]
+    density_data <- density_data %>%
+        pivot_longer(cols = !cols, names_to = "Y", values_to = "X")
+    return(list(density_data = density_data, 
+                colour_by = colour_by))
     
-    # Creates a list that includes the data and aesthetic
-    density_data_list <- list(density_data = density_data, 
-                              aesthetic = aesthetic)
-    return(density_data_list)
 }
 
 .density_plotter <- function(density_data, 
-                             aesthetic,
-                             abund_values,
-                             colour_by,
+                             xlab = NULL,
+                             ylab = NULL,
+                             colour_by = NULL,
+                             layout = "point",
                              point_alpha = 0.6,
                              point_shape = 124,
+                             point_size = 2,
                              text_size = 8,
-                             text_colour = "gray35"){
-    # Creates the plot and annotations. 
-    plot_out <- ggplot(density_data, aesthetic) + geom_point(alpha = point_alpha, shape = point_shape)
-    plot_out <- plot_out + xlab(abund_values) + ylab("Feature")  + theme_bw(text_size) +
-        theme(axis.text.x = element_text(colour = text_colour),
-              axis.text.y = element_text(colour = text_colour),
-              axis.title.x = element_text(colour = text_colour),
-              axis.title.y = element_text(colour = text_colour),
-              title = element_text(colour = text_colour))
+                             add_legend = TRUE,
+                             flipped = FALSE,
+                             add_x_text = FALSE,
+                             add_border = NULL){
+    # start plotting
+    plot_out <- ggplot(density_data, aes_string(x="X", y="Y")) +
+        xlab(xlab) +
+        ylab(ylab)
     
-    if (!is.null(density_data$colour_by)) {
-        plot_out <- .resolve_plot_colours(plot_out, density_data$colour_by, colour_by)
+    # Layout "density" or "point", "density" will be added
+    if (layout == "point"){
+        density_out <- .get_point_args(colour_by,
+                                       shape_by = NULL,
+                                       size_by = NULL,
+                                       alpha = point_alpha,
+                                       shape = point_shape,
+                                       size = point_size)
+        density_out$border <- TRUE
+        plot_out <- plot_out +
+            do.call(geom_point, density_out$args)
     }
+    
+    # adjust point colours
+    if(!is.null(colour_by)){
+        if(density_out$border){
+            # resolve the colour for the line colours
+            plot_out <- .resolve_plot_colours(plot_out,
+                                              density_data$colour_by,
+                                              colour_by,
+                                              fill = FALSE)
+        }
+        # resolve the color for fill
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          density_data$colour_by,
+                                          colour_by,
+                                          fill = TRUE)
+    }
+    plot_out <- plot_out +
+        theme_classic()
+    # add legend
+    plot_out <- .add_legend(plot_out, add_legend)
+    # flip
+    plot_out <- .flip_plot(plot_out, flipped, add_x_text)
     return(plot_out)
+    
+    
+    
+    # # Creates the plot and annotations. 
+    # plot_out <- ggplot(density_data, aesthetic) + geom_point(alpha = point_alpha, shape = point_shape)
+    # plot_out <- plot_out + xlab(abund_values) + ylab("Feature")  + theme_bw(text_size) +
+    #     theme(axis.text.x = element_text(colour = text_colour),
+    #           axis.text.y = element_text(colour = text_colour),
+    #           axis.title.x = element_text(colour = text_colour),
+    #           axis.title.y = element_text(colour = text_colour),
+    #           title = element_text(colour = text_colour))
+    # 
+    # if (!is.null(density_data$colour_by)) {
+    #     plot_out <- .resolve_plot_colours(plot_out, density_data$colour_by, colour_by)
+    # }
+    # return(plot_out)
 }
