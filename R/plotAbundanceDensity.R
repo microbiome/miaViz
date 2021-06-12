@@ -87,8 +87,8 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         
         # Gets the plot from plotter
         plot_out <- .density_plotter(density_data = density_data, 
-                                     xlab = "Taxa",
-                                     ylab = abund_values,
+                                     xlab = abund_values,
+                                     ylab = "Taxa",
                                      colour_by = colour_by,
                                      ...)
         return(plot_out)
