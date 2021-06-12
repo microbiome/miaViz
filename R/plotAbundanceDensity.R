@@ -10,7 +10,7 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   plotted. (default: \code{abund_values = "counts"})
 #'
-#' @param n A positive integer specifying the number of the most abundant taxa to show. 
+#' @param n a positive integer specifying the number of the most abundant taxa to show. 
 #'  
 #' @param colour_by a single character value defining a column from \code{colData}, that is used to
 #'   color plot. Must be a value of \code{colData()} function.
@@ -65,7 +65,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         # Checks abund_values
         .check_assay_present(abund_values, object)
         # Checks n
-        if( !(n%%1==0 && n>0) ){
+        if( !(length(n)==1 && n%%1==0 && n>0) ){
             stop("'n' must be a positive integer.", call. = FALSE)
         }
         # Checks colour_by
