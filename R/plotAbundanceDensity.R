@@ -120,9 +120,11 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
     cols <- c("Sample","colour_by")[c("Sample","colour_by") %in% colnames(density_data)]
     density_data <- density_data %>%
         pivot_longer(cols = !cols, names_to = "Y", values_to = "X")
+    # Converts taxa to factor. Order of levels is the opposite than in 'top_taxa'
+    # so that taxa with highest abundance is on top
+    density_data$Y <- factor( density_data$Y, rev(top_taxa) )
     return(list(density_data = density_data, 
                 colour_by = colour_by))
-    
 }
 
 .density_plotter <- function(density_data, 
@@ -131,7 +133,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                              colour_by = NULL,
                              layout = "point",
                              point_alpha = 0.6,
-                             point_shape = 124,
+                             point_shape = 21,
                              point_size = 2,
                              text_size = 8,
                              add_legend = TRUE,
