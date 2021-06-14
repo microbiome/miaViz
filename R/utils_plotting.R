@@ -261,7 +261,12 @@ NULL
         aes_args$shape <- "shape_by"
     }
     if (!is.null(colour_by)) {
-        aes_args$fill <- "colour_by"
+        # Only shapes 21 to 25 can be filled. Filling does not work in other shapes.
+        if(shape >= 21 && shape <= 25){
+            aes_args$fill <- "colour_by"
+        } else {
+            aes_args$colour <- "colour_by"
+        }
     }
     if (!is.null(size_by)) {
         aes_args$size <- "size_by"

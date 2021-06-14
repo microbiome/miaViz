@@ -30,10 +30,13 @@ object.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 plotted. (default: \code{abund_values = "counts"})}
 
-\item{n}{A positive integer specifying the number of the most abundant taxa to show.}
+\item{n}{a positive integer specifying the number of the most abundant taxa to show.}
 
 \item{colour_by}{a single character value defining a column from \code{colData}, that is used to
 color plot. Must be a value of \code{colData()} function.}
+
+\item{...}{additional parameters for plotting. See
+\code{\link{mia-plot-args}} for more details}
 }
 \value{
 A \code{ggplot2} object

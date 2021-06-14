@@ -133,13 +133,12 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                              colour_by = NULL,
                              layout = "point",
                              point_alpha = 0.6,
-                             point_shape = 21,
+                             point_shape = 124,
                              point_size = 2,
                              text_size = 8,
                              add_legend = TRUE,
                              flipped = FALSE,
-                             add_x_text = FALSE,
-                             add_border = NULL){
+                             add_x_text = FALSE){
     # start plotting
     plot_out <- ggplot(density_data, aes_string(x="X", y="Y")) +
         xlab(xlab) +
@@ -153,25 +152,14 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                                        alpha = point_alpha,
                                        shape = point_shape,
                                        size = point_size)
-        density_out$border <- TRUE
         plot_out <- plot_out +
             do.call(geom_point, density_out$args)
-    }
-    
-    # adjust point colours
-    if(!is.null(colour_by)){
-        if(density_out$border){
-            # resolve the colour for the line colours
-            plot_out <- .resolve_plot_colours(plot_out,
-                                              density_data$colour_by,
-                                              colour_by,
-                                              fill = FALSE)
-        }
-        # resolve the color for fill
+        # resolve the colours
         plot_out <- .resolve_plot_colours(plot_out,
                                           density_data$colour_by,
                                           colour_by,
-                                          fill = TRUE)
+                                          fill = FALSE,
+                                          na.translate = FALSE)
     }
     plot_out <- plot_out +
         theme_classic()
