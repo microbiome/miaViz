@@ -133,7 +133,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                              colour_by = NULL,
                              layout = "point",
                              point_alpha = 0.6,
-                             point_shape = 124,
+                             point_shape = 21,
                              point_size = 2,
                              text_size = 8,
                              add_legend = TRUE,
@@ -151,18 +151,31 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                                        size_by = NULL,
                                        alpha = point_alpha,
                                        shape = point_shape,
-                                       size = point_size)
+                                       size = point_size,
+                                       position = "identity")
         plot_out <- plot_out +
             do.call(geom_point, density_out$args)
-        # If colour_by is specified, colours are added
-        if (!is.null(colour_by)) {
-            # resolve the colours
-            plot_out <- .resolve_plot_colours(plot_out,
-                                              density_data$colour_by,
-                                              colour_by,
-                                              fill = FALSE,
-                                              na.translate = FALSE)
-        }
+    }
+    # Layout "density" or "point", "density" will be added
+    else if (layout == "jitter"){
+        density_out <- .get_point_args(colour_by,
+                                       shape_by = NULL,
+                                       size_by = NULL,
+                                       alpha = point_alpha,
+                                       shape = point_shape,
+                                       size = point_size,
+                                       position = "jitter")
+        plot_out <- plot_out +
+            do.call(geom_point, density_out$args)
+    }
+    # If colour_by is specified, colours are added
+    if (!is.null(colour_by)) {
+        # resolve the colours
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          density_data$colour_by,
+                                          colour_by,
+                                          fill = FALSE,
+                                          na.translate = FALSE)
     }
     plot_out <- plot_out +
         theme_classic()
