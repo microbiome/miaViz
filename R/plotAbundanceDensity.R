@@ -154,12 +154,15 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                                        size = point_size)
         plot_out <- plot_out +
             do.call(geom_point, density_out$args)
-        # resolve the colours
-        plot_out <- .resolve_plot_colours(plot_out,
-                                          density_data$colour_by,
-                                          colour_by,
-                                          fill = FALSE,
-                                          na.translate = FALSE)
+        # If colour_by is specified, colours are added
+        if (!is.null(colour_by)) {
+            # resolve the colours
+            plot_out <- .resolve_plot_colours(plot_out,
+                                              density_data$colour_by,
+                                              colour_by,
+                                              fill = FALSE,
+                                              na.translate = FALSE)
+        }
     }
     plot_out <- plot_out +
         theme_classic()
