@@ -266,6 +266,7 @@ NULL
             aes_args$fill <- "colour_by"
         } else {
             aes_args$colour <- "colour_by"
+            fill_colour <- FALSE
         }
     }
     if (!is.null(size_by)) {
