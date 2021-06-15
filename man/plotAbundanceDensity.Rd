@@ -45,8 +45,7 @@ object.}
 (default: \code{add_legend = TRUE}) }
 
 \item{flipped}{ a boolean value selecting if the orientation of plot is changed
-so that x-axis and y-axis are swapped. \code{flipped} is disabled when
-\code{layout = "density"}. (default \code{flipped = FALSE}) }
+so that x-axis and y-axis are swapped. (default \code{flipped = FALSE}) }
 
 \item{add_x_text}{ a boolean value selecting if text that represents values is included in x-axis.
 (default: \code{add_x_text = TRUE}) }
@@ -65,8 +64,15 @@ plotted. (default: \code{abund_values = "counts"})}
 (default: \code{n = 25})}
 
 \item{colour_by}{a single character value defining a column from \code{colData}, that is used to
-color plot. Must be a value of \code{colData()} function. \code{colour_by} is disabled when
-\code{layout = "density"}.}
+color plot. Must be a value of \code{colData()} function. (default: \code{colour_by = NULL})}
+
+\item{shape_by}{a single character value defining a column from \code{colData}, that is used to
+group observations to different point shape groups. Must be a value of \code{colData()} function.
+\code{shape_by} is disabled when \code{layout = "density"}. (default: \code{shape_by = NULL})}
+
+\item{size_by}{a single character value defining a column from \code{colData}, that is used to
+group observations to different point size groups. Must be a value of \code{colData()} function.
+\code{size_by} is disabled when \code{layout = "density"}. (default: \code{size_by = NULL})}
 }
 \value{
 A \code{ggplot2} object
@@ -75,10 +81,13 @@ A \code{ggplot2} object
 This function plots abundance of the most abundant taxa.
 }
 \details{
-This function plots abundance of the most abundant taxa. Abundance is plotted as
-a point plot, where x-axis represents abundance and y-axis taxa. Each point represents
-abundance of individual taxa in individual sample. Most common abundances are shown
-as a higher density.
+This function plots abundance of the most abundant taxa. Abundance can be plotted as
+a jitter plot, a density plot, or a point plot. By default, x-axis represents abundance
+and y-axis taxa. In a jitter and point plot, each point represents abundance of individual taxa
+in individual sample. Most common abundances are shown as a higher density.
+
+A density plot can be seen as a smoothened bar plot. It visualized distribution of
+abundances where peaks represent most common abundances.
 }
 \examples{
 tse <- microbiomeDataSets::atlas1006()
@@ -102,9 +111,14 @@ plotAbundanceDensity(tse, layout = "density", abund_values = "relabundance",
     scale_x_log10()
                      
 # Plots the relative abundance of 10 most abundant taxa as a point plot.
-# point shape is changed from default (21) to 41.
+# Point shape is changed from default (21) to 41.
 plotAbundanceDensity(tse, layout = "point", abund_values = "relabundance", n = 10,
                      point_shape = 41)
+                     
+# Plots the relative abundance of 10 most abundant taxa as a point plot.
+# In addition to colour, groups can be visualized by size and sahep in point plots.
+plotAbundanceDensity(tse, layout = "point", abund_values = "relabundance", n = 10,
+                     shape_by = "sex", size_by = "time")
 
 }
 \author{

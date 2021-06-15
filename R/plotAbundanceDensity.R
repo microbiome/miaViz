@@ -18,8 +18,15 @@
 #' (default: \code{n = 25})
 #'  
 #' @param colour_by a single character value defining a column from \code{colData}, that is used to
-#' color plot. Must be a value of \code{colData()} function. \code{colour_by} is disabled when
-#' \code{layout = "density"}.
+#' color plot. Must be a value of \code{colData()} function. (default: \code{colour_by = NULL})
+#' 
+#' @param shape_by a single character value defining a column from \code{colData}, that is used to
+#' group observations to different point shape groups. Must be a value of \code{colData()} function.
+#' \code{shape_by} is disabled when \code{layout = "density"}. (default: \code{shape_by = NULL})
+#' 
+#' @param size_by a single character value defining a column from \code{colData}, that is used to
+#' group observations to different point size groups. Must be a value of \code{colData()} function.
+#' \code{size_by} is disabled when \code{layout = "density"}. (default: \code{size_by = NULL})
 #'   
 #' @param ... additional parameters for plotting. 
 #' \itemize{
@@ -43,8 +50,7 @@
 #'   (default: \code{add_legend = TRUE}) }
 #'   
 #'   \item{flipped}{ a boolean value selecting if the orientation of plot is changed 
-#'   so that x-axis and y-axis are swapped. \code{flipped} is disabled when 
-#'   \code{layout = "density"}. (default \code{flipped = FALSE}) }
+#'   so that x-axis and y-axis are swapped. (default \code{flipped = FALSE}) }
 #'   
 #'   \item{add_x_text}{ a boolean value selecting if text that represents values is included in x-axis. 
 #'   (default: \code{add_x_text = TRUE}) }
@@ -52,10 +58,13 @@
 #' See \code{\link{mia-plot-args}} for more details
 #'
 #' @details
-#' This function plots abundance of the most abundant taxa. Abundance is plotted as
-#' a point plot, where x-axis represents abundance and y-axis taxa. Each point represents
-#' abundance of individual taxa in individual sample. Most common abundances are shown
-#' as a higher density.
+#' This function plots abundance of the most abundant taxa. Abundance can be plotted as
+#' a jitter plot, a density plot, or a point plot. By default, x-axis represents abundance 
+#' and y-axis taxa. In a jitter and point plot, each point represents abundance of individual taxa 
+#' in individual sample. Most common abundances are shown as a higher density. 
+#' 
+#' A density plot can be seen as a smoothened bar plot. It visualized distribution of 
+#' abundances where peaks represent most common abundances.
 #'
 #' @return 
 #' A \code{ggplot2} object 
@@ -86,9 +95,14 @@
 #'     scale_x_log10()
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a point plot.
-#' # point shape is changed from default (21) to 41.
+#' # Point shape is changed from default (21) to 41.
 #' plotAbundanceDensity(tse, layout = "point", abund_values = "relabundance", n = 10,
 #'                      point_shape = 41)
+#'                      
+#' # Plots the relative abundance of 10 most abundant taxa as a point plot.
+#' # In addition to colour, groups can be visualized by size and sahep in point plots.
+#' plotAbundanceDensity(tse, layout = "point", abund_values = "relabundance", n = 10,
+#'                      shape_by = "sex", size_by = "time")
 #' 
 NULL
 
@@ -185,13 +199,13 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         density_data$colour_by <- colour_out$value
     }
     # Gets shape information if 'shape_by' is not NULL
-    if (!is.null(colour_by)) {
+    if (!is.null(shape_by)) {
         shape_out <- retrieveCellInfo(object, shape_by)
         shape_by <- shape_out$name
         density_data$shape_by <- shape_out$value
     }
     # Gets size information if 'size_by' is not NULL
-    if (!is.null(colour_by)) {
+    if (!is.null(size_by)) {
         size_out <- retrieveCellInfo(object, size_by)
         size_by <- size_out$name
         density_data$size_by <- size_out$value
@@ -204,7 +218,9 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
     # so that taxa with highest abundance is on top
     density_data$Y <- factor( density_data$Y, rev(top_taxa) )
     return(list(density_data = density_data, 
-                colour_by = colour_by))
+                colour_by = colour_by,
+                shape_by = shape_by,
+                size_by = size_by))
 }
 
 .density_plotter <- function(density_data, 
