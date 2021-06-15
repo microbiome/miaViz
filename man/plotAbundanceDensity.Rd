@@ -45,23 +45,34 @@ color plot. Must be a value of \code{colData()} function. \code{colour_by} is di
 
 \item{...}{additional parameters for plotting.
 \itemize{
-\item{xlab}{ a single character value for selecting the x-axis label.}
-\item{ylab}{ a single character value for selecting the y-axis label.}
+\item{xlab}{ a single character value for selecting the x-axis label.
+(default: \code{xlab = \code{abund_values}}) }
+
+\item{ylab}{ a single character value for selecting the y-axis label.
+\code{ylab} is disabled when \code{layout = "density"}.
+(default: \code{ylab = "Taxa")} }
+
 \item{point_alpha}{ a numeric value from range \link{0,1} selecting the transparency of colour in
-\code{jitter} and \code{point} plot. (default \code{point_alpha = 0.6}) }
+\code{jitter} and \code{point} plot. (default: \code{point_alpha = 0.6}) }
+
 \item{point_shape}{ a positive integer value selecting the shape of point in
-\code{jitter} and \code{point} plot. (default \code{point_shape = 21}) }
+\code{jitter} and \code{point} plot. (default: \code{point_shape = 21}) }
+
 \item{point_size}{ a positive numeric value selecting the size of point in
-\code{jitter} and \code{point} plot. (default \code{point_size = 2}) }
+\code{jitter} and \code{point} plot. (default: \code{point_size = 2}) }
+
 \item{add_legend}{ a boolean value selecting if legend is added.
-(default \code{add_legend = TRUE}) }
+(default: \code{add_legend = TRUE}) }
+
 \item{flipped}{ a boolean value selecting if the orientation of plot is changed
 so that x-axis and y-axis are swapped. \code{flipped} is disabled when
 \code{layout = "density"}. (default \code{flipped = FALSE}) }
+
 \item{add_x_text}{ a boolean value selecting if text that represents values is included in x-axis.
-(default \code{add_x_text = TRUE}) }
+(default: \code{add_x_text = TRUE}) }
+
 \item{log_scale_x_axis}{ a boolean value selecting if x-axis is log-scaled.
-(default \code{log_scale_x_axis = FALSE}) }
+(default: \code{log_scale_x_axis = FALSE}) }
 }
 See \code{\link{mia-plot-args}} for more details}
 }
