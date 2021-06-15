@@ -70,9 +70,6 @@ so that x-axis and y-axis are swapped. \code{flipped} is disabled when
 
 \item{add_x_text}{ a boolean value selecting if text that represents values is included in x-axis.
 (default: \code{add_x_text = TRUE}) }
-
-\item{log_scale_x_axis}{ a boolean value selecting if x-axis is log-scaled.
-(default: \code{log_scale_x_axis = FALSE}) }
 }
 See \code{\link{mia-plot-args}} for more details}
 }
@@ -100,12 +97,12 @@ tse <- transformSamples(tse, method = "relabundance")
 # Plots the relative abundance of 10 most abundant taxa. 
 # "nationality" information is used to color the points. X-axis is log-scaled.
 plotAbundanceDensity(tse, layout = "jitter", abund_values = "relabundance", 
-                     n = 10, colour_by = "nationality", log_scale_x_axis = TRUE)
+                     n = 10, colour_by = "nationality") + scale_x_log10() 
                      
 # Plots the relative abundance of 10 most abundant taxa as a density plot.
 # X-axis is log-scaled
-plotAbundanceDensity(tse, layout = "density", abund_values = "relabundance", n = 10,
-                     log_scale_x_axis = TRUE)
+plotAbundanceDensity(tse, layout = "density", abund_values = "relabundance", 
+                     n = 10 ) + scale_x_log10() 
                      
 # Plots the relative abundance of 10 most abundant taxa as a point plot.
 # point shape is changed from default (21) to 41.
