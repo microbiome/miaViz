@@ -46,13 +46,13 @@ color plot. Must be a value of \code{colData()} function. \code{colour_by} is di
 \item{...}{additional parameters for plotting.
 \itemize{
 \item{xlab}{ a single character value for selecting the x-axis label.
-(default: \code{xlab = \code{abund_values}}) }
+(default: \code{xlab = abund_values}) }
 
 \item{ylab}{ a single character value for selecting the y-axis label.
 \code{ylab} is disabled when \code{layout = "density"}.
 (default: \code{ylab = "Taxa")} }
 
-\item{point_alpha}{ a numeric value from range \link{0,1} selecting the transparency of colour in
+\item{point_alpha}{ a numeric value from range 0 to 1 selecting the transparency of colour in
 \code{jitter} and \code{point} plot. (default: \code{point_alpha = 0.6}) }
 
 \item{point_shape}{ a positive integer value selecting the shape of point in
