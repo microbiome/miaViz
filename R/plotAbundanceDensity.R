@@ -206,18 +206,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
     }
     
     # Layout can be "density", "jitter", or "point"
-    if (layout == "point"){
-        density_out <- .get_point_args(colour_by,
-                                       shape_by = NULL,
-                                       size_by = NULL,
-                                       alpha = point_alpha,
-                                       shape = point_shape,
-                                       size = point_size,
-                                       position = "identity")
-        plot_out <- plot_out +
-            do.call(geom_point, density_out$args)
-    }
-    else if (layout == "density"){
+    if (layout == "density"){
         density_out <- .get_density_args(alpha = 0.65)
         plot_out <- plot_out +
             do.call(geom_density, density_out$args) + 
@@ -236,10 +225,15 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                                        size_by = NULL,
                                        alpha = point_alpha,
                                        shape = point_shape,
-                                       size = point_size,
-                                       position = "jitter")
-        plot_out <- plot_out +
-            do.call(geom_point, density_out$args)
+                                       size = point_size)
+        if (layout == "point"){
+            plot_out <- plot_out +
+                do.call(geom_point, density_out$args)
+        }
+        else {
+            plot_out <- plot_out +
+                do.call(geom_jitter, density_out$args)
+        }
     }
     # If colour_by is specified, colours are added
     if (!is.null(colour_by)) {
