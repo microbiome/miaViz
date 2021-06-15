@@ -5,14 +5,7 @@
 \alias{plotAbundanceDensity,SummarizedExperiment-method}
 \title{Plot abundance density}
 \usage{
-plotAbundanceDensity(
-  object,
-  layout = c("jitter", "density", "point"),
-  abund_values = "counts",
-  n = 25,
-  colour_by = NULL,
-  ...
-)
+plotAbundanceDensity(object, ...)
 
 \S4method{plotAbundanceDensity}{SummarizedExperiment}(
   object,
@@ -20,6 +13,8 @@ plotAbundanceDensity(
   abund_values = "counts",
   n = 25,
   colour_by = NULL,
+  shape_by = NULL,
+  size_by = NULL,
   ...
 )
 }
@@ -27,21 +22,6 @@ plotAbundanceDensity(
 \item{object}{a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
-
-\item{layout}{a single character value for selecting the layout of the plot.
-There are three different options: \code{jitter}, \code{density}, and \code{point} plot.
-(default: \code{layout = "jitter"})}
-
-\item{abund_values}{a single character value for selecting the
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-plotted. (default: \code{abund_values = "counts"})}
-
-\item{n}{a positive integer specifying the number of the most abundant taxa to show.
-(default: \code{n = 25})}
-
-\item{colour_by}{a single character value defining a column from \code{colData}, that is used to
-color plot. Must be a value of \code{colData()} function. \code{colour_by} is disabled when
-\code{layout = "density"}.}
 
 \item{...}{additional parameters for plotting.
 \itemize{
@@ -72,6 +52,21 @@ so that x-axis and y-axis are swapped. \code{flipped} is disabled when
 (default: \code{add_x_text = TRUE}) }
 }
 See \code{\link{mia-plot-args}} for more details}
+
+\item{layout}{a single character value for selecting the layout of the plot.
+There are three different options: \code{jitter}, \code{density}, and \code{point} plot.
+(default: \code{layout = "jitter"})}
+
+\item{abund_values}{a single character value for selecting the
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
+plotted. (default: \code{abund_values = "counts"})}
+
+\item{n}{a positive integer specifying the number of the most abundant taxa to show.
+(default: \code{n = 25})}
+
+\item{colour_by}{a single character value defining a column from \code{colData}, that is used to
+color plot. Must be a value of \code{colData()} function. \code{colour_by} is disabled when
+\code{layout = "density"}.}
 }
 \value{
 A \code{ggplot2} object
@@ -97,12 +92,14 @@ tse <- transformSamples(tse, method = "relabundance")
 # Plots the relative abundance of 10 most abundant taxa. 
 # "nationality" information is used to color the points. X-axis is log-scaled.
 plotAbundanceDensity(tse, layout = "jitter", abund_values = "relabundance", 
-                     n = 10, colour_by = "nationality") + scale_x_log10() 
+                     n = 10, colour_by = "nationality") +
+    scale_x_log10() 
                      
 # Plots the relative abundance of 10 most abundant taxa as a density plot.
 # X-axis is log-scaled
-plotAbundanceDensity(tse, layout = "density", abund_values = "relabundance", 
-                     n = 10 ) + scale_x_log10() 
+plotAbundanceDensity(tse, layout = "density", abund_values = "relabundance",
+                     n = 10 ) +
+    scale_x_log10()
                      
 # Plots the relative abundance of 10 most abundant taxa as a point plot.
 # point shape is changed from default (21) to 41.

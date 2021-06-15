@@ -374,13 +374,21 @@ NULL
     return(list(args = geom_args))
 }
 
-.get_density_args <- function(alpha = 0.65, colour = "black") 
-{
+.get_density_args <- function(colour_by, alpha = 0.65, colour = "black") {
+    fill_colour <- TRUE
     aes_args <- list()
+    if (!is.null(colour_by)) {
+        aes_args$colour <- "colour_by"
+        aes_args$fill <- "colour_by"
+    }
     new_aes <- do.call(aes_string, aes_args)
-    geom_args <- list(mapping = new_aes, alpha = alpha, colour = colour)
-    geom_args$fill <- "grey70"
-    return(list(args = geom_args))
+    geom_args <- list(mapping = new_aes,
+                      alpha = alpha)
+    if (is.null(colour_by)) {
+        geom_args$colour <- colour
+        geom_args$fill <- "grey70"
+    }
+    return(list(args = geom_args, fill = fill_colour))
 }
 
 #' @importFrom ggplot2 coord_flip element_blank element_text
@@ -393,15 +401,15 @@ NULL
             plot_out <- plot_out +
                 theme(axis.text.y = element_blank(),
                       axis.ticks.y = element_blank())
+        } else if(angle_x_text) {
+            plot_out <- plot_out +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
     } else {
         if(!add_x_text){
             plot_out <- plot_out +
                 theme(axis.text.x = element_blank(),
                       axis.ticks.x = element_blank())
-        } else if(angle_x_text) {
-            plot_out <- plot_out +
-                theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
     }
     plot_out
