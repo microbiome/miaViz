@@ -375,6 +375,15 @@ NULL
     return(list(args = geom_args))
 }
 
+.get_density_args <- function(alpha = 0.65, colour = "black") 
+{
+    aes_args <- list()
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes, alpha = alpha, colour = colour)
+    geom_args$fill <- "grey70"
+    return(list(args = geom_args))
+}
+
 #' @importFrom ggplot2 coord_flip element_blank element_text
 .flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE,
                        angle_x_text = TRUE){

@@ -138,13 +138,25 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                              text_size = 8,
                              add_legend = TRUE,
                              flipped = FALSE,
-                             add_x_text = FALSE){
+                             add_x_text = TRUE,
+                             scale_x_axis = TRUE){
     # start plotting
-    plot_out <- ggplot(density_data, aes_string(x="X", y="Y")) +
-        xlab(xlab) +
-        ylab(ylab)
+    # Density plot needs different kind of structure
+    if (layout == "density"){
+        # # Reorders the levels to reverse order so that the taxa with highest abundance
+        # is on the top
+        density_data$Y <- factor(density_data$Y , levels = rev(levels(density_data$Y)) )
+        plot_out <- ggplot(density_data, aes_string(x="X", colour = "Y")) +
+            xlab(xlab) +
+            ylab(ylab)
+    }
+    else {
+        plot_out <- ggplot(density_data, aes_string(x="X", y="Y")) +
+            xlab(xlab) +
+            ylab(ylab)
+    }
     
-    # Layout "density" or "point", "density" will be added
+    # Layout can be "density", "jitter", or "point"
     if (layout == "point"){
         density_out <- .get_point_args(colour_by,
                                        shape_by = NULL,
@@ -156,7 +168,6 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         plot_out <- plot_out +
             do.call(geom_point, density_out$args)
     }
-    # Layout "density" or "point", "density" will be added
     else if (layout == "jitter"){
         density_out <- .get_point_args(colour_by,
                                        shape_by = NULL,
@@ -168,6 +179,21 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         plot_out <- plot_out +
             do.call(geom_point, density_out$args)
     }
+    else {
+        density_out <- .get_density_args(alpha = 0.65)
+        plot_out <- plot_out +
+            do.call(geom_density, density_out$args) + 
+            facet_grid(Y~., switch = "y", scales="free") + 
+            theme_classic() +
+            theme(strip.background = element_blank(), strip.text.y.left = element_text(angle = 0), # Removes label grid, horizontal labels
+                  axis.ticks.y = element_blank(), axis.text.y = element_blank(), # Removes y-axis
+                  axis.title.y = element_blank(), axis.line.y = element_blank()) # Removes y-axis
+        if (scale_x_axis){
+            plot_out <- plot_out + scale_x_log10() 
+        }
+        # colour_by is disabled in density_plot
+        colour_by <- NULL
+    }
     # If colour_by is specified, colours are added
     if (!is.null(colour_by)) {
         # resolve the colours
@@ -177,8 +203,10 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                                           fill = FALSE,
                                           na.translate = FALSE)
     }
-    plot_out <- plot_out +
-        theme_classic()
+    if ( !layout == "density" ){
+        plot_out <- plot_out +
+            theme_classic()
+    }
     # add legend
     plot_out <- .add_legend(plot_out, add_legend)
     # flip
