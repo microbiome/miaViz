@@ -15,7 +15,7 @@
 #' plotted. (default: \code{abund_values = "counts"})
 #'
 #' @param n a positive integer specifying the number of the most abundant taxa to show.
-#' (default: \code{n = 50})
+#' (default: \code{n = 25})
 #'  
 #' @param colour_by a single character value defining a column from \code{colData}, that is used to
 #' color plot. Must be a value of \code{colData()} function. \code{colour_by} is disabled when
@@ -58,13 +58,27 @@
 #'
 #' @examples
 #' tse <- microbiomeDataSets::atlas1006()
-#' # Plots the abundances of 100 most abundant taxa
-#' plotAbundanceDensity(tse, abund_values = "counts", n = 100)
+#' 
+#' # Plots the abundances of 25 most abundant taxa. Jitter plot is the default option.
+#' plotAbundanceDensity(tse, abund_values = "counts")
+#' 
 #' # Counts relative abundances
 #' tse <- transformSamples(tse, method = "relabundance")
-#' # Plots the relative abundance of 50 msot abundant taxa. 
-#' # "nationality" information is used to color the points. 
-#' plotAbundanceDensity(tse, abund_values = "relabundance", colour_by = "nationality")
+#' 
+#' # Plots the relative abundance of 10 most abundant taxa. 
+#' # "nationality" information is used to color the points. X-axis is log-scaled.
+#' plotAbundanceDensity(tse, layout = "jitter", abund_values = "relabundance", 
+#'                      n = 10, colour_by = "nationality", log_scale_x_axis = TRUE)
+#'                      
+#' # Plots the relative abundance of 10 most abundant taxa as a density plot.
+#' # X-axis is log-scaled
+#' plotAbundanceDensity(tse, layout = "density", abund_values = "relabundance", n = 10,
+#'                      log_scale_x_axis = TRUE)
+#'                      
+#' # Plots the relative abundance of 10 most abundant taxa as a point plot.
+#' # point shape is changed from default (21) to 41.
+#' plotAbundanceDensity(tse, layout = "point", abund_values = "relabundance", n = 10,
+#'                      point_shape = 41)
 #' 
 NULL
 
@@ -74,7 +88,7 @@ setGeneric("plotAbundanceDensity", signature = c("object"),
            function(object,
                     layout = c("jitter", "density", "point"),
                     abund_values = "counts",
-                    n = 50,
+                    n = 25,
                     colour_by = NULL, 
                     ...)
              standardGeneric("plotAbundanceDensity"))
@@ -85,7 +99,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
     function(object,
              layout = c("jitter", "density", "point"),
              abund_values = "counts",
-             n = 50, 
+             n = 25, 
              colour_by = NULL, 
              ...){
         ############################# Input Check ##############################
