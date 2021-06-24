@@ -253,7 +253,7 @@ NULL
 
 # Adjusted function originally developed for scater package by Aaron Lun
 .get_point_args <- function(colour_by, shape_by, size_by, alpha = 0.65,
-                            size = NULL) 
+                            size = NULL, shape = 21) 
 {
     aes_args <- list()
     fill_colour <- TRUE
@@ -261,7 +261,13 @@ NULL
         aes_args$shape <- "shape_by"
     }
     if (!is.null(colour_by)) {
-        aes_args$fill <- "colour_by"
+        # Only shapes 21 to 25 can be filled. Filling does not work in other shapes.
+        if(shape >= 21 && shape <= 25){
+            aes_args$fill <- "colour_by"
+        } else {
+            aes_args$colour <- "colour_by"
+            fill_colour <- FALSE
+        }
     }
     if (!is.null(size_by)) {
         aes_args$size <- "size_by"
@@ -272,7 +278,7 @@ NULL
         geom_args$fill <- "grey70"
     }
     if (is.null(shape_by)) {
-        geom_args$shape <- 21
+        geom_args$shape <- shape
     }
     if (is.null(size_by)) {
         geom_args$size <- size
@@ -368,6 +374,23 @@ NULL
     return(list(args = geom_args))
 }
 
+.get_density_args <- function(colour_by, alpha = 0.65, colour = "black") {
+    fill_colour <- TRUE
+    aes_args <- list()
+    if (!is.null(colour_by)) {
+        aes_args$colour <- "colour_by"
+        aes_args$fill <- "colour_by"
+    }
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes,
+                      alpha = alpha)
+    if (is.null(colour_by)) {
+        geom_args$colour <- colour
+        geom_args$fill <- "grey70"
+    }
+    return(list(args = geom_args, fill = fill_colour))
+}
+
 #' @importFrom ggplot2 coord_flip element_blank element_text
 .flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE,
                        angle_x_text = TRUE){
@@ -378,15 +401,15 @@ NULL
             plot_out <- plot_out +
                 theme(axis.text.y = element_blank(),
                       axis.ticks.y = element_blank())
+        } else if(angle_x_text) {
+            plot_out <- plot_out +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
     } else {
         if(!add_x_text){
             plot_out <- plot_out +
                 theme(axis.text.x = element_blank(),
                       axis.ticks.x = element_blank())
-        } else if(angle_x_text) {
-            plot_out <- plot_out +
-                theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
     }
     plot_out
