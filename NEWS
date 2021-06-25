@@ -1,2 +1,5 @@
 Changes in version 0.99.0 (2021-03-19)
 + Submitted to Bioconductor
+
+Changes in version 1.1.x
++ Added plotAbundanceDensity (2021-06-23)
