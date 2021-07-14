@@ -181,6 +181,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                     facet_wrap(~colour_by, ncol = ncol, scales = scales)
             }
         }
+        # Checks if the list contains only one element. If it does, only the element
+        # is returned. Otherwise the list is returned. 
+        if ( length(plot_out) == 1) {
+            plot_out <- plot_out[[1]]
+        }
         plot_out
     }
 )
