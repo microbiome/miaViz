@@ -15,8 +15,13 @@ coverage](https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg)
 The scope of this package is the plotting and visualization of microbiome data.
 The main classes for interfacing is the `TreeSummarizedExperiment` class.
 
-The [package homepage](https://microbiome.github.io/miaViz/) provides
-some online tutorials and examples.
+## Using the package
+
+Online tutorials and examples are available at:
+
+- [Package homepage](https://microbiome.github.io/miaViz/) 
+- [Orchestrating microbiome analysis with R/Bioconductor online book](https://microbiome.github.io/OMA)
+
 
 ## Contribution
 
