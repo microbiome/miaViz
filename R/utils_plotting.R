@@ -96,9 +96,21 @@
 #'     transparency of the ribbon. Defaults to \code{0.3}.}
 #' }
 #' 
+#' @section Tile plotting:
+#' 
+#' \describe{
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'     Defaults to \code{TRUE}.}
+#'   \item{\code{rect_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the areas. Defaults to \code{1}.}
+#'   \item{\code{rect_colour}:}{Character scalar, specfiying the colour to use
+#'     for colouring the borders of the areas. Defaults to \code{"black"}.}
+#'   \item{\code{na.value}:}{Character scalar, specfiying the colour to use
+#'     for \code{NA} values. Defaults to \code{"grey80"}.}
+#' }
+#' 
 #' @name mia-plot-args
 NULL
-
 
 .get_palette <- scater:::.get_palette
 # Adjusted function originally developed for scater package by Aaron Lun
@@ -241,7 +253,7 @@ NULL
 
 # Adjusted function originally developed for scater package by Aaron Lun
 .get_point_args <- function(colour_by, shape_by, size_by, alpha = 0.65,
-                            size = NULL) 
+                            size = NULL, shape = 21) 
 {
     aes_args <- list()
     fill_colour <- TRUE
@@ -249,7 +261,13 @@ NULL
         aes_args$shape <- "shape_by"
     }
     if (!is.null(colour_by)) {
-        aes_args$fill <- "colour_by"
+        # Only shapes 21 to 25 can be filled. Filling does not work in other shapes.
+        if(shape >= 21 && shape <= 25){
+            aes_args$fill <- "colour_by"
+        } else {
+            aes_args$colour <- "colour_by"
+            fill_colour <- FALSE
+        }
     }
     if (!is.null(size_by)) {
         aes_args$size <- "size_by"
@@ -260,7 +278,7 @@ NULL
         geom_args$fill <- "grey70"
     }
     if (is.null(shape_by)) {
-        geom_args$shape <- 21
+        geom_args$shape <- shape
     }
     if (is.null(size_by)) {
         geom_args$size <- size
@@ -346,6 +364,33 @@ NULL
     edge_args
 }
 
+.get_rect_args <- function(colour_by, alpha = 1, colour = "black"){
+    aes_args <- list()
+    if (!is.null(colour_by)) {
+        aes_args$fill <- "colour_by"
+    }
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes, alpha = alpha, colour = colour)
+    return(list(args = geom_args))
+}
+
+.get_density_args <- function(colour_by, alpha = 0.65, colour = "black") {
+    fill_colour <- TRUE
+    aes_args <- list()
+    if (!is.null(colour_by)) {
+        aes_args$colour <- "colour_by"
+        aes_args$fill <- "colour_by"
+    }
+    new_aes <- do.call(aes_string, aes_args)
+    geom_args <- list(mapping = new_aes,
+                      alpha = alpha)
+    if (is.null(colour_by)) {
+        geom_args$colour <- colour
+        geom_args$fill <- "grey70"
+    }
+    return(list(args = geom_args, fill = fill_colour))
+}
+
 #' @importFrom ggplot2 coord_flip element_blank element_text
 .flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE,
                        angle_x_text = TRUE){
@@ -356,15 +401,15 @@ NULL
             plot_out <- plot_out +
                 theme(axis.text.y = element_blank(),
                       axis.ticks.y = element_blank())
+        } else if(angle_x_text) {
+            plot_out <- plot_out +
+                theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
     } else {
         if(!add_x_text){
             plot_out <- plot_out +
                 theme(axis.text.x = element_blank(),
                       axis.ticks.x = element_blank())
-        } else if(angle_x_text) {
-            plot_out <- plot_out +
-                theme(axis.text.x = element_text(angle = 45, hjust = 1))
         }
     }
     plot_out

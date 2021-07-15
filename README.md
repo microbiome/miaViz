@@ -3,6 +3,8 @@
 <!-- badges: start -->
 
 [![R-CMD-check-Bioc-devel](https://github.com/microbiome/miaViz/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/miaViz/actions)
+[![R-CMD-check-bioc](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml)
+[![Bioc-release](http://bioconductor.org/shields/build/release/bioc/miaViz.svg)](http://bioconductor.org/packages/release/bioc/html/miaViz.html)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/miaViz?branch=master)
 
@@ -33,6 +35,29 @@ package.
 Let's use a git flow kind of approach. Development version should be done 
 against the `master` branch and then merged to `release` for release. 
 (https://guides.github.com/introduction/flow/)
+
+## Installation
+
+### Bioc-release
+
+```
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("miaViz")
+```
+
+### Bioc-devel
+
+```
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+# The following initializes usage of Bioc devel
+BiocManager::install(version='devel')
+
+BiocManager::install("miaViz")
+```
 
 # Code of conduct
 
