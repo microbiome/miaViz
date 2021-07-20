@@ -11,6 +11,7 @@ vignette: >
   %\VignetteIndexEntry{miaViz}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+bibliography: references.bib
 ---
 
 ```{r, include = FALSE}
@@ -294,6 +295,35 @@ plotSeries(silverman,
            linetype_by = "Phylum",
            abund_values = "counts")
 ```
+
+# Plotting factor data
+
+To visualize the relative relations between two groupings among the factor data,
+two functions are available for the purpose; `plotColTile` and `plotRowTile`.
+
+```{r}
+data(GlobalPatterns)
+se <- GlobalPatterns
+plotColTile(se,"SampleType","Primer") +
+  theme(axis.text.x.top = element_text(angle = 45, hjust = 0))
+```
+
+# DMN fit plotting
+
+Searching for groups that are similar to each other among the samples, could be
+approached with the Dirichlet Multinomial Mixtures [@DMM].
+After using `runDMN` from the `mia` package, several k values as a number of clusters 
+are used to observe the best fit (see also `getDMN` and `getBestDMNFit`).
+To visualize the fit using e.g. "laplace" as a measure of goodness of fit:
+
+```{r}
+data(dmn_se, package = "mia")
+names(metadata(dmn_se))
+# plot the fit
+plotDMNFit(dmn_se, type = "laplace")
+```
+
+More examples and materials are available at Orchestrating Microbiome Analysis [@OMA].
 
 # Session info
 
