@@ -31,8 +31,7 @@
 #'   
 #' @param order_sample_by A single character value from the chosen rank of abundance
 #'   data or from \code{colData} to select values to order the abundance
-#'   plot by. If the value is not part of \code{features}, it will be added.
-#'   (default: \code{order_sample_by = NULL})
+#'   plot by. (default: \code{order_sample_by = NULL})
 #'   
 #' @param decreasing TRUE or FALSE: If the \code{order_sample_by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
@@ -57,7 +56,7 @@
 #'   \code{\link{mia-plot-args}} for more details
 #'
 #' @return 
-#' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of 
+#' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 
 #' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `features` are added to 
 #' the plot. 
 #'
@@ -206,9 +205,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             # If it contains only one ggplot object, only the object is returned
             if ( length(plot_out) == 1) {
                 plot_out <- plot_out[["abundance"]]
-            } 
+            }
             # If the list contains multiple ggplot objects, only abundance and features
-            # plots are returned. 
+            # plots are returned.
             else{
                 plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[features]])
                 # Assigns the names back
@@ -360,7 +359,16 @@ MELT_VALUES <- "Value"
         abund_data <- abund_data[order(abund_data$colour_by, abund_data$X),]
         if(!is.null(features_data)){
             o <- order(factor(rownames(features_data), lvl))
-            features_data <- features_data[o,]
+            # If features and order_sample_by are the same, there is only one column.
+            # One column is converted to vector which is why it is converted back
+            # to data frame which is expected in next steps.
+            if(ncol(features_data) == 1) {
+                colname <- colnames(features_data)
+                features_data <- as.data.frame(features_data[o,])
+                colnames(features_data) <- colname
+            } else{
+                features_data <- features_data[o,]
+            }
         }
     }
     list(abund_data = abund_data, features_data = features_data)
