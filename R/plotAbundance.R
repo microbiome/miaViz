@@ -19,7 +19,8 @@
 #' @param abund_values a \code{character} value defining which assay data to
 #'   use. (default: \code{abund_values = "relabundance"})
 #'   
-#' @param features data \code{colData} to be plotted below the abundance plot.
+#' @param features a single \code{character} value defining a column from 
+#'   \code{colData} to be plotted below the abundance plot.
 #'   Continuous numeric values will be plotted as point, whereas factors and
 #'   character will be plotted as colour-code bar. (default: \code{features =
 #'   NULL})
@@ -165,6 +166,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
                                ncol = ncol)
+        if( !is.null(features) ){
+            features <- match.arg(features, colnames(colData(x)))
+        }
         #
         abund_data <- .get_abundance_data(x, rank, abund_values, order_rank_by,
                                           use_relative)
