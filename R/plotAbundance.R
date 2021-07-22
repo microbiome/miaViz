@@ -77,10 +77,20 @@
 #' plotAbundance(se, abund_values="counts", rank = NULL,
 #'               features = head(rownames(se)))
 #'               
-#' ## A feature e.g. from colData can be used for ordering samples before plot
+#' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
 #' plotAbundance(se, abund_values="counts", rank = "Phylum",
-#'               features = "SampleType",
-#'               order_sample_by = "SampleType")
+#'               order_sample_by = "Bacteroidetes")
+#' 
+#' ## Features from colData can be plotted together with abundance plot.                      
+#' # Returned object is a list that includes two plot; other visualizes abundance
+#' # other features. 
+#' plot <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
+#'                       features = "SampleType")
+#' \dontrun{
+#' # These two plots can be combined with wrap_plots function from patchwork package
+#' library(patchwork)
+#' wrap_plots(plot, ncol = 1)
+#' }
 #'               
 #' ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
 #' 
@@ -151,7 +161,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                 ylab(ylab)
             return(plot)
         }
-        # input checks
+        ############################# INPUT CHECK #############################
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
                  call. = FALSE)
@@ -169,7 +179,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         if( !is.null(features) ){
             features <- match.arg(features, colnames(colData(x)))
         }
-        #
+        ########################### INPUT CHECK END ###########################
         abund_data <- .get_abundance_data(x, rank, abund_values, order_rank_by,
                                           use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
