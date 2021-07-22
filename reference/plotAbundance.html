@@ -44,7 +44,8 @@
 <meta property="og:title" content="Plotting abundance data — plotAbundance" />
 <meta property="og:description" content="plotAbundance plots the abundance on a selected taxonomic rank.
 Since this probably makes sense only for relative abundance data, the
-assay used by default is expected to be in the slot &amp;#8216;relabundance&amp;#8217;." />
+assay used by default is expected to be in the slot &amp;#8216;relabundance&amp;#8217;.
+If only &amp;#8216;counts&amp;#8217; is present, the relative abundance is computed." />
 
 
 
@@ -118,7 +119,8 @@ assay used by default is expected to be in the slot &amp;#8216;relabundance&amp;
     <div class="ref-description">
     <p><code>plotAbundance</code> plots the abundance on a selected taxonomic rank.
 Since this probably makes sense only for relative abundance data, the
-assay used by default is expected to be in the slot &#8216;relabundance&#8217;.</p>
+assay used by default is expected to be in the slot &#8216;relabundance&#8217;.
+If only &#8216;counts&#8217; is present, the relative abundance is computed.</p>
     </div>
 
     <pre class="usage"><span class='fu'>plotAbundance</span><span class='op'>(</span><span class='va'>x</span>, <span class='va'>...</span><span class='op'>)</span>
@@ -168,13 +170,14 @@ character will be plotted as colour-code bar. (default: <code>features =
     </tr>
     <tr>
       <th>order_rank_by</th>
-      <td><p>How to order abundance value: By name (&#8220;name&#8221;),
-by abundance (&#8220;abund&#8221;) or by reverse abundance (&#8220;revabund&#8221;).</p></td>
+      <td><p>How to order abundance value: By name (&#8220;name&#8221;)
+for sorting the taxonomic labels alphabetically, by abundance (&#8220;abund&#8221;) to
+sort by abundance values or by a reverse order of abundance values (&#8220;revabund&#8221;).</p></td>
     </tr>
     <tr>
       <th>order_sample_by</th>
       <td><p>A single character value from the chosen rank of abundance
-data data or from <code>colData</code> to select values to order the abundance
+data or from <code>colData</code> to select values to order the abundance
 plot by. If the value is not part of <code>features</code>, it will be added.
 (default: <code>order_sample_by = NULL</code>)</p></td>
     </tr>
@@ -229,20 +232,37 @@ features present.</p>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, package<span class='op'>=</span><span class='st'>"mia"</span><span class='op'>)</span>
 <span class='va'>se</span> <span class='op'>&lt;-</span> <span class='va'>GlobalPatterns</span>
 
-<span class='co'>#</span>
+<span class='co'>## Plotting abundance using the first taxonomic rank as default</span>
 <span class='fu'>plotAbundance</span><span class='op'>(</span><span class='va'>se</span>, abund_values<span class='op'>=</span><span class='st'>"counts"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotAbundance-1.png' alt='' width='3000' height='2100' /></div><div class='input'><span class='co'>#</span>
+</div><div class='img'><img src='plotAbundance-1.png' alt='' width='3000' height='2100' /></div><div class='input'>
+<span class='co'>## Using "Phylum" as rank</span>
 <span class='fu'>plotAbundance</span><span class='op'>(</span><span class='va'>se</span>, abund_values<span class='op'>=</span><span class='st'>"counts"</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span>, add_legend <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span>
 </div><div class='img'><img src='plotAbundance-2.png' alt='' width='3000' height='2100' /></div><div class='input'>
-<span class='co'># If rank is set to NULL plotAbundance behaves like plotExpression</span>
+<span class='co'>## If rank is set to NULL plotAbundance behaves like plotExpression</span>
 <span class='fu'>plotAbundance</span><span class='op'>(</span><span class='va'>se</span>, abund_values<span class='op'>=</span><span class='st'>"counts"</span>, rank <span class='op'>=</span> <span class='cn'>NULL</span>,
               features <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/utils/head.html'>head</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/colnames.html'>rownames</a></span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='img'><img src='plotAbundance-3.png' alt='' width='3000' height='2100' /></div><div class='input'>              
-<span class='co'># Factors can also be plotted and ordered by</span>
+<span class='co'>## A feature e.g. from colData can be used for ordering samples before plot</span>
 <span class='fu'>plotAbundance</span><span class='op'>(</span><span class='va'>se</span>, abund_values<span class='op'>=</span><span class='st'>"counts"</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,
               features <span class='op'>=</span> <span class='st'>"SampleType"</span>,
               order_sample_by <span class='op'>=</span> <span class='st'>"SampleType"</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; $abundance</div><div class='img'><img src='plotAbundance-4.png' alt='' width='3000' height='2100' /></div><div class='output co'>#&gt; </div></pre>
+</div><div class='output co'>#&gt; $abundance</div><div class='img'><img src='plotAbundance-4.png' alt='' width='3000' height='2100' /></div><div class='output co'>#&gt; </div><div class='input'>              
+<span class='co'>## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"</span>
+
+<span class='co'># Getting top taxa on a Phylum level</span>
+<span class='va'>se</span> <span class='op'>&lt;-</span> <span class='fu'>relAbundanceCounts</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span>
+<span class='va'>se_phylum</span> <span class='op'>&lt;-</span> <span class='fu'>agglomerateByRank</span><span class='op'>(</span><span class='va'>se</span>, rank <span class='op'>=</span><span class='st'>"Phylum"</span>, onRankOnly<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+<span class='va'>top_taxa</span> <span class='op'>&lt;-</span> <span class='fu'>getTopTaxa</span><span class='op'>(</span><span class='va'>se_phylum</span>,top <span class='op'>=</span> <span class='fl'>5</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span><span class='op'>)</span>
+
+<span class='co'># Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"</span>
+<span class='va'>phylum_renamed</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/lapply.html'>lapply</a></span><span class='op'>(</span><span class='fu'>rowData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Phylum</span>,
+                         <span class='kw'>function</span><span class='op'>(</span><span class='va'>x</span><span class='op'>)</span><span class='op'>{</span><span class='kw'>if</span> <span class='op'>(</span><span class='va'>x</span> <span class='op'>%in%</span> <span class='va'>top_taxa</span><span class='op'>)</span> <span class='op'>{</span><span class='va'>x</span><span class='op'>}</span> <span class='kw'>else</span> <span class='op'>{</span><span class='st'>"Other"</span><span class='op'>}</span><span class='op'>}</span><span class='op'>)</span>
+<span class='fu'>rowData</span><span class='op'>(</span><span class='va'>se</span><span class='op'>)</span><span class='op'>$</span><span class='va'>Phylum</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/character.html'>as.character</a></span><span class='op'>(</span><span class='va'>phylum_renamed</span><span class='op'>)</span>
+
+<span class='co'># Compositional barplot</span>
+<span class='fu'>plotAbundance</span><span class='op'>(</span><span class='va'>se</span>, abund_values<span class='op'>=</span><span class='st'>"relabundance"</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,
+              order_rank_by<span class='op'>=</span><span class='st'>"abund"</span>, order_sample_by <span class='op'>=</span> <span class='st'>"Bacteroidetes"</span><span class='op'>)</span>
+</div><div class='img'><img src='plotAbundance-5.png' alt='' width='3000' height='2100' /></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
