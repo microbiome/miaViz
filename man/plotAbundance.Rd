@@ -90,18 +90,34 @@ features present.
 data(GlobalPatterns, package="mia")
 se <- GlobalPatterns
 
-# Plotting abundance using the first taxonomic rank as default
+## Plotting abundance using the first taxonomic rank as default
 plotAbundance(se, abund_values="counts")
 
-# Using "Phylum" as rank
+## Using "Phylum" as rank
 plotAbundance(se, abund_values="counts", rank = "Phylum", add_legend = FALSE)
 
-# If rank is set to NULL plotAbundance behaves like plotExpression
+## If rank is set to NULL plotAbundance behaves like plotExpression
 plotAbundance(se, abund_values="counts", rank = NULL,
               features = head(rownames(se)))
               
-# A feature e.g. from colData can be used for ordering samples before plot
+## A feature e.g. from colData can be used for ordering samples before plot
 plotAbundance(se, abund_values="counts", rank = "Phylum",
               features = "SampleType",
               order_sample_by = "SampleType")
+              
+## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
+
+# Getting top taxa on a Phylum level
+se <- relAbundanceCounts(se)
+se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
+top_taxa <- getTopTaxa(se_phylum,top = 5, abund_values = "relabundance")
+
+# Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
+phylum_renamed <- lapply(rowData(se)$Phylum,
+                         function(x){if (x \%in\% top_taxa) {x} else {"Other"}})
+rowData(se)$Phylum <- as.character(phylum_renamed)
+
+# Compositional barplot
+plotAbundance(se, abund_values="relabundance", rank = "Phylum",
+              order_rank_by="abund", order_sample_by = "Bacteroidetes")
 }
