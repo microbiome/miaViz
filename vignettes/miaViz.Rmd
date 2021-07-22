@@ -98,6 +98,8 @@ plots$abundance / plots$SampleType +
      plot_layout(heights = c(9, 1))
 ```
 
+Further example about composition barplot can be found at Orchestrating Microbiome Analysis [@OMA].
+
 # Prevalence plotting
 
 To visualize prevalence within the dataset, two functions are available,
