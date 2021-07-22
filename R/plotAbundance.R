@@ -201,10 +201,19 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                     facet_wrap(~colour_by, ncol = ncol, scales = scales)
             }
         }
-        # Checks if the list contains only one element. If it does, only the element
-        # is returned. Otherwise the list is returned. 
-        if ( length(plot_out) == 1) {
-            plot_out <- plot_out[[1]]
+        # Checks if the list is a ggplot object or regular list of ggplot objects
+        if( !is.ggplot(plot_out) ){
+            # If it contains only one ggplot object, only the object is returned
+            if ( length(plot_out) == 1) {
+                plot_out <- plot_out[["abundance"]]
+            } 
+            # If the list contains multiple ggplot objects, only abundance and features
+            # plots are returned. 
+            else{
+                plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[features]])
+                # Assigns the names back
+                names(plot_out) <- c("abundance", features)
+            }
         }
         plot_out
     }
