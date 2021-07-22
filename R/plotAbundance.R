@@ -3,6 +3,7 @@
 #' \code{plotAbundance} plots the abundance on a selected taxonomic rank.
 #' Since this probably makes sense only for relative abundance data, the
 #' assay used by default is expected to be in the slot \sQuote{relabundance}.
+#' If only \sQuote{counts} is present, the relative abundance is computed.
 #'
 #' Subsetting to rows of interested and ordering of those is expected to be done
 #' outside of this functions, e.g. \code{x[1:2,]}. This will plot data of all
@@ -23,11 +24,13 @@
 #'   character will be plotted as colour-code bar. (default: \code{features =
 #'   NULL})
 #'   
-#' @param order_rank_by How to order abundance value: By name (\dQuote{name}), 
-#'   by abundance (\dQuote{abund}) or by reverse abundance (\dQuote{revabund}).
+#' @param order_rank_by How to order abundance value: By name (\dQuote{name}) 
+#' for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
+#' sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).
+#'  
 #'   
 #' @param order_sample_by A single character value from the chosen rank of abundance
-#'   data data or from \code{colData} to select values to order the abundance
+#'   data or from \code{colData} to select values to order the abundance
 #'   plot by. If the value is not part of \code{features}, it will be added.
 #'   (default: \code{order_sample_by = NULL})
 #'   
@@ -64,19 +67,36 @@
 #' data(GlobalPatterns, package="mia")
 #' se <- GlobalPatterns
 #' 
-#' #
+#' ## Plotting abundance using the first taxonomic rank as default
 #' plotAbundance(se, abund_values="counts")
-#' #
+#' 
+#' ## Using "Phylum" as rank
 #' plotAbundance(se, abund_values="counts", rank = "Phylum", add_legend = FALSE)
 #' 
-#' # If rank is set to NULL plotAbundance behaves like plotExpression
+#' ## If rank is set to NULL plotAbundance behaves like plotExpression
 #' plotAbundance(se, abund_values="counts", rank = NULL,
 #'               features = head(rownames(se)))
 #'               
-#' # Factors can also be plotted and ordered by
+#' ## A feature e.g. from colData can be used for ordering samples before plot
 #' plotAbundance(se, abund_values="counts", rank = "Phylum",
 #'               features = "SampleType",
 #'               order_sample_by = "SampleType")
+#'               
+#' ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
+#' 
+#' # Getting top taxa on a Phylum level
+#' se <- relAbundanceCounts(se)
+#' se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
+#' top_taxa <- getTopTaxa(se_phylum,top = 5, abund_values = "relabundance")
+#' 
+#' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
+#' phylum_renamed <- lapply(rowData(se)$Phylum,
+#'                          function(x){if (x %in% top_taxa) {x} else {"Other"}})
+#' rowData(se)$Phylum <- as.character(phylum_renamed)
+#' 
+#' # Compositional barplot
+#' plotAbundance(se, abund_values="relabundance", rank = "Phylum",
+#'               order_rank_by="abund", order_sample_by = "Bacteroidetes")
 NULL
 
 #' @rdname plotAbundance

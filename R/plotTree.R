@@ -1012,7 +1012,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                                  edge_size_by,
                                  line_alpha,
                                  line_width,
-                                 line_width_range)
+                                 line_width_range,
+                                 layout)
     # add tip and node points
     plot_out <- .plot_tree_node_points(plot_out,
                                        show_tips,
@@ -1240,12 +1241,14 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
                              edge_size_by,
                              line_alpha,
                              line_width,
-                             line_width_range){
+                             line_width_range,
+                             layout){
     # assemble arg list
     edge_out <- .get_edge_args(edge_colour_by,
                                edge_size_by,
                                alpha = line_alpha,
-                               size = line_width)
+                               size = line_width,
+                               layout = layout)
     plot_out <- plot_out +
         do.call(geom_tree, edge_out$args) + 
         theme_tree()
