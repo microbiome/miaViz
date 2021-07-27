@@ -19,7 +19,8 @@
 #' @param abund_values a \code{character} value defining which assay data to
 #'   use. (default: \code{abund_values = "relabundance"})
 #'   
-#' @param features data \code{colData} to be plotted below the abundance plot.
+#' @param features a single \code{character} value defining a column from 
+#'   \code{colData} to be plotted below the abundance plot.
 #'   Continuous numeric values will be plotted as point, whereas factors and
 #'   character will be plotted as colour-code bar. (default: \code{features =
 #'   NULL})
@@ -31,8 +32,7 @@
 #'   
 #' @param order_sample_by A single character value from the chosen rank of abundance
 #'   data or from \code{colData} to select values to order the abundance
-#'   plot by. If the value is not part of \code{features}, it will be added.
-#'   (default: \code{order_sample_by = NULL})
+#'   plot by. (default: \code{order_sample_by = NULL})
 #'   
 #' @param decreasing TRUE or FALSE: If the \code{order_sample_by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
@@ -57,7 +57,7 @@
 #'   \code{\link{mia-plot-args}} for more details
 #'
 #' @return 
-#' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of 
+#' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 
 #' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `features` are added to 
 #' the plot. 
 #'
@@ -77,10 +77,20 @@
 #' plotAbundance(se, abund_values="counts", rank = NULL,
 #'               features = head(rownames(se)))
 #'               
-#' ## A feature e.g. from colData can be used for ordering samples before plot
+#' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
 #' plotAbundance(se, abund_values="counts", rank = "Phylum",
-#'               features = "SampleType",
-#'               order_sample_by = "SampleType")
+#'               order_sample_by = "Bacteroidetes")
+#' 
+#' ## Features from colData can be plotted together with abundance plot.                      
+#' # Returned object is a list that includes two plot; other visualizes abundance
+#' # other features. 
+#' plot <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
+#'                       features = "SampleType")
+#' \dontrun{
+#' # These two plots can be combined with wrap_plots function from patchwork package
+#' library(patchwork)
+#' wrap_plots(plot, ncol = 1)
+#' }
 #'               
 #' ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
 #' 
@@ -151,7 +161,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                 ylab(ylab)
             return(plot)
         }
-        # input checks
+        ############################# INPUT CHECK #############################
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
                  call. = FALSE)
@@ -166,7 +176,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
                                ncol = ncol)
-        #
+        if( !is.null(features) ){
+            features <- match.arg(features, colnames(colData(x)))
+        }
+        ########################### INPUT CHECK END ###########################
         abund_data <- .get_abundance_data(x, rank, abund_values, order_rank_by,
                                           use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
@@ -199,6 +212,18 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             if (!one_facet) {
                 plot_out <- plot_out + 
                     facet_wrap(~colour_by, ncol = ncol, scales = scales)
+            }
+        }
+        # Checks if the list is a ggplot object or regular list of ggplot objects
+        if( !is.ggplot(plot_out) ){
+            # If features is specified, then only abundance and features plots are 
+            # returned as a list. If it is not, then only abundance plot is returned.
+            if( !is.null(features) ){
+                plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[features]])
+                # Assigns the names back
+                names(plot_out) <- c("abundance", features)
+            } else{
+                plot_out <- plot_out[["abundance"]]
             }
         }
         plot_out
@@ -346,7 +371,16 @@ MELT_VALUES <- "Value"
         abund_data <- abund_data[order(abund_data$colour_by, abund_data$X),]
         if(!is.null(features_data)){
             o <- order(factor(rownames(features_data), lvl))
-            features_data <- features_data[o,]
+            # If features and order_sample_by are the same, there is only one column.
+            # One column is converted to vector which is why it is converted back
+            # to data frame which is expected in next steps.
+            if(ncol(features_data) == 1) {
+                colname <- colnames(features_data)
+                features_data <- as.data.frame(features_data[o,])
+                colnames(features_data) <- colname
+            } else{
+                features_data <- features_data[o,]
+            }
         }
     }
     list(abund_data = abund_data, features_data = features_data)
