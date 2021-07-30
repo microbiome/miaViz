@@ -62,7 +62,7 @@ is used to divide taxa to different line types. Must be a value of
 plotted. (default: \code{abund_values = "counts"})}
 
 \item{...}{additional parameters for plotting. See
-\code{\link{mia-plot-args}} for more details}
+\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 }
 \value{
 A \code{ggplot2} object

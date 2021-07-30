@@ -6,8 +6,8 @@
 #' additional information.
 #'
 #' @param object a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   object.
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
+#' object.
 #'
 #' @param relabel_tree logical scalar, Should the tip labels be relabeled using 
 #'   the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?  
@@ -85,7 +85,7 @@
 #'   without plotting them.
 #'   
 #' @param ... additional arguments for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @details 
 #' If \code{show_label} or \code{show_highlight_label} have the same length
@@ -1122,12 +1122,10 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     if(layout %in% c("fan","circular","radial")){
         ans <- highlight_data %>%
             mutate(highlight_extendto = (max(.data$x) - .data$x) / 1.5,
-                   #highlight_extendto = .data$highlight_extendto - min(.data$highlight_extendto[.data$highlight]),
                    highlight_extendto = .data$highlight_extendto + max(.data$x) + 0.07)
     } else if(layout %in% c("rectangular","slanted","ellipse","roundrect")){
         ans <- highlight_data %>%
             mutate(highlight_extendto = (max(.data$x) - .data$x) / 1.5,
-                   #highlight_extendto = .data$highlight_extendto - min(.data$highlight_extendto[.data$highlight]),
                    highlight_extendto = .data$highlight_extendto + max(.data$x) + 0.01)
     } else if(layout %in% c("dendrogram")){
         warning("highlights with layout `dendrogram` are buggy.")
@@ -1138,7 +1136,6 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         warning("highlights with layout `inward_circular` are buggy.")
         ans <- highlight_data %>%
             mutate(highlight_extendto = (max(.data$x) - .data$x) / 1.5,
-                   #highlight_extendto = .data$highlight_extendto - min(.data$highlight_extendto[.data$highlight]),
                    highlight_extendto = .data$highlight_extendto + max(.data$x) + 0.07,
                    highlight_extendto = .data$highlight_extendto * -1)
     } else {

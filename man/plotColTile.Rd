@@ -31,7 +31,7 @@ Alternatively, an \link{AsIs} vector or data.frame, see
 result in a returned \code{character} or \code{factor} vector.}
 
 \item{...}{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details}
+\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one

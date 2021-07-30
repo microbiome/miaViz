@@ -78,7 +78,7 @@ on compositional (relative) abundances? Passed onto
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 }
 \item{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details}
+\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 }}
 
 \item{BPPARAM}{A

@@ -68,7 +68,7 @@ plotColTree(object, ...)
 object.}
 
 \item{...}{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details}
+\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
 the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?

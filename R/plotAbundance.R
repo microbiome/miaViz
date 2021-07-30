@@ -54,7 +54,7 @@
 #'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
 #' 
 #' @param ... additional parameters for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @return 
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 
@@ -75,23 +75,23 @@
 #' 
 #' ## If rank is set to NULL plotAbundance behaves like plotExpression
 #' plotAbundance(se, abund_values="counts", rank = NULL,
-#'               features = head(rownames(se)))
-#'               
+#'            features = head(rownames(se)))
+#'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
 #' plotAbundance(se, abund_values="counts", rank = "Phylum",
-#'               order_sample_by = "Bacteroidetes")
+#'            order_sample_by = "Bacteroidetes")
 #' 
-#' ## Features from colData can be plotted together with abundance plot.                      
+#' ## Features from colData can be plotted together with abundance plot.
 #' # Returned object is a list that includes two plot; other visualizes abundance
 #' # other features. 
 #' plot <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
-#'                       features = "SampleType")
-#' \dontrun{
+#'                    features = "SampleType")
+#' \donttest{
 #' # These two plots can be combined with wrap_plots function from patchwork package
 #' library(patchwork)
 #' wrap_plots(plot, ncol = 1)
 #' }
-#'               
+#' 
 #' ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
 #' 
 #' # Getting top taxa on a Phylum level
@@ -101,28 +101,27 @@
 #' 
 #' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
 #' phylum_renamed <- lapply(rowData(se)$Phylum,
-#'                          function(x){if (x %in% top_taxa) {x} else {"Other"}})
+#'                        function(x){if (x %in% top_taxa) {x} else {"Other"}})
 #' rowData(se)$Phylum <- as.character(phylum_renamed)
 #' 
 #' # Compositional barplot
 #' plotAbundance(se, abund_values="relabundance", rank = "Phylum",
-#'               order_rank_by="abund", order_sample_by = "Bacteroidetes")
+#'            order_rank_by="abund", order_sample_by = "Bacteroidetes")
 NULL
 
 #' @rdname plotAbundance
 setGeneric("plotAbundance", signature = c("x"),
-           function(x, ...)
-               standardGeneric("plotAbundance"))
+        function(x, ...)
+            standardGeneric("plotAbundance"))
 
 .check_abund_plot_args <- function(one_facet = TRUE,
-                                   ncol = 2){
-    
+                                ncol = 2){
    if(!.is_a_bool(one_facet)){
         stop("'one_facet' must be TRUE or FALSE.", call. = FALSE)
     }
     if(!is.numeric(ncol) || as.integer(ncol) != ncol || ncol < 1){
         stop("'ncol' must be an integer value above or equal to 1.",
-             call. = FALSE)
+            call. = FALSE)
     }
 }
 
@@ -133,18 +132,18 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
-             rank = taxonomyRanks(x)[1],
-             features = NULL,
-             order_rank_by = c("name","abund","revabund"),
-             order_sample_by = NULL,
-             decreasing = TRUE,
-             use_relative = TRUE,
-             layout = c("bar","point"),
-             one_facet = TRUE,
-             ncol = 2,
-             scales = "fixed",
-             abund_values = "counts",
-             ...){
+            rank = taxonomyRanks(x)[1],
+            features = NULL,
+            order_rank_by = c("name","abund","revabund"),
+            order_sample_by = NULL,
+            decreasing = TRUE,
+            use_relative = TRUE,
+            layout = c("bar","point"),
+            one_facet = TRUE,
+            ncol = 2,
+            scales = "fixed",
+            abund_values = "counts",
+            ...){
         # input checks
         if(nrow(x) == 0L){
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
@@ -153,9 +152,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         # if rank is set to NULL, default to plotExpression 
         if(is.null(rank)){
             plot <- plotExpression(x, features = features, 
-                                   exprs_values = abund_values,
-                                   one_facet = one_facet,
-                                   ncol = ncol, scales = scales, ...)
+                                exprs_values = abund_values,
+                                one_facet = one_facet,
+                                ncol = ncol, scales = scales, ...)
             ylab <- gsub("Expression","Abundance",plot$labels$y)
             plot <- plot +
                 ylab(ylab)
@@ -164,49 +163,49 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         ############################# INPUT CHECK #############################
         if(!.is_non_empty_string(rank)){
             stop("'rank' must be an non empty single character value.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         if(!.is_a_bool(use_relative)){
             stop("'use_relative' must be TRUE or FALSE.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         .check_taxonomic_rank(rank, x)
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
         order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
-                               ncol = ncol)
+                            ncol = ncol)
         if( !is.null(features) ){
             features <- match.arg(features, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
         abund_data <- .get_abundance_data(x, rank, abund_values, order_rank_by,
-                                          use_relative)
+                                        use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
-                                                 unique(abund_data$colour_by),
-                                                 x)
+                                                unique(abund_data$colour_by),
+                                                x)
         features_data <- NULL
         if(!is.null(features) || !is.null(order_sample_by)){
             features_data <- .get_features_data(features, order_sample_by, x)
         }
         if(!is.null(order_sample_by)){
             order_out <- .order_abund_feature_data(abund_data, features_data,
-                                                   order_sample_by, decreasing)
+                                                order_sample_by, decreasing)
             abund_data <- order_out$abund_data
             features_data <- order_out$features_data
             rm(order_out)
         }
         plot_out <- .abund_plotter(abund_data,
-                                   xlab = "Samples",
-                                   ylab = "Rel. Abundance",
-                                   colour_by = rank,
-                                   layout = layout,
-                                   ...)
+                                xlab = "Samples",
+                                ylab = "Rel. Abundance",
+                                colour_by = rank,
+                                layout = layout,
+                                ...)
         if(!is.null(features_data)){
             plot_feature_out <- .features_plotter(features_data,
-                                                  order_sample_by,
-                                                  xlab = "Samples",
-                                                  ...)
+                                                order_sample_by,
+                                                xlab = "Samples",
+                                                ...)
             plot_out <- c(list(abundance = plot_out), plot_feature_out)
         } else {
             if (!one_facet) {
@@ -257,8 +256,8 @@ MELT_VALUES <- "Value"
         as.data.frame() %>%
         mutate(rank = factor(rowData(x)[,rank], unique(rowData(x)[,rank]))) %>%
         pivot_longer(cols = !.data$rank,
-                     names_to = MELT_NAME,
-                     values_to = MELT_VALUES) %>%
+                    names_to = MELT_NAME,
+                    values_to = MELT_VALUES) %>%
         mutate(!!sym(MELT_NAME) := factor(!!sym(MELT_NAME), unique(!!sym(MELT_NAME)))) %>%
         nest(data = !rank) %>%
         mutate(data = map(data, merge_FUN)) %>%
@@ -266,8 +265,8 @@ MELT_VALUES <- "Value"
     # rename columns
     data <- data %>%
         dplyr::rename(colour_by = "rank",
-                      X = MELT_NAME,
-                      Y = MELT_VALUES)
+                    X = MELT_NAME,
+                    Y = MELT_VALUES)
     # order values
     if(order_rank_by == "name"){
         lvl <- levels(data$colour_by)
@@ -295,15 +294,15 @@ MELT_VALUES <- "Value"
         return(order_sample_by)
     }
     msg <- paste0("'order_sample_by' must be a single non-empty character value, ",
-                  "either present in the abundance data as group variable or ",
-                  "in the column data of 'x'. (The abundance data takes ",
-                  "precedence)")
+                "either present in the abundance data as group variable or ",
+                "in the column data of 'x'. (The abundance data takes ",
+                "precedence)")
     if(!.is_non_empty_string(order_sample_by)){
         stop(msg, call. = FALSE)
     }
     if(!(order_sample_by %in% factors)){
         tmp <- try({retrieveCellInfo(x, order_sample_by, search = "colData")},
-                   silent = TRUE)
+                silent = TRUE)
         if(is(tmp,"try-error")){
             stop(msg, call. = FALSE)
         } else {
@@ -345,11 +344,11 @@ MELT_VALUES <- "Value"
 
 #' @importFrom dplyr pull
 .order_abund_feature_data <- function(abund_data, features_data,
-                                      order_sample_by, decreasing = TRUE){
+                                    order_sample_by, decreasing = TRUE){
     if(!is.null(order_sample_by)){
         lvl <- levels(abund_data$X)
         if(is.null(features_data) || 
-           !(order_sample_by %in% colnames(features_data))){
+            !(order_sample_by %in% colnames(features_data))){
             # presort by rank value
             lvl_tmp <- levels(abund_data$colour_by)
             lvl_tmp <- c(order_sample_by, lvl_tmp[!(lvl_tmp %in% order_sample_by)])
@@ -394,17 +393,17 @@ MELT_VALUES <- "Value"
 #' @importFrom ggplot2 ggplot theme_classic geom_point geom_bar coord_flip
 #'   scale_y_continuous
 .abund_plotter <- function(object,
-                           xlab = NULL,
-                           ylab = NULL,
-                           colour_by = NULL,
-                           layout = "bar",
-                           flipped = FALSE,
-                           add_legend = TRUE,
-                           add_x_text = FALSE,
-                           add_border = NULL,
-                           bar_alpha = 0.65,
-                           point_alpha = 1,
-                           point_size = 2){
+                        xlab = NULL,
+                        ylab = NULL,
+                        colour_by = NULL,
+                        layout = "bar",
+                        flipped = FALSE,
+                        add_legend = TRUE,
+                        add_x_text = FALSE,
+                        add_border = NULL,
+                        bar_alpha = 0.65,
+                        point_alpha = 1,
+                        point_size = 2){
     # start plotting
     plot_out <- ggplot(object, aes_string(x="X", y="Y")) +
         xlab(xlab) +
@@ -412,19 +411,19 @@ MELT_VALUES <- "Value"
     # either bar or point plot
     if(layout == "bar"){
         abund_out <- .get_bar_args(colour_by,
-                                   alpha = bar_alpha,
-                                   add_border = add_border,
-                                   n = length(unique(object$X)))
+                                alpha = bar_alpha,
+                                add_border = add_border,
+                                n = length(unique(object$X)))
         plot_out <- plot_out +
             do.call(geom_bar, c(abund_out$args, list(stat="identity"))) +
             scale_y_continuous(expand = c(0,0))
-        
+
     } else {
         abund_out <- .get_point_args(colour_by,
-                                     shape_by = NULL,
-                                     size_by = NULL,
-                                     alpha = point_alpha,
-                                     size = point_size)
+                                    shape_by = NULL,
+                                    size_by = NULL,
+                                    alpha = point_alpha,
+                                    size = point_size)
         abund_out$border <- TRUE
         plot_out <- plot_out +
             do.call(geom_point, abund_out$args)
@@ -434,15 +433,15 @@ MELT_VALUES <- "Value"
         if(abund_out$border){
             # resolve the colour for the line colours
             plot_out <- .resolve_plot_colours(plot_out,
-                                              object$colour_by,
-                                              colour_by,
-                                              fill = FALSE)
+                                            object$colour_by,
+                                            colour_by,
+                                            fill = FALSE)
         }
         # resolve the color for fill
         plot_out <- .resolve_plot_colours(plot_out,
-                                          object$colour_by,
-                                          colour_by,
-                                          fill = TRUE)
+                                        object$colour_by,
+                                        colour_by,
+                                        fill = TRUE)
     }
     plot_out <- plot_out +
         theme_classic()
@@ -455,13 +454,13 @@ MELT_VALUES <- "Value"
 
 #' @importFrom ggplot2 ggplot aes_string labs geom_point geom_raster
 .feature_plotter <- function(feature_data,
-                             name,
-                             xlab,
-                             flipped,
-                             add_legend,
-                             add_x_text,
-                             point_alpha,
-                             point_size){
+                            name,
+                            xlab,
+                            flipped,
+                            add_legend,
+                            add_x_text,
+                            point_alpha,
+                            point_size){
     if(is.factor(feature_data$Y)){
         feature_data$colour_by <- feature_data$Y
         feature_data$Y <- ""
@@ -471,22 +470,22 @@ MELT_VALUES <- "Value"
         labs(x = xlab, y = name)
     if(length(unique(feature_data$Y)) == 1L){
         feature_out <- .get_bar_args(colour_by,
-                                     alpha = point_alpha,
-                                     add_border = FALSE)
+                                    alpha = point_alpha,
+                                    add_border = FALSE)
         feature_plot_out <- feature_plot_out +
             do.call(geom_raster, feature_out$args) +
             scale_y_discrete(expand = c(0,0))
         feature_plot_out <- .resolve_plot_colours(feature_plot_out,
-                                                  feature_data$colour_by,
-                                                  colour_by,
-                                                  fill = TRUE)
+                                                feature_data$colour_by,
+                                                colour_by,
+                                                fill = TRUE)
         legend_pos <- "bottom"
     } else {
         feature_out <- .get_point_args(NULL,
-                                       shape_by = NULL,
-                                       size_by = NULL,
-                                       alpha = point_alpha,
-                                       size = point_size)
+                                    shape_by = NULL,
+                                    size_by = NULL,
+                                    alpha = point_alpha,
+                                    size = point_size)
         feature_plot_out <- feature_plot_out +
             do.call(geom_point, feature_out$args)
         legend_pos <- "right"
@@ -501,21 +500,21 @@ MELT_VALUES <- "Value"
 }
 
 .features_plotter <- function(features_data,
-                              order_sample_by = NULL,
-                              xlab = NULL,
-                              flipped = FALSE,
-                              add_legend = TRUE,
-                              add_x_text = FALSE,
-                              point_alpha = 1,
-                              point_size = 2,
-                              ...){
+                            order_sample_by = NULL,
+                            xlab = NULL,
+                            flipped = FALSE,
+                            add_legend = TRUE,
+                            add_x_text = FALSE,
+                            point_alpha = 1,
+                            point_size = 2,
+                            ...){
     names <- colnames(features_data)
     features_data <- lapply(names, 
                             function(col){
                                 data.frame(X = factor(rownames(features_data),
-                                                      rownames(features_data)),
-                                           feature_name = col,
-                                           Y = features_data[,col])
+                                                    rownames(features_data)),
+                                                    feature_name = col,
+                                                    Y = features_data[,col])
                             })
     names(features_data) <- names
     plots_out <- mapply(.feature_plotter,
@@ -531,7 +530,7 @@ MELT_VALUES <- "Value"
     names(plots_out) <-  names(features_data)
     if(!is.null(order_sample_by)){
         reorder <- c(order_sample_by,
-                     names(plots_out)[!(names(plots_out) %in% order_sample_by)])
+                    names(plots_out)[!(names(plots_out) %in% order_sample_by)])
         m <- match(reorder,names(plots_out))
         m <- m[!is.na(m)]
         plots_out <- plots_out[m]

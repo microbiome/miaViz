@@ -29,7 +29,7 @@ plotAbundance(x, ...)
 object.}
 
 \item{...}{additional parameters for plotting. See
-\code{\link{mia-plot-args}} for more details}
+\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{rank}{a single \code{character} value defining the taxonomic rank to
 use. Must be a value of \code{taxonomyRanks(x)}.}
@@ -98,23 +98,23 @@ plotAbundance(se, abund_values="counts", rank = "Phylum", add_legend = FALSE)
 
 ## If rank is set to NULL plotAbundance behaves like plotExpression
 plotAbundance(se, abund_values="counts", rank = NULL,
-              features = head(rownames(se)))
-              
+           features = head(rownames(se)))
+  
 ## A feature from colData or taxon from chosen rank can be used for ordering samples.
 plotAbundance(se, abund_values="counts", rank = "Phylum",
-              order_sample_by = "Bacteroidetes")
+           order_sample_by = "Bacteroidetes")
 
-## Features from colData can be plotted together with abundance plot.                      
+## Features from colData can be plotted together with abundance plot.
 # Returned object is a list that includes two plot; other visualizes abundance
 # other features. 
 plot <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
-                      features = "SampleType")
-\dontrun{
+                   features = "SampleType")
+\donttest{
 # These two plots can be combined with wrap_plots function from patchwork package
 library(patchwork)
 wrap_plots(plot, ncol = 1)
 }
-              
+
 ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
 
 # Getting top taxa on a Phylum level
@@ -124,10 +124,10 @@ top_taxa <- getTopTaxa(se_phylum,top = 5, abund_values = "relabundance")
 
 # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
 phylum_renamed <- lapply(rowData(se)$Phylum,
-                         function(x){if (x \%in\% top_taxa) {x} else {"Other"}})
+                       function(x){if (x \%in\% top_taxa) {x} else {"Other"}})
 rowData(se)$Phylum <- as.character(phylum_renamed)
 
 # Compositional barplot
 plotAbundance(se, abund_values="relabundance", rank = "Phylum",
-              order_rank_by="abund", order_sample_by = "Bacteroidetes")
+           order_rank_by="abund", order_sample_by = "Bacteroidetes")
 }
