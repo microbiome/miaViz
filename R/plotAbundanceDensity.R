@@ -268,6 +268,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                              point_shape = 21,
                              point_size = 2,
                              point_alpha = 0.6,
+                             point_colour = "grey70",
                              flipped = FALSE,
                              scales_free = TRUE,
                              angle_x_text = TRUE){
@@ -280,7 +281,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         plot_out$data$Y <- factor(plot_out$data$Y,
                                   levels = rev(levels(plot_out$data$Y)) )
         point_args <- .get_density_args(colour_by,
-                                        alpha = alpha)
+                                        alpha = point_alpha)
         # density specific options for flipping
         grid_args <- list(switch = ifelse(flipped, "x", "y"),
                           scales = ifelse(scales_free, "free", "fixed"))
@@ -302,7 +303,8 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                                       size_by = size_by,
                                       alpha = point_alpha,
                                       shape = point_shape,
-                                      size = point_size)
+                                      size = point_size,
+                                      colour = point_colour)
         point_args$args$mapping$y <- sym("Y")
         if (layout == "point"){
             plot_out <- plot_out +
@@ -317,7 +319,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
     } else{
         stop("Unsupported layout option: '",layout,"'.", call. = FALSE)
     }
-    # If colour_by is specified, colours are resolve
+    # If colour_by is specified, colours are resolved
     if (!is.null(colour_by)) {
         plot_out <- .resolve_plot_colours(plot_out,
                                           density_data$colour_by,
