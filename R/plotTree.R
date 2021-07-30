@@ -85,7 +85,7 @@
 #'   without plotting them.
 #'   
 #' @param ... additional arguments for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @details 
 #' If \code{show_label} or \code{show_highlight_label} have the same length

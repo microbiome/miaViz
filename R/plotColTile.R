@@ -19,7 +19,7 @@
 #'   result in a returned \code{character} or \code{factor} vector.
 #'  
 #' @param ... additional arguments for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #' 
 #' @return 
 #' A \code{ggplot2} object or \code{plotly} object, if more than one 

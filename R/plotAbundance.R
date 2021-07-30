@@ -54,7 +54,7 @@
 #'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
 #' 
 #' @param ... additional parameters for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @return 
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 

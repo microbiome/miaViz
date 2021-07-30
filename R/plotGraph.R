@@ -67,7 +67,7 @@
 #'   without plotting them.
 #'   
 #' @param ... additional arguments for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #' 
 #' @details:
 #' Internally \code{tidygraph} and \code{ggraph} are used. Therefore, all 

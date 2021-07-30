@@ -55,7 +55,7 @@
 #'   \item{add_x_text}{ a boolean value selecting if text that represents values is included in x-axis. 
 #'   (default: \code{add_x_text = TRUE}) }
 #' }
-#' See \code{\link{mia-plot-args}} for more details
+#' See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @details
 #' This function plots abundance of the most abundant taxa. Abundance can be plotted as

@@ -34,7 +34,7 @@
 #'   \code{taxonomicRanks()} function.
 #'   
 #' @param ... additional parameters for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @details
 #' This function creates series plot, where x-axis includes e.g. time points, and

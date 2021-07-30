@@ -17,7 +17,7 @@
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
 #'   \item{additional arguments for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details}
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 #' }
 #'   
 #' @param abund_values a \code{character} value defining which assay data to
