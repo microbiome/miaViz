@@ -100,10 +100,11 @@
 #'                      point_shape = 41)
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a point plot.
-#' # In addition to colour, groups can be visualized by size and sahep in point plots.
+#' # In addition to colour, groups can be visualized by size and shape in point plots,
+#' # and adjusted for point size
 #' plotAbundanceDensity(tse, layout = "point", abund_values = "relabundance", n = 10,
-#'                      shape_by = "sex", size_by = "time")
-#' 
+#'                      shape_by = "sex", size_by = "time", point_size=1)
+#'
 NULL
 
 #' @rdname plotAbundanceDensity
