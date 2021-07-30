@@ -15,6 +15,7 @@ plotAbundanceDensity(object, ...)
   colour_by = NULL,
   shape_by = NULL,
   size_by = NULL,
+  order_descending = TRUE,
   ...
 )
 }
@@ -54,29 +55,34 @@ in x-axis. (default: \code{add_x_text = TRUE}) }
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{layout}{a single character value for selecting the layout of the plot.
-There are three different options: \code{jitter}, \code{density}, and \code{point} plot.
-(default: \code{layout = "jitter"})}
+There are three different options: \code{jitter}, \code{density}, and
+\code{point} plot. (default: \code{layout = "jitter"})}
 
 \item{abund_values}{a single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 plotted. (default: \code{abund_values = "counts"})}
 
-\item{n}{a positive integer specifying the number of the most abundant taxa to show.
-(default: \code{n = 25})}
+\item{n}{a positive integer specifying the number of the most abundant taxa
+to show. (default: \code{n = 25})}
 
-\item{colour_by}{a single character value defining a column from \code{colData},
-that is used to color plot. Must be a value of \code{colData()} function.
-(default: \code{colour_by = NULL})}
+\item{colour_by}{a single character value defining a column from
+\code{colData}, that is used to color plot. Must be a value of
+\code{colData()} function. (default: \code{colour_by = NULL})}
 
-\item{shape_by}{a single character value defining a column from \code{colData},
-that is used to group observations to different point shape groups. Must be a value
-of \code{colData()} function. \code{shape_by} is disabled when \code{layout = "density"}.
-(default: \code{shape_by = NULL})}
+\item{shape_by}{a single character value defining a column from
+\code{colData}, that is used to group observations to different point shape
+groups. Must be a value of \code{colData()} function. \code{shape_by} is
+disabled when \code{layout = "density"}. (default: \code{shape_by = NULL})}
 
-\item{size_by}{a single character value defining a column from \code{colData}, that is used to
-group observations to different point size groups. Must be a value of \code{colData()}
-function. \code{size_by} is disabled when \code{layout = "density"}.
-(default: \code{size_by = NULL})}
+\item{size_by}{a single character value defining a column from
+\code{colData}, that is used to group observations to different point size
+groups. Must be a value of \code{colData()} function. \code{size_by} is
+disabled when \code{layout = "density"}. (default: \code{size_by = NULL})}
+
+\item{order_descending}{\code{TRUE}, \code{FALSE} or\code{NA}: Should the
+results be ordered in a descending order? If \code{NA} is given the order
+as found in \code{object} for the \code{n} most abundant taxa is used.
+(default: \code{order_descending = TRUE})}
 }
 \value{
 A \code{ggplot2} object
@@ -124,6 +130,15 @@ plotAbundanceDensity(tse, layout = "point", abund_values = "relabundance", n = 1
 # and adjusted for point size
 plotAbundanceDensity(tse, layout = "point", abund_values = "relabundance", n = 10,
                      shape_by = "sex", size_by = "time", point_size=1)
+
+# Ordering via order_descending
+plotAbundanceDensity(tse, abund_values = "relabundance", 
+                     order_descending = FALSE)
+
+# for custom ordering set order_descending = NA and order the input object
+# to your wishes
+plotAbundanceDensity(tse, abund_values = "relabundance",
+                     order_descending = NA)
 
 }
 \author{
