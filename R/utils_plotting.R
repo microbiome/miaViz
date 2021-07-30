@@ -357,7 +357,7 @@ NULL
     return(list(args = geom_args))
 }
 
-.get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL
+.get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL,
                            layout){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
