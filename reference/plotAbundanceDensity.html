@@ -148,8 +148,8 @@ object.</p></td>
 <li><p>ylab a single character value for selecting the y-axis label.
 <code>ylab</code> is disabled when <code>layout = "density"</code>.
 (default: <code>ylab = "Taxa")</code></p></li>
-<li><p>point_alpha a numeric value from range 0 to 1 selecting the transparency of colour in
-<code>jitter</code> and <code>point</code> plot. (default: <code>point_alpha = 0.6</code>)</p></li>
+<li><p>point_alpha a numeric value from range 0 to 1 selecting the transparency of
+colour in <code>jitter</code> and <code>point</code> plot. (default: <code>point_alpha = 0.6</code>)</p></li>
 <li><p>point_shape a positive integer value selecting the shape of point in
 <code>jitter</code> and <code>point</code> plot. (default: <code>point_shape = 21</code>)</p></li>
 <li><p>point_size a positive numeric value selecting the size of point in
@@ -158,9 +158,9 @@ object.</p></td>
 (default: <code>add_legend = TRUE</code>)</p></li>
 <li><p>flipped a boolean value selecting if the orientation of plot is changed
 so that x-axis and y-axis are swapped. (default <code>flipped = FALSE</code>)</p></li>
-<li><p>add_x_text a boolean value selecting if text that represents values is included in x-axis.
-(default: <code>add_x_text = TRUE</code>)</p></li>
-</ul><p>See <code><a href='mia-plot-args.html'>mia-plot-args</a></code> for more details</p></td>
+<li><p>add_x_text a boolean value selecting if text that represents values is included
+in x-axis. (default: <code>add_x_text = TRUE</code>)</p></li>
+</ul><p>See <code><a href='mia-plot-args.html'>mia-plot-args</a></code> for more details i.e. call <code><a href='mia-plot-args.html'>help("mia-plot-args")</a></code></p></td>
     </tr>
     <tr>
       <th>layout</th>
@@ -181,20 +181,23 @@ plotted. (default: <code>abund_values = "counts"</code>)</p></td>
     </tr>
     <tr>
       <th>colour_by</th>
-      <td><p>a single character value defining a column from <code>colData</code>, that is used to
-color plot. Must be a value of <code>colData()</code> function. (default: <code>colour_by = NULL</code>)</p></td>
+      <td><p>a single character value defining a column from <code>colData</code>,
+that is used to color plot. Must be a value of <code>colData()</code> function.
+(default: <code>colour_by = NULL</code>)</p></td>
     </tr>
     <tr>
       <th>shape_by</th>
-      <td><p>a single character value defining a column from <code>colData</code>, that is used to
-group observations to different point shape groups. Must be a value of <code>colData()</code> function.
-<code>shape_by</code> is disabled when <code>layout = "density"</code>. (default: <code>shape_by = NULL</code>)</p></td>
+      <td><p>a single character value defining a column from <code>colData</code>,
+that is used to group observations to different point shape groups. Must be a value
+of <code>colData()</code> function. <code>shape_by</code> is disabled when <code>layout = "density"</code>.
+(default: <code>shape_by = NULL</code>)</p></td>
     </tr>
     <tr>
       <th>size_by</th>
       <td><p>a single character value defining a column from <code>colData</code>, that is used to
-group observations to different point size groups. Must be a value of <code>colData()</code> function.
-<code>size_by</code> is disabled when <code>layout = "density"</code>. (default: <code>size_by = NULL</code>)</p></td>
+group observations to different point size groups. Must be a value of <code>colData()</code>
+function. <code>size_by</code> is disabled when <code>layout = "density"</code>.
+(default: <code>size_by = NULL</code>)</p></td>
     </tr>
     </table>
 
@@ -205,8 +208,8 @@ group observations to different point size groups. Must be a value of <code>colD
 
     <p>This function plots abundance of the most abundant taxa. Abundance can be plotted as
 a jitter plot, a density plot, or a point plot. By default, x-axis represents abundance
-and y-axis taxa. In a jitter and point plot, each point represents abundance of individual taxa
-in individual sample. Most common abundances are shown as a higher density.</p>
+and y-axis taxa. In a jitter and point plot, each point represents abundance of
+individual taxa in individual sample. Most common abundances are shown as a higher density.</p>
 <p>A density plot can be seen as a smoothened bar plot. It visualized distribution of
 abundances where peaks represent most common abundances.</p>
     <h2 class="hasAnchor" id="author"><a class="anchor" href="#author"></a>Author</h2>
@@ -215,7 +218,7 @@ abundances where peaks represent most common abundances.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='va'>tse</span> <span class='op'>&lt;-</span> <span class='fu'>microbiomeDataSets</span><span class='fu'>::</span><span class='fu'><a href='https://rdrr.io/pkg/microbiomeDataSets/man/LahtiWAData.html'>atlas1006</a></span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>snapshotDate(): 2021-07-16</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>snapshotDate(): 2021-07-27</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='output co'>#&gt; <span class='message'>see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span></div><div class='output co'>#&gt; <span class='message'>loading from cache</span></div><div class='input'>
 <span class='co'># Plots the abundances of 25 most abundant taxa. Jitter plot is the default option.</span>
 <span class='fu'>plotAbundanceDensity</span><span class='op'>(</span><span class='va'>tse</span>, abund_values <span class='op'>=</span> <span class='st'>"counts"</span><span class='op'>)</span>
 </div><div class='img'><img src='plotAbundanceDensity-1.png' alt='' width='3000' height='2100' /></div><div class='input'>
@@ -240,9 +243,10 @@ abundances where peaks represent most common abundances.</p>
                      point_shape <span class='op'>=</span> <span class='fl'>41</span><span class='op'>)</span>
 </div><div class='img'><img src='plotAbundanceDensity-4.png' alt='' width='3000' height='2100' /></div><div class='input'>                     
 <span class='co'># Plots the relative abundance of 10 most abundant taxa as a point plot.</span>
-<span class='co'># In addition to colour, groups can be visualized by size and sahep in point plots.</span>
+<span class='co'># In addition to colour, groups can be visualized by size and shape in point plots,</span>
+<span class='co'># and adjusted for point size</span>
 <span class='fu'>plotAbundanceDensity</span><span class='op'>(</span><span class='va'>tse</span>, layout <span class='op'>=</span> <span class='st'>"point"</span>, abund_values <span class='op'>=</span> <span class='st'>"relabundance"</span>, n <span class='op'>=</span> <span class='fl'>10</span>,
-                     shape_by <span class='op'>=</span> <span class='st'>"sex"</span>, size_by <span class='op'>=</span> <span class='st'>"time"</span><span class='op'>)</span>
+                     shape_by <span class='op'>=</span> <span class='st'>"sex"</span>, size_by <span class='op'>=</span> <span class='st'>"time"</span>, point_size<span class='op'>=</span><span class='fl'>1</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='warning'>Warning: Removed 370 rows containing missing values (geom_point).</span></div><div class='img'><img src='plotAbundanceDensity-5.png' alt='' width='3000' height='2100' /></div><div class='input'>
 </div></pre>
   </div>
@@ -256,7 +260,7 @@ abundances where peaks represent most common abundances.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Felix G.M. Ernst, Tuomas Borman.</p>
+  <p>Developed by Felix G.M. Ernst, Tuomas Borman, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">

@@ -135,9 +135,9 @@ details for more information.</p>
 
     <p>For <code>*_graph</code> data:</p><ol>
 <li><p>&#8220;Jaccard&#8221; distances were calculated via
-<code>calculateDistance(genus, FUN = vegan::vegdist, method = "jaccard",exprs_values = "relabundance")</code>,
-either using transposed assay data or not to calculate distances for samples
-or features.</p></li>
+<code>calculateDistance(genus, FUN = vegan::vegdist, method = "jaccard",
+exprs_values = "relabundance")</code>, either using transposed assay data or not
+to calculate distances for samples or features.</p></li>
 <li><p>&#8220;Jaccard&#8221; dissimilarites were converted to similarities and values
 above a threshold were used to construct a graph via
 <code>graph.adjacency(mode = "lower", weighted = TRUE)</code>.</p></li>
@@ -157,7 +157,7 @@ above a threshold were used to construct a graph via
 
       <footer>
       <div class="copyright">
-  <p>Developed by Felix G.M. Ernst, Tuomas Borman.</p>
+  <p>Developed by Felix G.M. Ernst, Tuomas Borman, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">
