@@ -44,7 +44,7 @@
 #' @section Abundance plotting:
 #' 
 #' \describe{
-#'   \item{\code{flipped}:}{Logical scalar. Should the plot be flipped. Defaults
+#'   \item{\code{flipped}:}{Logical scalar. Should the plot be flipped? Defaults
 #'     to \code{FALSE}.}
 #'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
 #'     Defaults to \code{TRUE}.}
@@ -55,9 +55,30 @@
 #'   \item{\code{bar_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
 #'     transparency of the bars. Defaults to \code{1}.}
 #'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
-#'     transparency of the tips. Defaults to \code{1}.}
+#'     transparency of the points. Defaults to \code{1}.}
 #'   \item{\code{point_size}:}{Numeric scalar, specifying the 
-#'     default size of tips Defaults to \code{2.}.}
+#'     default size of points. Defaults to \code{2.}.}
+#' }
+#' 
+#' @section Abundance density plotting:
+#' 
+#' \describe{
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'     Defaults to \code{TRUE}.}
+#'   \item{\code{point_shape}:}{Numeric scalar setting the shape of points. 
+#'     Defaults to \code{21}.}
+#'   \item{\code{point_colour}:}{Character scalar, specifying the 
+#'     default colour of points. Defaults to \code{2.}.}
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'     default size of points. Defaults to \code{2.}.}
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the points. Defaults to \code{1}.}
+#'   \item{\code{flipped}:}{Logical scalar. Should the plot be flipped? Defaults
+#'     to \code{FALSE}.}
+#'   \item{\code{scales_free}:}{Logical scalar. Should \code{scales = "free"} be
+#'     set for faceted plots? Defaults to \code{TRUE}.}
+#'   \item{\code{angle_x_text}:}{Logical scalar. Should x tick labels be plotted?
+#'     Defaults to \code{FALSE}.}
 #' }
 #' 
 #' @section Prevalence plotting:
@@ -252,8 +273,11 @@ NULL
 
 
 # Adjusted function originally developed for scater package by Aaron Lun
-.get_point_args <- function(colour_by, shape_by, size_by, alpha = 0.65,
-                            size = NULL, shape = 21) 
+.get_point_args <- function(colour_by, shape_by, size_by,
+                            alpha = 0.65,
+                            size = NULL,
+                            shape = 21,
+                            colour = "grey70") 
 {
     aes_args <- list()
     fill_colour <- TRUE
@@ -275,7 +299,7 @@ NULL
     new_aes <- do.call(aes_string, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
-        geom_args$fill <- "grey70"
+        geom_args$fill <- colour
     }
     if (is.null(shape_by)) {
         geom_args$shape <- shape
@@ -289,7 +313,8 @@ NULL
 .get_line_args <- function(colour_by, linetype_by, size_by,
                            alpha = 0.65,
                            linetype = 1,
-                           size = NULL) 
+                           size = NULL,
+                           colour = "grey70") 
 {
     aes_args <- list()
     if (!is.null(linetype_by)) {
@@ -304,7 +329,7 @@ NULL
     new_aes <- do.call(aes_string, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
-        geom_args$colour <- "grey70"
+        geom_args$colour <- colour
     }
     if (is.null(linetype_by)) {
         geom_args$linetype <- linetype
@@ -333,7 +358,7 @@ NULL
 }
 
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL,
-                           layout = NULL){
+                           layout){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
         aes_args$colour <- "edge_colour_by"
@@ -348,9 +373,6 @@ NULL
     }
     if (is.null(edge_size_by)) {
         geom_args$size <- size
-    }
-    if (!is.null(layout)) {
-        geom_args$layout <- layout
     }
     return(list(args = geom_args))
 }
