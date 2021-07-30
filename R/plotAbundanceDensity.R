@@ -15,7 +15,7 @@
 #'   plotted. (default: \code{abund_values = "counts"})
 #'
 #' @param n a positive integer specifying the number of the most abundant taxa
-#'   to show. (default: \code{n = 25})
+#'   to show. (default: \code{n = min(nrow(object), 25L)})
 #'  
 #' @param colour_by a single character value defining a column from
 #'   \code{colData}, that is used to color plot. Must be a value of
@@ -137,7 +137,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
           function(object,
                    layout = c("jitter", "density", "point"),
                    abund_values = "counts",
-                   n = 25, 
+                   n = min(nrow(object), 25L), 
                    colour_by = NULL, 
                    shape_by = NULL, 
                    size_by = NULL, 

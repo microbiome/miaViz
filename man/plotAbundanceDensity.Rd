@@ -11,7 +11,7 @@ plotAbundanceDensity(object, ...)
   object,
   layout = c("jitter", "density", "point"),
   abund_values = "counts",
-  n = 25,
+  n = min(nrow(object), 25L),
   colour_by = NULL,
   shape_by = NULL,
   size_by = NULL,
@@ -63,7 +63,7 @@ There are three different options: \code{jitter}, \code{density}, and
 plotted. (default: \code{abund_values = "counts"})}
 
 \item{n}{a positive integer specifying the number of the most abundant taxa
-to show. (default: \code{n = 25})}
+to show. (default: \code{n = min(nrow(object), 25L)})}
 
 \item{colour_by}{a single character value defining a column from
 \code{colData}, that is used to color plot. Must be a value of
