@@ -167,7 +167,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                   stop("'size_by' must be a single character value.",
                        call. = FALSE)
               }
-              # Checks size_by
+              # Checks order_descending
               if( !is.na(order_descending) && !.is_a_bool(order_descending)){
                   stop("'order_descending' must be TRUE, FALSE or NA.",
                        call. = FALSE)
@@ -267,7 +267,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                              size_by = NULL,
                              point_shape = 21,
                              point_size = 2,
-                             alpha = 0.6,
+                             point_alpha = 0.6,
                              flipped = FALSE,
                              scales_free = TRUE,
                              angle_x_text = TRUE){
@@ -300,7 +300,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
         point_args <- .get_point_args(colour_by,
                                       shape_by = shape_by,
                                       size_by = size_by,
-                                      alpha = alpha,
+                                      alpha = point_alpha,
                                       shape = point_shape,
                                       size = point_size)
         point_args$args$mapping$y <- sym("Y")

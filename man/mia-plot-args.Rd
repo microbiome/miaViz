@@ -70,6 +70,27 @@ default size of tips Defaults to \code{2.}.}
 }
 }
 
+\section{Abundance density plotting}{
+
+
+\describe{
+\item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
+Defaults to \code{TRUE}.}
+\item{\code{point_shape}:}{Numeric scalar setting the shape of points.
+Defaults to \code{21}.}
+\item{\code{point_size}:}{Numeric scalar, specifying the
+default size of tips Defaults to \code{2.}.}
+\item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+transparency of the tips. Defaults to \code{1}.}
+\item{\code{flipped}:}{Logical scalar. Should the plot be flipped. Defaults
+to \code{FALSE}.}
+\item{\code{scales_free}:}{Logical scalar. Should \code{scales = "free"} be
+set for faceted plots? Defaults to \code{TRUE}.}
+\item{\code{angle_x_text}:}{Logical scalar. Should x tick labels be plotted?
+Defaults to \code{FALSE}.}
+}
+}
+
 \section{Prevalence plotting}{
 
 

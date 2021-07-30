@@ -60,6 +60,25 @@
 #'     default size of tips Defaults to \code{2.}.}
 #' }
 #' 
+#' @section Abundance density plotting:
+#' 
+#' \describe{
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'     Defaults to \code{TRUE}.}
+#'   \item{\code{point_shape}:}{Numeric scalar setting the shape of points. 
+#'     Defaults to \code{21}.}
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'     default size of tips Defaults to \code{2.}.}
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'     transparency of the tips. Defaults to \code{1}.}
+#'   \item{\code{flipped}:}{Logical scalar. Should the plot be flipped. Defaults
+#'     to \code{FALSE}.}
+#'   \item{\code{scales_free}:}{Logical scalar. Should \code{scales = "free"} be
+#'     set for faceted plots? Defaults to \code{TRUE}.}
+#'   \item{\code{angle_x_text}:}{Logical scalar. Should x tick labels be plotted?
+#'     Defaults to \code{FALSE}.}
+#' }
+#' 
 #' @section Prevalence plotting:
 #' 
 #' \describe{
@@ -332,8 +351,7 @@ NULL
     return(list(args = geom_args))
 }
 
-.get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL,
-                           layout = NULL){
+.get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
         aes_args$colour <- "edge_colour_by"
@@ -348,9 +366,6 @@ NULL
     }
     if (is.null(edge_size_by)) {
         geom_args$size <- size
-    }
-    if (!is.null(layout)) {
-        geom_args$layout <- layout
     }
     return(list(args = geom_args))
 }
