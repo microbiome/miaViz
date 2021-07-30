@@ -17,16 +17,19 @@
 #' @param n a positive integer specifying the number of the most abundant taxa to show.
 #' (default: \code{n = 25})
 #'  
-#' @param colour_by a single character value defining a column from \code{colData}, that is used to
-#' color plot. Must be a value of \code{colData()} function. (default: \code{colour_by = NULL})
+#' @param colour_by a single character value defining a column from \code{colData},
+#' that is used to color plot. Must be a value of \code{colData()} function.
+#' (default: \code{colour_by = NULL})
 #' 
-#' @param shape_by a single character value defining a column from \code{colData}, that is used to
-#' group observations to different point shape groups. Must be a value of \code{colData()} function.
-#' \code{shape_by} is disabled when \code{layout = "density"}. (default: \code{shape_by = NULL})
+#' @param shape_by a single character value defining a column from \code{colData},
+#' that is used to group observations to different point shape groups. Must be a value
+#' of \code{colData()} function. \code{shape_by} is disabled when \code{layout = "density"}.
+#' (default: \code{shape_by = NULL})
 #' 
 #' @param size_by a single character value defining a column from \code{colData}, that is used to
-#' group observations to different point size groups. Must be a value of \code{colData()} function.
-#' \code{size_by} is disabled when \code{layout = "density"}. (default: \code{size_by = NULL})
+#' group observations to different point size groups. Must be a value of \code{colData()}
+#' function. \code{size_by} is disabled when \code{layout = "density"}.
+#' (default: \code{size_by = NULL})
 #'   
 #' @param ... additional parameters for plotting. 
 #' \itemize{
@@ -37,8 +40,8 @@
 #'   \code{ylab} is disabled when \code{layout = "density"}. 
 #'   (default: \code{ylab = "Taxa")} }
 #'   
-#'   \item{point_alpha}{ a numeric value from range 0 to 1 selecting the transparency of colour in
-#'   \code{jitter} and \code{point} plot. (default: \code{point_alpha = 0.6}) }
+#'   \item{point_alpha}{ a numeric value from range 0 to 1 selecting the transparency of
+#'   colour in \code{jitter} and \code{point} plot. (default: \code{point_alpha = 0.6}) }
 #'   
 #'   \item{point_shape}{ a positive integer value selecting the shape of point in
 #'   \code{jitter} and \code{point} plot. (default: \code{point_shape = 21}) }
@@ -52,16 +55,17 @@
 #'   \item{flipped}{ a boolean value selecting if the orientation of plot is changed 
 #'   so that x-axis and y-axis are swapped. (default \code{flipped = FALSE}) }
 #'   
-#'   \item{add_x_text}{ a boolean value selecting if text that represents values is included in x-axis. 
-#'   (default: \code{add_x_text = TRUE}) }
+#'   \item{add_x_text}{ a boolean value selecting if text that represents values is included
+#'   in x-axis. (default: \code{add_x_text = TRUE}) }
+#'
 #' }
 #' See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @details
 #' This function plots abundance of the most abundant taxa. Abundance can be plotted as
 #' a jitter plot, a density plot, or a point plot. By default, x-axis represents abundance 
-#' and y-axis taxa. In a jitter and point plot, each point represents abundance of individual taxa 
-#' in individual sample. Most common abundances are shown as a higher density. 
+#' and y-axis taxa. In a jitter and point plot, each point represents abundance of
+#' individual taxa in individual sample. Most common abundances are shown as a higher density. 
 #' 
 #' A density plot can be seen as a smoothened bar plot. It visualized distribution of 
 #' abundances where peaks represent most common abundances.
@@ -308,14 +312,16 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
             theme(strip.background = element_blank())
         if(flipped){
             plot_out <- plot_out +
-                theme(strip.text.x.bottom = element_text(angle = 90, hjust = 1), # Removes label grid, horizontal labels
+            # Removes label grid, horizontal labels
+                theme(strip.text.x.bottom = element_text(angle = 90, hjust = 1), 
                       axis.ticks.x = element_blank(),
                       axis.text.x = element_blank(), # Removes x-axis
                       axis.title.x = element_blank(),
                       axis.line.x = element_blank()) # Removes x-axis
         } else {
             plot_out <- plot_out +
-                theme(strip.text.y.left = element_text(angle = 0, hjust = 1), # Removes label grid, horizontal labels
+             # Removes label grid, horizontal labels
+                theme(strip.text.y.left = element_text(angle = 0, hjust = 1), 
                       axis.ticks.y = element_blank(),
                       axis.text.y = element_blank(), # Removes y-axis
                       axis.title.y = element_blank(),

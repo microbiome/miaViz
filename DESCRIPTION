@@ -13,9 +13,10 @@ Authors@R:
              comment = c(ORCID = "0000-0001-5537-637X"))
 	     )
 Description: 
-    miaViz implements plotting function to work with TreeSummarizedExperiment
+    The miaViz package implements plotting function to work with TreeSummarizedExperiment
     and related objects in a context of microbiome analysis. Among others this 
-    includes plotting tree, graph and microbiome series data.
+    includes plotting tree, graph and microbiome series data. The package is part of the
+    broader miaverse framework.
 biocViews: Microbiome, Software, Visualization
 License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8

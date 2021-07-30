@@ -32,8 +32,8 @@ object.}
 \code{ylab} is disabled when \code{layout = "density"}.
 (default: \code{ylab = "Taxa")} }
 
-\item{point_alpha}{ a numeric value from range 0 to 1 selecting the transparency of colour in
-\code{jitter} and \code{point} plot. (default: \code{point_alpha = 0.6}) }
+\item{point_alpha}{ a numeric value from range 0 to 1 selecting the transparency of
+colour in \code{jitter} and \code{point} plot. (default: \code{point_alpha = 0.6}) }
 
 \item{point_shape}{ a positive integer value selecting the shape of point in
 \code{jitter} and \code{point} plot. (default: \code{point_shape = 21}) }
@@ -47,8 +47,9 @@ object.}
 \item{flipped}{ a boolean value selecting if the orientation of plot is changed
 so that x-axis and y-axis are swapped. (default \code{flipped = FALSE}) }
 
-\item{add_x_text}{ a boolean value selecting if text that represents values is included in x-axis.
-(default: \code{add_x_text = TRUE}) }
+\item{add_x_text}{ a boolean value selecting if text that represents values is included
+in x-axis. (default: \code{add_x_text = TRUE}) }
+
 }
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
@@ -63,16 +64,19 @@ plotted. (default: \code{abund_values = "counts"})}
 \item{n}{a positive integer specifying the number of the most abundant taxa to show.
 (default: \code{n = 25})}
 
-\item{colour_by}{a single character value defining a column from \code{colData}, that is used to
-color plot. Must be a value of \code{colData()} function. (default: \code{colour_by = NULL})}
+\item{colour_by}{a single character value defining a column from \code{colData},
+that is used to color plot. Must be a value of \code{colData()} function.
+(default: \code{colour_by = NULL})}
 
-\item{shape_by}{a single character value defining a column from \code{colData}, that is used to
-group observations to different point shape groups. Must be a value of \code{colData()} function.
-\code{shape_by} is disabled when \code{layout = "density"}. (default: \code{shape_by = NULL})}
+\item{shape_by}{a single character value defining a column from \code{colData},
+that is used to group observations to different point shape groups. Must be a value
+of \code{colData()} function. \code{shape_by} is disabled when \code{layout = "density"}.
+(default: \code{shape_by = NULL})}
 
 \item{size_by}{a single character value defining a column from \code{colData}, that is used to
-group observations to different point size groups. Must be a value of \code{colData()} function.
-\code{size_by} is disabled when \code{layout = "density"}. (default: \code{size_by = NULL})}
+group observations to different point size groups. Must be a value of \code{colData()}
+function. \code{size_by} is disabled when \code{layout = "density"}.
+(default: \code{size_by = NULL})}
 }
 \value{
 A \code{ggplot2} object
@@ -83,8 +87,8 @@ This function plots abundance of the most abundant taxa.
 \details{
 This function plots abundance of the most abundant taxa. Abundance can be plotted as
 a jitter plot, a density plot, or a point plot. By default, x-axis represents abundance
-and y-axis taxa. In a jitter and point plot, each point represents abundance of individual taxa
-in individual sample. Most common abundances are shown as a higher density.
+and y-axis taxa. In a jitter and point plot, each point represents abundance of
+individual taxa in individual sample. Most common abundances are shown as a higher density.
 
 A density plot can be seen as a smoothened bar plot. It visualized distribution of
 abundances where peaks represent most common abundances.

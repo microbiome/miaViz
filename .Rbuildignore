@@ -1,5 +1,7 @@
 ^miaViz\.Rproj$
 ^\.Rproj\.user$
 .github
+.git
 .RData
 .pdf
+inst/extras/
