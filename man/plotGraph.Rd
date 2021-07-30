@@ -60,7 +60,7 @@ object or just a
 For the latter object a graph object must be stored in \code{metadata(x)$name}.}
 
 \item{...}{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details}
+\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{show_label}{\code{logical} (scalar), \code{integer} or \code{character}
 vector. If a \code{logical} scalar is given, should tip labels be plotted
