@@ -326,6 +326,12 @@ plotDMNFit(dmn_se, type = "laplace")
 
 More examples and materials are available at Orchestrating Microbiome Analysis [@OMA].
 
+
+# Plotting options
+
+See `help("mia-plot-args")` for more options for adjusting the plots.
+
+
 # Session info
 
 ```{r}

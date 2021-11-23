@@ -96,11 +96,15 @@ plotAbundance(se, abund_values="counts")
 ## Using "Phylum" as rank
 plotAbundance(se, abund_values="counts", rank = "Phylum", add_legend = FALSE)
 
+## Show sample names (see help("mia-plot-args") for more options)
+plotAbundance(se, add_x_text=TRUE)
+
 ## If rank is set to NULL plotAbundance behaves like plotExpression
 plotAbundance(se, abund_values="counts", rank = NULL,
            features = head(rownames(se)))
   
-## A feature from colData or taxon from chosen rank can be used for ordering samples.
+## A feature from colData or taxon from chosen rank can be used for
+## ordering samples.
 plotAbundance(se, abund_values="counts", rank = "Phylum",
            order_sample_by = "Bacteroidetes")
 
