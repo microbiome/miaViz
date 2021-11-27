@@ -74,7 +74,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -155,12 +155,14 @@ object contain the DMN data in <code>metadata</code>.</p></td>
     <div class='dont-index'><p><code><a href='https://rdrr.io/pkg/mia/man/calculateDMN.html'>calculateDMN</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>dmn_se</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
-<span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'>metadata</span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; [1] "DMN"</div><div class='input'>
-<span class='co'># plot the fit</span>
-<span class='fu'>plotDMNFit</span><span class='op'>(</span><span class='va'>dmn_se</span>, type <span class='op'>=</span> <span class='st'>"laplace"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotDMN-1.png' alt='' width='3000' height='2100' /></div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>dmn_se</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'><a href='https://rdrr.io/r/base/names.html'>names</a></span><span class='op'>(</span><span class='fu'>metadata</span><span class='op'>(</span><span class='va'>dmn_se</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> [1] "DMN"</span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># plot the fit</span></span>
+<span class='r-in'><span class='fu'>plotDMNFit</span><span class='op'>(</span><span class='va'>dmn_se</span>, type <span class='op'>=</span> <span class='st'>"laplace"</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plotDMN-1.png' alt='' width='3000' height='2100' /></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

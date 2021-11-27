@@ -76,7 +76,7 @@ colTreeData can be used." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -188,53 +188,73 @@ values of <code>rowTreeData(c)</code></p>
 contain at least a &#8216;node&#8217; and &#8216;label&#8217; column.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>td</span> <span class='op'>&lt;-</span> <span class='fu'>rowTreeData</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-<span class='va'>td</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 38,431 × 2</span>
-#&gt;     node label 
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> 
-#&gt; <span style='color: #BCBCBC;'> 1</span>     1 549322
-#&gt; <span style='color: #BCBCBC;'> 2</span>     2 522457
-#&gt; <span style='color: #BCBCBC;'> 3</span>     3 951   
-#&gt; <span style='color: #BCBCBC;'> 4</span>     4 244423
-#&gt; <span style='color: #BCBCBC;'> 5</span>     5 586076
-#&gt; <span style='color: #BCBCBC;'> 6</span>     6 246140
-#&gt; <span style='color: #BCBCBC;'> 7</span>     7 143239
-#&gt; <span style='color: #BCBCBC;'> 8</span>     8 244960
-#&gt; <span style='color: #BCBCBC;'> 9</span>     9 255340
-#&gt; <span style='color: #BCBCBC;'>10</span>    10 144887
-#&gt; <span style='color: #949494;'># … with 38,421 more rows</span></div><div class='input'><span class='va'>td</span><span class='op'>$</span><span class='va'>test</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>td</span><span class='op'>)</span><span class='op'>)</span>
-<span class='fu'>rowTreeData</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>td</span>
-<span class='fu'>rowTreeData</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 38,431 × 2</span>
-#&gt;     node label 
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> 
-#&gt; <span style='color: #BCBCBC;'> 1</span>     1 549322
-#&gt; <span style='color: #BCBCBC;'> 2</span>     2 522457
-#&gt; <span style='color: #BCBCBC;'> 3</span>     3 951   
-#&gt; <span style='color: #BCBCBC;'> 4</span>     4 244423
-#&gt; <span style='color: #BCBCBC;'> 5</span>     5 586076
-#&gt; <span style='color: #BCBCBC;'> 6</span>     6 246140
-#&gt; <span style='color: #BCBCBC;'> 7</span>     7 143239
-#&gt; <span style='color: #BCBCBC;'> 8</span>     8 244960
-#&gt; <span style='color: #BCBCBC;'> 9</span>     9 255340
-#&gt; <span style='color: #BCBCBC;'>10</span>    10 144887
-#&gt; <span style='color: #949494;'># … with 38,421 more rows</span></div><div class='input'><span class='fu'>combineTreeData</span><span class='op'>(</span><span class='fu'>rowTree</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>, <span class='va'>td</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; 'treedata' S4 object'.
-#&gt; 
-#&gt; ...@ phylo: 
-#&gt; Phylogenetic tree with 19216 tips and 19215 internal nodes.
-#&gt; 
-#&gt; Tip labels:
-#&gt;   549322, 522457, 951, 244423, 586076, 246140, ...
-#&gt; Node labels:
-#&gt;   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 1.000.2, ...
-#&gt; 
-#&gt; Rooted; includes branch lengths.
-#&gt; 
-#&gt; with the following features available:
-#&gt; 	'test'.</div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>td</span> <span class='op'>&lt;-</span> <span class='fu'>rowTreeData</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-in'><span class='va'>td</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 38,431 × 2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     node label </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span>     1 549322</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span>     2 522457</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span>     3 951   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span>     4 244423</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span>     5 586076</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span>     6 246140</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span>     7 143239</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span>     8 244960</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>     9 255340</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>    10 144887</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 38,421 more rows</span></span>
+<span class='r-in'><span class='va'>td</span><span class='op'>$</span><span class='va'>test</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Normal.html'>rnorm</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/nrow.html'>nrow</a></span><span class='op'>(</span><span class='va'>td</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-in'><span class='fu'>rowTreeData</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span> <span class='op'>&lt;-</span> <span class='va'>td</span></span>
+<span class='r-in'><span class='fu'>rowTreeData</span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># A tibble: 38,431 × 2</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     node label </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span>     1 549322</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span>     2 522457</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span>     3 951   </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span>     4 244423</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span>     5 586076</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span>     6 246140</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span>     7 143239</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span>     8 244960</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>     9 255340</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>    10 144887</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 38,421 more rows</span></span>
+<span class='r-in'><span class='fu'>combineTreeData</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html'>rowTree</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span><span class='op'>)</span>, <span class='va'>td</span><span class='op'>)</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> 'treedata' S4 object'.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> ...@ phylo:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Phylogenetic tree with 19216 tips and 19215 internal nodes.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Tip labels:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   549322, 522457, 951, 244423, 586076, 246140, ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Node labels:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   , 0.858.4, 1.000.154, 0.764.3, 0.995.2, 1.000.2, ...</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> Rooted; includes branch lengths.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> with the following features available:</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>   'test'.</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># The associated data tibble abstraction: 38,431 × 4</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># The 'node', 'label' and 'isTip' are from the phylo tree.</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>     node label  isTip    test</span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;lgl&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 1</span>     1 549322 TRUE   1.32  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 2</span>     2 522457 TRUE   0.524 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 3</span>     3 951    TRUE   0.607 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 4</span>     4 244423 TRUE  -<span style='color: #BB0000;'>0.110</span> </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 5</span>     5 586076 TRUE   0.172 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 6</span>     6 246140 TRUE  -<span style='color: #BB0000;'>0.090</span><span style='color: #BB0000; text-decoration: underline;'>3</span></span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 7</span>     7 143239 TRUE   1.92  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 8</span>     8 244960 TRUE   1.30  </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'> 9</span>     9 255340 TRUE   0.749 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #BCBCBC;'>10</span>    10 144887 TRUE   0.556 </span>
+<span class='r-out co'><span class='r-pr'>#&gt;</span> <span style='color: #949494;'># … with 38,421 more rows</span></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

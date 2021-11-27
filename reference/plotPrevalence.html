@@ -75,7 +75,7 @@ information." />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -242,7 +242,7 @@ for selecting labels from the rownames of <code>x</code>. If <code>rank</code> i
     <tr>
       <th>facet_by</th>
       <td><p>Taxonomic rank to facet the plot by.
-Value must be of <code><a href='https://rdrr.io/pkg/mia/man/taxonomy-methods.html'>taxonomyRanks(x)</a></code>
+Value must be of <code>taxonomyRanks(x)</code>
 Argument can only be used in function plotPrevalentAbundance.</p></td>
     </tr>
     <tr>
@@ -279,32 +279,38 @@ with subsetting via <code>getPrevalentTaxa</code> or
 <code><a href='https://rdrr.io/pkg/mia/man/agglomerate-methods.html'>agglomerateByRank</a></code></p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span>
-
-<span class='co'># plotting N of prevalence exceeding taxa on the Phylum level</span>
-<span class='fu'>plotPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotPrevalence-1.png' alt='' width='3000' height='2100' /></div><div class='input'><span class='fu'>plotPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>scale_x_log10</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='img'><img src='plotPrevalence-2.png' alt='' width='3000' height='2100' /></div><div class='input'>
-<span class='co'># plotting prevalence per taxa for different detectio thresholds as heatmap</span>
-<span class='fu'>plotTaxaPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span>
-</div><div class='img'><img src='plotPrevalence-3.png' alt='' width='3000' height='2100' /></div><div class='input'>
-<span class='co'># by default a continous scale is used for different detections levels, </span>
-<span class='co'># but this can be adjusted</span>
-<span class='fu'>plotTaxaPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,
-                   detections <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0.001</span>, <span class='fl'>0.01</span>, <span class='fl'>0.1</span>, <span class='fl'>0.2</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='img'><img src='plotPrevalence-4.png' alt='' width='3000' height='2100' /></div><div class='input'>                   
-<span class='co'># point layout for plotTaxaPrevalence can be used to visualize by additional</span>
-<span class='co'># information</span>
-<span class='fu'>plotPrevalentAbundance</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Family"</span>,
-                       colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span> <span class='op'>+</span>
-    <span class='fu'>scale_x_log10</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='img'><img src='plotPrevalence-5.png' alt='' width='3000' height='2100' /></div><div class='input'>
-<span class='co'># When using function plotPrevalentAbundace, it is possible to create facets</span>
-<span class='co'># with 'facet_by'.</span>
-<span class='fu'>plotPrevalentAbundance</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Family"</span>,
-                       colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span>, facet_by <span class='op'>=</span> <span class='st'>"Kingdom"</span><span class='op'>)</span> <span class='op'>+</span>
-    <span class='fu'>scale_x_log10</span><span class='op'>(</span><span class='op'>)</span>
-</div><div class='img'><img src='plotPrevalence-6.png' alt='' width='3000' height='2100' /></div></pre>
+    <pre class="examples"><span class='r-in'><span class='fu'><a href='https://rdrr.io/r/utils/data.html'>data</a></span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, package <span class='op'>=</span> <span class='st'>"mia"</span><span class='op'>)</span></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># plotting N of prevalence exceeding taxa on the Phylum level</span></span>
+<span class='r-in'><span class='fu'>plotPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plotPrevalence-1.png' alt='' width='3000' height='2100' /></span>
+<span class='r-in'><span class='fu'>plotPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span> <span class='op'>+</span> <span class='fu'>scale_x_log10</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plotPrevalence-2.png' alt='' width='3000' height='2100' /></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># plotting prevalence per taxa for different detectio thresholds as heatmap</span></span>
+<span class='r-in'><span class='fu'>plotTaxaPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plotPrevalence-3.png' alt='' width='3000' height='2100' /></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># by default a continous scale is used for different detections levels, </span></span>
+<span class='r-in'><span class='co'># but this can be adjusted</span></span>
+<span class='r-in'><span class='fu'>plotTaxaPrevalence</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Phylum"</span>,</span>
+<span class='r-in'>                   detections <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span>, <span class='fl'>0.001</span>, <span class='fl'>0.01</span>, <span class='fl'>0.1</span>, <span class='fl'>0.2</span><span class='op'>)</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plotPrevalence-4.png' alt='' width='3000' height='2100' /></span>
+<span class='r-in'>                   </span>
+<span class='r-in'><span class='co'># point layout for plotTaxaPrevalence can be used to visualize by additional</span></span>
+<span class='r-in'><span class='co'># information</span></span>
+<span class='r-in'><span class='fu'>plotPrevalentAbundance</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Family"</span>,</span>
+<span class='r-in'>                       colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span class='r-in'>    <span class='fu'>scale_x_log10</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plotPrevalence-5.png' alt='' width='3000' height='2100' /></span>
+<span class='r-in'></span>
+<span class='r-in'><span class='co'># When using function plotPrevalentAbundace, it is possible to create facets</span></span>
+<span class='r-in'><span class='co'># with 'facet_by'.</span></span>
+<span class='r-in'><span class='fu'>plotPrevalentAbundance</span><span class='op'>(</span><span class='va'>GlobalPatterns</span>, rank <span class='op'>=</span> <span class='st'>"Family"</span>,</span>
+<span class='r-in'>                       colour_by <span class='op'>=</span> <span class='st'>"Phylum"</span>, facet_by <span class='op'>=</span> <span class='st'>"Kingdom"</span><span class='op'>)</span> <span class='op'>+</span></span>
+<span class='r-in'>    <span class='fu'>scale_x_log10</span><span class='op'>(</span><span class='op'>)</span></span>
+<span class='r-plt img'><img src='plotPrevalence-6.png' alt='' width='3000' height='2100' /></span>
+</pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

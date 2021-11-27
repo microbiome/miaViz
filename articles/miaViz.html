@@ -32,7 +32,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.1.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.0</span>
       </span>
     </div>
 
@@ -61,7 +61,7 @@
 
       
 
-      </header><script src="miaViz_files/header-attrs-2.9/header-attrs.js"></script><div class="row">
+      </header><script src="miaViz_files/header-attrs-2.11/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>miaViz</h1>
@@ -107,14 +107,14 @@
 <code class="sourceCode R"><span class="va">prev_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/getPrevalence.html">getPrevalentTaxa</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,
                                 detection <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu">rowData</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op">%in%</span> <span class="va">prev_phylum</span><span class="op">]</span>,
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">prev_phylum</span><span class="op">]</span>,
               rank <span class="op">=</span> <span class="st">"Phylum"</span>,
               abund_values <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-7-1.png" width="3000"></p>
 <p>The <code>features</code> argument is reused for plotting data along the different samples. In the next example the <sub>SampleType</sub> is plotted along the samples. In this case the result is a list, which can combined using external tools, for example <code>patchwork</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com">patchwork</a></span><span class="op">)</span>
-<span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu">rowData</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op">%in%</span> <span class="va">prev_phylum</span><span class="op">]</span>,
+<span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html">%in%</a></span> <span class="va">prev_phylum</span><span class="op">]</span>,
                        features <span class="op">=</span> <span class="st">"SampleType"</span>,
                        rank <span class="op">=</span> <span class="st">"Phylum"</span>,
                        abund_values <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span>
@@ -136,7 +136,7 @@
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotPrevalence.html">plotPrevalentAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,
                        colour_by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span>
-    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></code></pre></div>
+    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-10-1.png" width="3000"></p>
 <p><code>plotPrevalence</code> plot the number of samples and their prevalence across different abundance thresholds. Abundance steps can be adjusted using the <code>detections</code> argument, whereas the analyzed prevalence steps is set using the <code>prevalences</code> argument.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
@@ -155,20 +155,20 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/">scater</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/mia">mia</a></span><span class="op">)</span></code></pre></div>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>
-<span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html">addPerFeatureQC</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span>
-<span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">log_mean</span> <span class="op">&lt;-</span>
-    <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span>
-<span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;-</span> 
-    <span class="fu">rowData</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">/</span> <span class="fl">100</span>
-<span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html">getTopTaxa</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html">addPerFeatureQC</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">log_mean</span> <span class="op">&lt;-</span>
+    <span class="fu"><a href="https://rdrr.io/r/base/Log.html">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;-</span> 
+    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">/</span> <span class="fl">100</span>
+<span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html">getTopTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,
                        method<span class="op">=</span><span class="st">"mean"</span>,
                        top<span class="op">=</span><span class="fl">100L</span>,
                        abund_values<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></code></pre></div>
 <p>Colour, size and shape of tree tips and nodes can be decorated based on data present in the <code>SE</code> object or by providing additional information via the <code>other_fields</code> argument. Note that currently information for nodes have to be provided via the <code>other_fields</code> arguments.</p>
 <p>Data will be matched via the <code>node</code> or <code>label</code> argument depending on which was provided. <code>label</code> takes precedent.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
             tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,
             tip_size_by <span class="op">=</span> <span class="st">"detected"</span><span class="op">)</span>
 <span class="co">#&gt; Warning in .numeric_ij(ij = i, x = x, dim = "row"): For rows/cols with the same</span>
@@ -184,7 +184,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 </div>
 <p>Tip and node labels can be shown as well. Setting <code>show_label = TRUE</code> shows the tip labels only …</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
             tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,
             tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,
             show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -203,7 +203,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <p>Please not that currently <code>ggtree</code> only can plot node labels in a rectangular layout.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"Genus:Providencia"</span>, <span class="st">"Genus:Morganella"</span>, <span class="st">"0.961.60"</span><span class="op">)</span>
-<span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
+<span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
             tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,
             tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,
             show_label <span class="op">=</span> <span class="va">labels</span>,
@@ -221,7 +221,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 </div>
 <p>Information can also be visualized on the edges of the tree plot.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
+<code class="sourceCode R"><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,
             edge_colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,
             tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span>
 <span class="co">#&gt; Warning in .numeric_ij(ij = i, x = x, dim = "row"): For rows/cols with the same</span>
@@ -246,7 +246,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <p>In the following examples, the <code>weight</code> data is automatically generated from the graph data. The <code>SummarizedExperiment</code> provided is required to have overlapping rownames with the node names of the graph. Using this link the graph plot can incorporated data from the <code>SummarizedExperiment</code>.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/plotGraph.html">plotColGraph</a></span><span class="op">(</span><span class="va">col_graph</span>,
-             <span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,
+             <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,
              colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,
              edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,
              edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,
@@ -254,7 +254,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <p><img src="miaViz_files/figure-html/unnamed-chunk-15-1.png" width="3000"></p>
 <p>As mentioned the graph data can be provided from the <code>metadata</code> of the <code>SummarizedExperiment</code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu">metadata</span><span class="op">(</span><span class="fu">altExp</span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="va">col_graph</span></code></pre></div>
+<code class="sourceCode R"><span class="fu">metadata</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="va">col_graph</span></code></pre></div>
 <p>This produces the same plot as shown above.</p>
 </div>
 <div id="plotting-of-serial-data" class="section level1">
@@ -262,9 +262,8 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <a href="#plotting-of-serial-data" class="anchor"></a>Plotting of serial data</h1>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">microbiomeDataSets</span><span class="op">)</span>
-<span class="co">#&gt; Loading required package: MultiAssayExperiment</span>
 <span class="va">silverman</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbiomeDataSets/man/SilvermanAGutData.html">SilvermanAGutData</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; snapshotDate(): 2021-07-30</span>
+<span class="co">#&gt; snapshotDate(): 2021-11-24</span>
 <span class="co">#&gt; see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span>
 <span class="co">#&gt; loading from cache</span>
 <span class="co">#&gt; see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span>
@@ -309,7 +308,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>
 <span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span>
 <span class="fu"><a href="../reference/plotColTile.html">plotColTile</a></span><span class="op">(</span><span class="va">se</span>,<span class="st">"SampleType"</span>,<span class="st">"Primer"</span><span class="op">)</span> <span class="op">+</span>
-  <span class="fu">theme</span><span class="op">(</span>axis.text.x.top <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html">theme</a></span><span class="op">(</span>axis.text.x.top <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-22-1.png" width="3000"></p>
 </div>
 <div id="dmn-fit-plotting" class="section level1">
@@ -330,9 +329,9 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <a href="#session-info" class="anchor"></a>Session info</h1>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; R version 4.1.0 (2021-05-18)</span>
+<span class="co">#&gt; R Under development (unstable) (2021-11-16 r81199)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
-<span class="co">#&gt; Running under: Ubuntu 20.04.2 LTS</span>
+<span class="co">#&gt; Running under: Ubuntu 20.04.3 LTS</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Matrix products: default</span>
 <span class="co">#&gt; BLAS/LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/libopenblasp-r0.3.8.so</span>
@@ -350,86 +349,87 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <span class="co">#&gt; [8] base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt;  [1] microbiomeDataSets_1.1.1       MultiAssayExperiment_1.19.3   </span>
-<span class="co">#&gt;  [3] scater_1.21.2                  scuttle_1.3.0                 </span>
-<span class="co">#&gt;  [5] patchwork_1.1.1                miaViz_1.1.4                  </span>
-<span class="co">#&gt;  [7] ggraph_2.0.5                   ggplot2_3.3.5                 </span>
-<span class="co">#&gt;  [9] mia_1.1.7                      TreeSummarizedExperiment_2.1.3</span>
-<span class="co">#&gt; [11] Biostrings_2.61.1              XVector_0.33.0                </span>
-<span class="co">#&gt; [13] SingleCellExperiment_1.15.1    SummarizedExperiment_1.23.1   </span>
-<span class="co">#&gt; [15] Biobase_2.53.0                 GenomicRanges_1.45.0          </span>
-<span class="co">#&gt; [17] GenomeInfoDb_1.29.3            IRanges_2.27.0                </span>
-<span class="co">#&gt; [19] S4Vectors_0.31.0               BiocGenerics_0.39.1           </span>
-<span class="co">#&gt; [21] MatrixGenerics_1.5.1           matrixStats_0.60.0            </span>
-<span class="co">#&gt; [23] BiocStyle_2.21.3              </span>
+<span class="co">#&gt;  [1] microbiomeDataSets_1.3.0       scater_1.23.1                 </span>
+<span class="co">#&gt;  [3] scuttle_1.5.0                  patchwork_1.1.1               </span>
+<span class="co">#&gt;  [5] miaViz_1.3.0                   ggraph_2.0.5                  </span>
+<span class="co">#&gt;  [7] ggplot2_3.3.5                  mia_1.3.8                     </span>
+<span class="co">#&gt;  [9] MultiAssayExperiment_1.21.3    TreeSummarizedExperiment_2.1.4</span>
+<span class="co">#&gt; [11] Biostrings_2.63.0              XVector_0.35.0                </span>
+<span class="co">#&gt; [13] SingleCellExperiment_1.17.2    SummarizedExperiment_1.25.2   </span>
+<span class="co">#&gt; [15] Biobase_2.55.0                 GenomicRanges_1.47.5          </span>
+<span class="co">#&gt; [17] GenomeInfoDb_1.31.1            IRanges_2.29.1                </span>
+<span class="co">#&gt; [19] S4Vectors_0.33.5               BiocGenerics_0.41.2           </span>
+<span class="co">#&gt; [21] MatrixGenerics_1.7.0           matrixStats_0.61.0            </span>
+<span class="co">#&gt; [23] BiocStyle_2.23.0              </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;   [1] AnnotationHub_3.1.4           BiocFileCache_2.1.1          </span>
-<span class="co">#&gt;   [3] systemfonts_1.0.2             plyr_1.8.6                   </span>
-<span class="co">#&gt;   [5] igraph_1.2.6                  lazyeval_0.2.2               </span>
-<span class="co">#&gt;   [7] splines_4.1.0                 BiocParallel_1.27.2          </span>
-<span class="co">#&gt;   [9] digest_0.6.27                 htmltools_0.5.1.1            </span>
-<span class="co">#&gt;  [11] viridis_0.6.1                 fansi_0.5.0                  </span>
-<span class="co">#&gt;  [13] magrittr_2.0.1                memoise_2.0.0                </span>
-<span class="co">#&gt;  [15] ScaledMatrix_1.1.0            cluster_2.1.2                </span>
-<span class="co">#&gt;  [17] DECIPHER_2.21.0               graphlayouts_0.7.1           </span>
-<span class="co">#&gt;  [19] pkgdown_1.6.1                 colorspace_2.0-2             </span>
-<span class="co">#&gt;  [21] rappdirs_0.3.3                blob_1.2.2                   </span>
-<span class="co">#&gt;  [23] ggrepel_0.9.1                 textshaping_0.3.5            </span>
-<span class="co">#&gt;  [25] xfun_0.24                     dplyr_1.0.7                  </span>
-<span class="co">#&gt;  [27] crayon_1.4.1                  RCurl_1.98-1.3               </span>
-<span class="co">#&gt;  [29] jsonlite_1.7.2                ape_5.5                      </span>
-<span class="co">#&gt;  [31] glue_1.4.2                    polyclip_1.10-0              </span>
-<span class="co">#&gt;  [33] gtable_0.3.0                  zlibbioc_1.39.0              </span>
-<span class="co">#&gt;  [35] DelayedArray_0.19.1           BiocSingular_1.9.1           </span>
-<span class="co">#&gt;  [37] scales_1.1.1                  DBI_1.1.1                    </span>
-<span class="co">#&gt;  [39] Rcpp_1.0.7                    xtable_1.8-4                 </span>
-<span class="co">#&gt;  [41] viridisLite_0.4.0             decontam_1.13.0              </span>
-<span class="co">#&gt;  [43] tidytree_0.3.4                bit_4.0.4                    </span>
-<span class="co">#&gt;  [45] rsvd_1.0.5                    httr_1.4.2                   </span>
-<span class="co">#&gt;  [47] RColorBrewer_1.1-2            ellipsis_0.3.2               </span>
-<span class="co">#&gt;  [49] pkgconfig_2.0.3               farver_2.1.0                 </span>
-<span class="co">#&gt;  [51] dbplyr_2.1.1                  sass_0.4.0                   </span>
-<span class="co">#&gt;  [53] utf8_1.2.2                    AnnotationDbi_1.55.1         </span>
-<span class="co">#&gt;  [55] later_1.2.0                   tidyselect_1.1.1             </span>
-<span class="co">#&gt;  [57] labeling_0.4.2                rlang_0.4.11                 </span>
-<span class="co">#&gt;  [59] reshape2_1.4.4                munsell_0.5.0                </span>
-<span class="co">#&gt;  [61] BiocVersion_3.14.0            tools_4.1.0                  </span>
-<span class="co">#&gt;  [63] cachem_1.0.5                  DirichletMultinomial_1.35.0  </span>
-<span class="co">#&gt;  [65] generics_0.1.0                RSQLite_2.2.7                </span>
-<span class="co">#&gt;  [67] ExperimentHub_2.1.4           evaluate_0.14                </span>
-<span class="co">#&gt;  [69] stringr_1.4.0                 fastmap_1.1.0                </span>
-<span class="co">#&gt;  [71] yaml_2.2.1                    ragg_1.1.3                   </span>
-<span class="co">#&gt;  [73] ggtree_3.1.2                  knitr_1.33                   </span>
-<span class="co">#&gt;  [75] bit64_4.0.5                   fs_1.5.0                     </span>
-<span class="co">#&gt;  [77] tidygraph_1.2.0               purrr_0.3.4                  </span>
-<span class="co">#&gt;  [79] KEGGREST_1.33.0               nlme_3.1-152                 </span>
-<span class="co">#&gt;  [81] sparseMatrixStats_1.5.0       mime_0.11                    </span>
-<span class="co">#&gt;  [83] aplot_0.0.6                   compiler_4.1.0               </span>
-<span class="co">#&gt;  [85] png_0.1-7                     interactiveDisplayBase_1.31.0</span>
-<span class="co">#&gt;  [87] filelock_1.0.2                curl_4.3.2                   </span>
-<span class="co">#&gt;  [89] beeswarm_0.4.0                treeio_1.17.2                </span>
-<span class="co">#&gt;  [91] tibble_3.1.3                  tweenr_1.0.2                 </span>
-<span class="co">#&gt;  [93] bslib_0.2.5.1                 stringi_1.7.3                </span>
-<span class="co">#&gt;  [95] highr_0.9                     desc_1.3.0                   </span>
-<span class="co">#&gt;  [97] lattice_0.20-44               Matrix_1.3-4                 </span>
-<span class="co">#&gt;  [99] vegan_2.5-7                   permute_0.9-5                </span>
-<span class="co">#&gt; [101] vctrs_0.3.8                   pillar_1.6.2                 </span>
-<span class="co">#&gt; [103] lifecycle_1.0.0               BiocManager_1.30.16          </span>
-<span class="co">#&gt; [105] jquerylib_0.1.4               BiocNeighbors_1.11.0         </span>
-<span class="co">#&gt; [107] bitops_1.0-7                  irlba_2.3.3                  </span>
-<span class="co">#&gt; [109] httpuv_1.6.1                  R6_2.5.0                     </span>
-<span class="co">#&gt; [111] promises_1.2.0.1              bookdown_0.22                </span>
-<span class="co">#&gt; [113] gridExtra_2.3                 vipor_0.4.5                  </span>
-<span class="co">#&gt; [115] MASS_7.3-54                   assertthat_0.2.1             </span>
-<span class="co">#&gt; [117] rprojroot_2.0.2               withr_2.4.2                  </span>
-<span class="co">#&gt; [119] GenomeInfoDbData_1.2.6        mgcv_1.8-36                  </span>
-<span class="co">#&gt; [121] parallel_4.1.0                grid_4.1.0                   </span>
-<span class="co">#&gt; [123] beachmat_2.9.0                tidyr_1.1.3                  </span>
-<span class="co">#&gt; [125] rmarkdown_2.9                 DelayedMatrixStats_1.15.0    </span>
-<span class="co">#&gt; [127] rvcheck_0.1.8                 ggnewscale_0.4.5             </span>
-<span class="co">#&gt; [129] ggforce_0.3.3                 shiny_1.6.0                  </span>
-<span class="co">#&gt; [131] ggbeeswarm_0.6.0</span></code></pre></div>
+<span class="co">#&gt;   [1] AnnotationHub_3.3.6           BiocFileCache_2.3.0          </span>
+<span class="co">#&gt;   [3] systemfonts_1.0.3             plyr_1.8.6                   </span>
+<span class="co">#&gt;   [5] igraph_1.2.9                  lazyeval_0.2.2               </span>
+<span class="co">#&gt;   [7] splines_4.2.0                 BiocParallel_1.29.3          </span>
+<span class="co">#&gt;   [9] digest_0.6.28                 yulab.utils_0.0.4            </span>
+<span class="co">#&gt;  [11] htmltools_0.5.2               viridis_0.6.2                </span>
+<span class="co">#&gt;  [13] fansi_0.5.0                   magrittr_2.0.1               </span>
+<span class="co">#&gt;  [15] memoise_2.0.1                 ScaledMatrix_1.3.0           </span>
+<span class="co">#&gt;  [17] cluster_2.1.2                 DECIPHER_2.23.0              </span>
+<span class="co">#&gt;  [19] graphlayouts_0.7.2            pkgdown_1.6.1                </span>
+<span class="co">#&gt;  [21] colorspace_2.0-2              rappdirs_0.3.3               </span>
+<span class="co">#&gt;  [23] blob_1.2.2                    ggrepel_0.9.1                </span>
+<span class="co">#&gt;  [25] textshaping_0.3.6             xfun_0.28                    </span>
+<span class="co">#&gt;  [27] dplyr_1.0.7                   crayon_1.4.2                 </span>
+<span class="co">#&gt;  [29] RCurl_1.98-1.5                jsonlite_1.7.2               </span>
+<span class="co">#&gt;  [31] ape_5.5                       glue_1.5.0                   </span>
+<span class="co">#&gt;  [33] polyclip_1.10-0               gtable_0.3.0                 </span>
+<span class="co">#&gt;  [35] zlibbioc_1.41.0               DelayedArray_0.21.2          </span>
+<span class="co">#&gt;  [37] BiocSingular_1.11.0           scales_1.1.1                 </span>
+<span class="co">#&gt;  [39] DBI_1.1.1                     Rcpp_1.0.7                   </span>
+<span class="co">#&gt;  [41] xtable_1.8-4                  viridisLite_0.4.0            </span>
+<span class="co">#&gt;  [43] decontam_1.15.0               gridGraphics_0.5-1           </span>
+<span class="co">#&gt;  [45] tidytree_0.3.6                bit_4.0.4                    </span>
+<span class="co">#&gt;  [47] rsvd_1.0.5                    httr_1.4.2                   </span>
+<span class="co">#&gt;  [49] RColorBrewer_1.1-2            ellipsis_0.3.2               </span>
+<span class="co">#&gt;  [51] pkgconfig_2.0.3               farver_2.1.0                 </span>
+<span class="co">#&gt;  [53] dbplyr_2.1.1                  sass_0.4.0                   </span>
+<span class="co">#&gt;  [55] utf8_1.2.2                    AnnotationDbi_1.57.1         </span>
+<span class="co">#&gt;  [57] later_1.3.0                   ggplotify_0.1.0              </span>
+<span class="co">#&gt;  [59] tidyselect_1.1.1              labeling_0.4.2               </span>
+<span class="co">#&gt;  [61] rlang_0.4.12                  reshape2_1.4.4               </span>
+<span class="co">#&gt;  [63] BiocVersion_3.15.0            munsell_0.5.0                </span>
+<span class="co">#&gt;  [65] tools_4.2.0                   cachem_1.0.6                 </span>
+<span class="co">#&gt;  [67] DirichletMultinomial_1.37.0   generics_0.1.1               </span>
+<span class="co">#&gt;  [69] RSQLite_2.2.8                 ExperimentHub_2.3.4          </span>
+<span class="co">#&gt;  [71] evaluate_0.14                 stringr_1.4.0                </span>
+<span class="co">#&gt;  [73] fastmap_1.1.0                 yaml_2.2.1                   </span>
+<span class="co">#&gt;  [75] ragg_1.2.0                    ggtree_3.3.0                 </span>
+<span class="co">#&gt;  [77] knitr_1.36                    bit64_4.0.5                  </span>
+<span class="co">#&gt;  [79] fs_1.5.0                      tidygraph_1.2.0              </span>
+<span class="co">#&gt;  [81] purrr_0.3.4                   KEGGREST_1.35.0              </span>
+<span class="co">#&gt;  [83] nlme_3.1-153                  sparseMatrixStats_1.7.0      </span>
+<span class="co">#&gt;  [85] mime_0.12                     aplot_0.1.1                  </span>
+<span class="co">#&gt;  [87] compiler_4.2.0                png_0.1-7                    </span>
+<span class="co">#&gt;  [89] interactiveDisplayBase_1.33.0 filelock_1.0.2               </span>
+<span class="co">#&gt;  [91] curl_4.3.2                    beeswarm_0.4.0               </span>
+<span class="co">#&gt;  [93] treeio_1.19.1                 tibble_3.1.6                 </span>
+<span class="co">#&gt;  [95] tweenr_1.0.2                  bslib_0.3.1                  </span>
+<span class="co">#&gt;  [97] stringi_1.7.5                 highr_0.9                    </span>
+<span class="co">#&gt;  [99] desc_1.4.0                    lattice_0.20-45              </span>
+<span class="co">#&gt; [101] Matrix_1.3-4                  vegan_2.5-7                  </span>
+<span class="co">#&gt; [103] permute_0.9-5                 vctrs_0.3.8                  </span>
+<span class="co">#&gt; [105] pillar_1.6.4                  lifecycle_1.0.1              </span>
+<span class="co">#&gt; [107] BiocManager_1.30.16           jquerylib_0.1.4              </span>
+<span class="co">#&gt; [109] BiocNeighbors_1.13.0          bitops_1.0-7                 </span>
+<span class="co">#&gt; [111] irlba_2.3.3                   httpuv_1.6.3                 </span>
+<span class="co">#&gt; [113] R6_2.5.1                      promises_1.2.0.1             </span>
+<span class="co">#&gt; [115] bookdown_0.24                 gridExtra_2.3                </span>
+<span class="co">#&gt; [117] vipor_0.4.5                   MASS_7.3-54                  </span>
+<span class="co">#&gt; [119] assertthat_0.2.1              rprojroot_2.0.2              </span>
+<span class="co">#&gt; [121] withr_2.4.2                   GenomeInfoDbData_1.2.7       </span>
+<span class="co">#&gt; [123] mgcv_1.8-38                   parallel_4.2.0               </span>
+<span class="co">#&gt; [125] grid_4.2.0                    ggfun_0.0.4                  </span>
+<span class="co">#&gt; [127] beachmat_2.11.0               tidyr_1.1.4                  </span>
+<span class="co">#&gt; [129] rmarkdown_2.11                DelayedMatrixStats_1.17.0    </span>
+<span class="co">#&gt; [131] ggnewscale_0.4.5              ggforce_0.3.3                </span>
+<span class="co">#&gt; [133] shiny_1.7.1                   ggbeeswarm_0.6.0</span></code></pre></div>
 </div>
 <div id="references" class="section level1 unnumbered">
 <h1 class="hasAnchor">
