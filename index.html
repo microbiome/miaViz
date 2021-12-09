@@ -24,6 +24,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-home">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -36,18 +38,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.3.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="articles/miaViz.html">Get started</a>
 </li>
@@ -68,113 +64,125 @@
       </header><div class="row">
   <div class="contents col-md-9">
 
-<div id="miaviz" class="section level1">
-<div class="page-header"><h1 class="hasAnchor">
-<a href="#miaviz" class="anchor"></a>miaViz</h1></div>
+<div class="section level1">
+<div class="page-header"><h1 id="miaviz">miaViz<a class="anchor" aria-label="anchor" href="#miaviz"></a>
+</h1></div>
 <!-- badges: start -->
 
 <!-- badges: end -->
-<div id="microbiome-analysis-plotting-and-visualization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#microbiome-analysis-plotting-and-visualization" class="anchor"></a>Microbiome Analysis Plotting and Visualization</h2>
+<div class="section level2">
+<h2 id="microbiome-analysis-plotting-and-visualization">Microbiome Analysis Plotting and Visualization<a class="anchor" aria-label="anchor" href="#microbiome-analysis-plotting-and-visualization"></a>
+</h2>
 <p>The scope of this package is the plotting and visualization of microbiome data. The main classes for interfacing is the <code>TreeSummarizedExperiment</code> class.</p>
 </div>
-<div id="using-the-package" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-the-package" class="anchor"></a>Using the package</h2>
+<div class="section level2">
+<h2 id="using-the-package">Using the package<a class="anchor" aria-label="anchor" href="#using-the-package"></a>
+</h2>
 <p>Online tutorials and examples are available at:</p>
 <ul>
-<li><a href="https://microbiome.github.io/miaViz/">Package homepage</a></li>
-<li><a href="https://microbiome.github.io/OMA">Orchestrating microbiome analysis with R/Bioconductor online book</a></li>
+<li><a href="https://microbiome.github.io/miaViz/" class="external-link">Package homepage</a></li>
+<li><a href="https://microbiome.github.io/OMA" class="external-link">Orchestrating microbiome analysis with R/Bioconductor online book</a></li>
 </ul>
 </div>
-<div id="contribution" class="section level2">
-<h2 class="hasAnchor">
-<a href="#contribution" class="anchor"></a>Contribution</h2>
-<p>Feel free to contribute by forking and opening a pull request. Please make sure that required data wrangling should be designed as reusable as possible and potentially find a better home in the <a href="https://github.com/FelixErnst/mia"><code>mia</code></a> package.</p>
-<p>Additionally, please make sure that working examples are included and that vignetted make use of added functions in either <code>miaViz</code> or the <a href="https://github.com/fionarhuang/TreeSummarizedExperiment"><code>TreeSummarizedExperiment</code></a> package.</p>
+<div class="section level2">
+<h2 id="contribution">Contribution<a class="anchor" aria-label="anchor" href="#contribution"></a>
+</h2>
+<p>Feel free to contribute by forking and opening a pull request. Please make sure that required data wrangling should be designed as reusable as possible and potentially find a better home in the <a href="https://github.com/FelixErnst/mia" class="external-link"><code>mia</code></a> package.</p>
+<p>Additionally, please make sure that working examples are included and that vignetted make use of added functions in either <code>miaViz</code> or the <a href="https://github.com/fionarhuang/TreeSummarizedExperiment" class="external-link"><code>TreeSummarizedExperiment</code></a> package.</p>
 </div>
-<div id="technical-aspects" class="section level2">
-<h2 class="hasAnchor">
-<a href="#technical-aspects" class="anchor"></a>Technical aspects</h2>
-<p>Let’s use a git flow kind of approach. Development version should be done against the <code>master</code> branch and then merged to <code>release</code> for release. (<a href="https://guides.github.com/introduction/flow/" class="uri">https://guides.github.com/introduction/flow/</a>)</p>
+<div class="section level2">
+<h2 id="technical-aspects">Technical aspects<a class="anchor" aria-label="anchor" href="#technical-aspects"></a>
+</h2>
+<p>Let’s use a git flow kind of approach. Development version should be done against the <code>master</code> branch and then merged to <code>release</code> for release. (<a href="https://guides.github.com/introduction/flow/" class="external-link uri">https://guides.github.com/introduction/flow/</a>)</p>
 </div>
-<div id="installation" class="section level2">
-<h2 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h2>
-<div id="bioc-release" class="section level3">
-<h3 class="hasAnchor">
-<a href="#bioc-release" class="anchor"></a>Bioc-release</h3>
-<pre><code>if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
+<div class="section level3">
+<h3 id="bioc-release">Bioc-release<a class="anchor" aria-label="anchor" href="#bioc-release"></a>
+</h3>
+<pre><code><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
 
-BiocManager::install("miaViz")</code></pre>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"miaViz"</span><span class="op">)</span></code></pre>
 </div>
-<div id="bioc-devel" class="section level3">
-<h3 class="hasAnchor">
-<a href="#bioc-devel" class="anchor"></a>Bioc-devel</h3>
-<pre><code>if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+<div class="section level3">
+<h3 id="bioc-devel">Bioc-devel<a class="anchor" aria-label="anchor" href="#bioc-devel"></a>
+</h3>
+<pre><code><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
+    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span>
 
-# The following initializes usage of Bioc devel
-BiocManager::install(version='devel')
+<span class="co"># The following initializes usage of Bioc devel</span>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span>version<span class="op">=</span><span class="st">'devel'</span><span class="op">)</span>
 
-BiocManager::install("miaViz")</code></pre>
+<span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"miaViz"</span><span class="op">)</span></code></pre>
 </div>
 </div>
 </div>
-<div id="code-of-conduct" class="section level1">
-<h1 class="hasAnchor">
-<a href="#code-of-conduct" class="anchor"></a>Code of conduct</h1>
-<p>Please note that the miaViz project is released with a <a href="https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
+<div class="section level1">
+<h1 id="code-of-conduct">Code of conduct<a class="anchor" aria-label="anchor" href="#code-of-conduct"></a>
+</h1>
+<p>Please note that the miaViz project is released with a <a href="https://contributor-covenant.org/version/2/0/CODE_OF_CONDUCT.html" class="external-link">Contributor Code of Conduct</a>. By contributing to this project, you agree to abide by its terms.</p>
 </div>
 
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <div class="links">
-<h2>Links</h2>
+<h2 data-toc-skip>Links</h2>
 <ul class="list-unstyled">
-<li>Download from BIOC at <br><a href="https://www.bioconductor.org/packages/miaViz">https://​www.bioconductor.org/​packages/​miaViz</a>
-</li>
-</ul>
-</div>
-<div class="license">
-<h2>License</h2>
-<ul class="list-unstyled">
-<li>
-<a href="https://www.r-project.org/Licenses/Artistic-2.0">Artistic-2.0</a> | file <a href="LICENSE-text.html">LICENSE</a>
-</li>
-</ul>
-</div>
-<div class="developers">
-<h2>Developers</h2>
-<ul class="list-unstyled">
-<li>Felix G.M. Ernst <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-5064-0928" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Tuomas Borman <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-8563-8884" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
-<li>Leo Lahti <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-5537-637X" target="orcid.widget" aria-label="ORCID"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li><a href="https://www.bioconductor.org/packages/miaViz" class="external-link">View on Bioconductor</a></li>
 </ul>
 </div>
 
-  <div class="dev-status">
-<h2>Dev status</h2>
+<div class="license">
+<h2 data-toc-skip>License</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/microbiome/miaViz/actions"><img src="https://github.com/microbiome/miaViz/workflows/R-CMD-check-bioc-devel/badge.svg" alt="R-CMD-check-Bioc-devel"></a></li>
-<li><a href="https://github.com/microbiome/mia/actions/workflows/check-bioc.yml"><img src="https://github.com/microbiome/mia/actions/workflows/check-bioc.yml/badge.svg" alt="R-CMD-check-bioc"></a></li>
-<li><a href="http://bioconductor.org/packages/release/bioc/html/miaViz.html"><img src="http://bioconductor.org/shields/build/release/bioc/miaViz.svg" alt="Bioc-release"></a></li>
-<li><a href="https://codecov.io/gh/microbiome/miaViz?branch=master"><img src="https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+<li>
+<a href="https://www.r-project.org/Licenses/Artistic-2.0" class="external-link">Artistic-2.0</a> | file <a href="LICENSE-text.html">LICENSE</a>
+</li>
 </ul>
 </div>
+
+
+<div class="citation">
+<h2 data-toc-skip>Citation</h2>
+<ul class="list-unstyled">
+<li><a href="authors.html#citation">Citing miaViz</a></li>
+</ul>
 </div>
+
+<div class="developers">
+<h2 data-toc-skip>Developers</h2>
+<ul class="list-unstyled">
+<li>Felix G.M. Ernst <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0001-5064-0928" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Tuomas Borman <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-8563-8884" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+<li>Leo Lahti <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0001-5537-637X" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
+</ul>
+</div>
+
+<div class="dev-status">
+<h2 data-toc-skip>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/microbiome/miaViz/actions" class="external-link"><img src="https://github.com/microbiome/miaViz/workflows/R-CMD-check-bioc-devel/badge.svg" alt="R-CMD-check-Bioc-devel"></a></li>
+<li><a href="https://github.com/microbiome/mia/actions/workflows/check-bioc.yml" class="external-link"><img src="https://github.com/microbiome/mia/actions/workflows/check-bioc.yml/badge.svg" alt="R-CMD-check-bioc"></a></li>
+<li><a href="http://bioconductor.org/packages/release/bioc/html/miaViz.html" class="external-link"><img src="http://bioconductor.org/shields/build/release/bioc/miaViz.svg" alt="Bioc-release"></a></li>
+<li><a href="https://codecov.io/gh/microbiome/miaViz?branch=master" class="external-link"><img src="https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg" alt="Codecov test coverage"></a></li>
+</ul>
+</div>
+
+  </div>
 </div>
 
 
       <footer><div class="copyright">
-  <p>Developed by Felix G.M. Ernst, Tuomas Borman, Leo Lahti.</p>
+  <p></p>
+<p>Developed by Felix G.M. Ernst, Tuomas Borman, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
 </div>
 
       </footer>
@@ -182,6 +190,8 @@ BiocManager::install("miaViz")</code></pre>
 
   
 
+
+  
 
   </body>
 </html>
