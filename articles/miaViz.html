@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.1</span>
       </span>
     </div>
 
@@ -325,7 +325,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 </h1>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; R Under development (unstable) (2021-11-16 r81199)</span>
+<span class="co">#&gt; R Under development (unstable) (2021-12-30 r81418)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
 <span class="co">#&gt; Running under: Ubuntu 20.04.3 LTS</span>
 <span class="co">#&gt; </span>
@@ -345,24 +345,24 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <span class="co">#&gt; [8] base     </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; other attached packages:</span>
-<span class="co">#&gt;  [1] microbiomeDataSets_1.3.0       scater_1.23.1                 </span>
+<span class="co">#&gt;  [1] microbiomeDataSets_1.3.0       scater_1.23.2                 </span>
 <span class="co">#&gt;  [3] scuttle_1.5.0                  patchwork_1.1.1               </span>
-<span class="co">#&gt;  [5] miaViz_1.3.2                   ggraph_2.0.5                  </span>
+<span class="co">#&gt;  [5] miaViz_1.3.1                   ggraph_2.0.5                  </span>
 <span class="co">#&gt;  [7] ggplot2_3.3.5                  mia_1.3.9                     </span>
-<span class="co">#&gt;  [9] MultiAssayExperiment_1.21.4    TreeSummarizedExperiment_2.1.4</span>
+<span class="co">#&gt;  [9] MultiAssayExperiment_1.21.5    TreeSummarizedExperiment_2.1.4</span>
 <span class="co">#&gt; [11] Biostrings_2.63.0              XVector_0.35.0                </span>
 <span class="co">#&gt; [13] SingleCellExperiment_1.17.2    SummarizedExperiment_1.25.3   </span>
 <span class="co">#&gt; [15] Biobase_2.55.0                 GenomicRanges_1.47.5          </span>
 <span class="co">#&gt; [17] GenomeInfoDb_1.31.1            IRanges_2.29.1                </span>
 <span class="co">#&gt; [19] S4Vectors_0.33.8               BiocGenerics_0.41.2           </span>
 <span class="co">#&gt; [21] MatrixGenerics_1.7.0           matrixStats_0.61.0            </span>
-<span class="co">#&gt; [23] BiocStyle_2.23.0              </span>
+<span class="co">#&gt; [23] BiocStyle_2.23.1              </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;   [1] AnnotationHub_3.3.7           BiocFileCache_2.3.0          </span>
+<span class="co">#&gt;   [1] AnnotationHub_3.3.7           BiocFileCache_2.3.3          </span>
 <span class="co">#&gt;   [3] systemfonts_1.0.3             plyr_1.8.6                   </span>
-<span class="co">#&gt;   [5] igraph_1.2.9                  lazyeval_0.2.2               </span>
-<span class="co">#&gt;   [7] splines_4.2.0                 BiocParallel_1.29.5          </span>
+<span class="co">#&gt;   [5] igraph_1.2.10                 lazyeval_0.2.2               </span>
+<span class="co">#&gt;   [7] splines_4.2.0                 BiocParallel_1.29.8          </span>
 <span class="co">#&gt;   [9] digest_0.6.29                 yulab.utils_0.0.4            </span>
 <span class="co">#&gt;  [11] htmltools_0.5.2               viridis_0.6.2                </span>
 <span class="co">#&gt;  [13] fansi_0.5.0                   magrittr_2.0.1               </span>
@@ -371,14 +371,14 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <span class="co">#&gt;  [19] graphlayouts_0.7.2            pkgdown_2.0.1                </span>
 <span class="co">#&gt;  [21] colorspace_2.0-2              rappdirs_0.3.3               </span>
 <span class="co">#&gt;  [23] blob_1.2.2                    ggrepel_0.9.1                </span>
-<span class="co">#&gt;  [25] textshaping_0.3.6             xfun_0.28                    </span>
+<span class="co">#&gt;  [25] textshaping_0.3.6             xfun_0.29                    </span>
 <span class="co">#&gt;  [27] dplyr_1.0.7                   crayon_1.4.2                 </span>
 <span class="co">#&gt;  [29] RCurl_1.98-1.5                jsonlite_1.7.2               </span>
-<span class="co">#&gt;  [31] ape_5.5                       glue_1.5.1                   </span>
+<span class="co">#&gt;  [31] ape_5.6                       glue_1.6.0                   </span>
 <span class="co">#&gt;  [33] polyclip_1.10-0               gtable_0.3.0                 </span>
 <span class="co">#&gt;  [35] zlibbioc_1.41.0               DelayedArray_0.21.2          </span>
 <span class="co">#&gt;  [37] BiocSingular_1.11.0           scales_1.1.1                 </span>
-<span class="co">#&gt;  [39] DBI_1.1.1                     Rcpp_1.0.7                   </span>
+<span class="co">#&gt;  [39] DBI_1.1.2                     Rcpp_1.0.7                   </span>
 <span class="co">#&gt;  [41] xtable_1.8-4                  viridisLite_0.4.0            </span>
 <span class="co">#&gt;  [43] decontam_1.15.0               gridGraphics_0.5-1           </span>
 <span class="co">#&gt;  [45] tidytree_0.3.6                bit_4.0.4                    </span>
@@ -396,8 +396,8 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <span class="co">#&gt;  [69] RSQLite_2.2.9                 ExperimentHub_2.3.4          </span>
 <span class="co">#&gt;  [71] evaluate_0.14                 stringr_1.4.0                </span>
 <span class="co">#&gt;  [73] fastmap_1.1.0                 yaml_2.2.1                   </span>
-<span class="co">#&gt;  [75] ragg_1.2.1                    ggtree_3.3.0                 </span>
-<span class="co">#&gt;  [77] knitr_1.36                    bit64_4.0.5                  </span>
+<span class="co">#&gt;  [75] ragg_1.2.1                    ggtree_3.3.1                 </span>
+<span class="co">#&gt;  [77] knitr_1.37                    bit64_4.0.5                  </span>
 <span class="co">#&gt;  [79] fs_1.5.2                      tidygraph_1.2.0              </span>
 <span class="co">#&gt;  [81] purrr_0.3.4                   KEGGREST_1.35.0              </span>
 <span class="co">#&gt;  [83] nlme_3.1-153                  sparseMatrixStats_1.7.0      </span>
@@ -409,12 +409,12 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <span class="co">#&gt;  [95] tweenr_1.0.2                  bslib_0.3.1                  </span>
 <span class="co">#&gt;  [97] stringi_1.7.6                 highr_0.9                    </span>
 <span class="co">#&gt;  [99] desc_1.4.0                    lattice_0.20-45              </span>
-<span class="co">#&gt; [101] Matrix_1.3-4                  vegan_2.5-7                  </span>
+<span class="co">#&gt; [101] Matrix_1.4-0                  vegan_2.5-7                  </span>
 <span class="co">#&gt; [103] permute_0.9-5                 vctrs_0.3.8                  </span>
 <span class="co">#&gt; [105] pillar_1.6.4                  lifecycle_1.0.1              </span>
 <span class="co">#&gt; [107] BiocManager_1.30.16           jquerylib_0.1.4              </span>
 <span class="co">#&gt; [109] BiocNeighbors_1.13.0          bitops_1.0-7                 </span>
-<span class="co">#&gt; [111] irlba_2.3.5                   httpuv_1.6.3                 </span>
+<span class="co">#&gt; [111] irlba_2.3.5                   httpuv_1.6.4                 </span>
 <span class="co">#&gt; [113] R6_2.5.1                      promises_1.2.0.1             </span>
 <span class="co">#&gt; [115] bookdown_0.24                 gridExtra_2.3                </span>
 <span class="co">#&gt; [117] vipor_0.4.5                   MASS_7.3-54                  </span>
