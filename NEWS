@@ -3,3 +3,6 @@ Changes in version 0.99.0 (2021-03-19)
 
 Changes in version 1.1.x
 + Added plotAbundanceDensity (2021-06-23)
+
+Changes in version 1.3.x
++ Bugfix for plotting functions to support sparseMatrix and other assay types (2021-12-31)

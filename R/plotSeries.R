@@ -185,7 +185,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     }
     
     # Retrieves the assay
-    assay <- assay(object, abund_values)
+    assay <- assay(object, abund_values, withDimnames = TRUE)
     
     # Gets rownames
     rownames(assay) <- rownames(object)

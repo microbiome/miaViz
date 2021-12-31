@@ -207,11 +207,15 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                                       size_by,
                                       order_descending = TRUE){
     # Gets the assay
-    mat <- assay(object, abund_values)
+    mat <- assay(object, abund_values, withDimnames = TRUE)
     # Gets the most abundant taxa
     top_taxa <- getTopTaxa(object, top = n, abund_values = abund_values)
     # Subsets abundance table  by taking taxa of highest abundance
     mat <- mat[top_taxa, , drop=FALSE]
+    # enable conversion to data.frame for non-matrix assays, e.g. sparseMatrices
+    if(!is.matrix(mat)){
+        mat <- as.matrix(mat)
+    }
     # melt the data
     density_data <- t(mat) %>%
         as.data.frame() %>%
