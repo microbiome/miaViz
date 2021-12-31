@@ -240,11 +240,7 @@ MELT_VALUES <- "Value"
 #' @importFrom purrr map
 .get_abundance_data <- function(x, rank, abund_values, order_rank_by = "name",
                                 use_relative = TRUE){
-    # Get assay and convert it into matrix if it is sparseMatrix
-    data <- assay(x, abund_values) %>%
-        as.matrix()
-    rownames(data) <- rownames(x)
-    colnames(data) <- colnames(x)
+    data <- assay(x,abund_values)
     if(use_relative){
         data <- .calc_rel_abund(data)
     }
