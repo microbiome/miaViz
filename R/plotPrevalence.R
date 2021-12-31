@@ -183,7 +183,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 .get_prevalence_plot_data <- function(x, abund_values, detections, prevalences,
                                       as_relative = TRUE, 
                                       BPPARAM = BiocParallel::SerialParam()){
-    mat <- assay(x,abund_values)
+    mat <- assay(x, abund_values, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
@@ -280,7 +280,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment assay
 .get_prevalence_plot_point_data <- function(x, abund_values, as_relative = TRUE,
                                             label = NULL){
-    mat <- assay(x,abund_values)
+    mat <- assay(x, abund_values, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
@@ -415,7 +415,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                                         as_relative = TRUE, 
                                         min_prevalence,
                                         BPPARAM = BiocParallel::SerialParam()){
-    mat <- assay(x,abund_values)
+    mat <- assay(x, abund_values, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }

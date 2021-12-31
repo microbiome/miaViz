@@ -240,9 +240,9 @@ MELT_VALUES <- "Value"
 #' @importFrom purrr map
 .get_abundance_data <- function(x, rank, abund_values, order_rank_by = "name",
                                 use_relative = TRUE){
-    data <- assay(x,abund_values)
+    data <- assay(x, abund_values, withDimnames = TRUE)
     if(use_relative){
-        data <- .calc_rel_abund(data)
+        data <- mia:::.calc_rel_abund(data)
     }
     if(is.null(colnames(x))){
         colnames(data) <- paste0("Sample",seq_len(ncol(x)))
@@ -251,6 +251,10 @@ MELT_VALUES <- "Value"
         data %>%
             group_by(!!sym(MELT_NAME)) %>%
             summarize(!!sym(MELT_VALUES) := sum(!!sym(MELT_VALUES)))
+    }
+    # enable conversion to data.frame for non-matrix assays, e.g. sparseMatrices
+    if(!is.matrix(data)){
+        data <- as.matrix(data)
     }
     data <- data %>%
         as.data.frame() %>%
