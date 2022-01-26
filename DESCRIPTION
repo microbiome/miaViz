@@ -47,7 +47,8 @@ Imports:
     tidyr,
     dplyr,
     ape,
-    DirichletMultinomial
+    DirichletMultinomial,
+    gridExtra
 Suggests:
     knitr,
     rmarkdown,

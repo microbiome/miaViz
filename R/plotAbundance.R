@@ -18,58 +18,58 @@
 #'
 #' @param abund_values a \code{character} value defining which assay data to
 #'   use. (default: \code{abund_values = "relabundance"})
-#'   
-#' @param features a single \code{character} value defining a column from 
+#'
+#' @param features a single \code{character} value defining a column from
 #'   \code{colData} to be plotted below the abundance plot.
 #'   Continuous numeric values will be plotted as point, whereas factors and
 #'   character will be plotted as colour-code bar. (default: \code{features =
 #'   NULL})
-#'   
-#' @param order_rank_by How to order abundance value: By name (\dQuote{name}) 
+#'
+#' @param order_rank_by How to order abundance value: By name (\dQuote{name})
 #' for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
 #' sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).
-#'  
-#'   
+#'
+#'
 #' @param order_sample_by A single character value from the chosen rank of abundance
 #'   data or from \code{colData} to select values to order the abundance
 #'   plot by. (default: \code{order_sample_by = NULL})
-#'   
+#'
 #' @param decreasing TRUE or FALSE: If the \code{order_sample_by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
 #'   increasing fashion? (default: \code{decreasing = FALSE})
-#'   
+#'
 #' @param use_relative \code{TRUE} or \code{FALSE}: Should the relative values
 #'   be calculated? (default: \code{use_relative = TRUE})
 #'
-#' @param layout Either \dQuote{bar} or \dQuote{point}. 
-#' 
-#' @param one_facet Should the plot be returned in on facet or split into 
+#' @param layout Either \dQuote{bar} or \dQuote{point}.
+#'
+#' @param one_facet Should the plot be returned in on facet or split into
 #'   different facet, one facet per different value detect in \code{rank}. If
 #'   \code{features} or \code{order_sample_by} is not \code{NULL}, this setting will
 #'   be disregarded.
-#' 
-#' @param ncol,scales if \code{one_facet = FALSE}, \code{ncol} defines many 
+#'
+#' @param ncol,scales if \code{one_facet = FALSE}, \code{ncol} defines many
 #'   columns should be for plotting the different facets and \code{scales} is
-#'   used to define the behavior of the scales of each facet. Both values are 
+#'   used to define the behavior of the scales of each facet. Both values are
 #'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
-#' 
-#' @param ... additional parameters for plotting. See 
+#'
+#' @param ... additional parameters for plotting. See
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
-#' @return 
-#' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 
-#' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `features` are added to 
-#' the plot. 
+#' @return
+#' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two
+#' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `features` are added to
+#' the plot.
 #'
 #' @name plotAbundance
 #'
 #' @examples
 #' data(GlobalPatterns, package="mia")
 #' se <- GlobalPatterns
-#' 
+#'
 #' ## Plotting abundance using the first taxonomic rank as default
 #' plotAbundance(se, abund_values="counts")
-#' 
+#'
 #' ## Using "Phylum" as rank
 #' plotAbundance(se, abund_values="counts", rank = "Phylum", add_legend = FALSE)
 #'
@@ -79,15 +79,15 @@
 #' ## If rank is set to NULL plotAbundance behaves like plotExpression
 #' plotAbundance(se, abund_values="counts", rank = NULL,
 #'            features = head(rownames(se)))
-#'   
+#'
 #' ## A feature from colData or taxon from chosen rank can be used for
 #' ## ordering samples.
 #' plotAbundance(se, abund_values="counts", rank = "Phylum",
 #'            order_sample_by = "Bacteroidetes")
-#' 
+#'
 #' ## Features from colData can be plotted together with abundance plot.
 #' # Returned object is a list that includes two plot; other visualizes abundance
-#' # other features. 
+#' # other features.
 #' plot <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
 #'                    features = "SampleType")
 #' \donttest{
@@ -95,19 +95,19 @@
 #' library(patchwork)
 #' wrap_plots(plot, ncol = 1)
 #' }
-#' 
+#'
 #' ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
-#' 
+#'
 #' # Getting top taxa on a Phylum level
 #' se <- relAbundanceCounts(se)
 #' se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
 #' top_taxa <- getTopTaxa(se_phylum,top = 5, abund_values = "relabundance")
-#' 
+#'
 #' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
 #' phylum_renamed <- lapply(rowData(se)$Phylum,
 #'                        function(x){if (x %in% top_taxa) {x} else {"Other"}})
 #' rowData(se)$Phylum <- as.character(phylum_renamed)
-#' 
+#'
 #' # Compositional barplot
 #' plotAbundance(se, abund_values="relabundance", rank = "Phylum",
 #'            order_rank_by="abund", order_sample_by = "Bacteroidetes")
@@ -133,6 +133,7 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @rdname plotAbundance
 #' @importFrom scater plotExpression
 #' @importFrom ggplot2 facet_wrap
+#' @importFrom gridExtra grid.arrange
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
@@ -153,9 +154,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
         .check_assay_present(abund_values, x)
-        # if rank is set to NULL, default to plotExpression 
+        # if rank is set to NULL, default to plotExpression
         if(is.null(rank)){
-            plot <- plotExpression(x, features = features, 
+            plot <- plotExpression(x, features = features,
                                 exprs_values = abund_values,
                                 one_facet = one_facet,
                                 ncol = ncol, scales = scales, ...)
@@ -213,18 +214,19 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             plot_out <- c(list(abundance = plot_out), plot_feature_out)
         } else {
             if (!one_facet) {
-                plot_out <- plot_out + 
+                plot_out <- plot_out +
                     facet_wrap(~colour_by, ncol = ncol, scales = scales)
             }
         }
         # Checks if the list is a ggplot object or regular list of ggplot objects
         if( !is.ggplot(plot_out) ){
-            # If features is specified, then only abundance and features plots are 
+            # If features is specified, then only abundance and features plots are
             # returned as a list. If it is not, then only abundance plot is returned.
             if( !is.null(features) ){
                 plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[features]])
                 # Assigns the names back
                 names(plot_out) <- c("abundance", features)
+                plot_out <- grid.arrange(plot_out[[1]], plot_out[[2]], nrow = 2)
             } else{
                 plot_out <- plot_out[["abundance"]]
             }
@@ -276,12 +278,12 @@ MELT_VALUES <- "Value"
         lvl <- levels(data$colour_by)
         lvl <- lvl[order(lvl)]
     } else if(order_rank_by %in% c("abund","revabund")){
-        o <- data %>% 
-            select(!.data$X) %>% 
-            group_by(.data$colour_by) %>% 
+        o <- data %>%
+            select(!.data$X) %>%
+            group_by(.data$colour_by) %>%
             summarize(sum = sum(.data$Y))
         decreasing <- ifelse(order_rank_by == "abund",TRUE,FALSE)
-        lvl <- o[order(o$sum, decreasing = decreasing),] %>% 
+        lvl <- o[order(o$sum, decreasing = decreasing),] %>%
             pull(.data$colour_by) %>%
             as.character()
     } else {
@@ -351,7 +353,7 @@ MELT_VALUES <- "Value"
                                     order_sample_by, decreasing = TRUE){
     if(!is.null(order_sample_by)){
         lvl <- levels(abund_data$X)
-        if(is.null(features_data) || 
+        if(is.null(features_data) ||
             !(order_sample_by %in% colnames(features_data))){
             # presort by rank value
             lvl_tmp <- levels(abund_data$colour_by)
@@ -511,7 +513,7 @@ MELT_VALUES <- "Value"
                             point_size = 2,
                             ...){
     names <- colnames(features_data)
-    features_data <- lapply(names, 
+    features_data <- lapply(names,
                             function(col){
                                 data.frame(X = factor(rownames(features_data),
                                                     rownames(features_data)),

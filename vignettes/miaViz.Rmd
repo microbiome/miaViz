@@ -83,9 +83,8 @@ plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
 ```
 
 The `features` argument is reused for plotting data along the different samples.
-In the next example the ~SampleType~ is plotted along the samples. In this case 
-the result is a list, which can combined using external tools, for example
-`patchwork`. 
+In the next example the ~SampleType~ is plotted along the samples. In this case, 
+the result is a single plot that includes abundance and sample plots. 
 
 ```{r}
 library(patchwork)
@@ -93,11 +92,15 @@ plots <- plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_p
                        features = "SampleType",
                        rank = "Phylum",
                        abund_values = "relabundance")
-plots$abundance / plots$SampleType +
-     plot_layout(heights = c(9, 1))
 ```
 
-Further example about composition barplot can be found at Orchestrating Microbiome Analysis [@OMA].
+```{r}
+plot <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
+                        features = "SampleType")
+```
+
+Further example about composition barplot can be found at Orchestrating 
+Microbiome Analysis [@OMA].
 
 # Prevalence plotting
 
@@ -313,9 +316,10 @@ plotColTile(se,"SampleType","Primer") +
 
 Searching for groups that are similar to each other among the samples, could be
 approached with the Dirichlet Multinomial Mixtures [@DMM].
-After using `runDMN` from the `mia` package, several k values as a number of clusters 
-are used to observe the best fit (see also `getDMN` and `getBestDMNFit`).
-To visualize the fit using e.g. "laplace" as a measure of goodness of fit:
+After using `runDMN` from the `mia` package, several k values as a number of 
+clusters are used to observe the best fit (see also `getDMN` and 
+`getBestDMNFit`).To visualize the fit using e.g. "laplace" as a measure of 
+goodness of fit:
 
 ```{r}
 data(dmn_se, package = "mia")
@@ -324,7 +328,8 @@ names(metadata(dmn_se))
 plotDMNFit(dmn_se, type = "laplace")
 ```
 
-More examples and materials are available at Orchestrating Microbiome Analysis [@OMA].
+More examples and materials are available at Orchestrating Microbiome 
+Analysis [@OMA].
 
 
 # Plotting options
