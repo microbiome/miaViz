@@ -48,13 +48,12 @@ Imports:
     dplyr,
     ape,
     DirichletMultinomial,
-    gridExtra
+    patchwork
 Suggests:
     knitr,
     rmarkdown,
     BiocStyle,
     testthat,
-    patchwork,
     microbiomeDataSets
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.2

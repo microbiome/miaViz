@@ -133,7 +133,7 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @rdname plotAbundance
 #' @importFrom scater plotExpression
 #' @importFrom ggplot2 facet_wrap
-#' @importFrom gridExtra grid.arrange
+#' @importFrom patchwork plot_layout
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
@@ -226,7 +226,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                 plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[features]])
                 # Assigns the names back
                 names(plot_out) <- c("abundance", features)
-                plot_out <- grid.arrange(plot_out[[1]], plot_out[[2]], nrow = 2)
+                plot_out <- plot_out[[1]] / plot_out[[2]] + plot_layout(ncol=1,heights=c(4,1))
             } else{
                 plot_out <- plot_out[["abundance"]]
             }

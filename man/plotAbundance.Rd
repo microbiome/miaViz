@@ -102,7 +102,7 @@ plotAbundance(se, add_x_text=TRUE)
 ## If rank is set to NULL plotAbundance behaves like plotExpression
 plotAbundance(se, abund_values="counts", rank = NULL,
            features = head(rownames(se)))
-  
+
 ## A feature from colData or taxon from chosen rank can be used for
 ## ordering samples.
 plotAbundance(se, abund_values="counts", rank = "Phylum",
@@ -110,7 +110,7 @@ plotAbundance(se, abund_values="counts", rank = "Phylum",
 
 ## Features from colData can be plotted together with abundance plot.
 # Returned object is a list that includes two plot; other visualizes abundance
-# other features. 
+# other features.
 plot <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
                    features = "SampleType")
 \donttest{
