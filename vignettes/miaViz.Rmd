@@ -83,11 +83,11 @@ plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
 ```
 
 The `features` argument is reused for plotting data along the different samples.
-In the next example the ~SampleType~ is plotted along the samples. In this case, the result is a single plot that includes abundance
-and sample plots. 
+In the next example the ~SampleType~ is plotted along the samples. In this case, 
+the result is a single plot that includes abundance and sample plots. 
 
 ```{r}
-library(patchwork)
+library(cowplot)
 plots <- plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
                        features = "SampleType",
                        rank = "Phylum",

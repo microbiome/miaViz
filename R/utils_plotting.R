@@ -1,77 +1,77 @@
 #' Additional arguments for plotting
-#' 
+#'
 #' To be able to fine tune plotting, several additional plotting arguments are
 #' available. These are described on this page.
-#' 
+#'
 #' @section Tree plotting:
-#' 
+#'
 #' \describe{
-#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the tree edges. Defaults to \code{1}.}
-#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of 
+#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of
 #'     an edge. Defaults to NULL to use default of the \code{ggtree} package}
 #'   \item{\code{line_width_range}:}{Two numeric values, the range for plotting
 #'     dynamic edge widths in. Defaults to \code{c(0.5,3)}.}
-#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the tips. Defaults to \code{1}.}
-#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the
 #'     default size of tips Defaults to \code{2.}.}
 #'   \item{\code{point_size_range}:}{Two numeric values, the range for plotting
 #'     dynamic tip sizes in. Defaults to \code{c(1,4)}.}
-#'   \item{\code{label_font_size}:}{Numeric scalar, font size for the tip and 
+#'   \item{\code{label_font_size}:}{Numeric scalar, font size for the tip and
 #'     node labels. Default to \code{3}.}
-#'   \item{\code{highlight_font_size}:}{Numeric scalar, font size for the 
+#'   \item{\code{highlight_font_size}:}{Numeric scalar, font size for the
 #'     highlight labels. Default to \code{3}.}
 #' }
-#' 
+#'
 #' @section Graph plotting:
-#' 
+#'
 #' \describe{
-#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the tree edges. Defaults to \code{1}.}
-#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of 
+#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of
 #'     an edge. Defaults to NULL to use default of the \code{ggraph} package}
 #'   \item{\code{line_width_range}:}{Two numeric values, the range for plotting
 #'     dynamic edge widths in. Defaults to \code{c(0.5,3)}.}
-#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the tips. Defaults to \code{1}.}
-#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the
 #'     default size of tips Defaults to \code{2.}.}
 #'   \item{\code{point_size_range}:}{Two numeric values, the range for plotting
 #'     dynamic tip sizes in. Defaults to \code{c(1,4)}.}
 #' }
-#' 
+#'
 #' @section Abundance plotting:
-#' 
+#'
 #' \describe{
 #'   \item{\code{flipped}:}{Logical scalar. Should the plot be flipped? Defaults
 #'     to \code{FALSE}.}
-#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
 #'     Defaults to \code{TRUE}.}
 #'   \item{\code{add_x_text}:}{Logical scalar. Should x tick labels be plotted?
 #'     Defaults to \code{FALSE}.}
 #'   \item{\code{add_border}:}{Logical scalar. Should border of bars be plotted?
 #'     Defaults to \code{FALSE}.}
-#'   \item{\code{bar_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{bar_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the bars. Defaults to \code{1}.}
-#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the points. Defaults to \code{1}.}
-#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the
 #'     default size of points. Defaults to \code{2.}.}
 #' }
-#' 
+#'
 #' @section Abundance density plotting:
-#' 
+#'
 #' \describe{
-#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
 #'     Defaults to \code{TRUE}.}
-#'   \item{\code{point_shape}:}{Numeric scalar setting the shape of points. 
+#'   \item{\code{point_shape}:}{Numeric scalar setting the shape of points.
 #'     Defaults to \code{21}.}
-#'   \item{\code{point_colour}:}{Character scalar, specifying the 
+#'   \item{\code{point_colour}:}{Character scalar, specifying the
 #'     default colour of points. Defaults to \code{2.}.}
-#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the
 #'     default size of points. Defaults to \code{2.}.}
-#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the points. Defaults to \code{1}.}
 #'   \item{\code{flipped}:}{Logical scalar. Should the plot be flipped? Defaults
 #'     to \code{FALSE}.}
@@ -80,56 +80,56 @@
 #'   \item{\code{angle_x_text}:}{Logical scalar. Should x tick labels be plotted?
 #'     Defaults to \code{FALSE}.}
 #' }
-#' 
+#'
 #' @section Prevalence plotting:
-#' 
+#'
 #' \describe{
 #'   \item{\code{flipped}:}{Logical scalar, specifying whether the plot should
 #'     be flipped. Defaults to \code{FALSE}.}
-#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
 #'     Defaults to \code{TRUE}.}
-#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the tips. Defaults to \code{1}.}
-#'   \item{\code{point_size}:}{Numeric scalar, specifying the 
+#'   \item{\code{point_size}:}{Numeric scalar, specifying the
 #'     default size of tips Defaults to \code{2.}.}
-#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the tree edges. Defaults to \code{1}.}
 #'   \item{\code{line_type}:}{Numeric scalar, specifying the default line type.
 #'     Defaults to NULL to use default of the \code{ggplot2} package}
-#'   \item{\code{line_size}:}{Numeric scalar, specifying the default width of 
+#'   \item{\code{line_size}:}{Numeric scalar, specifying the default width of
 #'     a line. Defaults to NULL to use default of the \code{ggplot2} package}
 #' }
-#' 
+#'
 #' @section Series plotting:
-#' 
+#'
 #' \describe{
-#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
 #'     Defaults to \code{TRUE}.}
-#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the tree edges. Defaults to \code{1}.}
 #'   \item{\code{line_type}:}{Numeric scalar, specifying the default line type.
 #'     Defaults to NULL to use default of the \code{ggplot2} package}
-#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of 
+#'   \item{\code{line_width}:}{Numeric scalar, specifying the default width of
 #'     a line. Defaults to NULL to use default of the \code{ggplot2} package}
 #'   \item{\code{line_width_range}:}{Two numeric values, the range for plotting
 #'     dynamic line widths in. Defaults to \code{c(0.5,3)}.}
-#'   \item{\code{ribbon_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{ribbon_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the ribbon. Defaults to \code{0.3}.}
 #' }
-#' 
+#'
 #' @section Tile plotting:
-#' 
+#'
 #' \describe{
-#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted? 
+#'   \item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
 #'     Defaults to \code{TRUE}.}
-#'   \item{\code{rect_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
+#'   \item{\code{rect_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 #'     transparency of the areas. Defaults to \code{1}.}
 #'   \item{\code{rect_colour}:}{Character scalar, specfiying the colour to use
 #'     for colouring the borders of the areas. Defaults to \code{"black"}.}
 #'   \item{\code{na.value}:}{Character scalar, specfiying the colour to use
 #'     for \code{NA} values. Defaults to \code{"grey80"}.}
 #' }
-#' 
+#'
 #' @name mia-plot-args
 NULL
 
@@ -141,7 +141,7 @@ NULL
                                   fill = FALSE,
                                   type = c("normal","edges"),
                                   na.translate = TRUE,
-                                  na.value = NA) 
+                                  na.value = NA)
 {
     if (is.null(colour_by)) {
         return(plot_out)
@@ -177,20 +177,20 @@ NULL
     else {
         nlevs_colour_by <- nlevels(as.factor(colour_by))
         if (nlevs_colour_by <= 10) {
-            plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau10medium"), 
+            plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau10medium"),
                                             name = colour_by_name,
                                             na.translate = na.translate,
                                             na.value = na.value)
         }
         else {
             if (nlevs_colour_by > 10 && nlevs_colour_by <= 20) {
-                plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau20"), 
+                plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau20"),
                                                 name = colour_by_name,
                                                 na.translate = na.translate,
                                                 na.value = na.value)
             }
             else {
-                plot_out <- plot_out + VIRIDFUN(name = colour_by_name, 
+                plot_out <- plot_out + VIRIDFUN(name = colour_by_name,
                                                 discrete = TRUE,
                                                 na.translate = na.translate,
                                                 option = option,
@@ -207,7 +207,7 @@ NULL
     guide_args <- list()
     if (!is.null(edge_width_by)) {
         guide_args$edge_width <- guide_legend(title = edge_width_by)
-        plot_out <- plot_out + 
+        plot_out <- plot_out +
             do.call(guides, guide_args)
     }
     plot_out
@@ -221,7 +221,7 @@ NULL
         } else {
             SIZEFUN <- scale_size_discrete
         }
-        plot_out <- plot_out + 
+        plot_out <- plot_out +
             SIZEFUN(name = edge_size_by, range = line_width_range) +
             new_scale("size")
     }
@@ -248,7 +248,7 @@ NULL
 }
 
 .get_bar_args <- function (colour_by, alpha = 0.65, add_border = NULL,
-                           n = 0) 
+                           n = 0)
 {
     aes_args <- list()
     fill_colour <- TRUE
@@ -277,7 +277,7 @@ NULL
                             alpha = 0.65,
                             size = NULL,
                             shape = 21,
-                            colour = "grey70") 
+                            colour = "grey70")
 {
     aes_args <- list()
     fill_colour <- TRUE
@@ -314,7 +314,7 @@ NULL
                            alpha = 0.65,
                            linetype = 1,
                            size = NULL,
-                           colour = "grey70") 
+                           colour = "grey70")
 {
     aes_args <- list()
     if (!is.null(linetype_by)) {
@@ -341,7 +341,7 @@ NULL
 }
 
 .get_ribbon_args <- function(colour_by,
-                             alpha = 0.3) 
+                             alpha = 0.3)
 {
     aes_args <- list()
     aes_args$ymin <- "Y - sd"
@@ -421,7 +421,7 @@ NULL
 .flip_plot <- function(plot_out, flipped = FALSE, add_x_text = FALSE,
                        angle_x_text = TRUE){
     if (flipped) {
-        plot_out <- plot_out + 
+        plot_out <- plot_out +
             coord_flip()
         if(!add_x_text){
             plot_out <- plot_out +
@@ -454,4 +454,18 @@ NULL
         }
     }
     plot_out
+}
+
+#' @importFrom cowplot plot_grid
+.combine_plots <- function(plots, flipped = FALSE, ...){
+  if(flipped){
+    plot_out <- plot_grid(plotlist = rev(plots), nrow=1, align="h",
+                          axis = "tb",
+                          rel_widths = c(rep(1, length(plots) - 1L), 2))
+  } else {
+    plot_out <- plot_grid(plotlist = plots, ncol=1, align="v",
+                          axis = "lr",
+                          rel_heights = c(2, rep(1, length(plots) - 1L)))
+  }
+  plot_out
 }

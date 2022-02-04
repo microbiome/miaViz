@@ -12,47 +12,35 @@
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
-#'
 #' @param rank a single \code{character} value defining the taxonomic rank to
 #'   use. Must be a value of \code{taxonomyRanks(x)}.
-#'
 #' @param abund_values a \code{character} value defining which assay data to
 #'   use. (default: \code{abund_values = "relabundance"})
-#'
 #' @param features a single \code{character} value defining a column from
 #'   \code{colData} to be plotted below the abundance plot.
 #'   Continuous numeric values will be plotted as point, whereas factors and
 #'   character will be plotted as colour-code bar. (default: \code{features =
 #'   NULL})
-#'
 #' @param order_rank_by How to order abundance value: By name (\dQuote{name})
 #' for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
 #' sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).
-#'
-#'
 #' @param order_sample_by A single character value from the chosen rank of abundance
 #'   data or from \code{colData} to select values to order the abundance
 #'   plot by. (default: \code{order_sample_by = NULL})
-#'
 #' @param decreasing TRUE or FALSE: If the \code{order_sample_by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
 #'   increasing fashion? (default: \code{decreasing = FALSE})
-#'
 #' @param use_relative \code{TRUE} or \code{FALSE}: Should the relative values
 #'   be calculated? (default: \code{use_relative = TRUE})
-#'
 #' @param layout Either \dQuote{bar} or \dQuote{point}.
-#'
 #' @param one_facet Should the plot be returned in on facet or split into
 #'   different facet, one facet per different value detect in \code{rank}. If
 #'   \code{features} or \code{order_sample_by} is not \code{NULL}, this setting will
 #'   be disregarded.
-#'
 #' @param ncol,scales if \code{one_facet = FALSE}, \code{ncol} defines many
 #'   columns should be for plotting the different facets and \code{scales} is
 #'   used to define the behavior of the scales of each facet. Both values are
 #'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
-#'
 #' @param ... additional parameters for plotting. See
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
@@ -133,7 +121,6 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @rdname plotAbundance
 #' @importFrom scater plotExpression
 #' @importFrom ggplot2 facet_wrap
-#' @importFrom patchwork plot_layout
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
@@ -226,7 +213,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                 plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[features]])
                 # Assigns the names back
                 names(plot_out) <- c("abundance", features)
-                plot_out <- plot_out[[1]] / plot_out[[2]] + plot_layout(ncol=1,heights=c(4,1))
+                plot_out <- .combine_plots(plot_out)
             } else{
                 plot_out <- plot_out[["abundance"]]
             }
