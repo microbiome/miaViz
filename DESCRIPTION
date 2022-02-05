@@ -48,7 +48,8 @@ Imports:
     dplyr,
     ape,
     DirichletMultinomial,
-    cowplot
+    cowplot,
+    patchwork
 Suggests:
     knitr,
     rmarkdown,
