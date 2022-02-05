@@ -65,6 +65,7 @@
 #' plotAbundance(se, add_x_text=TRUE)
 #'
 #' ## If rank is set to NULL plotAbundance behaves like plotExpression
+#' library(cowplot)
 #' plotAbundance(se, abund_values="counts", rank = NULL,
 #'            features = head(rownames(se)))
 #'
