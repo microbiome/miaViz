@@ -1,7 +1,7 @@
 pandoc: 2.14.0.3
-pkgdown: 2.0.1
+pkgdown: 2.0.2
 pkgdown_sha: ~
 articles:
   miaViz: miaViz.html
-last_built: 2021-12-31T20:20Z
+last_built: 2022-02-06T13:36Z
 

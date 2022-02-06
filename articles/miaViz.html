@@ -34,7 +34,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
       </span>
     </div>
 
@@ -71,9 +71,9 @@
     
     
 <p><code>miaViz</code> implements plotting function to work with <code>TreeSummarizedExperiment</code> and related objects in a context of microbiome analysis. For more general plotting function on <code>SummarizedExperiment</code> objects the <code>scater</code> package offers several options, such as <code>plotColData</code>, <code>plotExpression</code> and <code>plotRowData</code>.</p>
-<div class="section level1">
-<h1 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
-</h1>
+<div class="section level2">
+<h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
+</h2>
 <p>To install <code>miaViz</code>, install <code>BiocManager</code> first, if it is not installed. Afterwards use the <code>install</code> function from <code>BiocManager</code> and load <code>miaViz</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
@@ -83,9 +83,9 @@
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">miaViz</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></code></pre></div>
 </div>
-<div class="section level1">
-<h1 id="abundance-plotting">Abundance plotting<a class="anchor" aria-label="anchor" href="#abundance-plotting"></a>
-</h1>
+<div class="section level2">
+<h2 id="abundance-plotting">Abundance plotting<a class="anchor" aria-label="anchor" href="#abundance-plotting"></a>
+</h2>
 <p>in contrast to other fields of sequencing based fields of research for which expression of genes is usually studied, microbiome research uses the more term <sub>Abundance</sub> to described the numeric data measured and analyzed. Technically, especially in context of <code>SummarizedExperiment</code> objects, there is no difference. Therefore <code>plotExpression</code> can be used to plot <code>Abundance</code> data.</p>
 <p><code>plotAbundance</code> can be used as well and as long as <code>rank</code> is set <code>NULL</code>, it behaves as <code>plotExpression</code>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -119,9 +119,9 @@
 <p><img src="miaViz_files/figure-html/unnamed-chunk-8-1.png" width="3000"></p>
 <p>Further example about composition barplot can be found at Orchestrating Microbiome Analysis <span class="citation">(Lahti, Shetty, and Ernst 2021)</span>.</p>
 </div>
-<div class="section level1">
-<h1 id="prevalence-plotting">Prevalence plotting<a class="anchor" aria-label="anchor" href="#prevalence-plotting"></a>
-</h1>
+<div class="section level2">
+<h2 id="prevalence-plotting">Prevalence plotting<a class="anchor" aria-label="anchor" href="#prevalence-plotting"></a>
+</h2>
 <p>To visualize prevalence within the dataset, two functions are available, <code>plotTaxaPrevalence</code>, <code>plotPrevalenceAbundance</code> and <code>plotPrevalence</code>.</p>
 <p><code>plotTaxaPrevalence</code> produces a so-called landscape plot, which visualizes the prevalence of samples across abundance thresholds.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -142,9 +142,9 @@
                prevalences <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-11-1.png" width="3000"></p>
 </div>
-<div class="section level1">
-<h1 id="tree-plotting">Tree plotting<a class="anchor" aria-label="anchor" href="#tree-plotting"></a>
-</h1>
+<div class="section level2">
+<h2 id="tree-plotting">Tree plotting<a class="anchor" aria-label="anchor" href="#tree-plotting"></a>
+</h2>
 <p>The information stored in the <code>rowTree</code> can be directly plotted. However, sizes of stored trees have to be kept in mind and plotting of large trees rarely makes sense.</p>
 <p>For this example we limit the information plotted to the top 100 taxa as judged by mean abundance on the genus level.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
@@ -232,9 +232,9 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 </p>
 </div>
 </div>
-<div class="section level1">
-<h1 id="graph-plotting">Graph plotting<a class="anchor" aria-label="anchor" href="#graph-plotting"></a>
-</h1>
+<div class="section level2">
+<h2 id="graph-plotting">Graph plotting<a class="anchor" aria-label="anchor" href="#graph-plotting"></a>
+</h2>
 <p>Similar to tree data, graph data can also be plotted in conjunction with <code>SummarizedExperiment</code> objects. Since the graph data in itself cannot be stored in a specialized slot, a graph object can be provided separately or as an element from the <code>metedata</code>.</p>
 <p>Here we load an example graph. As graph data, all objects types accepted by <code>as_tbl_graph</code> from the <code>tidygraph</code> package are supported.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
@@ -253,13 +253,13 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <code class="sourceCode R"><span class="fu">metadata</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="va">col_graph</span></code></pre></div>
 <p>This produces the same plot as shown above.</p>
 </div>
-<div class="section level1">
-<h1 id="plotting-of-serial-data">Plotting of serial data<a class="anchor" aria-label="anchor" href="#plotting-of-serial-data"></a>
-</h1>
+<div class="section level2">
+<h2 id="plotting-of-serial-data">Plotting of serial data<a class="anchor" aria-label="anchor" href="#plotting-of-serial-data"></a>
+</h2>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">microbiomeDataSets</span><span class="op">)</span>
 <span class="va">silverman</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/microbiomeDataSets/man/SilvermanAGutData.html" class="external-link">SilvermanAGutData</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; snapshotDate(): 2021-11-24</span>
+<span class="co">#&gt; snapshotDate(): 2022-01-20</span>
 <span class="co">#&gt; see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span>
 <span class="co">#&gt; loading from cache</span>
 <span class="co">#&gt; see ?microbiomeDataSets and browseVignettes('microbiomeDataSets') for documentation</span>
@@ -296,9 +296,9 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
            abund_values <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-21-1.png" width="3000"></p>
 </div>
-<div class="section level1">
-<h1 id="plotting-factor-data">Plotting factor data<a class="anchor" aria-label="anchor" href="#plotting-factor-data"></a>
-</h1>
+<div class="section level2">
+<h2 id="plotting-factor-data">Plotting factor data<a class="anchor" aria-label="anchor" href="#plotting-factor-data"></a>
+</h2>
 <p>To visualize the relative relations between two groupings among the factor data, two functions are available for the purpose; <code>plotColTile</code> and <code>plotRowTile</code>.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>
@@ -307,9 +307,9 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x.top <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-22-1.png" width="3000"></p>
 </div>
-<div class="section level1">
-<h1 id="dmn-fit-plotting">DMN fit plotting<a class="anchor" aria-label="anchor" href="#dmn-fit-plotting"></a>
-</h1>
+<div class="section level2">
+<h2 id="dmn-fit-plotting">DMN fit plotting<a class="anchor" aria-label="anchor" href="#dmn-fit-plotting"></a>
+</h2>
 <p>Searching for groups that are similar to each other among the samples, could be approached with the Dirichlet Multinomial Mixtures <span class="citation">(Holmes, Harris, and Quince 2012)</span>. After using <code>runDMN</code> from the <code>mia</code> package, several k values as a number of clusters are used to observe the best fit (see also <code>getDMN</code> and <code>getBestDMNFit</code>). To visualize the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span>
@@ -320,12 +320,12 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <p><img src="miaViz_files/figure-html/unnamed-chunk-23-1.png" width="3000"></p>
 <p>More examples and materials are available at Orchestrating Microbiome Analysis <span class="citation">(Lahti, Shetty, and Ernst 2021)</span>.</p>
 </div>
-<div class="section level1">
-<h1 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
-</h1>
+<div class="section level2">
+<h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
+</h2>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; R Under development (unstable) (2021-12-30 r81418)</span>
+<span class="co">#&gt; R Under development (unstable) (2022-02-03 r81650)</span>
 <span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span>
 <span class="co">#&gt; Running under: Ubuntu 20.04.3 LTS</span>
 <span class="co">#&gt; </span>
@@ -335,7 +335,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <span class="co">#&gt; locale:</span>
 <span class="co">#&gt;  [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C              </span>
 <span class="co">#&gt;  [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8    </span>
-<span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=C             </span>
+<span class="co">#&gt;  [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8   </span>
 <span class="co">#&gt;  [7] LC_PAPER=en_US.UTF-8       LC_NAME=C                 </span>
 <span class="co">#&gt;  [9] LC_ADDRESS=C               LC_TELEPHONE=C            </span>
 <span class="co">#&gt; [11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C       </span>
@@ -347,41 +347,41 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <span class="co">#&gt; other attached packages:</span>
 <span class="co">#&gt;  [1] microbiomeDataSets_1.3.0       scater_1.23.2                 </span>
 <span class="co">#&gt;  [3] scuttle_1.5.0                  patchwork_1.1.1               </span>
-<span class="co">#&gt;  [5] miaViz_1.3.2                   ggraph_2.0.5                  </span>
-<span class="co">#&gt;  [7] ggplot2_3.3.5                  mia_1.3.9                     </span>
+<span class="co">#&gt;  [5] miaViz_1.3.3                   ggraph_2.0.5                  </span>
+<span class="co">#&gt;  [7] ggplot2_3.3.5                  mia_1.3.17                    </span>
 <span class="co">#&gt;  [9] MultiAssayExperiment_1.21.5    TreeSummarizedExperiment_2.1.4</span>
-<span class="co">#&gt; [11] Biostrings_2.63.0              XVector_0.35.0                </span>
+<span class="co">#&gt; [11] Biostrings_2.63.1              XVector_0.35.0                </span>
 <span class="co">#&gt; [13] SingleCellExperiment_1.17.2    SummarizedExperiment_1.25.3   </span>
-<span class="co">#&gt; [15] Biobase_2.55.0                 GenomicRanges_1.47.5          </span>
-<span class="co">#&gt; [17] GenomeInfoDb_1.31.1            IRanges_2.29.1                </span>
-<span class="co">#&gt; [19] S4Vectors_0.33.8               BiocGenerics_0.41.2           </span>
+<span class="co">#&gt; [15] Biobase_2.55.0                 GenomicRanges_1.47.6          </span>
+<span class="co">#&gt; [17] GenomeInfoDb_1.31.4            IRanges_2.29.1                </span>
+<span class="co">#&gt; [19] S4Vectors_0.33.10              BiocGenerics_0.41.2           </span>
 <span class="co">#&gt; [21] MatrixGenerics_1.7.0           matrixStats_0.61.0            </span>
 <span class="co">#&gt; [23] BiocStyle_2.23.1              </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; loaded via a namespace (and not attached):</span>
-<span class="co">#&gt;   [1] AnnotationHub_3.3.7           BiocFileCache_2.3.3          </span>
+<span class="co">#&gt;   [1] AnnotationHub_3.3.8           BiocFileCache_2.3.4          </span>
 <span class="co">#&gt;   [3] systemfonts_1.0.3             plyr_1.8.6                   </span>
-<span class="co">#&gt;   [5] igraph_1.2.10                 lazyeval_0.2.2               </span>
-<span class="co">#&gt;   [7] splines_4.2.0                 BiocParallel_1.29.8          </span>
+<span class="co">#&gt;   [5] igraph_1.2.11                 lazyeval_0.2.2               </span>
+<span class="co">#&gt;   [7] splines_4.2.0                 BiocParallel_1.29.12         </span>
 <span class="co">#&gt;   [9] digest_0.6.29                 yulab.utils_0.0.4            </span>
 <span class="co">#&gt;  [11] htmltools_0.5.2               viridis_0.6.2                </span>
-<span class="co">#&gt;  [13] fansi_0.5.0                   magrittr_2.0.1               </span>
+<span class="co">#&gt;  [13] fansi_1.0.2                   magrittr_2.0.2               </span>
 <span class="co">#&gt;  [15] memoise_2.0.1                 ScaledMatrix_1.3.0           </span>
 <span class="co">#&gt;  [17] cluster_2.1.2                 DECIPHER_2.23.0              </span>
-<span class="co">#&gt;  [19] graphlayouts_0.7.2            pkgdown_2.0.1                </span>
+<span class="co">#&gt;  [19] graphlayouts_0.8.0            pkgdown_2.0.2                </span>
 <span class="co">#&gt;  [21] colorspace_2.0-2              rappdirs_0.3.3               </span>
 <span class="co">#&gt;  [23] blob_1.2.2                    ggrepel_0.9.1                </span>
 <span class="co">#&gt;  [25] textshaping_0.3.6             xfun_0.29                    </span>
 <span class="co">#&gt;  [27] dplyr_1.0.7                   crayon_1.4.2                 </span>
-<span class="co">#&gt;  [29] RCurl_1.98-1.5                jsonlite_1.7.2               </span>
-<span class="co">#&gt;  [31] ape_5.6                       glue_1.6.0                   </span>
+<span class="co">#&gt;  [29] RCurl_1.98-1.5                jsonlite_1.7.3               </span>
+<span class="co">#&gt;  [31] ape_5.6-1                     glue_1.6.1                   </span>
 <span class="co">#&gt;  [33] polyclip_1.10-0               gtable_0.3.0                 </span>
 <span class="co">#&gt;  [35] zlibbioc_1.41.0               DelayedArray_0.21.2          </span>
 <span class="co">#&gt;  [37] BiocSingular_1.11.0           scales_1.1.1                 </span>
-<span class="co">#&gt;  [39] DBI_1.1.2                     Rcpp_1.0.7                   </span>
+<span class="co">#&gt;  [39] DBI_1.1.2                     Rcpp_1.0.8                   </span>
 <span class="co">#&gt;  [41] xtable_1.8-4                  viridisLite_0.4.0            </span>
 <span class="co">#&gt;  [43] decontam_1.15.0               gridGraphics_0.5-1           </span>
-<span class="co">#&gt;  [45] tidytree_0.3.6                bit_4.0.4                    </span>
+<span class="co">#&gt;  [45] tidytree_0.3.7                bit_4.0.4                    </span>
 <span class="co">#&gt;  [47] rsvd_1.0.5                    httr_1.4.2                   </span>
 <span class="co">#&gt;  [49] RColorBrewer_1.1-2            ellipsis_0.3.2               </span>
 <span class="co">#&gt;  [51] pkgconfig_2.0.3               farver_2.1.0                 </span>
@@ -389,47 +389,48 @@ Tree plot using ggtree with tip labels decorated by mean abundance (colour) and 
 <span class="co">#&gt;  [55] utf8_1.2.2                    AnnotationDbi_1.57.1         </span>
 <span class="co">#&gt;  [57] later_1.3.0                   ggplotify_0.1.0              </span>
 <span class="co">#&gt;  [59] tidyselect_1.1.1              labeling_0.4.2               </span>
-<span class="co">#&gt;  [61] rlang_0.4.12                  reshape2_1.4.4               </span>
+<span class="co">#&gt;  [61] rlang_1.0.1                   reshape2_1.4.4               </span>
 <span class="co">#&gt;  [63] BiocVersion_3.15.0            munsell_0.5.0                </span>
 <span class="co">#&gt;  [65] tools_4.2.0                   cachem_1.0.6                 </span>
-<span class="co">#&gt;  [67] DirichletMultinomial_1.37.0   generics_0.1.1               </span>
-<span class="co">#&gt;  [69] RSQLite_2.2.9                 ExperimentHub_2.3.4          </span>
-<span class="co">#&gt;  [71] evaluate_0.14                 stringr_1.4.0                </span>
-<span class="co">#&gt;  [73] fastmap_1.1.0                 yaml_2.2.1                   </span>
-<span class="co">#&gt;  [75] ragg_1.2.1                    ggtree_3.3.1                 </span>
-<span class="co">#&gt;  [77] knitr_1.37                    bit64_4.0.5                  </span>
-<span class="co">#&gt;  [79] fs_1.5.2                      tidygraph_1.2.0              </span>
-<span class="co">#&gt;  [81] purrr_0.3.4                   KEGGREST_1.35.0              </span>
-<span class="co">#&gt;  [83] nlme_3.1-153                  sparseMatrixStats_1.7.0      </span>
-<span class="co">#&gt;  [85] mime_0.12                     aplot_0.1.1                  </span>
-<span class="co">#&gt;  [87] compiler_4.2.0                png_0.1-7                    </span>
-<span class="co">#&gt;  [89] interactiveDisplayBase_1.33.0 filelock_1.0.2               </span>
-<span class="co">#&gt;  [91] curl_4.3.2                    beeswarm_0.4.0               </span>
-<span class="co">#&gt;  [93] treeio_1.19.1                 tibble_3.1.6                 </span>
-<span class="co">#&gt;  [95] tweenr_1.0.2                  bslib_0.3.1                  </span>
-<span class="co">#&gt;  [97] stringi_1.7.6                 highr_0.9                    </span>
-<span class="co">#&gt;  [99] desc_1.4.0                    lattice_0.20-45              </span>
-<span class="co">#&gt; [101] Matrix_1.4-0                  vegan_2.5-7                  </span>
-<span class="co">#&gt; [103] permute_0.9-5                 vctrs_0.3.8                  </span>
-<span class="co">#&gt; [105] pillar_1.6.4                  lifecycle_1.0.1              </span>
-<span class="co">#&gt; [107] BiocManager_1.30.16           jquerylib_0.1.4              </span>
-<span class="co">#&gt; [109] BiocNeighbors_1.13.0          bitops_1.0-7                 </span>
-<span class="co">#&gt; [111] irlba_2.3.5                   httpuv_1.6.4                 </span>
-<span class="co">#&gt; [113] R6_2.5.1                      promises_1.2.0.1             </span>
-<span class="co">#&gt; [115] bookdown_0.24                 gridExtra_2.3                </span>
-<span class="co">#&gt; [117] vipor_0.4.5                   MASS_7.3-54                  </span>
-<span class="co">#&gt; [119] assertthat_0.2.1              rprojroot_2.0.2              </span>
-<span class="co">#&gt; [121] withr_2.4.3                   GenomeInfoDbData_1.2.7       </span>
-<span class="co">#&gt; [123] mgcv_1.8-38                   parallel_4.2.0               </span>
-<span class="co">#&gt; [125] grid_4.2.0                    ggfun_0.0.4                  </span>
-<span class="co">#&gt; [127] beachmat_2.11.0               tidyr_1.1.4                  </span>
-<span class="co">#&gt; [129] rmarkdown_2.11                DelayedMatrixStats_1.17.0    </span>
-<span class="co">#&gt; [131] ggnewscale_0.4.5              ggforce_0.3.3                </span>
-<span class="co">#&gt; [133] shiny_1.7.1                   ggbeeswarm_0.6.0</span></code></pre></div>
+<span class="co">#&gt;  [67] cli_3.1.1                     ExperimentHub_2.3.5          </span>
+<span class="co">#&gt;  [69] DirichletMultinomial_1.37.0   generics_0.1.2               </span>
+<span class="co">#&gt;  [71] RSQLite_2.2.9                 evaluate_0.14                </span>
+<span class="co">#&gt;  [73] stringr_1.4.0                 fastmap_1.1.0                </span>
+<span class="co">#&gt;  [75] yaml_2.2.2                    ragg_1.2.1                   </span>
+<span class="co">#&gt;  [77] ggtree_3.3.1                  knitr_1.37                   </span>
+<span class="co">#&gt;  [79] bit64_4.0.5                   fs_1.5.2                     </span>
+<span class="co">#&gt;  [81] tidygraph_1.2.0               purrr_0.3.4                  </span>
+<span class="co">#&gt;  [83] KEGGREST_1.35.0               nlme_3.1-155                 </span>
+<span class="co">#&gt;  [85] sparseMatrixStats_1.7.0       mime_0.12                    </span>
+<span class="co">#&gt;  [87] aplot_0.1.2                   compiler_4.2.0               </span>
+<span class="co">#&gt;  [89] png_0.1-7                     interactiveDisplayBase_1.33.0</span>
+<span class="co">#&gt;  [91] filelock_1.0.2                curl_4.3.2                   </span>
+<span class="co">#&gt;  [93] beeswarm_0.4.0                treeio_1.19.1                </span>
+<span class="co">#&gt;  [95] tibble_3.1.6                  tweenr_1.0.2                 </span>
+<span class="co">#&gt;  [97] bslib_0.3.1                   stringi_1.7.6                </span>
+<span class="co">#&gt;  [99] highr_0.9                     desc_1.4.0                   </span>
+<span class="co">#&gt; [101] lattice_0.20-45               Matrix_1.4-0                 </span>
+<span class="co">#&gt; [103] vegan_2.5-7                   permute_0.9-7                </span>
+<span class="co">#&gt; [105] vctrs_0.3.8                   pillar_1.7.0                 </span>
+<span class="co">#&gt; [107] lifecycle_1.0.1               BiocManager_1.30.16          </span>
+<span class="co">#&gt; [109] jquerylib_0.1.4               BiocNeighbors_1.13.0         </span>
+<span class="co">#&gt; [111] bitops_1.0-7                  irlba_2.3.5                  </span>
+<span class="co">#&gt; [113] httpuv_1.6.5                  R6_2.5.1                     </span>
+<span class="co">#&gt; [115] promises_1.2.0.1              bookdown_0.24                </span>
+<span class="co">#&gt; [117] gridExtra_2.3                 vipor_0.4.5                  </span>
+<span class="co">#&gt; [119] MASS_7.3-55                   assertthat_0.2.1             </span>
+<span class="co">#&gt; [121] rprojroot_2.0.2               withr_2.4.3                  </span>
+<span class="co">#&gt; [123] GenomeInfoDbData_1.2.7        mgcv_1.8-38                  </span>
+<span class="co">#&gt; [125] parallel_4.2.0                grid_4.2.0                   </span>
+<span class="co">#&gt; [127] ggfun_0.0.5                   beachmat_2.11.0              </span>
+<span class="co">#&gt; [129] tidyr_1.2.0                   rmarkdown_2.11               </span>
+<span class="co">#&gt; [131] DelayedMatrixStats_1.17.0     ggnewscale_0.4.5             </span>
+<span class="co">#&gt; [133] ggforce_0.3.3                 shiny_1.7.1                  </span>
+<span class="co">#&gt; [135] ggbeeswarm_0.6.0</span></code></pre></div>
 </div>
-<div class="section level1 unnumbered">
-<h1 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
-</h1>
+<div class="section level2">
+<h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
+</h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-DMM" class="csl-entry">
 Holmes, Ian, Keith Harris, and Christopher Quince. 2012. <span>“Dirichlet Multinomial Mixtures: Generative Models for Microbial Metagenomics.”</span> <em>PLOS ONE</em>. <a href="https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0030126" class="external-link">https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0030126</a>.
@@ -458,7 +459,7 @@ Lahti, Leo, Sudarshan Shetty, and Felix GM Ernst. 2021. <span>“Orchestrating M
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
