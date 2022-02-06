@@ -100,8 +100,7 @@ plotAbundance(se, abund_values="counts", rank = "Phylum", add_legend = FALSE)
 plotAbundance(se, abund_values="counts", rank = NULL,
            features = head(rownames(se)))
   
-## A feature from colData or taxon from chosen rank can be used for ordering
-samples.
+## A feature from colData or taxon from chosen rank can be used for ordering samples.
 plotAbundance(se, abund_values="counts", rank = "Phylum",
            order_sample_by = "Bacteroidetes")
 
@@ -111,14 +110,12 @@ plotAbundance(se, abund_values="counts", rank = "Phylum",
 plot <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
                    features = "SampleType")
 \donttest{
-# These two plots can be combined with wrap_plots function from patchwork
-package
+# These two plots can be combined with wrap_plots function from patchwork package
 library(patchwork)
 wrap_plots(plot, ncol = 1)
 }
 
-## Same plot as above but showing sample IDs as labels for the x axis on the
-top plot
+## Same plot as above but showing sample IDs as labels for the x axis on the top plot
 
 plot[[1]] <- plotAbundance(se, abund_values = "counts", rank = "Phylum",
                            features = "SampleType", add_legend = FALSE,
