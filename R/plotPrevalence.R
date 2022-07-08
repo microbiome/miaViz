@@ -20,8 +20,13 @@
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 #' }
 #'   
-#' @param abund_values a \code{character} value defining which assay data to
-#'   use. (default: \code{abund_values = "relabundance"})
+#' @param assay_name a \code{character} value defining which assay data to
+#'   use. (default: \code{assay_name = "relabundance"})
+#'   
+#' @param abund_values a single \code{character} value for specifying which
+#'   assay to use for calculation.
+#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   will be disabled.)
 #'   
 #' @param as_relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? Passed onto
@@ -129,7 +134,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
           function(x,
                    detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
                    prevalences = seq(0.1, 1, 0.1),
-                   abund_values = "counts",
+                   assay_name = abund_values, abund_values = "counts",
                    as_relative = TRUE,
                    rank = NULL,
                    BPPARAM = BiocParallel::SerialParam(),
@@ -143,7 +148,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
             stop("'prevalences' must be numeric values between 0 and 1.",
                  call. = FALSE)
         }
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -153,7 +158,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
         }
         #
         x <- mia:::.agg_for_prevalence(x, rank, ...)
-        plot_data <- .get_prevalence_plot_data(x, abund_values, detections,
+        plot_data <- .get_prevalence_plot_data(x, assay_name, detections,
                                                prevalences, as_relative,
                                                BPPARAM)
         plot_data$colour_by <- plot_data$colour_by * 100
@@ -180,10 +185,10 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom BiocParallel bpmapply bpisup bpstart bpstop SerialParam
 #' @importFrom SummarizedExperiment assay
-.get_prevalence_plot_data <- function(x, abund_values, detections, prevalences,
+.get_prevalence_plot_data <- function(x, assay_name, detections, prevalences,
                                       as_relative = TRUE, 
                                       BPPARAM = BiocParallel::SerialParam()){
-    mat <- assay(x, abund_values, withDimnames = TRUE)
+    mat <- assay(x, assay_name, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
@@ -215,7 +220,7 @@ setGeneric("plotPrevalentAbundance", signature = c("x"),
 setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x,
              rank = taxonomyRanks(x)[1L],
-             abund_values = "counts",
+             assay_name = abund_values, abund_values = "counts",
              as_relative = TRUE,
              colour_by = NULL,
              size_by = NULL,
@@ -224,7 +229,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
              facet_by = NULL,
              ...){
         # input check
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -238,7 +243,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                                        ...)
         label <- .norm_label(label, x)
         #
-        plot_data <- .get_prevalence_plot_point_data(x, abund_values, 
+        plot_data <- .get_prevalence_plot_point_data(x, assay_name, 
                                                      as_relative = as_relative,
                                                      label = label)
         vis_out <- .incorporate_prevalence_vis(plot_data,
@@ -278,9 +283,9 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom DelayedArray rowMeans
 #' @importFrom SummarizedExperiment assay
-.get_prevalence_plot_point_data <- function(x, abund_values, as_relative = TRUE,
+.get_prevalence_plot_point_data <- function(x, assay_name, as_relative = TRUE,
                                             label = NULL){
-    mat <- assay(x, abund_values, withDimnames = TRUE)
+    mat <- assay(x, assay_name, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
@@ -344,7 +349,7 @@ setGeneric("plotTaxaPrevalence", signature = c("x"),
 setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
           function(x,
                    rank = taxonomyRanks(x)[1L],
-                   abund_values = "counts",
+                   assay_name = abund_values, abund_values = "counts",
                    detections = NULL,
                    ndetections = 20,
                    as_relative = TRUE,
@@ -366,7 +371,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
             detections <- seq(0,1,length.out = ndetections + 1L)
             as_relative <- TRUE
         }
-        .check_assay_present(abund_values, x)
+        .check_assay_present(assay_name, x)
         if(!.is_a_bool(as_relative)){
             stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
         }
@@ -381,7 +386,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
         #
         x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, relabel = TRUE,
                                        ...)
-        plot_data <- .get_prevalence_plot_matrix(x, abund_values, detections,
+        plot_data <- .get_prevalence_plot_matrix(x, assay_name, detections,
                                                  as_relative, 
                                                  min_prevalence,
                                                  BPPARAM)
@@ -411,11 +416,11 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment assay
 #' @importFrom tidyr pivot_longer
 #' @importFrom DelayedArray rowSums
-.get_prevalence_plot_matrix <- function(x, abund_values, detections, 
+.get_prevalence_plot_matrix <- function(x, assay_name, detections, 
                                         as_relative = TRUE, 
                                         min_prevalence,
                                         BPPARAM = BiocParallel::SerialParam()){
-    mat <- assay(x, abund_values, withDimnames = TRUE)
+    mat <- assay(x, assay_name, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
     }

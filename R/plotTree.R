@@ -112,7 +112,7 @@
 #' top_genus <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
 #'                         method="mean",
 #'                         top=100L,
-#'                         abund_values="counts")
+#'                         assay_name="counts")
 #' #
 #' x <- altExp(GlobalPatterns,"Genus")
 #' plotRowTree(x[rownames(x) %in% top_genus,],
@@ -149,7 +149,7 @@
 #' top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
 #'                         method="mean",
 #'                         top=10L,
-#'                         abund_values="counts")
+#'                         assay_name="counts")
 #' altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
 #' altExps(GlobalPatterns) <-
 #'    lapply(altExps(GlobalPatterns),

@@ -10,13 +10,13 @@ test_that("plot series", {
     expect_error(plotSeries(tse_sub))
     
     # Expect output
-    expect_type(plotSeries(tse_sub, abund_values = "counts", x = "DAY_ORDER"), "list")
+    expect_type(plotSeries(tse_sub, assay_name = "counts", x = "DAY_ORDER"), "list")
     
     # Expect warning when over 10 taxa, expect error when over 20 taxa
     tse_sub <- tse[1:11]
-    expect_warning(plotSeries(tse_sub, abund_values = "counts", x = "DAY_ORDER"))
+    expect_warning(plotSeries(tse_sub, assay_name = "counts", x = "DAY_ORDER"))
     tse_sub <- tse[1:21]
-    expect_error(plotSeries(tse_sub, abund_values = "counts", x = "DAY_ORDER"))
+    expect_error(plotSeries(tse_sub, assay_name = "counts", x = "DAY_ORDER"))
     
     ##################### Test .get_assay_data #################################
     tse_sub <- tse[1:10]
