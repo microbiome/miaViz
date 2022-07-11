@@ -8,11 +8,11 @@
 \alias{row_graph_order}
 \title{miaViz example data}
 \format{
-An object of class \code{tbl_graph} (inherits from \code{igraph}) of length 10.
+An object of class \code{tbl_graph} (inherits from \code{igraph}) of length 26.
 
-An object of class \code{tbl_graph} (inherits from \code{igraph}) of length 10.
+An object of class \code{tbl_graph} (inherits from \code{igraph}) of length 996.
 
-An object of class \code{tbl_graph} (inherits from \code{igraph}) of length 10.
+An object of class \code{tbl_graph} (inherits from \code{igraph}) of length 110.
 }
 \usage{
 data(col_graph)

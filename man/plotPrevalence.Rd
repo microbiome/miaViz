@@ -15,6 +15,7 @@ plotPrevalence(x, ...)
   x,
   detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
   prevalences = seq(0.1, 1, 0.1),
+  assay_name = abund_values,
   abund_values = "counts",
   as_relative = TRUE,
   rank = NULL,
@@ -27,6 +28,7 @@ plotPrevalentAbundance(x, ...)
 \S4method{plotPrevalentAbundance}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1L],
+  assay_name = abund_values,
   abund_values = "counts",
   as_relative = TRUE,
   colour_by = NULL,
@@ -42,6 +44,7 @@ plotTaxaPrevalence(x, ...)
 \S4method{plotTaxaPrevalence}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1L],
+  assay_name = abund_values,
   abund_values = "counts",
   detections = NULL,
   ndetections = 20,
@@ -64,8 +67,13 @@ value between 0 and 1, if \code{as_relative = TRUE}.}
 required prevalence is strictly greater by default. To include the
 limit, set \code{include_lowest} to \code{TRUE}.}
 
-\item{abund_values}{a \code{character} value defining which assay data to
-use. (default: \code{abund_values = "relabundance"})}
+\item{assay_name}{a \code{character} value defining which assay data to
+use. (default: \code{assay_name = "relabundance"})}
+
+\item{abund_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay_name} instead. At some point \code{abund_values}
+will be disabled.)}
 
 \item{as_relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? Passed onto

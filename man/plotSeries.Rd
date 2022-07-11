@@ -13,6 +13,7 @@ plotSeries(
   colour_by = NULL,
   size_by = NULL,
   linetype_by = NULL,
+  assay_name = abund_values,
   abund_values = "counts",
   ...
 )
@@ -25,6 +26,7 @@ plotSeries(
   colour_by = NULL,
   size_by = NULL,
   linetype_by = NULL,
+  assay_name = abund_values,
   abund_values = "counts",
   ...
 )
@@ -57,9 +59,14 @@ used to divide taxa to different line size types. Must be a value of
 is used to divide taxa to different line types. Must be a value of
 \code{taxonomicRanks()} function.}
 
-\item{abund_values}{a single character value for selecting the
+\item{assay_name}{a single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-plotted. (default: \code{abund_values = "counts"})}
+plotted. (default: \code{assay_name = "counts"})}
+
+\item{abund_values}{a single \code{character} value for specifying which
+assay to use for calculation.
+(Please use \code{assay_name} instead. At some point \code{abund_values}
+will be disabled.)}
 
 \item{...}{additional parameters for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
@@ -94,7 +101,7 @@ plotSeries(object[taxa,],
            x = "DAY_ORDER", 
            colour_by = "Family",
            linetype_by = "Phylum",
-           abund_values = "relabundance")
+           assay_name = "relabundance")
 
 # In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
 plotSeries(object,
@@ -102,7 +109,7 @@ plotSeries(object,
            y = getTopTaxa(object, 5), 
            colour_by = "Family",
            size_by = "Phylum",
-           abund_values = "counts")
+           assay_name = "counts")
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
