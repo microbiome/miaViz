@@ -20,7 +20,7 @@ additional information."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.4</span>
       </span>
     </div>
 
@@ -116,20 +116,30 @@ additional information.</p>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
 object.</p></dd>
+
+
 <dt>...</dt>
 <dd><p>additional arguments for plotting. See
 <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
+
+
 <dt>relabel_tree</dt>
 <dd><p>logical scalar, Should the tip labels be relabeled using
 the output of <code>getTaxonomyLabels(object, with_rank = TRUE)</code>?
 (default: <code>relabel_tree = FALSE</code>)</p></dd>
+
+
 <dt>order_tree</dt>
 <dd><p>logical scalar, Should the tree be ordered based on
 alphabetic order of taxonomic levels?
 (default: <code>order_tree = FALSE</code>)</p></dd>
+
+
 <dt>remove_levels</dt>
 <dd><p>logical scalar, Should taxonomic level information
 be removed from labels? (default: <code>relabel_tree = FALSE</code>)</p></dd>
+
+
 <dt>show_label, show_highlights, show_highlight_label, abbr_label</dt>
 <dd><p><code>logical</code> (scalar), <code>integer</code> or <code>character</code> vector. If a
 <code>logical</code> scalar is given, should tip labels be plotted or if a
@@ -141,62 +151,91 @@ match values of the <code>label</code> column in the node data. In case of a
 <code>character</code> vector only values corresponding to actual labels will be
 plotted and if no labels are provided no labels will be shown. (default:
 <code>FALSE</code>)</p></dd>
+
+
 <dt>add_legend</dt>
 <dd><p>logical scalar. Should legends be plotted?
 (default: <code>add_legend = TRUE</code>)</p></dd>
+
+
 <dt>layout</dt>
 <dd><p>layout for the plotted tree. See
 <code><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html" class="external-link">ggtree</a></code> for details.</p></dd>
+
+
 <dt>edge_colour_by</dt>
 <dd><p>Specification of a column metadata field or a feature
 to colour tree edges by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
+
+
 <dt>edge_size_by</dt>
 <dd><p>Specification of a column metadata field or a feature
 to size tree edges by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
+
+
 <dt>tip_colour_by</dt>
 <dd><p>Specification of a column metadata field or a feature to
 colour tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
+
+
 <dt>tip_shape_by</dt>
 <dd><p>Specification of a column metadata field or a feature to
 shape tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
+
+
 <dt>tip_size_by</dt>
 <dd><p>Specification of a column metadata field or a feature to
 size tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
+
+
 <dt>node_colour_by</dt>
 <dd><p>Specification of a column metadata field or a feature to
 colour tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
+
+
 <dt>node_shape_by</dt>
 <dd><p>Specification of a column metadata field or a feature to
 shape tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
+
+
 <dt>node_size_by</dt>
 <dd><p>Specification of a column metadata field or a feature to
 size tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
+
+
 <dt>colour_highlights_by</dt>
 <dd><p>Should the highlights be colour differently?
 If <code>show_highlights = TRUE</code>, <code>colour_highlights</code> will be set to
 <code>TRUE</code> as default. (default: <code>colour_highlights = FALSE</code>)</p></dd>
+
+
 <dt>by_exprs_values</dt>
 <dd><p>A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 <code>exprs_values</code> argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.</p></dd>
+
+
 <dt>other_fields</dt>
 <dd><p>Additional fields to include in the node information
 without plotting them.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>a <code>ggtree</code> plot</p>
+    
+
+<p>a <code>ggtree</code> plot</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -224,7 +263,7 @@ as the number of nodes, the vector will be used to relabel the nodes.</p>
 <span class="r-in"><span class="va">top_genus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTopTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,</span>
 <span class="r-in">                        method<span class="op">=</span><span class="st">"mean"</span>,</span>
 <span class="r-in">                        top<span class="op">=</span><span class="fl">100L</span>,</span>
-<span class="r-in">                        abund_values<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span>
+<span class="r-in">                        assay_name<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span>
 <span class="r-in"><span class="co">#</span></span>
 <span class="r-in"><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_genus</span>,<span class="op">]</span>,</span>
@@ -266,7 +305,7 @@ as the number of nodes, the vector will be used to relabel the nodes.</p>
 <span class="r-in"><span class="va">top_phyla</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTopTaxa</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Phylum"</span><span class="op">)</span>,</span>
 <span class="r-in">                        method<span class="op">=</span><span class="st">"mean"</span>,</span>
 <span class="r-in">                        top<span class="op">=</span><span class="fl">10L</span>,</span>
-<span class="r-in">                        abund_values<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span>
+<span class="r-in">                        assay_name<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>, <span class="va">addPerFeatureQC</span><span class="op">)</span></span>
 <span class="r-in"><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span> <span class="op">&lt;-</span></span>
 <span class="r-in">   <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExps</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span>,</span>
@@ -309,7 +348,7 @@ as the number of nodes, the vector will be used to relabel the nodes.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>

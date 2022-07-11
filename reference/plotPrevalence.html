@@ -18,7 +18,7 @@ information."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.3.4</span>
       </span>
     </div>
 
@@ -56,6 +56,7 @@ information.</p>
   <span class="va">x</span>,
   detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span>,
   prevalences <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   as_relative <span class="op">=</span> <span class="cn">TRUE</span>,
   rank <span class="op">=</span> <span class="cn">NULL</span>,
@@ -69,6 +70,7 @@ information.</p>
 <span class="fu">plotPrevalentAbundance</span><span class="op">(</span>
   <span class="va">x</span>,
   rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   as_relative <span class="op">=</span> <span class="cn">TRUE</span>,
   colour_by <span class="op">=</span> <span class="cn">NULL</span>,
@@ -85,6 +87,7 @@ information.</p>
 <span class="fu">plotTaxaPrevalence</span><span class="op">(</span>
   <span class="va">x</span>,
   rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,
+  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
   abund_values <span class="op">=</span> <span class="st">"counts"</span>,
   detections <span class="op">=</span> <span class="cn">NULL</span>,
   ndetections <span class="op">=</span> <span class="fl">20</span>,
@@ -101,21 +104,38 @@ information.</p>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
+
+
 <dt>detections</dt>
 <dd><p>Detection thresholds for absence/presence. Either an
 absolutes value compared directly to the values of <code>x</code> or a relative
 value between 0 and 1, if <code>as_relative = TRUE</code>.</p></dd>
+
+
 <dt>prevalences</dt>
 <dd><p>Prevalence thresholds (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set <code>include_lowest</code> to <code>TRUE</code>.</p></dd>
-<dt>abund_values</dt>
+
+
+<dt>assay_name</dt>
 <dd><p>a <code>character</code> value defining which assay data to
-use. (default: <code>abund_values = "relabundance"</code>)</p></dd>
+use. (default: <code>assay_name = "relabundance"</code>)</p></dd>
+
+
+<dt>abund_values</dt>
+<dd><p>a single <code>character</code> value for specifying which
+assay to use for calculation.
+(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+will be disabled.)</p></dd>
+
+
 <dt>as_relative</dt>
 <dd><p>logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? Passed onto
 <code><a href="https://rdrr.io/pkg/mia/man/getPrevalence.html" class="external-link">getPrevalence</a></code>. (default: <code>TRUE</code>)</p></dd>
+
+
 <dt>rank, ...</dt>
 <dd><p>additional arguments</p><ul><li><p>If <code>!is.null(rank)</code> matching arguments are passed on to
 <code><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></code>. See
@@ -123,45 +143,64 @@ on compositional (relative) abundances? Passed onto
 <li><p>additional arguments for plotting. See
 <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></li>
 </ul></dd>
+
+
 <dt>BPPARAM</dt>
 <dd><p>A
 <code><a href="https://rdrr.io/pkg/BiocParallel/man/BiocParallelParam-class.html" class="external-link">BiocParallelParam</a></code>
 object specifying whether the UniFrac calculation should be parallelized.</p></dd>
+
+
 <dt>colour_by</dt>
 <dd><p>Specification of a feature to colour points by, see the
 <code>by</code> argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
 possible values. Only used with <code>layout = "point"</code>.</p></dd>
+
+
 <dt>size_by</dt>
 <dd><p>Specification of a feature to size points by, see the
 <code>by</code> argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
 possible values. Only used with <code>layout = "point"</code>.</p></dd>
+
+
 <dt>shape_by</dt>
 <dd><p>Specification of a feature to shape points by, see the
 <code>by</code> argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
 possible values. Only used with <code>layout = "point"</code>.</p></dd>
+
+
 <dt>label</dt>
 <dd><p>a <code>logical</code>, <code>character</code> or <code>integer</code> vector
 for selecting labels from the rownames of <code>x</code>. If <code>rank</code> is not
 <code>NULL</code> the rownames might change. (default: <code>label = NULL</code>)</p></dd>
+
+
 <dt>facet_by</dt>
 <dd><p>Taxonomic rank to facet the plot by.
 Value must be of <code>taxonomyRanks(x)</code>
 Argument can only be used in function plotPrevalentAbundance.</p></dd>
+
+
 <dt>ndetections</dt>
 <dd><p>If <code>detections</code> is <code>NULL</code>, a number of breaks
 are calculated automatically. <code>as_relative</code> is then also regarded as
 <code>TRUE</code>.</p></dd>
+
+
 <dt>min_prevalence</dt>
 <dd><p>a single numeric value to apply as a threshold for
 plotting. The threshold is applied per row and column.
 (default: <code>min_prevalence = 0</code>)</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A <code>ggplot2</code> object or <code>plotly</code> object, if more than one
+    
+
+<p>A <code>ggplot2</code> object or <code>plotly</code> object, if more than one
 <code>prevalences</code> was defined.</p>
     </div>
     <div id="details">
@@ -228,7 +267,7 @@ with subsetting via <code>getPrevalentTaxa</code> or
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
 </div>
 
       </footer></div>
