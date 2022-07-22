@@ -244,7 +244,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble rownames_to_column
-#' @importFrom dplyr left_join group_by summarize ungroup
+#' @importFrom dplyr group_by summarize ungroup
 #' @importFrom stats sd
 .melt_series_data <- function(assay, series_data, feature_data){
     colnames(assay) <- seq_len(ncol(assay))
@@ -256,7 +256,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                      values_to = "Y")
     # joing the series data
     melted_data <- melted_data %>%
-        left_join(data.frame(sample = colnames(assay),
+        dplyr::left_join(data.frame(sample = colnames(assay),
                              X = series_data),
                   by = "sample") %>%
         select(!sym("sample"))
@@ -273,7 +273,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         feature_data <- feature_data %>%
             rownames_to_column("feature")
         melted_data <- melted_data %>%
-            left_join(feature_data,
+            dplyr::left_join(feature_data,
                       by = "feature")
     }
     melted_data

@@ -88,7 +88,7 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
          y_lab = y_lab)
 }
 
-#' @importFrom dplyr group_by mutate summarise left_join ungroup n
+#' @importFrom dplyr group_by mutate summarise ungroup n
 .summarise_tile_data <- function(object,
                                  data,
                                  type){
@@ -107,7 +107,7 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
     data <- data %>%
         group_by(.data$X, .data$Y) %>%
         summarise(fill_n = n(), .groups = "rowwise") %>%
-        left_join(x_group, by = "X") %>%
+        dplyr::left_join(x_group, by = "X") %>%
         mutate(fill_freq = .data$fill_n/.data$group_n) %>%
         group_by(.data$X) %>%
         mutate(y = cumsum(.data$fill_freq),
