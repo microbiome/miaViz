@@ -928,7 +928,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         stop(".")
     }
     tree_data %>%
-        left_join(feature_info, by = "label")
+        dplyr::left_join(feature_info, by = "label")
 }
 
 # due to a bug in ggtree/tidytree the treedata object needs to be contructed
