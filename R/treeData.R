@@ -211,12 +211,11 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
     other_fields
 }
 
-#' @importFrom dplyr left_join
 .combine_tree_data_and_other_fields <- function(tree_data, other_fields){
     if(!is.null(other_fields)){
         by_col_name <- colnames(other_fields)[1L]
         tree_data <- tree_data %>%
-            left_join(other_fields, by = by_col_name)
+            dplyr::left_join(other_fields, by = by_col_name)
     }
     tree_data
 }
