@@ -2,10 +2,10 @@ Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
 Version: 1.5.1
 Authors@R: 
-    c(person(given = "Felix G.M.", family = "Ernst", role = c("aut", "cre"),
+    c(person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
              email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
-      person(given = "Tuomas", family = "Borman", role = c("aut"),
+      person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
              comment = c(ORCID = "0000-0002-8563-8884")), 
       person(given = "Leo", family = "Lahti", role = c("aut"),
