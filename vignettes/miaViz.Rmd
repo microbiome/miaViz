@@ -256,8 +256,14 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 # Plotting of serial data
 
 ```{r}
-library(microbiomeDataSets)
-silverman <- SilvermanAGutData()
+# Load data from miaTime package
+if( !require("miaTime") ){
+    BiocManager::install(version='devel')
+    BiocManager::install("miaTime")
+    library("miaTime")
+}
+data("SilvermanAGutData")
+silverman <- SilvermanAGutData
 silverman <- transformCounts(silverman, method = "relabundance")
 taxa <- getTopTaxa(silverman, 2)
 ```

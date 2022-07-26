@@ -83,7 +83,15 @@ y-axis abundances of selected taxa.
 }
 \examples{
 library(mia)
-object <- microbiomeDataSets::SilvermanAGutData()
+# Load data from miaTime package
+if( !require("miaTime") ){ 
+    BiocManager::install(version='devel')
+    BiocManager::install("miaTime")
+    library("miaTime")
+}
+data("SilvermanAGutData")
+object <- SilvermanAGutData
+
 # Plots 2 most abudant taxa, which are colore by their family
 plotSeries(object,
            x = "DAY_ORDER",
