@@ -10,6 +10,9 @@
 #'
 #' @param other_fields,value a \code{data.frame} or coercible to one, with at least one type
 #'   of id information. See details.
+#'  
+#' @param tree_name a single \code{character} value specifying a rowTree/colTree from
+#'   \code{x}. (By default: \code{tree_name = "phylo"})
 #'   
 #' @param ... additional arguments, currently not used.
 #'
@@ -52,12 +55,12 @@ setGeneric("colTreeData", signature = c("x"),
 
 #' @rdname treeData
 setGeneric("rowTreeData<-", signature = c("x"),
-           function(x, value)
+           function(x, value, tree_name = "phylo")
                standardGeneric("rowTreeData<-"))
 
 #' @rdname treeData
 setGeneric("colTreeData<-", signature = c("x"),
-           function(x, value)
+           function(x, value, tree_name = "phylo")
                standardGeneric("colTreeData<-"))
 
 #' @rdname treeData
@@ -82,10 +85,15 @@ setGeneric("combineTreeData", signature = c("x"),
 #' @export
 setMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
     function(x){
-        if(is.null(colTree(x))){
+        # Check tree_name
+        if( !.is_a_string(tree_name) ){
+            stop("'tree_name' must be a single character value specifying a colTree.",
+                 call. = FALSE)
+        }
+        if(is.null(colTree(x, tree_name))){
          return(NULL)
         }
-        .get_tree_data(colTree(x)) %>%
+        .get_tree_data(colTree(x, tree_name)) %>%
             select(c("node","label":last_col()))
     }
 )
@@ -93,11 +101,16 @@ setMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom dplyr last_col
 #' @export
 setMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x){
-        if(is.null(rowTree(x))){
+    function(x, tree_name = "phylo"){
+        # Check tree_name
+        if( !.is_a_string(tree_name) ){
+            stop("'tree_name' must be a single character value specifying a rowTree.",
+                 call. = FALSE)
+        }
+        if(is.null(rowTree(x, tree_name))){
             return(NULL)
         }
-        .get_tree_data(rowTree(x)) %>%
+        .get_tree_data(rowTree(x, tree_name)) %>%
             select(c("node","label":last_col()))
     }
 )
@@ -111,14 +124,19 @@ DEFAULT_TREE_DATA_COLS <- c("parent","node","branch.length","label")
 #' @rdname treeData
 #' @export
 setReplaceMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, value){
-        tree <- colTree(x)
+    function(x, value, tree_name = "phylo"){
+        # Check tree_name
+        if( !.is_a_string(tree_name) ){
+            stop("'tree_name' must be a single character value specifying a colTree.",
+                 call. = FALSE)
+        }
+        tree <- colTree(x, tree_name)
         # input check
         if(is.null(tree)){
-            stop("'colTree(x)' is NULL.", call. = FALSE)
+            stop("'colTree(x, tree_name)' is NULL.", call. = FALSE)
         }
         # this is just temporary solution since phylo does not support data
-        x@colTree$phylo <- tidytree::as.phylo(combineTreeData(tree, value))
+        x@colTree[[tree_name]] <- tidytree::as.phylo(combineTreeData(tree, value))
         return(x)
     }
 )
@@ -127,14 +145,19 @@ setReplaceMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom tidytree as.phylo
 #' @export
 setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, value){
+    function(x, value, tree_name = "phylo"){
+        # Check tree_name
+        if( !.is_a_string(tree_name) ){
+            stop("'tree_name' must be a single character value specifying a rowTree.",
+                 call. = FALSE)
+        }
         tree <- rowTree(x)
         # input check
         if(is.null(tree)){
           stop("'rowTree(x)' is NULL.", call. = FALSE)
         }
         # this is just temporary solution since phylo does not support data
-        x@rowTree$phylo <- tidytree::as.phylo(combineTreeData(tree, value))
+        x@rowTree[[tree_name]] <- tidytree::as.phylo(combineTreeData(tree, value))
         return(x)
     }
 )
