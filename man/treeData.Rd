@@ -27,7 +27,7 @@ combineTreeData(x, other_fields = list())
 
 combineTreeData(x, other_fields = list())
 
-\S4method{colTreeData}{TreeSummarizedExperiment}(x)
+\S4method{colTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo")
 
 \S4method{rowTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo")
 

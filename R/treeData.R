@@ -55,12 +55,12 @@ setGeneric("colTreeData", signature = c("x"),
 
 #' @rdname treeData
 setGeneric("rowTreeData<-", signature = c("x"),
-           function(x, value, tree_name = "phylo")
+           function(x, tree_name = "phylo", value)
                standardGeneric("rowTreeData<-"))
 
 #' @rdname treeData
 setGeneric("colTreeData<-", signature = c("x"),
-           function(x, value, tree_name = "phylo")
+           function(x, tree_name = "phylo", value)
                standardGeneric("colTreeData<-"))
 
 #' @rdname treeData
@@ -84,7 +84,7 @@ setGeneric("combineTreeData", signature = c("x"),
 #' @importFrom dplyr last_col
 #' @export
 setMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x){
+    function(x, tree_name = "phylo"){
         # Check tree_name
         if( !.is_a_string(tree_name) ){
             stop("'tree_name' must be a single character value specifying a colTree.",
@@ -124,7 +124,7 @@ DEFAULT_TREE_DATA_COLS <- c("parent","node","branch.length","label")
 #' @rdname treeData
 #' @export
 setReplaceMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, value, tree_name = "phylo"){
+    function(x, tree_name = "phylo", value){
         # Check tree_name
         if( !.is_a_string(tree_name) ){
             stop("'tree_name' must be a single character value specifying a colTree.",
@@ -145,7 +145,7 @@ setReplaceMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom tidytree as.phylo
 #' @export
 setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, value, tree_name = "phylo"){
+    function(x, tree_name = "phylo", value){
         # Check tree_name
         if( !.is_a_string(tree_name) ){
             stop("'tree_name' must be a single character value specifying a rowTree.",
