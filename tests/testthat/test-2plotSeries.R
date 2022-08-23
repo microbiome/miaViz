@@ -4,8 +4,8 @@ test_that("plot series", {
     
     # Load data from miaTime package
     if( !require("miaTime") ){
-        BiocManager::install(version='devel')
-        BiocManager::install("miaTime")
+        if( !require("devtools") ) BiocManager::install("devtools")
+        devtools::install_github("microbiome/miaTime")
         library("miaTime")
     }
     data("SilvermanAGutData")

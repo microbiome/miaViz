@@ -84,9 +84,9 @@ y-axis abundances of selected taxa.
 \examples{
 library(mia)
 # Load data from miaTime package
-if( !require("miaTime") ){ 
-    BiocManager::install(version='devel')
-    BiocManager::install("miaTime")
+if( !require("miaTime") ){
+    if( !require("devtools") ) BiocManager::install("devtools")
+    devtools::install_github("microbiome/miaTime")
     library("miaTime")
 }
 data("SilvermanAGutData")
