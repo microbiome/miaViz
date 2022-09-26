@@ -374,6 +374,8 @@ NULL
     if (is.null(edge_size_by)) {
         geom_args$size <- size
     }
+    # Add layout
+    geom_args$layout <- layout
     return(list(args = geom_args))
 }
 
