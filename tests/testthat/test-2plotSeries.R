@@ -4,7 +4,9 @@ test_that("plot series", {
     
     # Load data from miaTime package
     if( !require("miaTime") ){
-        if( !require("devtools") ) BiocManager::install("devtools")
+        if( !require("devtools") ){
+            install.packages("devtools")
+        }
         devtools::install_github("microbiome/miaTime")
         library("miaTime")
     }

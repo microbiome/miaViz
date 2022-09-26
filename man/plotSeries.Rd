@@ -82,13 +82,10 @@ This function creates series plot, where x-axis includes e.g. time points, and
 y-axis abundances of selected taxa.
 }
 \examples{
+\dontrun{
 library(mia)
 # Load data from miaTime package
-if( !require("miaTime") ){
-    if( !require("devtools") ) BiocManager::install("devtools")
-    devtools::install_github("microbiome/miaTime")
-    library("miaTime")
-}
+library("miaTime")
 data("SilvermanAGutData")
 object <- SilvermanAGutData
 
@@ -118,6 +115,7 @@ plotSeries(object,
            colour_by = "Family",
            size_by = "Phylum",
            assay_name = "counts")
+}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

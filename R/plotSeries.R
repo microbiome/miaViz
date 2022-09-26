@@ -53,13 +53,10 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
+#' \dontrun{
 #' library(mia)
 #' # Load data from miaTime package
-#' if( !require("miaTime") ){
-#'     if( !require("devtools") ) BiocManager::install("devtools")
-#'     devtools::install_github("microbiome/miaTime")
-#'     library("miaTime")
-#' }
+#' library("miaTime")
 #' data("SilvermanAGutData")
 #' object <- SilvermanAGutData
 #' 
@@ -89,6 +86,7 @@
 #'            colour_by = "Family",
 #'            size_by = "Phylum",
 #'            assay_name = "counts")
+#' }
 NULL
 
 #' @rdname plotSeries
