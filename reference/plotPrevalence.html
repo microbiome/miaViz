@@ -49,53 +49,53 @@ information.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">plotPrevalence</span><span class="op">(</span>
-  <span class="va">x</span>,
-  detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span>,
-  prevalences <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,
-  rank <span class="op">=</span> <span class="cn">NULL</span>,
-  BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">plotPrevalentAbundance</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">plotPrevalentAbundance</span><span class="op">(</span>
-  <span class="va">x</span>,
-  rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,
-  colour_by <span class="op">=</span> <span class="cn">NULL</span>,
-  size_by <span class="op">=</span> <span class="cn">NULL</span>,
-  shape_by <span class="op">=</span> <span class="cn">NULL</span>,
-  label <span class="op">=</span> <span class="cn">NULL</span>,
-  facet_by <span class="op">=</span> <span class="cn">NULL</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="fu">plotTaxaPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">plotTaxaPrevalence</span><span class="op">(</span>
-  <span class="va">x</span>,
-  rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,
-  assay_name <span class="op">=</span> <span class="va">abund_values</span>,
-  abund_values <span class="op">=</span> <span class="st">"counts"</span>,
-  detections <span class="op">=</span> <span class="cn">NULL</span>,
-  ndetections <span class="op">=</span> <span class="fl">20</span>,
-  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,
-  min_prevalence <span class="op">=</span> <span class="fl">0</span>,
-  BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">plotPrevalence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span>,</span>
+<span>  prevalences <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">plotPrevalentAbundance</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">plotPrevalentAbundance</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  label <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">plotTaxaPrevalence</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">plotTaxaPrevalence</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
+<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  detections <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ndetections <span class="op">=</span> <span class="fl">20</span>,</span>
+<span>  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  min_prevalence <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -222,36 +222,36 @@ with subsetting via <code>getPrevalentTaxa</code> or
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plotting N of prevalence exceeding taxa on the Phylum level</span></span>
-<span class="r-in"><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plotting N of prevalence exceeding taxa on the Phylum level</span></span></span>
+<span class="r-in"><span><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPrevalence-1.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-in"><span><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPrevalence-2.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plotting prevalence per taxa for different detectio thresholds as heatmap</span></span>
-<span class="r-in"><span class="fu">plotTaxaPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plotting prevalence per taxa for different detectio thresholds as heatmap</span></span></span>
+<span class="r-in"><span><span class="fu">plotTaxaPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPrevalence-3.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># by default a continous scale is used for different detections levels, </span></span>
-<span class="r-in"><span class="co"># but this can be adjusted</span></span>
-<span class="r-in"><span class="fu">plotTaxaPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span class="r-in">                   detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># by default a continous scale is used for different detections levels, </span></span></span>
+<span class="r-in"><span><span class="co"># but this can be adjusted</span></span></span>
+<span class="r-in"><span><span class="fu">plotTaxaPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>                   detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPrevalence-4.png" alt="" width="3000" height="2100"></span>
-<span class="r-in">                   </span>
-<span class="r-in"><span class="co"># point layout for plotTaxaPrevalence can be used to visualize by additional</span></span>
-<span class="r-in"><span class="co"># information</span></span>
-<span class="r-in"><span class="fu">plotPrevalentAbundance</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,</span>
-<span class="r-in">                       colour_by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-in"><span>                   </span></span>
+<span class="r-in"><span><span class="co"># point layout for plotTaxaPrevalence can be used to visualize by additional</span></span></span>
+<span class="r-in"><span><span class="co"># information</span></span></span>
+<span class="r-in"><span><span class="fu">plotPrevalentAbundance</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
+<span class="r-in"><span>                       colour_by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPrevalence-5.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># When using function plotPrevalentAbundace, it is possible to create facets</span></span>
-<span class="r-in"><span class="co"># with 'facet_by'.</span></span>
-<span class="r-in"><span class="fu">plotPrevalentAbundance</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,</span>
-<span class="r-in">                       colour_by <span class="op">=</span> <span class="st">"Phylum"</span>, facet_by <span class="op">=</span> <span class="st">"Kingdom"</span><span class="op">)</span> <span class="op">+</span></span>
-<span class="r-in">    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># When using function plotPrevalentAbundace, it is possible to create facets</span></span></span>
+<span class="r-in"><span><span class="co"># with 'facet_by'.</span></span></span>
+<span class="r-in"><span><span class="fu">plotPrevalentAbundance</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
+<span class="r-in"><span>                       colour_by <span class="op">=</span> <span class="st">"Phylum"</span>, facet_by <span class="op">=</span> <span class="st">"Kingdom"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPrevalence-6.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
     </div>
@@ -267,7 +267,7 @@ with subsetting via <code>getPrevalentTaxa</code> or
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

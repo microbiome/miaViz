@@ -51,51 +51,51 @@ Information on the edges have to provided manually.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY,SummarizedExperiment</span>
-<span class="fu">plotColGraph</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  show_label <span class="op">=</span> <span class="cn">FALSE</span>,
-  add_legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  layout <span class="op">=</span> <span class="st">"kk"</span>,
-  edge_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fan"</span>, <span class="st">"link"</span>, <span class="st">"arc"</span>, <span class="st">"parallel"</span><span class="op">)</span>,
-  edge_colour_by <span class="op">=</span> <span class="cn">NULL</span>,
-  edge_width_by <span class="op">=</span> <span class="cn">NULL</span>,
-  colour_by <span class="op">=</span> <span class="cn">NULL</span>,
-  shape_by <span class="op">=</span> <span class="cn">NULL</span>,
-  size_by <span class="op">=</span> <span class="cn">NULL</span>,
-  by_exprs_values <span class="op">=</span> <span class="st">"counts"</span>,
-  other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment,missing</span>
-<span class="fu">plotColGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, name <span class="op">=</span> <span class="st">"graph"</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for ANY,SummarizedExperiment</span>
-<span class="fu">plotRowGraph</span><span class="op">(</span>
-  <span class="va">x</span>,
-  <span class="va">y</span>,
-  show_label <span class="op">=</span> <span class="cn">FALSE</span>,
-  add_legend <span class="op">=</span> <span class="cn">TRUE</span>,
-  layout <span class="op">=</span> <span class="st">"kk"</span>,
-  edge_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fan"</span>, <span class="st">"link"</span>, <span class="st">"arc"</span>, <span class="st">"parallel"</span><span class="op">)</span>,
-  edge_colour_by <span class="op">=</span> <span class="cn">NULL</span>,
-  edge_width_by <span class="op">=</span> <span class="cn">NULL</span>,
-  colour_by <span class="op">=</span> <span class="cn">NULL</span>,
-  shape_by <span class="op">=</span> <span class="cn">NULL</span>,
-  size_by <span class="op">=</span> <span class="cn">NULL</span>,
-  by_exprs_values <span class="op">=</span> <span class="st">"counts"</span>,
-  other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,
-  <span class="va">...</span>
-<span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment,missing</span>
-<span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, name <span class="op">=</span> <span class="st">"graph"</span>, <span class="va">...</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY,SummarizedExperiment</span></span>
+<span><span class="fu">plotColGraph</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  show_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  layout <span class="op">=</span> <span class="st">"kk"</span>,</span>
+<span>  edge_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fan"</span>, <span class="st">"link"</span>, <span class="st">"arc"</span>, <span class="st">"parallel"</span><span class="op">)</span>,</span>
+<span>  edge_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  edge_width_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  by_exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment,missing</span></span>
+<span><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, name <span class="op">=</span> <span class="st">"graph"</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for ANY,SummarizedExperiment</span></span>
+<span><span class="fu">plotRowGraph</span><span class="op">(</span></span>
+<span>  <span class="va">x</span>,</span>
+<span>  <span class="va">y</span>,</span>
+<span>  show_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  layout <span class="op">=</span> <span class="st">"kk"</span>,</span>
+<span>  edge_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fan"</span>, <span class="st">"link"</span>, <span class="st">"arc"</span>, <span class="st">"parallel"</span><span class="op">)</span>,</span>
+<span>  edge_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  edge_width_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  by_exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  <span class="va">...</span></span>
+<span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment,missing</span></span>
+<span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, name <span class="op">=</span> <span class="st">"graph"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -209,91 +209,91 @@ be used.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># data setup</span></span>
-<span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/mia" class="external-link">mia</a></span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">col_graph</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">row_graph</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">row_graph_order</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">metadata</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">col_graph</span> <span class="op">&lt;-</span> <span class="va">col_graph</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="va">genus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span>,na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">metadata</span><span class="op">(</span><span class="va">genus</span><span class="op">)</span><span class="op">$</span><span class="va">row_graph</span> <span class="op">&lt;-</span> <span class="va">row_graph</span></span>
-<span class="r-in"><span class="va">order</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">genus</span>,<span class="st">"Order"</span>,na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu">metadata</span><span class="op">(</span><span class="va">order</span><span class="op">)</span><span class="op">$</span><span class="va">row_graph</span> <span class="op">&lt;-</span> <span class="va">row_graph_order</span></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot a graph independently</span></span>
-<span class="r-in"><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">col_graph</span>,</span>
-<span class="r-in">             <span class="va">genus</span>,</span>
-<span class="r-in">             colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
-<span class="r-in">             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># data setup</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/mia" class="external-link">mia</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">col_graph</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">row_graph</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">row_graph_order</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">col_graph</span> <span class="op">&lt;-</span> <span class="va">col_graph</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">genus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span>,na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">genus</span><span class="op">)</span><span class="op">$</span><span class="va">row_graph</span> <span class="op">&lt;-</span> <span class="va">row_graph</span></span></span>
+<span class="r-in"><span><span class="va">order</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">genus</span>,<span class="st">"Order"</span>,na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">order</span><span class="op">)</span><span class="op">$</span><span class="va">row_graph</span> <span class="op">&lt;-</span> <span class="va">row_graph_order</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
+<span class="r-in"><span><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">col_graph</span>,</span></span>
+<span class="r-in"><span>             <span class="va">genus</span>,</span></span>
+<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
+<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-1.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot the graph stored in the object</span></span>
-<span class="r-in"><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">genus</span>,</span>
-<span class="r-in">             name <span class="op">=</span> <span class="st">"col_graph"</span>,</span>
-<span class="r-in">             colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
-<span class="r-in">             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot the graph stored in the object</span></span></span>
+<span class="r-in"><span><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">genus</span>,</span></span>
+<span class="r-in"><span>             name <span class="op">=</span> <span class="st">"col_graph"</span>,</span></span>
+<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
+<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-2.png" alt="" width="3000" height="2100"></span>
-<span class="r-in">             </span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot a graph independently</span></span>
-<span class="r-in"><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">row_graph</span>,</span>
-<span class="r-in">             <span class="va">genus</span>,</span>
-<span class="r-in">             colour_by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span>
-<span class="r-in">             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
+<span class="r-in"><span>             </span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
+<span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">row_graph</span>,</span></span>
+<span class="r-in"><span>             <span class="va">genus</span>,</span></span>
+<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span></span>
+<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-3.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot the graph stored in the object</span></span>
-<span class="r-in"><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">genus</span>,</span>
-<span class="r-in">             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span>
-<span class="r-in">             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span class="r-in">             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot the graph stored in the object</span></span></span>
+<span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">genus</span>,</span></span>
+<span class="r-in"><span>             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span></span>
+<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-4.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"></span>
-<span class="r-in">                           </span>
-<span class="r-in"><span class="co"># plot a graph independently</span></span>
-<span class="r-in"><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">row_graph_order</span>,</span>
-<span class="r-in">             <span class="va">order</span>,</span>
-<span class="r-in">             colour_by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span>
-<span class="r-in">             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span>                           </span></span>
+<span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
+<span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">row_graph_order</span>,</span></span>
+<span class="r-in"><span>             <span class="va">order</span>,</span></span>
+<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span></span>
+<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-5.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot the graph stored in the object and include some labels</span></span>
-<span class="r-in"><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span>
-<span class="r-in">             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span>
-<span class="r-in">             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span class="r-in">             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>, </span>
-<span class="r-in">             show_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sulfolobales"</span>,<span class="st">"Spirochaetales"</span>,</span>
-<span class="r-in">                            <span class="st">"Verrucomicrobiales"</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot the graph stored in the object and include some labels</span></span></span>
+<span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span></span>
+<span class="r-in"><span>             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span></span>
+<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
+<span class="r-in"><span>             show_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sulfolobales"</span>,<span class="st">"Spirochaetales"</span>,</span></span>
+<span class="r-in"><span>                            <span class="st">"Verrucomicrobiales"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-6.png" alt="" width="3000" height="2100"></span>
-<span class="r-in">                            </span>
-<span class="r-in"><span class="co"># labls can also be included via selecting specific rownames of x/y</span></span>
-<span class="r-in"><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span>
-<span class="r-in">             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span>
-<span class="r-in">             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span class="r-in">             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>, </span>
-<span class="r-in">             show_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span>
+<span class="r-in"><span>                            </span></span>
+<span class="r-in"><span><span class="co"># labls can also be included via selecting specific rownames of x/y</span></span></span>
+<span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span></span>
+<span class="r-in"><span>             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span></span>
+<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
+<span class="r-in"><span>             show_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-7.png" alt="" width="3000" height="2100"></span>
-<span class="r-in">             </span>
-<span class="r-in"><span class="co"># labls can also be included via a logical vector, which has the same length</span></span>
-<span class="r-in"><span class="co"># as nodes are present</span></span>
-<span class="r-in"><span class="va">label_select</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">FALSE</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">order</span><span class="op">)</span><span class="op">)</span></span>
-<span class="r-in"><span class="va">label_select</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span>,<span class="fl">50</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span>  <span class="cn">TRUE</span></span>
-<span class="r-in"><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span>
-<span class="r-in">             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span>
-<span class="r-in">             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span class="r-in">             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span class="r-in">             show_label <span class="op">=</span> <span class="va">label_select</span><span class="op">)</span></span>
+<span class="r-in"><span>             </span></span>
+<span class="r-in"><span><span class="co"># labls can also be included via a logical vector, which has the same length</span></span></span>
+<span class="r-in"><span><span class="co"># as nodes are present</span></span></span>
+<span class="r-in"><span><span class="va">label_select</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="cn">FALSE</span>,<span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">order</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">label_select</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span>,<span class="fl">50</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span>  <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span></span>
+<span class="r-in"><span>             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span></span>
+<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             show_label <span class="op">=</span> <span class="va">label_select</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-8.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
     </div>
@@ -309,7 +309,7 @@ be used.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>

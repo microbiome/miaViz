@@ -47,10 +47,10 @@
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">plotDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span>
-
-<span class="co"># S4 method for SummarizedExperiment</span>
-<span class="fu">plotDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="fu">plotDMNFit</span><span class="op">(</span><span class="va">x</span>, name <span class="op">=</span> <span class="st">"DMN"</span>, type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"laplace"</span>, <span class="st">"AIC"</span>, <span class="st">"BIC"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -88,12 +88,12 @@ object contain the DMN data in <code>metadata</code>.</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
-<span class="r-in"><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DMN"</span>
-<span class="r-in"></span>
-<span class="r-in"><span class="co"># plot the fit</span></span>
-<span class="r-in"><span class="fu">plotDMNFit</span><span class="op">(</span><span class="va">dmn_se</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># plot the fit</span></span></span>
+<span class="r-in"><span><span class="fu">plotDMNFit</span><span class="op">(</span><span class="va">dmn_se</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotDMN-1.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
     </div>
@@ -109,7 +109,7 @@ object contain the DMN data in <code>metadata</code>.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.4.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer></div>
