@@ -82,8 +82,13 @@ This function creates series plot, where x-axis includes e.g. time points, and
 y-axis abundances of selected taxa.
 }
 \examples{
+\dontrun{
 library(mia)
-object <- microbiomeDataSets::SilvermanAGutData()
+# Load data from miaTime package
+library("miaTime")
+data("SilvermanAGutData")
+object <- SilvermanAGutData
+
 # Plots 2 most abudant taxa, which are colore by their family
 plotSeries(object,
            x = "DAY_ORDER",
@@ -110,6 +115,7 @@ plotSeries(object,
            colour_by = "Family",
            size_by = "Phylum",
            assay_name = "counts")
+}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
