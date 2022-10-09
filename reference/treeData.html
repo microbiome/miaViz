@@ -19,7 +19,7 @@ colTreeData can be used."><!-- mathjax --><script src="https://cdnjs.cloudflare.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
       </span>
     </div>
 
@@ -55,25 +55,25 @@ colTreeData can be used."><!-- mathjax --><script src="https://cdnjs.cloudflare.
 <span></span>
 <span><span class="fu">colTreeData</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">rowTreeData</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span><span class="fu">rowTreeData</span><span class="op">(</span><span class="va">x</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
-<span><span class="fu">colTreeData</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
-<span></span>
-<span><span class="fu">combineTreeData</span><span class="op">(</span><span class="va">x</span>, other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu">colTreeData</span><span class="op">(</span><span class="va">x</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="fu">combineTreeData</span><span class="op">(</span><span class="va">x</span>, other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">colTreeData</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu">combineTreeData</span><span class="op">(</span><span class="va">x</span>, other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">rowTreeData</span><span class="op">(</span><span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu">colTreeData</span><span class="op">(</span><span class="va">x</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">colTreeData</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span><span class="fu">rowTreeData</span><span class="op">(</span><span class="va">x</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
-<span><span class="fu">rowTreeData</span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span><span class="fu">colTreeData</span><span class="op">(</span><span class="va">x</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
+<span></span>
+<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="fu">rowTreeData</span><span class="op">(</span><span class="va">x</span>, tree_name <span class="op">=</span> <span class="st">"phylo"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">value</span></span>
 <span></span>
 <span><span class="co"># S4 method for phylo</span></span>
 <span><span class="fu">combineTreeData</span><span class="op">(</span><span class="va">x</span>, other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -92,6 +92,11 @@ object.</p></dd>
 
 <dt>...</dt>
 <dd><p>additional arguments, currently not used.</p></dd>
+
+
+<dt>tree_name</dt>
+<dd><p>a single <code>character</code> value specifying a rowTree/colTree from
+<code>x</code>. (By default: <code>tree_name = "phylo"</code>)</p></dd>
 
 
 <dt>other_fields, value</dt>
@@ -179,15 +184,15 @@ contain at least a ‘node’ and ‘label’ column.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     node label  isTip    test</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    <span style="color: #949494; font-style: italic;">&lt;int&gt;</span> <span style="color: #949494; font-style: italic;">&lt;chr&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;lgl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 1</span>     1 549322 TRUE   1.12  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     2 522457 TRUE   0.637 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 951    TRUE   1.44  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     4 244423 TRUE   0.044<span style="text-decoration: underline;">0</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     5 586076 TRUE  -<span style="color: #BB0000;">1.02</span>  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     6 246140 TRUE  -<span style="color: #BB0000;">0.646</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     7 143239 TRUE   1.38  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8 244960 TRUE  -<span style="color: #BB0000;">0.069</span><span style="color: #BB0000; text-decoration: underline;">4</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     9 255340 TRUE   1.06  </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    10 144887 TRUE  -<span style="color: #BB0000;">1.70</span>  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 2</span>     2 522457 TRUE   0.898 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 3</span>     3 951    TRUE   0.273 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 4</span>     4 244423 TRUE  -<span style="color: #BB0000;">0.037</span><span style="color: #BB0000; text-decoration: underline;">5</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 5</span>     5 586076 TRUE   0.169 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 6</span>     6 246140 TRUE   1.42  </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 7</span>     7 143239 TRUE  -<span style="color: #BB0000;">0.736</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 8</span>     8 244960 TRUE   0.887 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;"> 9</span>     9 255340 TRUE   0.463 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #BCBCBC;">10</span>    10 144887 TRUE  -<span style="color: #BB0000;">0.662</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #949494;"># … with 38,421 more rows</span></span>
 </code></pre></div>
     </div>

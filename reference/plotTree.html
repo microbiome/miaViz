@@ -20,7 +20,7 @@ additional information."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.2</span>
       </span>
     </div>
 
@@ -60,6 +60,7 @@ additional information.</p>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
 <span><span class="fu">plotColTree</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
+<span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  relabel_tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  order_tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  remove_levels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -86,6 +87,7 @@ additional information.</p>
 <span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
 <span><span class="fu">plotRowTree</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
+<span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  relabel_tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  order_tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  remove_levels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
@@ -121,6 +123,11 @@ object.</p></dd>
 <dt>...</dt>
 <dd><p>additional arguments for plotting. See
 <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
+
+
+<dt>tree_name</dt>
+<dd><p>a single <code>character</code> value specifying a rowTree/colTree from
+<code>object</code>. (By default: <code>tree_name = "phylo"</code>)</p></dd>
 
 
 <dt>relabel_tree</dt>
