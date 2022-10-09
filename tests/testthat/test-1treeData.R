@@ -49,4 +49,16 @@ test_that("tree data", {
     expect_equal(combineTreeData(rowTree(x)), tidytree::as.treedata(td))
     expect_equal(combineTreeData(rowTree(x), other_fields),
                  tidytree::as.treedata(actual))
+    # Test situation when tree_name is wrong
+    expect_equal( colTreeData(x, tree_name = "phylo"), NULL )
+    expect_equal( rowTreeData(x, tree_name = "phylo.1"), NULL )
+    expect_error( colTreeData(x, tree_name = 1) )
+    expect_error( rowTreeData(x, tree_name = TRUE) )
+    expect_error( rowTreeData(x, tree_name = c("test", "test2")) )
+    td <- rowTreeData(x)
+    rowTreeData(x, "test") <- td
+    expect_equal(names(x@rowTree), c("phylo", "test"))
+    data(esophagus)
+    tse <- mia::mergeSEs(esophagus, GlobalPatterns)
+    expect_equal( rowTreeData(tse, "phylo"), rowTreeData(esophagus, "phylo") )
 })

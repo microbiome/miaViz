@@ -19,21 +19,21 @@ rowTreeData(x, ...)
 
 colTreeData(x, ...)
 
-rowTreeData(x) <- value
+rowTreeData(x, tree_name = "phylo") <- value
 
-colTreeData(x) <- value
-
-combineTreeData(x, other_fields = list())
+colTreeData(x, tree_name = "phylo") <- value
 
 combineTreeData(x, other_fields = list())
 
-\S4method{colTreeData}{TreeSummarizedExperiment}(x)
+combineTreeData(x, other_fields = list())
 
-\S4method{rowTreeData}{TreeSummarizedExperiment}(x)
+\S4method{colTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo")
 
-\S4method{colTreeData}{TreeSummarizedExperiment}(x) <- value
+\S4method{rowTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo")
 
-\S4method{rowTreeData}{TreeSummarizedExperiment}(x) <- value
+\S4method{colTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo") <- value
+
+\S4method{rowTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo") <- value
 
 \S4method{combineTreeData}{phylo}(x, other_fields = list())
 
@@ -45,6 +45,9 @@ combineTreeData(x, other_fields = list())
 object.}
 
 \item{...}{additional arguments, currently not used.}
+
+\item{tree_name}{a single \code{character} value specifying a rowTree/colTree from
+\code{x}. (By default: \code{tree_name = "phylo"})}
 
 \item{other_fields, value}{a \code{data.frame} or coercible to one, with at least one type
 of id information. See details.}
