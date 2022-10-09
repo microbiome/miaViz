@@ -2,7 +2,16 @@
 context("plot series")
 test_that("plot series", {
     
-    tse <- microbiomeDataSets::SilvermanAGutData()
+    # Load data from miaTime package
+    if( !require("miaTime") ){
+        if( !require("devtools") ){
+            install.packages("devtools")
+        }
+        devtools::install_github("microbiome/miaTime")
+        library("miaTime")
+    }
+    data("SilvermanAGutData")
+    tse <- SilvermanAGutData
     tse_sub <- tse[1:5]
     
     # Expect error
