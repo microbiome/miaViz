@@ -358,7 +358,7 @@ NULL
 }
 
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL,
-                           layout){
+                           layout = NULL){
     aes_args <- list()
     if (!is.null(edge_colour_by)) {
         aes_args$colour <- "edge_colour_by"
@@ -374,8 +374,10 @@ NULL
     if (is.null(edge_size_by)) {
         geom_args$size <- size
     }
-    # Add layout
-    geom_args$layout <- layout
+    # Add layout if specified
+    if( !is.null(layout) ){
+        geom_args$layout <- layout 
+    }
     return(list(args = geom_args))
 }
 
