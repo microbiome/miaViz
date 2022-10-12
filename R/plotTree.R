@@ -8,6 +8,9 @@
 #' @param object a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #' object.
+#' 
+#' @param tree_name a single \code{character} value specifying a rowTree/colTree from
+#'   \code{object}. (By default: \code{tree_name = "phylo"})
 #'
 #' @param relabel_tree logical scalar, Should the tip labels be relabeled using 
 #'   the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?  
@@ -190,6 +193,7 @@ setGeneric("plotColTree", signature = c("object"),
 #' @export
 setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
     function(object,
+             tree_name = "phylo",
              relabel_tree = FALSE,
              order_tree = FALSE,
              remove_levels = FALSE,
@@ -211,7 +215,8 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
              by_exprs_values = "counts",
              other_fields = list(),
              ...){
-        .plot_row_column_tree(object,
+        .plot_row_column_tree(object, 
+                              tree_name = tree_name,
                               relabel_tree = relabel_tree,
                               order_tree = order_tree,
                               remove_levels = remove_levels,
@@ -240,6 +245,7 @@ setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
 #' @export
 setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
     function(object,
+             tree_name = "phylo",
              relabel_tree = FALSE,
              order_tree = FALSE,
              remove_levels = FALSE,
@@ -262,6 +268,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
              other_fields = list(),
              ...){
         .plot_row_column_tree(object,
+                              tree_name = tree_name,
                               relabel_tree = relabel_tree,
                               order_tree = order_tree,
                               remove_levels = remove_levels,
@@ -354,6 +361,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 }
 
 .plot_row_column_tree <- function(object,
+                                  tree_name = "phylo",
                                   relabel_tree = FALSE,
                                   order_tree = FALSE,
                                   remove_levels = FALSE,
@@ -378,11 +386,16 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                                   ...){
     type <- match.arg(type)
     # input check
+    # Check tree_name
+    if( !.is_a_string(tree_name) ){
+        stop("'tree_name' must be a single character value specifying a colTree.",
+             call. = FALSE)
+    }
     FUN <- switch(type,
                   row = "rowTree",
                   column = "colTree")
-    if(is.null(do.call(FUN,list(object)))){
-        stop(FUN,"(object) is empty.", call. = FALSE)
+    if(is.null(do.call(FUN,list(x = object, whichTree = tree_name)))){
+        stop(FUN,"(object, tree_name) is empty.", call. = FALSE)
     }
     .check_tree_plot_switches(layout = layout,
                               relabel_tree = relabel_tree,
@@ -395,6 +408,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                               add_legend = add_legend)
     #
     tree_out <- .get_trimed_object_and_tree(object,
+                                            tree_name = tree_name,
                                             type = type,
                                             relabel = relabel_tree,
                                             order = order_tree)
@@ -466,14 +480,16 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 
 #' @importFrom ape keep.tip as.phylo
 #' @importFrom tidytree as_tibble 
-.get_trimed_object_and_tree <- function(object, type = c("row","columns"),
+.get_trimed_object_and_tree <- function(object,
+                                        tree_name = "phylo",
+                                        type = c("row","column"),
                                         relabel = FALSE,
                                         order = FALSE){
     type <- match.arg(type)
     tree_FUN <- switch(type, row = rowTree, column = colTree, stop("."))
     links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
     dimnames_FUN <- switch(type, row = rownames, column = colnames, stop("."))
-    tree <- tree_FUN(object)
+    tree <- tree_FUN(object, tree_name)
     links <- links_FUN(object)
     #
     tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))

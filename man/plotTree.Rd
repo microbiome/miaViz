@@ -14,6 +14,7 @@ plotColTree(object, ...)
 
 \S4method{plotColTree}{TreeSummarizedExperiment}(
   object,
+  tree_name = "phylo",
   relabel_tree = FALSE,
   order_tree = FALSE,
   remove_levels = FALSE,
@@ -39,6 +40,7 @@ plotColTree(object, ...)
 
 \S4method{plotRowTree}{TreeSummarizedExperiment}(
   object,
+  tree_name = "phylo",
   relabel_tree = FALSE,
   order_tree = FALSE,
   remove_levels = FALSE,
@@ -69,6 +71,9 @@ object.}
 
 \item{...}{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
+
+\item{tree_name}{a single \code{character} value specifying a rowTree/colTree from
+\code{object}. (By default: \code{tree_name = "phylo"})}
 
 \item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
 the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?

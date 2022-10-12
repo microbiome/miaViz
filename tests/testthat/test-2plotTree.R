@@ -58,7 +58,7 @@ test_that("plot tree", {
     library(scater)
     library(mia)
     data(GlobalPatterns)
-    altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus")
+    altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus", make_unique = FALSE)
     altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
     rowData(altExp(GlobalPatterns,"genus"))$log_mean <- log(rowData(altExp(GlobalPatterns,"genus"))$mean)
     top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
@@ -83,4 +83,10 @@ test_that("plot tree", {
                                        show_label = labels,
                                        layout="rectangular"))
     expect_true(all(c("colour_by", "size_by") %in% colnames(plot$data)))
+    # Test that error occurs if tree_name is wrong
+    expect_error( plotRowTree(GlobalPatterns, tree_name = "test") )
+    expect_error( plotRowTree(GlobalPatterns, tree_name = NULL) )
+    expect_error( plotRowTree(GlobalPatterns, tree_name = c("test", "phylo")) )
+    expect_error( plotColTree(GlobalPatterns, tree_name = 1) )
+    expect_error( plotRowTree(GlobalPatterns, tree_name = TRUE) )
 })
