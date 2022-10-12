@@ -79,6 +79,7 @@
 #' @name plotGraph
 #' 
 #' @examples
+#' \donttest{
 #' # data setup
 #' library(mia)
 #' data(GlobalPatterns)
@@ -157,6 +158,7 @@
 #'              edge_colour_by = "weight",
 #'              edge_width_by = "weight",
 #'              show_label = label_select)
+#' }
 NULL
 
 #' @rdname plotGraph

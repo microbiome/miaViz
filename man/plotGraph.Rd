@@ -133,6 +133,7 @@ graph types which can be converted by \code{tidygraph::as_tbl_graph} can
 be used.
 }
 \examples{
+\donttest{
 # data setup
 library(mia)
 data(GlobalPatterns)
@@ -211,4 +212,5 @@ plotRowGraph(order,
              edge_colour_by = "weight",
              edge_width_by = "weight",
              show_label = label_select)
+}
 }
