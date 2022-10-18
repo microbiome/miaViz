@@ -226,7 +226,7 @@ graph data. The `SummarizedExperiment` provided is required to have overlapping
 rownames with the node names of the graph. Using this link the graph plot
 can incorporated data from the `SummarizedExperiment`.
 
-```{r}
+```{r, eval=FALSE}
 plotColGraph(col_graph,
              altExp(GlobalPatterns,"Genus"),
              colour_by = "SampleType",
@@ -244,7 +244,7 @@ metadata(altExp(GlobalPatterns,"Genus"))$graph <- col_graph
 
 This produces the same plot as shown above.
 
-```{r include=FALSE}
+```{r include=FALSE, eval=FALSE}
 plotColGraph(altExp(GlobalPatterns,"Genus"),
              name = "graph",
              colour_by = "SampleType",
