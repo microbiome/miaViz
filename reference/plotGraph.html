@@ -19,7 +19,7 @@ Information on the edges have to provided manually."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.5.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.0</span>
       </span>
     </div>
 
@@ -209,7 +209,8 @@ be used.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># data setup</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># \donttest{</span></span></span>
+<span class="r-in"><span><span class="co"># data setup</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/mia" class="external-link">mia</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">col_graph</span><span class="op">)</span></span></span>
@@ -229,7 +230,7 @@ be used.</p>
 <span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotGraph-1.png" alt="" width="3000" height="2100"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in guides_train(scales = scales$non_position_scales(), theme = theme,     guides = guides, labels = labels):</span> Guide `colorbar` cannot be used for <span style="color: #00BB00;">edge_colour</span>.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot the graph stored in the object</span></span></span>
 <span class="r-in"><span><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">genus</span>,</span></span>
@@ -237,7 +238,7 @@ be used.</p>
 <span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
 <span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotGraph-2.png" alt="" width="3000" height="2100"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in guides_train(scales = scales$non_position_scales(), theme = theme,     guides = guides, labels = labels):</span> Guide `colorbar` cannot be used for <span style="color: #00BB00;">edge_colour</span>.</span>
 <span class="r-in"><span>             </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
@@ -246,7 +247,7 @@ be used.</p>
 <span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span></span>
 <span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotGraph-3.png" alt="" width="3000" height="2100"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in guides_train(scales = scales$non_position_scales(), theme = theme,     guides = guides, labels = labels):</span> Guide `colorbar` cannot be used for <span style="color: #00BB00;">edge_colour</span>.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot the graph stored in the object</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">genus</span>,</span></span>
@@ -254,7 +255,7 @@ be used.</p>
 <span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotGraph-4.png" alt="" width="3000" height="2100"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in guides_train(scales = scales$non_position_scales(), theme = theme,     guides = guides, labels = labels):</span> Guide `colorbar` cannot be used for <span style="color: #00BB00;">edge_colour</span>.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>                           </span></span>
 <span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
@@ -263,7 +264,7 @@ be used.</p>
 <span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span></span>
 <span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotGraph-5.png" alt="" width="3000" height="2100"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in guides_train(scales = scales$non_position_scales(), theme = theme,     guides = guides, labels = labels):</span> Guide `colorbar` cannot be used for <span style="color: #00BB00;">edge_colour</span>.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot the graph stored in the object and include some labels</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span></span>
@@ -273,7 +274,7 @@ be used.</p>
 <span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
 <span class="r-in"><span>             show_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sulfolobales"</span>,<span class="st">"Spirochaetales"</span>,</span></span>
 <span class="r-in"><span>                            <span class="st">"Verrucomicrobiales"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotGraph-6.png" alt="" width="3000" height="2100"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in guides_train(scales = scales$non_position_scales(), theme = theme,     guides = guides, labels = labels):</span> Guide `colorbar` cannot be used for <span style="color: #00BB00;">edge_colour</span>.</span>
 <span class="r-in"><span>                            </span></span>
 <span class="r-in"><span><span class="co"># labls can also be included via selecting specific rownames of x/y</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span></span>
@@ -282,7 +283,7 @@ be used.</p>
 <span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
 <span class="r-in"><span>             show_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotGraph-7.png" alt="" width="3000" height="2100"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in guides_train(scales = scales$non_position_scales(), theme = theme,     guides = guides, labels = labels):</span> Guide `colorbar` cannot be used for <span style="color: #00BB00;">edge_colour</span>.</span>
 <span class="r-in"><span>             </span></span>
 <span class="r-in"><span><span class="co"># labls can also be included via a logical vector, which has the same length</span></span></span>
 <span class="r-in"><span><span class="co"># as nodes are present</span></span></span>
@@ -294,7 +295,8 @@ be used.</p>
 <span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
 <span class="r-in"><span>             show_label <span class="op">=</span> <span class="va">label_select</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotGraph-8.png" alt="" width="3000" height="2100"></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in guides_train(scales = scales$non_position_scales(), theme = theme,     guides = guides, labels = labels):</span> Guide `colorbar` cannot be used for <span style="color: #00BB00;">edge_colour</span>.</span>
+<span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
   </div>
