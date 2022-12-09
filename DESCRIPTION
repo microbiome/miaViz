@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.5.4
+Version: 1.7.0
 Authors@R: 
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
              email = "felix.gm.ernst@outlook.com",
