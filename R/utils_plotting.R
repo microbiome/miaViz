@@ -172,7 +172,9 @@ NULL
     }
     if (is.numeric(colour_by)) {
         plot_out <- plot_out + VIRIDFUN(name = colour_by_name, option = option,
-                                        na.value = na.value)
+                                        na.value = na.value,
+                                        guide = "edge_colourbar" # Specify guide
+                                        )
     }
     else {
         nlevs_colour_by <- nlevels(as.factor(colour_by))
