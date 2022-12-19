@@ -596,7 +596,10 @@ setMethod("plotRowGraph",
                                               pull("edge_colour_by"),
                                           edge_colour_by,
                                           type = "edges",
-                                          na.translate = FALSE)
+                                          na.translate = FALSE,
+                                          # Specify guide
+                                          guide = "edge_colourbar"
+                                          )
     }
     if (!is.null(edge_width_by)) {
         if(is.numeric(object %>% activate("edges") %>% pull("edge_width_by"))){
