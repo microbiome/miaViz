@@ -378,13 +378,25 @@ p1 +
 Examples of 30 days trajectories:
 
 ```{r}
-# making info of samples corresponding to IDs having measurements up till 30 days
-IDs_keep <- sapply(colData(tse)$ID_Number %>% unique, function(id_n) {
-    if(seq(30) %in%
-       colData(tse)[colData(tse)$ID_Number==id_n, "Day_Number"] %>%
-       all) id_n
-})
-colData(tse)$has_30d <- 
+DF <- data.frame(reducedDim(tse) %>% `colnames<-`(c("PCoA1","PCoA2")),
+                 colData(tse)[,c("Day_Number","ID_Number")]) %>%
+    filter(Day_Number %in% seq(30)) %>%
+    tidyr::pivot_wider(id_cols = ID_Number, names_from = Day_Number,
+                       values_from = c(PCoA1,PCoA2))
+df <- DF %>% select(c(ID_Number,PCoA1_1, PCoA2_1, PCoA1_2, PCoA2_2)) %>% 
+    `colnames<-`(c("ID_Number","x_start","y_start", "x_end", "y_end"))
+for (i in 2:29) {
+    df <- rbind(df,
+                DF %>% select(c("ID_Number",
+                                paste0(c("PCoA1_","PCoA2_"),i),
+                                paste0(c("PCoA1_","PCoA2_"),i+1))) %>% 
+    `colnames<-`(c("ID_Number","x_start","y_start", "x_end", "y_end")))
+}
+
+p1 + 
+    geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
+                     color=ID_Number), data = df %>% filter(ID_Number %in% c(800,802)), 
+                 arrow = arrow(length = unit(0.1,"cm")))
 ```
 
 
