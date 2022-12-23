@@ -331,6 +331,7 @@ plotDMNFit(dmn_se, type = "laplace")
 
 ```{r}
 library(dplyr)
+data(hitchip1006, package = "miaTime")
 tse <- hitchip1006
 tse <- transformCounts(tse, method = "relabundance")
 ## Ordination with PCoA with Bray-Curtis dissimilarity
@@ -392,6 +393,21 @@ p1 +
                      color=change), data = df %>% top_frac(0.1, change), 
                  arrow = arrow(length = unit(0.1,"cm")))+
     labs(title = "top 10% trajectories from time point 1 to 2")
+```
+
+Coloring trajectories with metadata (e.g. nationality): 
+
+```{r}
+df <- df %>%
+    mutate(colData(tse) %>% as_tibble()  %>%
+    filter(subject %in% df$subject) %>% select(subject, nationality) %>%
+    distinct() %>% select(nationality))
+
+p1 + 
+    geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
+                     color=nationality), data = df, 
+                 arrow = arrow(length = unit(0.1,"cm")))+
+    labs(title = "Trajectories coloured with nationality ")
 ```
 
 Trajectories with multiple points (e.g. 5 poins which was maximum):
