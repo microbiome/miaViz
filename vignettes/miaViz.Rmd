@@ -449,6 +449,36 @@ p1 +
 ```
 
 
+```{r}
+df <- traj_info %>% reshape2::melt() %>% `colnames<-`(c("subject", "time", "value")) %>%
+    filter(value>0) %>% arrange(subject, time) %>% 
+    mutate(sample_id = apply(., 1, function(row) {
+        colData(tse[,colData(tse)$subject == row[1] & colData(tse)$time == row[2]])$sample
+        }))
+    
+df$subject <- as.factor(df$subject)
+df <- cbind(df, 
+      reducedDim(
+          tse[,(colData(tse)$subject %in% df$subject &
+                    colData(tse)$time %in% df$time)], "PCoA_BC") %>%
+          `colnames<-`(c("PC1","PC2")))
+# df_start_end <- df %>% group_by(subject) %>% summarise(start=min(time), end=max(time)) %>%
+#     tidyr::pivot_longer(cols = c(start, end), names_to = "side", values_to = "time") %>% 
+#     mutate(sample_id = apply(., 1, function(row) {
+#         colData(tse[,colData(tse)$subject == row[1] & colData(tse)$time == row[3]])$sample
+#         }))
+# df_start_end <- cbind(
+#     df_start_end,
+#     reducedDim(
+#           tse[,(colData(tse)$subject %in% df_start_end$subject &
+#                     colData(tse)$time %in% df_start_end$time)], "PCoA_BC") %>%
+#           `colnames<-`(c("PC1","PC2")))
+
+p1 + 
+    geom_line(aes(x=PC1, y=PC2, color=subject), data = df)
+```
+
+
 More examples and materials are available at Orchestrating Microbiome Analysis [@OMA].
 
 # Session info
