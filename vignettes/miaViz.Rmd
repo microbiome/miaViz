@@ -355,7 +355,7 @@ Retrieving information about available trajectories:
 colData(tse)$time <- as.factor(colData(tse)$time)
 # trajectories info
 traj_info <- table(colData(tse)$subject,colData(tse)$time)
-# has at least two point
+# has at least two points
 traj_info <- traj_info[rowSums(traj_info)!=1,]
 table(rowSums(traj_info)) %>% as.data.frame() %>%
     `colnames<-`(c("Trajectories Lengths", "Counts"))
@@ -394,28 +394,42 @@ p1 +
     labs(title = "top 10% trajectories from time point 1 to 2")
 ```
 
-Examples of 30 days trajectories:
+Trajectories with multiple points (e.g. 5 poins which was maximum):
 
 ```{r}
-DF <- data.frame(reducedDim(tse) %>% `colnames<-`(c("PCoA1","PCoA2")),
-                 colData(tse)[,c("Day_Number","ID_Number")]) %>%
-    filter(Day_Number %in% seq(30)) %>%
-    tidyr::pivot_wider(id_cols = ID_Number, names_from = Day_Number,
+# subject with maximum points in a trajectory
+max_tp <- max(rowSums(traj_info))
+ids_max_tp <- which(rowSums(traj_info)==max_tp) %>% names()
+
+DF <- data.frame(
+    reducedDim(tse[,colData(tse)$subject %in% ids_max_tp],"PCoA_BC") %>%
+        `colnames<-`(c("PCoA1","PCoA2")),
+    colData(tse[,colData(tse)$subject %in% ids_max_tp])[,c("time","subject")]) %>%
+    arrange(subject) %>% mutate(time_mod=rep(paste0("tp_", seq(max_tp)), nrow(.)/max_tp)) %>% 
+    tidyr::pivot_wider(id_cols = subject, names_from = time_mod,
                        values_from = c(PCoA1,PCoA2))
-df <- DF %>% select(c(ID_Number,PCoA1_1, PCoA2_1, PCoA1_2, PCoA2_2)) %>% 
-    `colnames<-`(c("ID_Number","x_start","y_start", "x_end", "y_end"))
-for (i in 2:29) {
+df <- DF %>% select(c(subject,PCoA1_tp_1, PCoA2_tp_1, PCoA1_tp_2, PCoA2_tp_2)) %>% 
+    `colnames<-`(c("subject","x_start","y_start", "x_end", "y_end"))
+for (i in 2:(max_tp-1)) {
     df <- rbind(df,
-                DF %>% select(c("ID_Number",
-                                paste0(c("PCoA1_","PCoA2_"),i),
-                                paste0(c("PCoA1_","PCoA2_"),i+1))) %>% 
-    `colnames<-`(c("ID_Number","x_start","y_start", "x_end", "y_end")))
+                DF %>% select(c("subject",
+                                paste0(c("PCoA1_tp_","PCoA2_tp_"),i),
+                                paste0(c("PCoA1_tp_","PCoA2_tp_"),i+1))) %>% 
+    `colnames<-`(c("subject","x_start","y_start", "x_end", "y_end")))
 }
+
+df_start_end <- rbind(
+    DF[,grep("tp_1", colnames(DF))] %>% `colnames<-`(c("PCoA1","PCoA2")) %>%
+        mutate(tp=rep("start", nrow(.))),
+    DF[,grep(paste0("tp_",max_tp), colnames(DF))] %>%
+        `colnames<-`(c("PCoA1","PCoA2")) %>% mutate(tp=rep("end", nrow(.))))
 
 p1 + 
     geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
-                     color=ID_Number), data = df %>% filter(ID_Number==801), 
-                 arrow = arrow(length = unit(0.2,"cm")))
+                     color=subject), data = df)+
+    geom_point(aes(x=PCoA1,y=PCoA2, shape=tp),data = df_start_end, size=2)+
+    scale_shape_manual(name="",values = c("start"=8, "end"=5))+
+    labs(title = "Multiple points trajectories")
 ```
 
 
