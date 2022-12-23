@@ -328,21 +328,11 @@ plotDMNFit(dmn_se, type = "laplace")
 
 # Ordination of serial data and trajectories
 
+
 ```{r}
 library(dplyr)
-data(temporalMicrobiome20, package = "miaTime")
-## Pre-processing data
-# removing NAs
-tse <- temporalMicrobiome20[,colData(temporalMicrobiome20)$Day_Number!="NA"]
-# making Day_Number as factor
-colData(tse)$Day_Number <- colData(tse)$Day_Number %>% as.integer() %>%
-    as.factor()
-## transforming data
-# imputing missing values with 0
-assay(tse,"counts")[is.na(assay(tse,"counts"))] <- 0 # is ok?
-# relative abundance transform
-tse <- transformCounts(tse, abund_values = "counts", method = "relabundance",
-                       pseudocount = 1)
+tse <- hitchip1006
+tse <- transformCounts(tse, method = "relabundance")
 ## Ordination with PCoA with Bray-Curtis dissimilarity
 tse <- runMDS(tse, FUN = vegan::vegdist, method = "bray",
                   name = "PCoA_BC", exprs_values = "relabundance",
@@ -359,20 +349,49 @@ p1 <- plotReducedDim(tse, dimred = "PCoA_BC") +
 p1
 ```
 
-With two points; day 1 and day 30:
+Retrieving information about available trajectories:
 
 ```{r}
-df <- data.frame(reducedDim(tse) %>% `colnames<-`(c("PCoA1","PCoA2")),
-                 colData(tse)[,c("Day_Number","ID_Number")]) %>%
-    filter(Day_Number %in% c(1,30)) %>%
-    tidyr::pivot_wider(id_cols = ID_Number, names_from = Day_Number,
+colData(tse)$time <- as.factor(colData(tse)$time)
+# trajectories info
+traj_info <- table(colData(tse)$subject,colData(tse)$time)
+# has at least two point
+traj_info <- traj_info[rowSums(traj_info)!=1,]
+table(rowSums(traj_info)) %>% as.data.frame() %>%
+    `colnames<-`(c("Trajectories Lengths", "Counts"))
+```
+
+Lets look at trajectories with two time points:
+
+```{r}
+# subject with 2 points trajectory
+ids_2tp <- which(rowSums(traj_info)==2) %>% names()
+
+df <- data.frame(
+    reducedDim(tse[,colData(tse)$subject %in% ids_2tp],"PCoA_BC") %>%
+        `colnames<-`(c("PCoA1","PCoA2")),
+    colData(tse[,colData(tse)$subject %in% ids_2tp])[,c("time","subject")]) %>%
+    arrange(subject) %>% mutate(time_mod=rep(c("tp_1","tp_2"), nrow(.)/2)) %>% 
+    tidyr::pivot_wider(id_cols = subject, names_from = time_mod,
                        values_from = c(PCoA1,PCoA2)) %>% 
-    mutate(change=sqrt((PCoA1_30-PCoA1_1)^2+(PCoA2_30-PCoA2_1)^2))
+    `colnames<-`(c("subject","x_start", "x_end", "y_start", "y_end")) %>% 
+    mutate(change=sqrt((.[[3]]-.[[2]])^2+(.[[5]]-.[[4]])^2))
 
 p1 + 
-    geom_segment(aes(x=PCoA1_1, y=PCoA2_1, xend=PCoA1_30, yend=PCoA2_30,
+    geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
                      color=change), data = df, 
-                 arrow = arrow(length = unit(0.1,"cm")))
+                 arrow = arrow(length = unit(0.1,"cm")))+
+    labs(title = "All two time point trajectories")
+```
+
+top 10 % trajectories (in terms of change) with two time points:
+
+```{r}
+p1 + 
+    geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
+                     color=change), data = df %>% top_frac(0.1, change), 
+                 arrow = arrow(length = unit(0.1,"cm")))+
+    labs(title = "top 10% trajectories from time point 1 to 2")
 ```
 
 Examples of 30 days trajectories:
@@ -395,8 +414,8 @@ for (i in 2:29) {
 
 p1 + 
     geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
-                     color=ID_Number), data = df %>% filter(ID_Number %in% c(800,802)), 
-                 arrow = arrow(length = unit(0.1,"cm")))
+                     color=ID_Number), data = df %>% filter(ID_Number==801), 
+                 arrow = arrow(length = unit(0.2,"cm")))
 ```
 
 
