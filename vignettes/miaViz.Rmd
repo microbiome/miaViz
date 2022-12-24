@@ -326,8 +326,10 @@ names(metadata(dmn_se))
 plotDMNFit(dmn_se, type = "laplace")
 ```
 
-# Ordination of serial data and trajectories
+# Serial data ordination and trajectories
 
+Principal Coordinate Analysis using Bray-Curtis dissimilarity on the
+`hitchip1006` dataset:
 
 ```{r}
 library(dplyr)
@@ -362,7 +364,7 @@ table(rowSums(traj_info)) %>% as.data.frame() %>%
     `colnames<-`(c("Trajectories Lengths", "Counts"))
 ```
 
-Lets look at all present trajectories in th data:
+Lets look at all present trajectories in the data:
 
 ```{r}
 # keeping only data that has one-to-one link from one point to another
@@ -387,15 +389,15 @@ df_start_end <- rbind(
 # plot
 p1 + 
     geom_path(aes(x=PC1, y=PC2, color=subject),
-              data = df )+ # %>% filter(subject %in% ids_max_tp)
+              data = df )+ 
     geom_point(aes(x=PC1,y=PC2, shape=tp),
-               data = df_start_end , # %>% filter(subject %in% ids_max_tp)
+               data = df_start_end ,
                size=2)+
     scale_shape_manual(name="",values = c("start"=8, "end"=5))+
     labs(title = "All present trajectories")
 ```
 
-Filtering by trajectory length:
+Filtering by trajectory length and displaying top 10%:
 
 ```{r}
 # calculating trajectory lengths and merge
@@ -406,7 +408,7 @@ df <- merge(df,
                }))
 # plot
 p1 + 
-    geom_path(aes(x=PC1, y=PC2, color=subject),
+    geom_path(aes(x=PC1, y=PC2, color=change, group=subject),
               data = df %>% top_frac(0.1, change))+
     geom_point(aes(x=PC1,y=PC2, shape=tp),
                data = df_start_end %>% 
@@ -415,7 +417,27 @@ p1 +
                                    select(subject) %>% .[[1]] %>% unique())), 
                size=2)+
     scale_shape_manual(name="",values = c("start"=8, "end"=5))+
-    labs(title = "Top 10% longest trajectories")
+    labs(title = "Top 10% longest trajectories")+
+    scale_color_gradient2(low="white", high="red")
+```
+
+Filtering by trajectory length and displaying top 10% along with BMI grouping:
+
+```{r}
+# adding BMI grouping info
+df$bmi_group <- colData(tse)[df$sample_id, "bmi_group"]
+# plot
+p1 + 
+    geom_path(aes(x=PC1, y=PC2, color=bmi_group, group=subject),
+              data = df %>% top_frac(0.1, change))+
+    geom_point(aes(x=PC1,y=PC2, shape=tp),
+               data = df_start_end %>% 
+                   filter(subject %in%
+                              (df %>% top_frac(0.1, change) %>%
+                                   select(subject) %>% .[[1]] %>% unique())), 
+               size=2)+
+    scale_shape_manual(name="",values = c("start"=8, "end"=5))+
+    labs(title = "Top 10% longest trajectories and BMI grouping")
 ```
 
 
