@@ -450,18 +450,21 @@ p1 +
 
 
 ```{r}
-df <- traj_info %>% reshape2::melt() %>% `colnames<-`(c("subject", "time", "value")) %>%
-    filter(value>0) %>% arrange(subject, time) %>% 
-    mutate(sample_id = apply(., 1, function(row) {
-        colData(tse[,colData(tse)$subject == row[1] & colData(tse)$time == row[2]])$sample
-        }))
+df <- traj_info %>% as.data.frame() %>% `colnames<-`(c("subject", "time", "value")) %>%
+    filter(value ==1) %>% arrange(subject, time) 
+# %>% 
+#     mutate(sample_id = apply(., 1, function(row) {
+#         colData(tse[,colData(tse)$subject == row[1] & colData(tse)$time == row[2]])$sample
+#         }))
     
-df$subject <- as.factor(df$subject)
+#df$subject <- as.factor(df$subject)
 df <- cbind(df, 
       reducedDim(
           tse[,(colData(tse)$subject %in% df$subject &
                     colData(tse)$time %in% df$time)], "PCoA_BC") %>%
-          `colnames<-`(c("PC1","PC2")))
+          `colnames<-`(c("PC1","PC2")) %>% as_tibble(rownames = "sample_id") %>% 
+          mutate(subject=colData(tse)[sample_id,"subject"]) %>%
+          arrange(subject)) %>% select(-last_col())
 # df_start_end <- df %>% group_by(subject) %>% summarise(start=min(time), end=max(time)) %>%
 #     tidyr::pivot_longer(cols = c(start, end), names_to = "side", values_to = "time") %>% 
 #     mutate(sample_id = apply(., 1, function(row) {
@@ -475,7 +478,8 @@ df <- cbind(df,
 #           `colnames<-`(c("PC1","PC2")))
 
 p1 + 
-    geom_line(aes(x=PC1, y=PC2, color=subject), data = df)
+    geom_line(aes(x=PC1, y=PC2, color=subject),
+              data = df %>% filter(subject %in% ids_2tp)) # 
 ```
 
 
