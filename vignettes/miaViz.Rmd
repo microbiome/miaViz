@@ -328,6 +328,12 @@ plotDMNFit(dmn_se, type = "laplace")
 
 # Serial data ordination and trajectories
 
+```{r, error=FALSE, warning=FALSE, results='hide'}
+if (!requireNamespace("devtools", quietly = TRUE))
+    install.packages("devtools")
+devtools::install_github("microbiome/miaTime")
+```
+
 Principal Coordinate Analysis using Bray-Curtis dissimilarity on the
 `hitchip1006` dataset:
 
