@@ -350,7 +350,7 @@ p1 <- plotReducedDim(tse, dimred = "PCoA_BC") +
 p1
 ```
 
-Retrieving information about available trajectories:
+Retrieving information about all available trajectories:
 
 ```{r}
 colData(tse)$time <- as.factor(colData(tse)$time)
@@ -362,97 +362,14 @@ table(rowSums(traj_info)) %>% as.data.frame() %>%
     `colnames<-`(c("Trajectories Lengths", "Counts"))
 ```
 
-Lets look at trajectories with two time points:
+Lets look at all present trajectories in th data:
 
 ```{r}
-# subject with 2 points trajectory
-ids_2tp <- which(rowSums(traj_info)==2) %>% names()
-
-df <- data.frame(
-    reducedDim(tse[,colData(tse)$subject %in% ids_2tp],"PCoA_BC") %>%
-        `colnames<-`(c("PCoA1","PCoA2")),
-    colData(tse[,colData(tse)$subject %in% ids_2tp])[,c("time","subject")]) %>%
-    arrange(subject) %>% mutate(time_mod=rep(c("tp_1","tp_2"), nrow(.)/2)) %>% 
-    tidyr::pivot_wider(id_cols = subject, names_from = time_mod,
-                       values_from = c(PCoA1,PCoA2)) %>% 
-    `colnames<-`(c("subject","x_start", "x_end", "y_start", "y_end")) %>% 
-    mutate(change=sqrt((.[[3]]-.[[2]])^2+(.[[5]]-.[[4]])^2))
-
-p1 + 
-    geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
-                     color=change), data = df, 
-                 arrow = arrow(length = unit(0.1,"cm")))+
-    labs(title = "All two time point trajectories")
-```
-
-top 10 % trajectories (in terms of change) with two time points:
-
-```{r}
-p1 + 
-    geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
-                     color=change), data = df %>% top_frac(0.1, change), 
-                 arrow = arrow(length = unit(0.1,"cm")))+
-    labs(title = "top 10% trajectories from time point 1 to 2")
-```
-
-Coloring trajectories with metadata (e.g. nationality): 
-
-```{r}
-df <- df %>%
-    mutate(colData(tse) %>% as_tibble()  %>%
-    filter(subject %in% df$subject) %>% select(subject, nationality) %>%
-    distinct() %>% select(nationality))
-
-p1 + 
-    geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
-                     color=nationality), data = df, 
-                 arrow = arrow(length = unit(0.1,"cm")))+
-    labs(title = "Trajectories coloured with nationality ")
-```
-
-Trajectories with multiple points (e.g. 5 poins which was maximum):
-
-```{r}
-# subject with maximum points in a trajectory
-max_tp <- max(rowSums(traj_info))
-ids_max_tp <- which(rowSums(traj_info)==max_tp) %>% names()
-
-DF <- data.frame(
-    reducedDim(tse[,colData(tse)$subject %in% ids_max_tp],"PCoA_BC") %>%
-        `colnames<-`(c("PCoA1","PCoA2")),
-    colData(tse[,colData(tse)$subject %in% ids_max_tp])[,c("time","subject")]) %>%
-    arrange(subject) %>% mutate(time_mod=rep(paste0("tp_", seq(max_tp)), nrow(.)/max_tp)) %>% 
-    tidyr::pivot_wider(id_cols = subject, names_from = time_mod,
-                       values_from = c(PCoA1,PCoA2))
-df <- DF %>% select(c(subject,PCoA1_tp_1, PCoA2_tp_1, PCoA1_tp_2, PCoA2_tp_2)) %>% 
-    `colnames<-`(c("subject","x_start","y_start", "x_end", "y_end"))
-for (i in 2:(max_tp-1)) {
-    df <- rbind(df,
-                DF %>% select(c("subject",
-                                paste0(c("PCoA1_tp_","PCoA2_tp_"),i),
-                                paste0(c("PCoA1_tp_","PCoA2_tp_"),i+1))) %>% 
-    `colnames<-`(c("subject","x_start","y_start", "x_end", "y_end")))
-}
-
-df_start_end <- rbind(
-    DF[,grep("tp_1", colnames(DF))] %>% `colnames<-`(c("PCoA1","PCoA2")) %>%
-        mutate(tp=rep("start", nrow(.))),
-    DF[,grep(paste0("tp_",max_tp), colnames(DF))] %>%
-        `colnames<-`(c("PCoA1","PCoA2")) %>% mutate(tp=rep("end", nrow(.))))
-
-p1 + 
-    geom_segment(aes(x=x_start, y=y_start, xend=x_end, yend=y_end,
-                     color=subject), data = df)+
-    geom_point(aes(x=PCoA1,y=PCoA2, shape=tp),data = df_start_end, size=2)+
-    scale_shape_manual(name="",values = c("start"=8, "end"=5))+
-    labs(title = "Multiple points trajectories")
-```
-
-
-```{r}
-df <- traj_info %>% as.data.frame() %>% `colnames<-`(c("subject", "time", "value")) %>%
+# keeping only data that has one-to-one link from one point to another
+df <- traj_info %>% as.data.frame() %>%
+    `colnames<-`(c("subject", "time", "value")) %>% 
     filter(value ==1) %>% arrange(subject, time) 
-
+# retrieving corresponding ordination coordinate values
 df <- cbind(df, 
       reducedDim(
           tse[,(colData(tse)$subject %in% df$subject &
@@ -460,19 +377,45 @@ df <- cbind(df,
           `colnames<-`(c("PC1","PC2")) %>% as_tibble(rownames = "sample_id") %>% 
           mutate(subject=colData(tse)[sample_id,"subject"]) %>%
           arrange(subject)) %>% select(-last_col())
-
+# retrieving the corresponding start and end of each trajectory 
 df_start_end <- rbind(
-    df %>% group_by(subject) %>% slice(which.min(time)) %>% ungroup() %>% mutate(tp=rep("start",nrow(.))),
-    df %>% group_by(subject) %>% slice(which.max(time)) %>% ungroup() %>% mutate(tp=rep("end",nrow(.)))
+    df %>% group_by(subject) %>% slice(which.min(time)) %>% ungroup() %>%
+        mutate(tp=rep("start",nrow(.))),
+    df %>% group_by(subject) %>% slice(which.max(time)) %>% ungroup() %>%
+        mutate(tp=rep("end",nrow(.)))
 )
-
+# plot
 p1 + 
     geom_path(aes(x=PC1, y=PC2, color=subject),
               data = df )+ # %>% filter(subject %in% ids_max_tp)
     geom_point(aes(x=PC1,y=PC2, shape=tp),
                data = df_start_end , # %>% filter(subject %in% ids_max_tp)
                size=2)+
-    scale_shape_manual(name="",values = c("start"=8, "end"=5))
+    scale_shape_manual(name="",values = c("start"=8, "end"=5))+
+    labs(title = "All present trajectories")
+```
+
+Filtering by trajectory length:
+
+```{r}
+# calculating trajectory lengths and merge
+df <- merge(df,
+               df %>% group_by(subject) %>% group_modify(~{
+                   mat <- as.matrix(dist(.x[,c("PC1", "PC2")]));
+                   data.frame(change=sum(mat[row(mat) == col(mat) + 1]))
+               }))
+# plot
+p1 + 
+    geom_path(aes(x=PC1, y=PC2, color=subject),
+              data = df %>% top_frac(0.1, change))+
+    geom_point(aes(x=PC1,y=PC2, shape=tp),
+               data = df_start_end %>% 
+                   filter(subject %in%
+                              (df %>% top_frac(0.1, change) %>%
+                                   select(subject) %>% .[[1]] %>% unique())), 
+               size=2)+
+    scale_shape_manual(name="",values = c("start"=8, "end"=5))+
+    labs(title = "Top 10% longest trajectories")
 ```
 
 
