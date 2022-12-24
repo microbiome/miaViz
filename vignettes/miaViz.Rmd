@@ -478,8 +478,8 @@ df <- cbind(df,
 #           `colnames<-`(c("PC1","PC2")))
 
 p1 + 
-    geom_line(aes(x=PC1, y=PC2, color=subject),
-              data = df %>% filter(subject %in% ids_2tp)) # 
+    geom_path(aes(x=PC1, y=PC2, color=subject),
+              data = df %>% filter(subject %in% ids_max_tp)) # 
 ```
 
 
