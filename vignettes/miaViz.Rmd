@@ -366,12 +366,12 @@ table(table(tse$subject)) %>% as.data.frame() %>%
     rename(Timepoints=Var1, Subjects=Freq)
 ```
 
-Lets look at all present trajectories in the data:
+Lets look at all trajectories having two time points in the data:
 
 ```{r}
 # plot
 # List subjects with two time points
-selected.subjects <- names(which(table(tse$subject)>=2))
+selected.subjects <- names(which(table(tse$subject)==2))
 
 # plot
 p1 <- plotReducedDim(tse, dimred = "PCoA_BC") +
@@ -386,7 +386,7 @@ df <- cbind(df, colData(tse)) %>% as.data.frame()
 p1 <- p1 + geom_path(aes(x=PC1, y=PC2, group=subject),
               arrow=arrow(length = unit(0.1, "inches")),
               data = subset(df, subject %in% selected.subjects))+ 
-    labs(title = "All present trajectories")
+    labs(title = "All trajectories with two time points")
 
 print(p1)
 ```
@@ -412,7 +412,7 @@ p1 <- plotReducedDim(tse, dimred = "PCoA_BC") +
               data = subset(df, subject %in% selected.subjects) %>%
                   top_frac(0.1, change),
               arrow=arrow(length = unit(0.1, "inches")))+
-    labs(title = "Top 10% longest trajectories")+
+    labs(title = "Top 10% trajectories having highest change from time point one to two")+
     scale_color_gradient2(low="white", high="red")
 print(p1)
 ```
@@ -425,10 +425,25 @@ p1 <- plotReducedDim(tse, dimred = "PCoA_BC") +
          labs(title="PCoA - Bray-Curtis")+
     theme(plot.title = element_text(hjust = 0.5)) +
     geom_path(aes(x=PC1, y=PC2, color=nationality, group=subject),
-              data = subset(df, subject %in% selected.subjects) %>%
-                  top_frac(0.1, change),
+              data = subset(df, subject %in% selected.subjects) ,
               arrow=arrow(length = unit(0.1, "inches")))+
-    labs(title = "Top 10% longest trajectories and nationality")
+    labs(title = "Trajectories with two time points and nationality")
+print(p1)
+```
+
+Plotting an example of the longest trajectory within the data:
+
+```{r}
+# Get first subject to have maximum time points
+selected.subjects <- names(which.max(table(tse$subject)))
+# plot
+p1 <- plotReducedDim(tse, dimred = "PCoA_BC") +
+         labs(title="PCoA - Bray-Curtis")+
+    theme(plot.title = element_text(hjust = 0.5)) +
+    geom_path(aes(x=PC1, y=PC2, group=subject),
+              data = df %>% filter(change==max(change)) ,
+              arrow=arrow(length = unit(0.1, "inches")))+
+    labs(title = "Longest trajectory")
 print(p1)
 ```
 
