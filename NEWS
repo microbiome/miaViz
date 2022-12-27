@@ -11,3 +11,6 @@ Changes in version 1.3.x
 Changes in version 1.5.x
 + plot*Tree & *TreeData: Add support for multiple trees
 + plot*Tree layout bugfix
+
+Changes in version 1.7.x
++ Fixed plotGraph* that was broked due changes in dependencies
