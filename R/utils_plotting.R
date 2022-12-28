@@ -141,7 +141,8 @@ NULL
                                   fill = FALSE,
                                   type = c("normal","edges"),
                                   na.translate = TRUE,
-                                  na.value = NA) 
+                                  na.value = NA,
+                                  ...) 
 {
     if (is.null(colour_by)) {
         return(plot_out)
@@ -172,7 +173,9 @@ NULL
     }
     if (is.numeric(colour_by)) {
         plot_out <- plot_out + VIRIDFUN(name = colour_by_name, option = option,
-                                        na.value = na.value)
+                                        na.value = na.value,
+                                        ...
+                                        )
     }
     else {
         nlevs_colour_by <- nlevels(as.factor(colour_by))

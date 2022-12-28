@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.7.0
+Version: 1.7.1
 Authors@R: 
     c(person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
              email = "felix.gm.ernst@outlook.com",
@@ -56,5 +56,5 @@ Suggests:
     patchwork,
     microbiomeDataSets
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr
