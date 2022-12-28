@@ -343,19 +343,12 @@ data(hitchip1006, package = "miaTime")
 tse <- hitchip1006
 tse <- transformCounts(tse, method = "relabundance")
 ## Ordination with PCoA with Bray-Curtis dissimilarity
-tse <- runMDS(tse, FUN = vegan::vegdist, method = "bray",
-                  name = "PCoA_BC", exprs_values = "relabundance",
-              na.rm = TRUE)
-# Calculating Explained variance
-e <- attr(reducedDim(tse, "PCoA_BC"), "eig")
-rel_eig <- e/sum(e[e>0])
+tse <- runMDS(tse, FUN = vegan::vegdist, method = "bray", name = "PCoA_BC",
+              exprs_values = "relabundance", na.rm = TRUE)
 # plot
 p <- plotReducedDim(tse, dimred = "PCoA_BC")
 
-p + labs(x = paste("PCoA 1 (", round(100 * rel_eig[[1]],1), "%", ")", sep = ""),
-         y = paste("PCoA 2 (", round(100 * rel_eig[[2]],1), "%", ")", sep = ""),
-         title="PCoA - Bray-Curtis")+
-    theme(plot.title = element_text(hjust = 0.5))
+p
 ```
 
 Retrieving information about all available trajectories:
@@ -372,12 +365,12 @@ table(table(tse$subject)) %>% as.data.frame() %>%
 Lets look at all trajectories having two time points in the data:
 
 ```{r}
-# adding metadata for the plot
-p$data <- cbind(p$data, colData(tse))
 # plot
-p + geom_path(aes(x=X, y=Y, group=subject), 
+p + geom_path(aes(x=X1, y=X2, group=subject), 
               arrow=arrow(length = unit(0.1, "inches")),
-              data = subset(p$data, subject %in% selected.subjects))+
+              # combining ordination data and metadata then selecting the subjects
+              data = subset(data.frame(reducedDim(tse), colData(tse)),
+                            subject %in% selected.subjects) %>% arrange(time))+
     labs(title = "All trajectories with two time points")+
     theme(plot.title = element_text(hjust = 0.5))
 ```
@@ -388,15 +381,15 @@ Filtering the two time point trajectories by divergence and displaying top 10%:
 library(miaTime)
 # calculating step wise divergence based on the microbial profiles
 tse <- getStepwiseDivergence(tse, group = "subject", time_field = "time")
-# adding metadata for the plot
-p$data <- cbind(p$data, colData(tse)[,"time_divergence", drop=FALSE])
 # retrieving the top 10% divergent subjects having two time points
-top.selected.subjects <- p$data %>% filter(subject %in% selected.subjects) %>%
+top.selected.subjects <- subset(data.frame(reducedDim(tse), colData(tse)),
+                            subject %in% selected.subjects) %>% 
     top_frac(0.1, time_divergence) %>% select(subject) %>% .[[1]]
 # plot
-p + geom_path(aes(x=X, y=Y,
+p + geom_path(aes(x=X1, y=X2,
                   color=time_divergence, group=subject),
-              data = subset(p$data, subject %in% top.selected.subjects) %>% 
+              data = subset(data.frame(reducedDim(tse), colData(tse)),
+                            subject %in% top.selected.subjects) %>% 
                   arrange(desc(time)), 
               arrow=arrow(length = unit(0.1, "inches"), ends = "first"))+
     labs(title = "Top 10%  divergent trajectories from time point one to two")+
@@ -408,12 +401,14 @@ Plotting an example of the trajectory with the highest total divergence:
 
 ```{r}
 # Get first subject to have maximum time points
-selected.subject <- p$data %>% group_by(subject) %>%
-    summarise(total_divergence=sum(time_divergence, na.rm = TRUE)) %>%
+selected.subject <- data.frame(reducedDim(tse), colData(tse)) %>%
+    group_by(subject) %>% 
+    summarise(total_divergence = sum(time_divergence, na.rm = TRUE)) %>%
     filter(total_divergence==max(total_divergence)) %>% select(subject) %>% .[[1]]
 # plot
-p +  geom_path(aes(x=X, y=Y, group=subject),
-              data = subset(p$data, subject %in% selected.subject),
+p +  geom_path(aes(x=X1, y=X2, group=subject),
+              data = subset(data.frame(reducedDim(tse), colData(tse)),
+                            subject %in% selected.subject) %>% arrange(time),
               arrow=arrow(length = unit(0.1, "inches")))+
     labs(title = "Longest trajectory by divergence")+
     theme(plot.title = element_text(hjust = 0.5))
