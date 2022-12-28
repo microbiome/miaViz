@@ -347,7 +347,6 @@ tse <- runMDS(tse, FUN = vegan::vegdist, method = "bray", name = "PCoA_BC",
               exprs_values = "relabundance", na.rm = TRUE)
 # plot
 p <- plotReducedDim(tse, dimred = "PCoA_BC")
-
 p
 ```
 
@@ -369,6 +368,7 @@ Lets look at all trajectories having two time points in the data:
 p + geom_path(aes(x=X1, y=X2, group=subject), 
               arrow=arrow(length = unit(0.1, "inches")),
               # combining ordination data and metadata then selecting the subjects
+              # Note, scuttle::makePerCellDF could also be used for the purpose.
               data = subset(data.frame(reducedDim(tse), colData(tse)),
                             subject %in% selected.subjects) %>% arrange(time))+
     labs(title = "All trajectories with two time points")+
@@ -388,19 +388,25 @@ top.selected.subjects <- subset(data.frame(reducedDim(tse), colData(tse)),
 # plot
 p + geom_path(aes(x=X1, y=X2,
                   color=time_divergence, group=subject),
+              # the data is sorted in descending order in terms of time
+              # since geom_path will use the first occurring observation
+              # to color the corresponding segment. Without the sorting
+              # geom_path will pick up NA values (corresponding to initial time
+              # points); breaking the example.
               data = subset(data.frame(reducedDim(tse), colData(tse)),
                             subject %in% top.selected.subjects) %>% 
-                  arrange(desc(time)), 
+                  arrange(desc(time)),
+              # arrow end is reversed, due to the earlier sorting.
               arrow=arrow(length = unit(0.1, "inches"), ends = "first"))+
     labs(title = "Top 10%  divergent trajectories from time point one to two")+
     scale_color_gradient2(low="white", high="red")+
     theme(plot.title = element_text(hjust = 0.5))
 ```
 
-Plotting an example of the trajectory with the highest total divergence:
+Plotting an example of the trajectory with the maximum total divergence:
 
 ```{r}
-# Get first subject to have maximum time points
+# Get subject with the maximum total divergence
 selected.subject <- data.frame(reducedDim(tse), colData(tse)) %>%
     group_by(subject) %>% 
     summarise(total_divergence = sum(time_divergence, na.rm = TRUE)) %>%
