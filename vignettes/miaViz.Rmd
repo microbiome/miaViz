@@ -326,6 +326,101 @@ names(metadata(dmn_se))
 plotDMNFit(dmn_se, type = "laplace")
 ```
 
+# Serial data ordination and trajectories
+
+```{r, error=FALSE, warning=FALSE, results='hide'}
+if (!requireNamespace("devtools", quietly = TRUE))
+    install.packages("devtools")
+devtools::install_github("microbiome/miaTime")
+```
+
+Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
+`hitchip1006` dataset:
+
+```{r}
+library(dplyr)
+data(hitchip1006, package = "miaTime")
+tse <- hitchip1006
+tse <- transformCounts(tse, method = "relabundance")
+## Ordination with PCoA with Bray-Curtis dissimilarity
+tse <- runMDS(tse, FUN = vegan::vegdist, method = "bray", name = "PCoA_BC",
+              exprs_values = "relabundance", na.rm = TRUE)
+# plot
+p <- plotReducedDim(tse, dimred = "PCoA_BC")
+p
+```
+
+Retrieving information about all available trajectories:
+
+```{r}
+# List subjects with two time points
+selected.subjects <- names(which(table(tse$subject)==2))
+
+# Subjects counts per number of time points available in the data
+table(table(tse$subject)) %>% as.data.frame() %>%
+    rename(Timepoints=Var1, Subjects=Freq)
+```
+
+Lets look at all trajectories having two time points in the data:
+
+```{r}
+# plot
+p + geom_path(aes(x=X1, y=X2, group=subject), 
+              arrow=arrow(length = unit(0.1, "inches")),
+              # combining ordination data and metadata then selecting the subjects
+              # Note, scuttle::makePerCellDF could also be used for the purpose.
+              data = subset(data.frame(reducedDim(tse), colData(tse)),
+                            subject %in% selected.subjects) %>% arrange(time))+
+    labs(title = "All trajectories with two time points")+
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
+Filtering the two time point trajectories by divergence and displaying top 10%:
+
+```{r}
+library(miaTime)
+# calculating step wise divergence based on the microbial profiles
+tse <- getStepwiseDivergence(tse, group = "subject", time_field = "time")
+# retrieving the top 10% divergent subjects having two time points
+top.selected.subjects <- subset(data.frame(reducedDim(tse), colData(tse)),
+                            subject %in% selected.subjects) %>% 
+    top_frac(0.1, time_divergence) %>% select(subject) %>% .[[1]]
+# plot
+p + geom_path(aes(x=X1, y=X2,
+                  color=time_divergence, group=subject),
+              # the data is sorted in descending order in terms of time
+              # since geom_path will use the first occurring observation
+              # to color the corresponding segment. Without the sorting
+              # geom_path will pick up NA values (corresponding to initial time
+              # points); breaking the example.
+              data = subset(data.frame(reducedDim(tse), colData(tse)),
+                            subject %in% top.selected.subjects) %>% 
+                  arrange(desc(time)),
+              # arrow end is reversed, due to the earlier sorting.
+              arrow=arrow(length = unit(0.1, "inches"), ends = "first"))+
+    labs(title = "Top 10%  divergent trajectories from time point one to two")+
+    scale_color_gradient2(low="white", high="red")+
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
+Plotting an example of the trajectory with the maximum total divergence:
+
+```{r}
+# Get subject with the maximum total divergence
+selected.subject <- data.frame(reducedDim(tse), colData(tse)) %>%
+    group_by(subject) %>% 
+    summarise(total_divergence = sum(time_divergence, na.rm = TRUE)) %>%
+    filter(total_divergence==max(total_divergence)) %>% select(subject) %>% .[[1]]
+# plot
+p +  geom_path(aes(x=X1, y=X2, group=subject),
+              data = subset(data.frame(reducedDim(tse), colData(tse)),
+                            subject %in% selected.subject) %>% arrange(time),
+              arrow=arrow(length = unit(0.1, "inches")))+
+    labs(title = "Longest trajectory by divergence")+
+    theme(plot.title = element_text(hjust = 0.5))
+```
+
+
 More examples and materials are available at Orchestrating Microbiome Analysis [@OMA].
 
 # Session info
