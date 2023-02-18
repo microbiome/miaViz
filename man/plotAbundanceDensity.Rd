@@ -10,7 +10,7 @@ plotAbundanceDensity(object, ...)
 \S4method{plotAbundanceDensity}{SummarizedExperiment}(
   object,
   layout = c("jitter", "density", "point"),
-  assay_name = abund_values,
+  assay.type = abund_values,
   abund_values = "counts",
   n = min(nrow(object), 25L),
   colour_by = NULL,
@@ -28,7 +28,7 @@ object.}
 \item{...}{additional parameters for plotting.
 \itemize{
 \item{xlab}{ a single character value for selecting the x-axis label.
-(default: \code{xlab = assay_name}) }
+(default: \code{xlab = assay.type}) }
 
 \item{ylab}{ a single character value for selecting the y-axis label.
 \code{ylab} is disabled when \code{layout = "density"}.
@@ -59,13 +59,13 @@ See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-
 There are three different options: \code{jitter}, \code{density}, and
 \code{point} plot. (default: \code{layout = "jitter"})}
 
-\item{assay_name}{a single character value for selecting the
+\item{assay.type}{a single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-plotted. (default: \code{assay_name = "counts"})}
+plotted. (default: \code{assay.type = "counts"})}
 
 \item{abund_values}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{abund_values}
 will be disabled.)}
 
 \item{n}{a positive integer specifying the number of the most abundant taxa
@@ -109,41 +109,41 @@ abundances where peaks represent most common abundances.
 tse <- microbiomeDataSets::atlas1006()
 
 # Plots the abundances of 25 most abundant taxa. Jitter plot is the default option.
-plotAbundanceDensity(tse, assay_name = "counts")
+plotAbundanceDensity(tse, assay.type = "counts")
 
 # Counts relative abundances
 tse <- transformSamples(tse, method = "relabundance")
 
 # Plots the relative abundance of 10 most abundant taxa. 
 # "nationality" information is used to color the points. X-axis is log-scaled.
-plotAbundanceDensity(tse, layout = "jitter", assay_name = "relabundance", 
+plotAbundanceDensity(tse, layout = "jitter", assay.type = "relabundance", 
                      n = 10, colour_by = "nationality") +
     scale_x_log10() 
                      
 # Plots the relative abundance of 10 most abundant taxa as a density plot.
 # X-axis is log-scaled
-plotAbundanceDensity(tse, layout = "density", assay_name = "relabundance",
+plotAbundanceDensity(tse, layout = "density", assay.type = "relabundance",
                      n = 10 ) +
     scale_x_log10()
                      
 # Plots the relative abundance of 10 most abundant taxa as a point plot.
 # Point shape is changed from default (21) to 41.
-plotAbundanceDensity(tse, layout = "point", assay_name = "relabundance", n = 10,
+plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
                      point_shape = 41)
                      
 # Plots the relative abundance of 10 most abundant taxa as a point plot.
 # In addition to colour, groups can be visualized by size and shape in point plots,
 # and adjusted for point size
-plotAbundanceDensity(tse, layout = "point", assay_name = "relabundance", n = 10,
+plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
                      shape_by = "sex", size_by = "time", point_size=1)
 
 # Ordering via order_descending
-plotAbundanceDensity(tse, assay_name = "relabundance", 
+plotAbundanceDensity(tse, assay.type = "relabundance", 
                      order_descending = FALSE)
 
 # for custom ordering set order_descending = NA and order the input object
 # to your wishes
-plotAbundanceDensity(tse, assay_name = "relabundance",
+plotAbundanceDensity(tse, assay.type = "relabundance",
                      order_descending = NA)
 
 }
