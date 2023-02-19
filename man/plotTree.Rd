@@ -176,7 +176,7 @@ rowData(altExp(GlobalPatterns,"Genus"))$detected <-
 top_genus <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
                         method="mean",
                         top=100L,
-                        assay_name="counts")
+                        assay.type="counts")
 #
 x <- altExp(GlobalPatterns,"Genus")
 plotRowTree(x[rownames(x) \%in\% top_genus,],
@@ -213,7 +213,7 @@ altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
 top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
                         method="mean",
                         top=10L,
-                        assay_name="counts")
+                        assay.type="counts")
 altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
 altExps(GlobalPatterns) <-
    lapply(altExps(GlobalPatterns),

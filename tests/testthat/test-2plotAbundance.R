@@ -8,8 +8,8 @@ test_that("plot abundance", {
     expect_error(miaViz:::.get_abundance_data(),
                  'argument "x" is missing')
     expect_error(miaViz:::.get_abundance_data(x),
-                 'argument "assay_name" is missing')
-    expect_error(miaViz:::.get_abundance_data(x,assay_name = "counts"),
+                 'argument "assay.type" is missing')
+    expect_error(miaViz:::.get_abundance_data(x,assay.type = "counts"),
                  'argument "rank" is missing')
     actual <- miaViz:::.get_abundance_data(x,"Phylum","counts")
     expect_s3_class(actual,"tbl_df")
@@ -65,10 +65,10 @@ test_that("plot abundance", {
     expect_error(expect_equal(abund_data,actual$abund_data))
     expect_error(expect_equal(features_data,actual$features_data))
     #
-    plot <- plotAbundance(x, assay_name="counts")
+    plot <- plotAbundance(x, assay.type="counts")
     expect_s3_class(plot,"ggplot")
     expect_named(plot$data,c("colour_by","X","Y"))
-    plot <- plotAbundance(x, assay_name="counts", rank = "Phylum",
+    plot <- plotAbundance(x, assay.type="counts", rank = "Phylum",
                           features = "SampleType",
                           order_sample_by = "SampleType")
     expect_true(is.list(plot))

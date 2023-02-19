@@ -6,13 +6,13 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'    object.
 #'
-#' @param assay_name a single character value for selecting the
+#' @param assay.type a single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   plotted. (default: \code{assay_name = "counts"})
+#'   plotted. (default: \code{assay.type = "counts"})
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param x a single character value for selecting the column from
@@ -77,7 +77,7 @@
 #'            x = "DAY_ORDER", 
 #'            colour_by = "Family",
 #'            linetype_by = "Phylum",
-#'            assay_name = "relabundance")
+#'            assay.type = "relabundance")
 #' 
 #' # In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
 #' plotSeries(object,
@@ -85,7 +85,7 @@
 #'            y = getTopTaxa(object, 5), 
 #'            colour_by = "Family",
 #'            size_by = "Phylum",
-#'            assay_name = "counts")
+#'            assay.type = "counts")
 #' }
 NULL
 
@@ -99,7 +99,7 @@ setGeneric("plotSeries", signature = c("object"),
                     colour_by = NULL,
                     size_by = NULL,
                     linetype_by = NULL,
-                    assay_name = abund_values, abund_values = "counts",
+                    assay.type = assay_name, assay_name = "counts",
                     ...)
                standardGeneric("plotSeries"))
 
@@ -115,11 +115,11 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
              colour_by = NULL,
              size_by = NULL,
              linetype_by = NULL,
-             assay_name = abund_values, abund_values = "counts",
+             assay.type = assay_name, assay_name = "counts",
              ...){
         ###################### Input check #######################
-        # Checks assay_name
-        .check_assay_present(assay_name, object)
+        # Checks assay.type
+        .check_assay_present(assay.type, object)
         
         # Checks X
         if( !.is_a_string(x) ||
@@ -152,7 +152,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         ###################### Input check end ####################
         
         # Gets assay data
-        assay <- .get_assay_data(object, assay_name)
+        assay <- .get_assay_data(object, assay.type)
         
         # Fetches sample and features data as a list. 
         vis_out <- .incorporate_series_vis(object,
@@ -172,7 +172,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
                                        series_data,
                                        feature_data)
         xlab <- paste0(x)
-        ylab <- paste0(assay_name)
+        ylab <- paste0(assay.type)
         
         # Plots the data
         .series_plotter(plot_data, 
@@ -187,7 +187,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 
 ################## HELP FUNCTIONS ##########################
 
-.get_assay_data <- function(object, assay_name){
+.get_assay_data <- function(object, assay.type){
     # Gets warning or error if too many taxa are selected. 
     if( length(rownames(object)) > 20 ){
         stop("Over 20 taxa selected. 20 or under allowed.", call. = FALSE)
@@ -196,7 +196,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     }
     
     # Retrieves the assay
-    assay <- assay(object, assay_name, withDimnames = TRUE)
+    assay <- assay(object, assay.type, withDimnames = TRUE)
     
     # Gets rownames
     rownames(assay) <- rownames(object)

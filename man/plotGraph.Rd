@@ -202,7 +202,7 @@ plotRowGraph(order,
              edge_width_by = "weight", 
              show_label = c(1,10,50))
              
-# labls can also be included via a logical vector, which has the same length
+# labels can also be included via a logical vector, which has the same length
 # as nodes are present
 label_select <- rep(FALSE,nrow(order))
 label_select[c(1,10,50)] <-  TRUE

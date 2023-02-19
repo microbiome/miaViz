@@ -1,3 +1,6 @@
+Changes in version 1.7.2 (2022-02-17)
++ assay_name argument changed to assay.type
+
 Changes in version 0.99.0 (2021-03-19)
 + Submitted to Bioconductor
 

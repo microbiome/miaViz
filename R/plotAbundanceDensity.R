@@ -10,13 +10,13 @@
 #'   There are three different options: \code{jitter}, \code{density}, and
 #'   \code{point} plot. (default: \code{layout = "jitter"})
 #'
-#' @param assay_name a single character value for selecting the
+#' @param assay.type a single character value for selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   plotted. (default: \code{assay_name = "counts"})
+#'   plotted. (default: \code{assay.type = "counts"})
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param n a positive integer specifying the number of the most abundant taxa
@@ -44,7 +44,7 @@
 #' @param ... additional parameters for plotting. 
 #' \itemize{
 #'   \item{xlab}{ a single character value for selecting the x-axis label. 
-#'   (default: \code{xlab = assay_name}) }
+#'   (default: \code{xlab = assay.type}) }
 #'   
 #'   \item{ylab}{ a single character value for selecting the y-axis label. 
 #'   \code{ylab} is disabled when \code{layout = "density"}. 
@@ -91,41 +91,41 @@
 #' tse <- microbiomeDataSets::atlas1006()
 #' 
 #' # Plots the abundances of 25 most abundant taxa. Jitter plot is the default option.
-#' plotAbundanceDensity(tse, assay_name = "counts")
+#' plotAbundanceDensity(tse, assay.type = "counts")
 #' 
 #' # Counts relative abundances
 #' tse <- transformCounts(tse, method = "relabundance")
 #' 
 #' # Plots the relative abundance of 10 most abundant taxa. 
 #' # "nationality" information is used to color the points. X-axis is log-scaled.
-#' plotAbundanceDensity(tse, layout = "jitter", assay_name = "relabundance", 
+#' plotAbundanceDensity(tse, layout = "jitter", assay.type = "relabundance", 
 #'                      n = 10, colour_by = "nationality") +
 #'     scale_x_log10() 
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a density plot.
 #' # X-axis is log-scaled
-#' plotAbundanceDensity(tse, layout = "density", assay_name = "relabundance",
+#' plotAbundanceDensity(tse, layout = "density", assay.type = "relabundance",
 #'                      n = 10 ) +
 #'     scale_x_log10()
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a point plot.
 #' # Point shape is changed from default (21) to 41.
-#' plotAbundanceDensity(tse, layout = "point", assay_name = "relabundance", n = 10,
+#' plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
 #'                      point_shape = 41)
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a point plot.
 #' # In addition to colour, groups can be visualized by size and shape in point plots,
 #' # and adjusted for point size
-#' plotAbundanceDensity(tse, layout = "point", assay_name = "relabundance", n = 10,
+#' plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
 #'                      shape_by = "sex", size_by = "time", point_size=1)
 #' 
 #' # Ordering via order_descending
-#' plotAbundanceDensity(tse, assay_name = "relabundance", 
+#' plotAbundanceDensity(tse, assay.type = "relabundance", 
 #'                      order_descending = FALSE)
 #'
 #' # for custom ordering set order_descending = NA and order the input object
 #' # to your wishes
-#' plotAbundanceDensity(tse, assay_name = "relabundance",
+#' plotAbundanceDensity(tse, assay.type = "relabundance",
 #'                      order_descending = NA)
 #'
 NULL
@@ -141,7 +141,7 @@ setGeneric("plotAbundanceDensity", signature = c("object"),
 setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment"),
           function(object,
                    layout = c("jitter", "density", "point"),
-                   assay_name = abund_values, abund_values = "counts",
+                   assay.type = assay_name, assay_name = "counts",
                    n = min(nrow(object), 25L), 
                    colour_by = NULL, 
                    shape_by = NULL, 
@@ -151,8 +151,8 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
               ############################# Input Check ##############################
               # Check layout
               layout <- match.arg(layout, c("jitter", "density", "point"))
-              # Checks assay_name
-              .check_assay_present(assay_name, object)
+              # Checks assay.type
+              .check_assay_present(assay.type, object)
               # Checks n
               if( !(length(n)==1 && is.numeric(n) && n%%1==0 && n>0) ){
                   stop("'n' must be a positive integer.", call. = FALSE)
@@ -180,7 +180,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
               ########################### Input Check end ############################
               # Gets data that will be plotted. Gets a list
               density_data_list <- .incorporate_density_data(object = object,
-                                                             assay_name = assay_name,
+                                                             assay.type = assay.type,
                                                              n = n,
                                                              colour_by = colour_by,
                                                              shape_by = shape_by,
@@ -195,7 +195,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
               # Gets the plot from plotter
               plot_out <- .density_plotter(density_data = density_data, 
                                            layout = layout,
-                                           xlab = assay_name,
+                                           xlab = assay.type,
                                            colour_by = colour_by,
                                            shape_by = shape_by,
                                            size_by = size_by,
@@ -206,15 +206,15 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
 
 ################################ HELP FUNCTIONS ################################
 
-.incorporate_density_data <- function(object, assay_name, n,
+.incorporate_density_data <- function(object, assay.type, n,
                                       colour_by,
                                       shape_by,
                                       size_by,
                                       order_descending = TRUE){
     # Gets the assay
-    mat <- assay(object, assay_name, withDimnames = TRUE)
+    mat <- assay(object, assay.type, withDimnames = TRUE)
     # Gets the most abundant taxa
-    top_taxa <- getTopTaxa(object, top = n, assay_name = assay_name)
+    top_taxa <- getTopTaxa(object, top = n, assay.type = assay.type)
     # Subsets abundance table  by taking taxa of highest abundance
     mat <- mat[top_taxa, , drop=FALSE]
     # enable conversion to data.frame for non-matrix assays, e.g. sparseMatrices

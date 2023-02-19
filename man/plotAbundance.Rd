@@ -19,8 +19,8 @@ plotAbundance(x, ...)
   one_facet = TRUE,
   ncol = 2,
   scales = "fixed",
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   ...
 )
 }
@@ -68,12 +68,12 @@ columns should be for plotting the different facets and \code{scales} is
 used to define the behavior of the scales of each facet. Both values are
 passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.}
 
-\item{assay_name}{a \code{character} value defining which assay data to
-use. (default: \code{assay_name = "relabundance"})}
+\item{assay.type}{a \code{character} value defining which assay data to
+use. (default: \code{assay.type = "relabundance"})}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 }
 \value{
@@ -97,23 +97,23 @@ data(GlobalPatterns, package="mia")
 se <- GlobalPatterns
 
 ## Plotting abundance using the first taxonomic rank as default
-plotAbundance(se, assay_name="counts")
+plotAbundance(se, assay.type="counts")
 
 ## Using "Phylum" as rank
-plotAbundance(se, assay_name="counts", rank = "Phylum", add_legend = FALSE)
+plotAbundance(se, assay.type="counts", rank = "Phylum", add_legend = FALSE)
 
 ## If rank is set to NULL plotAbundance behaves like plotExpression
-plotAbundance(se, assay_name="counts", rank = NULL,
+plotAbundance(se, assay.type="counts", rank = NULL,
            features = head(rownames(se)))
   
 ## A feature from colData or taxon from chosen rank can be used for ordering samples.
-plotAbundance(se, assay_name="counts", rank = "Phylum",
+plotAbundance(se, assay.type="counts", rank = "Phylum",
            order_sample_by = "Bacteroidetes")
 
 ## Features from colData can be plotted together with abundance plot.
 # Returned object is a list that includes two plot; other visualizes abundance
 # other features. 
-plot <- plotAbundance(se, assay_name = "counts", rank = "Phylum",
+plot <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
                    features = "SampleType")
 \donttest{
 # These two plots can be combined with wrap_plots function from patchwork package
@@ -123,7 +123,7 @@ wrap_plots(plot, ncol = 1)
 
 ## Same plot as above but showing sample IDs as labels for the x axis on the top plot
 
-plot[[1]] <- plotAbundance(se, assay_name = "counts", rank = "Phylum",
+plot[[1]] <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
                            features = "SampleType", add_legend = FALSE,
                            add_x_text = TRUE)[[1]] +
                            theme(axis.text.x = element_text(angle = 90)) 
@@ -136,7 +136,7 @@ wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
 # Getting top taxa on a Phylum level
 se <- relAbundanceCounts(se)
 se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
-top_taxa <- getTopTaxa(se_phylum,top = 5, assay_name = "relabundance")
+top_taxa <- getTopTaxa(se_phylum,top = 5, assay.type = "relabundance")
 
 # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
 phylum_renamed <- lapply(rowData(se)$Phylum,
@@ -144,6 +144,6 @@ phylum_renamed <- lapply(rowData(se)$Phylum,
 rowData(se)$Phylum <- as.character(phylum_renamed)
 
 # Compositional barplot
-plotAbundance(se, assay_name="relabundance", rank = "Phylum",
+plotAbundance(se, assay.type="relabundance", rank = "Phylum",
            order_rank_by="abund", order_sample_by = "Bacteroidetes")
 }

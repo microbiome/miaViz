@@ -15,8 +15,8 @@ plotPrevalence(x, ...)
   x,
   detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
   prevalences = seq(0.1, 1, 0.1),
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   as_relative = TRUE,
   rank = NULL,
   BPPARAM = BiocParallel::SerialParam(),
@@ -28,8 +28,8 @@ plotPrevalentAbundance(x, ...)
 \S4method{plotPrevalentAbundance}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1L],
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   as_relative = TRUE,
   colour_by = NULL,
   size_by = NULL,
@@ -44,8 +44,8 @@ plotTaxaPrevalence(x, ...)
 \S4method{plotTaxaPrevalence}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1L],
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   detections = NULL,
   ndetections = 20,
   as_relative = TRUE,
@@ -67,12 +67,12 @@ value between 0 and 1, if \code{as_relative = TRUE}.}
 required prevalence is strictly greater by default. To include the
 limit, set \code{include_lowest} to \code{TRUE}.}
 
-\item{assay_name}{a \code{character} value defining which assay data to
-use. (default: \code{assay_name = "relabundance"})}
+\item{assay.type}{a \code{character} value defining which assay data to
+use. (default: \code{assay.type = "relabundance"})}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{as_relative}{logical scalar: Should the detection threshold be applied
