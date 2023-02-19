@@ -19,9 +19,9 @@
 #' @param assay.type a \code{character} value defining which assay data to
 #'   use. (default: \code{assay.type = "relabundance"})
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param features a single \code{character} value defining a column from 
@@ -157,7 +157,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             one_facet = TRUE,
             ncol = 2,
             scales = "fixed",
-            assay.type = abund_values, abund_values = "counts",
+            assay.type = assay_name, assay_name = "counts",
             ...){
         # input checks
         if(nrow(x) == 0L){

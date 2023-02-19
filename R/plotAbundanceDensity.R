@@ -14,9 +14,9 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   plotted. (default: \code{assay.type = "counts"})
 #'
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param n a positive integer specifying the number of the most abundant taxa
@@ -141,7 +141,7 @@ setGeneric("plotAbundanceDensity", signature = c("object"),
 setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment"),
           function(object,
                    layout = c("jitter", "density", "point"),
-                   assay.type = abund_values, abund_values = "counts",
+                   assay.type = assay_name, assay_name = "counts",
                    n = min(nrow(object), 25L), 
                    colour_by = NULL, 
                    shape_by = NULL, 

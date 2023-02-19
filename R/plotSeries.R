@@ -10,9 +10,9 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #'   plotted. (default: \code{assay.type = "counts"})
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'
 #' @param x a single character value for selecting the column from
@@ -99,7 +99,7 @@ setGeneric("plotSeries", signature = c("object"),
                     colour_by = NULL,
                     size_by = NULL,
                     linetype_by = NULL,
-                    assay.type = abund_values, abund_values = "counts",
+                    assay.type = assay_name, assay_name = "counts",
                     ...)
                standardGeneric("plotSeries"))
 
@@ -115,7 +115,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
              colour_by = NULL,
              size_by = NULL,
              linetype_by = NULL,
-             assay.type = abund_values, abund_values = "counts",
+             assay.type = assay_name, assay_name = "counts",
              ...){
         ###################### Input check #######################
         # Checks assay.type

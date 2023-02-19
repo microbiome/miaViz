@@ -13,8 +13,8 @@ plotSeries(
   colour_by = NULL,
   size_by = NULL,
   linetype_by = NULL,
-  assay.type = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   ...
 )
 
@@ -26,8 +26,8 @@ plotSeries(
   colour_by = NULL,
   size_by = NULL,
   linetype_by = NULL,
-  assay.type = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   ...
 )
 }
@@ -63,9 +63,9 @@ is used to divide taxa to different line types. Must be a value of
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 plotted. (default: \code{assay.type = "counts"})}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{...}{additional parameters for plotting. See

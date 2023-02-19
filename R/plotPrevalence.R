@@ -23,9 +23,9 @@
 #' @param assay.type a \code{character} value defining which assay data to
 #'   use. (default: \code{assay.type = "relabundance"})
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param as_relative logical scalar: Should the detection threshold be applied
@@ -134,7 +134,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
           function(x,
                    detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
                    prevalences = seq(0.1, 1, 0.1),
-                   assay.type = abund_values, abund_values = "counts",
+                   assay.type = assay_name, assay_name = "counts",
                    as_relative = TRUE,
                    rank = NULL,
                    BPPARAM = BiocParallel::SerialParam(),
@@ -220,7 +220,7 @@ setGeneric("plotPrevalentAbundance", signature = c("x"),
 setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x,
              rank = taxonomyRanks(x)[1L],
-             assay.type = abund_values, abund_values = "counts",
+             assay.type = assay_name, assay_name = "counts",
              as_relative = TRUE,
              colour_by = NULL,
              size_by = NULL,
@@ -349,7 +349,7 @@ setGeneric("plotTaxaPrevalence", signature = c("x"),
 setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
           function(x,
                    rank = taxonomyRanks(x)[1L],
-                   assay.type = abund_values, abund_values = "counts",
+                   assay.type = assay_name, assay_name = "counts",
                    detections = NULL,
                    ndetections = 20,
                    as_relative = TRUE,

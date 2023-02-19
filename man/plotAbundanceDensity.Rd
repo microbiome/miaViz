@@ -10,8 +10,8 @@ plotAbundanceDensity(object, ...)
 \S4method{plotAbundanceDensity}{SummarizedExperiment}(
   object,
   layout = c("jitter", "density", "point"),
-  assay.type = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   n = min(nrow(object), 25L),
   colour_by = NULL,
   shape_by = NULL,
@@ -63,9 +63,9 @@ There are three different options: \code{jitter}, \code{density}, and
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 plotted. (default: \code{assay.type = "counts"})}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{n}{a positive integer specifying the number of the most abundant taxa
@@ -112,7 +112,7 @@ tse <- microbiomeDataSets::atlas1006()
 plotAbundanceDensity(tse, assay.type = "counts")
 
 # Counts relative abundances
-tse <- transformSamples(tse, method = "relabundance")
+tse <- transformCounts(tse, method = "relabundance")
 
 # Plots the relative abundance of 10 most abundant taxa. 
 # "nationality" information is used to color the points. X-axis is log-scaled.
