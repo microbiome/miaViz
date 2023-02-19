@@ -18,7 +18,7 @@ information."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -56,8 +56,8 @@ information.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span>,</span>
 <span>  prevalences <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span>,</span>
@@ -70,8 +70,8 @@ information.</p>
 <span><span class="fu">plotPrevalentAbundance</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -87,8 +87,8 @@ information.</p>
 <span><span class="fu">plotTaxaPrevalence</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1L</span><span class="op">]</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  detections <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ndetections <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  as_relative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -118,15 +118,15 @@ required prevalence is strictly greater by default. To include the
 limit, set <code>include_lowest</code> to <code>TRUE</code>.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>a <code>character</code> value defining which assay data to
-use. (default: <code>assay_name = "relabundance"</code>)</p></dd>
+use. (default: <code>assay.type = "relabundance"</code>)</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
@@ -263,7 +263,7 @@ with subsetting via <code>getPrevalentTaxa</code> or
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Felix G.M. Ernst, Tuomas Borman, Leo Lahti.</p>
+  <p></p><p>Developed by Tuomas Borman, Felix G.M. Ernst, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">

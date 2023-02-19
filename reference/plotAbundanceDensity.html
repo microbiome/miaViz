@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -53,8 +53,8 @@
 <span><span class="fu">plotAbundanceDensity</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
 <span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"jitter"</span>, <span class="st">"density"</span>, <span class="st">"point"</span><span class="op">)</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">object</span><span class="op">)</span>, <span class="fl">25L</span><span class="op">)</span>,</span>
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -74,7 +74,7 @@ object.</p></dd>
 
 <dt>...</dt>
 <dd><p>additional parameters for plotting.</p><ul><li><p>xlab a single character value for selecting the x-axis label.
-(default: <code>xlab = assay_name</code>)</p></li>
+(default: <code>xlab = assay.type</code>)</p></li>
 <li><p>ylab a single character value for selecting the y-axis label.
 <code>ylab</code> is disabled when <code>layout = "density"</code>.
 (default: <code>ylab = "Taxa")</code></p></li>
@@ -99,16 +99,16 @@ There are three different options: <code>jitter</code>, <code>density</code>, an
 <code>point</code> plot. (default: <code>layout = "jitter"</code>)</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>a single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
-plotted. (default: <code>assay_name = "counts"</code>)</p></dd>
+plotted. (default: <code>assay.type = "counts"</code>)</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
@@ -176,48 +176,48 @@ abundances where peaks represent most common abundances.</p>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> loading from cache</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plots the abundances of 25 most abundant taxa. Jitter plot is the default option.</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundanceDensity-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Counts relative abundances</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformSamples</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">transformCounts</span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plots the relative abundance of 10 most abundant taxa. </span></span></span>
 <span class="r-in"><span><span class="co"># "nationality" information is used to color the points. X-axis is log-scaled.</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"jitter"</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>, </span></span>
+<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"jitter"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, </span></span>
 <span class="r-in"><span>                     n <span class="op">=</span> <span class="fl">10</span>, colour_by <span class="op">=</span> <span class="st">"nationality"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span> </span></span>
 <span class="r-plt img"><img src="plotAbundanceDensity-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="co"># Plots the relative abundance of 10 most abundant taxa as a density plot.</span></span></span>
 <span class="r-in"><span><span class="co"># X-axis is log-scaled</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"density"</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
+<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"density"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>                     n <span class="op">=</span> <span class="fl">10</span> <span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundanceDensity-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="co"># Plots the relative abundance of 10 most abundant taxa as a point plot.</span></span></span>
 <span class="r-in"><span><span class="co"># Point shape is changed from default (21) to 41.</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"point"</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>, n <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"point"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, n <span class="op">=</span> <span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                     point_shape <span class="op">=</span> <span class="fl">41</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundanceDensity-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="co"># Plots the relative abundance of 10 most abundant taxa as a point plot.</span></span></span>
 <span class="r-in"><span><span class="co"># In addition to colour, groups can be visualized by size and shape in point plots,</span></span></span>
 <span class="r-in"><span><span class="co"># and adjusted for point size</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"point"</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>, n <span class="op">=</span> <span class="fl">10</span>,</span></span>
+<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"point"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, n <span class="op">=</span> <span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                     shape_by <span class="op">=</span> <span class="st">"sex"</span>, size_by <span class="op">=</span> <span class="st">"time"</span>, point_size<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 370 rows containing missing values (`geom_point()`).</span>
 <span class="r-plt img"><img src="plotAbundanceDensity-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Ordering via order_descending</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>, </span></span>
+<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, </span></span>
 <span class="r-in"><span>                     order_descending <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundanceDensity-6.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># for custom ordering set order_descending = NA and order the input object</span></span></span>
 <span class="r-in"><span><span class="co"># to your wishes</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
+<span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>                     order_descending <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundanceDensity-7.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
@@ -231,7 +231,7 @@ abundances where peaks represent most common abundances.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Felix G.M. Ernst, Tuomas Borman, Leo Lahti.</p>
+  <p></p><p>Developed by Tuomas Borman, Felix G.M. Ernst, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">

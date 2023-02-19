@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -55,8 +55,8 @@
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linetype_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
@@ -69,8 +69,8 @@
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  linetype_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -118,16 +118,16 @@ is used to divide taxa to different line types. Must be a value of
 <code>taxonomicRanks()</code> function.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>a single character value for selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
-plotted. (default: <code>assay_name = "counts"</code>)</p></dd>
+plotted. (default: <code>assay.type = "counts"</code>)</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 
@@ -157,7 +157,7 @@ y-axis abundances of selected taxa.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/mia" class="external-link">mia</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># Load data from miaTime package</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"miaTime"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/microbiome/miaTime" class="external-link">"miaTime"</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"SilvermanAGutData"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">object</span> <span class="op">&lt;-</span> <span class="va">SilvermanAGutData</span></span></span>
 <span class="r-in"><span></span></span>
@@ -178,7 +178,7 @@ y-axis abundances of selected taxa.</p>
 <span class="r-in"><span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>, </span></span>
 <span class="r-in"><span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
 <span class="r-in"><span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>           assay_name <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>           assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.</span></span></span>
 <span class="r-in"><span><span class="fu">plotSeries</span><span class="op">(</span><span class="va">object</span>,</span></span>
@@ -186,7 +186,7 @@ y-axis abundances of selected taxa.</p>
 <span class="r-in"><span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTopTaxa</a></span><span class="op">(</span><span class="va">object</span>, <span class="fl">5</span><span class="op">)</span>, </span></span>
 <span class="r-in"><span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
 <span class="r-in"><span>           size_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>           assay_name <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>           assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
@@ -198,7 +198,7 @@ y-axis abundances of selected taxa.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Felix G.M. Ernst, Tuomas Borman, Leo Lahti.</p>
+  <p></p><p>Developed by Tuomas Borman, Felix G.M. Ernst, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">

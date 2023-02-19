@@ -20,7 +20,7 @@ If only &amp;#8216;counts&amp;#8217; is present, the relative abundance is compu
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
       </span>
     </div>
 
@@ -68,8 +68,8 @@ If only ‘counts’ is present, the relative abundance is computed.</p>
 <span>  one_facet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
-<span>  assay_name <span class="op">=</span> <span class="va">abund_values</span>,</span>
-<span>  abund_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
+<span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -141,15 +141,15 @@ used to define the behavior of the scales of each facet. Both values are
 passed onto <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></code>.</p></dd>
 
 
-<dt>assay_name</dt>
+<dt>assay.type</dt>
 <dd><p>a <code>character</code> value defining which assay data to
-use. (default: <code>assay_name = "relabundance"</code>)</p></dd>
+use. (default: <code>assay.type = "relabundance"</code>)</p></dd>
 
 
-<dt>abund_values</dt>
+<dt>assay_name</dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
-(Please use <code>assay_name</code> instead. At some point <code>abund_values</code>
+(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
 will be disabled.)</p></dd>
 
 </dl></div>
@@ -174,27 +174,27 @@ features present.</p>
 <span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Plotting abundance using the first taxonomic rank as default</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay_name<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Using "Phylum" as rank</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay_name<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## If rank is set to NULL plotAbundance behaves like plotExpression</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay_name<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
 <span class="r-in"><span>           features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co">## A feature from colData or taxon from chosen rank can be used for ordering samples.</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay_name<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>           order_sample_by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Features from colData can be plotted together with abundance plot.</span></span></span>
 <span class="r-in"><span><span class="co"># Returned object is a list that includes two plot; other visualizes abundance</span></span></span>
 <span class="r-in"><span><span class="co"># other features. </span></span></span>
-<span class="r-in"><span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                   features <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># These two plots can be combined with wrap_plots function from patchwork package</span></span></span>
@@ -205,7 +205,7 @@ features present.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Same plot as above but showing sample IDs as labels for the x axis on the top plot</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">plot</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay_name <span class="op">=</span> <span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span><span class="va">plot</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                           features <span class="op">=</span> <span class="st">"SampleType"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                           add_x_text <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>                           <span class="fu">theme</span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu">element_text</span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span> </span></span>
@@ -219,7 +219,7 @@ features present.</p>
 <span class="r-in"><span><span class="co"># Getting top taxa on a Phylum level</span></span></span>
 <span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu">relAbundanceCounts</span><span class="op">(</span><span class="va">se</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">se_phylum</span> <span class="op">&lt;-</span> <span class="fu">agglomerateByRank</span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span><span class="st">"Phylum"</span>, onRankOnly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">se_phylum</span>,top <span class="op">=</span> <span class="fl">5</span>, assay_name <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu">getTopTaxa</span><span class="op">(</span><span class="va">se_phylum</span>,top <span class="op">=</span> <span class="fl">5</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"</span></span></span>
 <span class="r-in"><span><span class="va">phylum_renamed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu">rowData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span>,</span></span>
@@ -227,7 +227,7 @@ features present.</p>
 <span class="r-in"><span><span class="fu">rowData</span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">phylum_renamed</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compositional barplot</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay_name<span class="op">=</span><span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>           order_rank_by<span class="op">=</span><span class="st">"abund"</span>, order_sample_by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-7.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
@@ -240,7 +240,7 @@ features present.</p>
 
 
       <footer><div class="copyright">
-  <p></p><p>Developed by Felix G.M. Ernst, Tuomas Borman, Leo Lahti.</p>
+  <p></p><p>Developed by Tuomas Borman, Felix G.M. Ernst, Leo Lahti.</p>
 </div>
 
 <div class="pkgdown">
