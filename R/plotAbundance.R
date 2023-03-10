@@ -110,7 +110,7 @@
 #' ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
 #' 
 #' # Getting top taxa on a Phylum level
-#' se <- relAbundanceCounts(se)
+#' se <- transformCounts(se, method="relabundance")
 #' se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
 #' top_taxa <- getTopTaxa(se_phylum,top = 5, assay.type = "relabundance")
 #' 

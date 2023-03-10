@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.7.3
+Version: 1.7.4
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -12,11 +12,9 @@ Authors@R:
              email = "leo.lahti@iki.fi",
              comment = c(ORCID = "0000-0001-5537-637X"))
 	     )
-Description: 
-    The miaViz package implements plotting function to work with TreeSummarizedExperiment
-    and related objects in a context of microbiome analysis. Among others this 
-    includes plotting tree, graph and microbiome series data. The package is part of the
-    broader miaverse framework.
+Description: The miaViz package implements functions to visualize
+    TreeSummarizedExperiment objects especially in the context of microbiome
+    analysis. Part of the mia family of R/Bioconductor packages.
 biocViews: Microbiome, Software, Visualization
 License: Artistic-2.0 | file LICENSE
 Encoding: UTF-8
@@ -28,10 +26,11 @@ Depends:
     mia (>= 0.99),
     ggplot2,
     ggraph (>= 2.0)
-Imports: 
+Imports:
     methods,
     stats,
     S4Vectors,
+    miaTime,    
     BiocGenerics,
     BiocParallel,
     DelayedArray,
@@ -54,6 +53,7 @@ Suggests:
     BiocStyle,
     testthat,
     patchwork,
+    vegan,
     microbiomeDataSets
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3

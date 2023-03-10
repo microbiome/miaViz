@@ -13,6 +13,7 @@ NULL
 #' @import methods
 #' @import TreeSummarizedExperiment
 #' @import mia
+#' @import miaTime
 #' @import ggplot2
 #' @import ggraph
 #' @importFrom rlang sym !! :=
@@ -32,7 +33,8 @@ NULL
 #' 1. \dQuote{Jaccard} distances were calculated via 
 #' \code{calculateDistance(genus, FUN = vegan::vegdist, method = "jaccard",
 #' exprs_values = "relabundance")}, either using transposed assay data or not
-#' to calculate distances for samples or features.
+#' to calculate distances for samples or features. NOTE: the function
+#' mia::calculateDistance is now deprecated.
 #' 
 #' 2. \dQuote{Jaccard} dissimilarites were converted to similarities and values
 #' above a threshold were used to construct a graph via 
