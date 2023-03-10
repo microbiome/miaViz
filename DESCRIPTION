@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.7.3
+Version: 1.7.4
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -28,10 +28,12 @@ Depends:
     mia (>= 0.99),
     ggplot2,
     ggraph (>= 2.0)
-Imports: 
+Imports:
+    vegan,
     methods,
     stats,
     S4Vectors,
+    miaTime,    
     BiocGenerics,
     BiocParallel,
     DelayedArray,
