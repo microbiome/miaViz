@@ -16,12 +16,12 @@
 #' @param rank a single \code{character} value defining the taxonomic rank to
 #'   use. Must be a value of \code{taxonomyRanks(x)}.
 #'
-#' @param assay_name a \code{character} value defining which assay data to
-#'   use. (default: \code{assay_name = "relabundance"})
+#' @param assay.type a \code{character} value defining which assay data to
+#'   use. (default: \code{assay.type = "relabundance"})
 #'   
-#' @param abund_values a single \code{character} value for specifying which
+#' @param assay_name a single \code{character} value for specifying which
 #'   assay to use for calculation.
-#'   (Please use \code{assay_name} instead. At some point \code{abund_values}
+#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
 #' @param features a single \code{character} value defining a column from 
@@ -73,23 +73,23 @@
 #' se <- GlobalPatterns
 #' 
 #' ## Plotting abundance using the first taxonomic rank as default
-#' plotAbundance(se, assay_name="counts")
+#' plotAbundance(se, assay.type="counts")
 #' 
 #' ## Using "Phylum" as rank
-#' plotAbundance(se, assay_name="counts", rank = "Phylum", add_legend = FALSE)
+#' plotAbundance(se, assay.type="counts", rank = "Phylum", add_legend = FALSE)
 #' 
 #' ## If rank is set to NULL plotAbundance behaves like plotExpression
-#' plotAbundance(se, assay_name="counts", rank = NULL,
+#' plotAbundance(se, assay.type="counts", rank = NULL,
 #'            features = head(rownames(se)))
 #'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
-#' plotAbundance(se, assay_name="counts", rank = "Phylum",
+#' plotAbundance(se, assay.type="counts", rank = "Phylum",
 #'            order_sample_by = "Bacteroidetes")
 #' 
 #' ## Features from colData can be plotted together with abundance plot.
 #' # Returned object is a list that includes two plot; other visualizes abundance
 #' # other features. 
-#' plot <- plotAbundance(se, assay_name = "counts", rank = "Phylum",
+#' plot <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
 #'                    features = "SampleType")
 #' \donttest{
 #' # These two plots can be combined with wrap_plots function from patchwork package
@@ -99,7 +99,7 @@
 #' 
 #' ## Same plot as above but showing sample IDs as labels for the x axis on the top plot
 #' 
-#' plot[[1]] <- plotAbundance(se, assay_name = "counts", rank = "Phylum",
+#' plot[[1]] <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
 #'                            features = "SampleType", add_legend = FALSE,
 #'                            add_x_text = TRUE)[[1]] +
 #'                            theme(axis.text.x = element_text(angle = 90)) 
@@ -112,7 +112,7 @@
 #' # Getting top taxa on a Phylum level
 #' se <- relAbundanceCounts(se)
 #' se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
-#' top_taxa <- getTopTaxa(se_phylum,top = 5, assay_name = "relabundance")
+#' top_taxa <- getTopTaxa(se_phylum,top = 5, assay.type = "relabundance")
 #' 
 #' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
 #' phylum_renamed <- lapply(rowData(se)$Phylum,
@@ -120,7 +120,7 @@
 #' rowData(se)$Phylum <- as.character(phylum_renamed)
 #' 
 #' # Compositional barplot
-#' plotAbundance(se, assay_name="relabundance", rank = "Phylum",
+#' plotAbundance(se, assay.type="relabundance", rank = "Phylum",
 #'            order_rank_by="abund", order_sample_by = "Bacteroidetes")
 NULL
 
@@ -157,17 +157,17 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             one_facet = TRUE,
             ncol = 2,
             scales = "fixed",
-            assay_name = abund_values, abund_values = "counts",
+            assay.type = assay_name, assay_name = "counts",
             ...){
         # input checks
         if(nrow(x) == 0L){
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
-        .check_assay_present(assay_name, x)
+        .check_assay_present(assay.type, x)
         # if rank is set to NULL, default to plotExpression 
         if(is.null(rank)){
             plot <- plotExpression(x, features = features, 
-                                exprs_values = assay_name,
+                                exprs_values = assay.type,
                                 one_facet = one_facet,
                                 ncol = ncol, scales = scales, ...)
             ylab <- gsub("Expression","Abundance",plot$labels$y)
@@ -194,7 +194,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             features <- match.arg(features, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
-        abund_data <- .get_abundance_data(x, rank, assay_name, order_rank_by,
+        abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
                                         use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
                                                 unique(abund_data$colour_by),
@@ -253,9 +253,9 @@ MELT_VALUES <- "Value"
 #' @importFrom tidyr pivot_longer nest unnest
 #' @importFrom tibble rownames_to_column
 #' @importFrom purrr map
-.get_abundance_data <- function(x, rank, assay_name, order_rank_by = "name",
+.get_abundance_data <- function(x, rank, assay.type, order_rank_by = "name",
                                 use_relative = TRUE){
-    data <- assay(x, assay_name, withDimnames = TRUE)
+    data <- assay(x, assay.type, withDimnames = TRUE)
     if(use_relative){
         data <- mia:::.calc_rel_abund(data)
     }

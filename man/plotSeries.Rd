@@ -13,8 +13,8 @@ plotSeries(
   colour_by = NULL,
   size_by = NULL,
   linetype_by = NULL,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   ...
 )
 
@@ -26,8 +26,8 @@ plotSeries(
   colour_by = NULL,
   size_by = NULL,
   linetype_by = NULL,
-  assay_name = abund_values,
-  abund_values = "counts",
+  assay.type = assay_name,
+  assay_name = "counts",
   ...
 )
 }
@@ -59,13 +59,13 @@ used to divide taxa to different line size types. Must be a value of
 is used to divide taxa to different line types. Must be a value of
 \code{taxonomicRanks()} function.}
 
-\item{assay_name}{a single character value for selecting the
+\item{assay.type}{a single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-plotted. (default: \code{assay_name = "counts"})}
+plotted. (default: \code{assay.type = "counts"})}
 
-\item{abund_values}{a single \code{character} value for specifying which
+\item{assay_name}{a single \code{character} value for specifying which
 assay to use for calculation.
-(Please use \code{assay_name} instead. At some point \code{abund_values}
+(Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
 \item{...}{additional parameters for plotting. See
@@ -106,7 +106,7 @@ plotSeries(object[taxa,],
            x = "DAY_ORDER", 
            colour_by = "Family",
            linetype_by = "Phylum",
-           assay_name = "relabundance")
+           assay.type = "relabundance")
 
 # In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
 plotSeries(object,
@@ -114,7 +114,7 @@ plotSeries(object,
            y = getTopTaxa(object, 5), 
            colour_by = "Family",
            size_by = "Phylum",
-           assay_name = "counts")
+           assay.type = "counts")
 }
 }
 \author{

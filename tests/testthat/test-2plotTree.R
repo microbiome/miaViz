@@ -64,7 +64,7 @@ test_that("plot tree", {
     top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
                            method="mean",
                            top=100L,
-                           assay_name="counts")
+                           assay.type="counts")
     #
     plot <- expect_warning(plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
                                        tip_colour_by = "log_mean",

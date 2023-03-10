@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
 )
+knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png")) 
 ```
 
 `miaViz` implements plotting function to work with `TreeSummarizedExperiment`
@@ -55,7 +56,7 @@ behaves as `plotExpression`.
 
 ```{r}
 plotAbundance(GlobalPatterns, rank = NULL, 
-              features = "549322", assay_name = "counts")
+              features = "549322", assay.type = "counts")
 ```
 
 However, if the `rank` is set not `NULL` a bar plot is returned. At the same
@@ -66,7 +67,7 @@ GlobalPatterns <- transformCounts(GlobalPatterns, method = "relabundance")
 ```
 
 ```{r}
-plotAbundance(GlobalPatterns, rank = "Kingdom", assay_name = "relabundance")
+plotAbundance(GlobalPatterns, rank = "Kingdom", assay.type = "relabundance")
 ```
 
 With subsetting to selected features the plot can be fine tuned.
@@ -79,7 +80,7 @@ prev_phylum <- getPrevalentTaxa(GlobalPatterns, rank = "Phylum",
 ```{r}
 plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
               rank = "Phylum",
-              assay_name = "relabundance")
+              assay.type = "relabundance")
 ```
 
 The `features` argument is reused for plotting data along the different samples.
@@ -92,7 +93,7 @@ library(patchwork)
 plots <- plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
                        features = "SampleType",
                        rank = "Phylum",
-                       assay_name = "relabundance")
+                       assay.type = "relabundance")
 plots$abundance / plots$SampleType +
      plot_layout(heights = c(9, 1))
 ```
@@ -157,7 +158,7 @@ rowData(altExp(GlobalPatterns,"Genus"))$detected <-
 top_taxa <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
                        method="mean",
                        top=100L,
-                       assay_name="counts")
+                       assay.type="counts")
 ```
 
 Colour, size and shape of tree tips and nodes can be decorated based on data
@@ -258,10 +259,10 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 ```{r eval=FALSE}
 # Load data from miaTime package
 library("miaTime")
-data("SilvermanAGutData")
-silverman <- SilvermanAGutData
-silverman <- transformCounts(silverman, method = "relabundance")
-taxa <- getTopTaxa(silverman, 2)
+data(SilvermanAGutData, package="miaTime")
+tse <- SilvermanAGutData
+tse <- transformCounts(tse, method = "relabundance")
+taxa <- getTopTaxa(tse, 2)
 ```
 
 Data from samples collected along time can be visualized using `plotSeries`.
@@ -271,32 +272,32 @@ Since plotting a lot of features is not advised a maximum of 20 features can
 plotted at the same time.
  
 ```{r eval=FALSE}
-plotSeries(silverman,
+plotSeries(tse,
            x = "DAY_ORDER",
            y = taxa,
            colour_by = "Family")
 ```
 If replicated data is present, data is automatically used for calculation of the
 `mean` and `sd` and plotted as a range. Data from different assays can be used
-for plotting via the `assay_name`.
+for plotting via the `assay.type`.
 
 ```{r eval=FALSE}
-plotSeries(silverman[taxa,],
+plotSeries(tse[taxa,],
            x = "DAY_ORDER",
            colour_by = "Family",
            linetype_by = "Phylum",
-           assay_name = "relabundance")
+           assay.type = "relabundance")
 ```
 
 Additional variables can be used to modify line type aesthetics.
 
 ```{r eval=FALSE}
-plotSeries(silverman,
+plotSeries(tse,
            x = "DAY_ORDER",
-           y = getTopTaxa(silverman, 5),
+           y = getTopTaxa(tse, 5),
            colour_by = "Family",
            linetype_by = "Phylum",
-           assay_name = "counts")
+           assay.type = "counts")
 ```
 
 # Plotting factor data
@@ -305,7 +306,7 @@ To visualize the relative relations between two groupings among the factor data,
 two functions are available for the purpose; `plotColTile` and `plotRowTile`.
 
 ```{r}
-data(GlobalPatterns)
+data(GlobalPatterns, package="mia")
 se <- GlobalPatterns
 plotColTile(se,"SampleType","Primer") +
   theme(axis.text.x.top = element_text(angle = 45, hjust = 0))
@@ -319,7 +320,7 @@ After using `runDMN` from the `mia` package, several k values as a number of clu
 are used to observe the best fit (see also `getDMN` and `getBestDMNFit`).
 To visualize the fit using e.g. "laplace" as a measure of goodness of fit:
 
-```{r}
+```{r, eval=FALSE}
 data(dmn_se, package = "mia")
 names(metadata(dmn_se))
 # plot the fit
@@ -328,7 +329,7 @@ plotDMNFit(dmn_se, type = "laplace")
 
 # Serial data ordination and trajectories
 
-```{r, error=FALSE, warning=FALSE, results='hide'}
+```{r, error=FALSE, warning=FALSE, results='hide', eval=FALSE}
 if (!requireNamespace("devtools", quietly = TRUE))
     install.packages("devtools")
 devtools::install_github("microbiome/miaTime")
@@ -337,8 +338,8 @@ devtools::install_github("microbiome/miaTime")
 Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 `hitchip1006` dataset:
 
-```{r}
-library(dplyr)
+```{r MDS}
+library(miaTime)
 data(hitchip1006, package = "miaTime")
 tse <- hitchip1006
 tse <- transformCounts(tse, method = "relabundance")
@@ -353,6 +354,8 @@ p
 Retrieving information about all available trajectories:
 
 ```{r}
+library(dplyr)
+
 # List subjects with two time points
 selected.subjects <- names(which(table(tse$subject)==2))
 
