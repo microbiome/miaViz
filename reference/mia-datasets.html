@@ -18,7 +18,7 @@ details for more information."><!-- mathjax --><script src="https://cdnjs.cloudf
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.7.4</span>
       </span>
     </div>
 
@@ -67,7 +67,8 @@ details for more information.</p>
     <p>For <code>*_graph</code> data:</p><ol><li><p>“Jaccard” distances were calculated via
 <code>calculateDistance(genus, FUN = vegan::vegdist, method = "jaccard",
 exprs_values = "relabundance")</code>, either using transposed assay data or not
-to calculate distances for samples or features.</p></li>
+to calculate distances for samples or features. NOTE: the function
+mia::calculateDistance is now deprecated.</p></li>
 <li><p>“Jaccard” dissimilarites were converted to similarities and values
 above a threshold were used to construct a graph via
 <code>graph.adjacency(mode = "lower", weighted = TRUE)</code>.</p></li>
