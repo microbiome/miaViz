@@ -31,7 +31,8 @@ For \code{*_graph} data:
 \item \dQuote{Jaccard} distances were calculated via
 \code{calculateDistance(genus, FUN = vegan::vegdist, method = "jaccard",
 exprs_values = "relabundance")}, either using transposed assay data or not
-to calculate distances for samples or features.
+to calculate distances for samples or features. NOTE: the function
+mia::calculateDistance is now deprecated.
 \item \dQuote{Jaccard} dissimilarites were converted to similarities and values
 above a threshold were used to construct a graph via
 \code{graph.adjacency(mode = "lower", weighted = TRUE)}.
