@@ -140,7 +140,7 @@
 #'              show_label = c("Sulfolobales","Spirochaetales",
 #'                             "Verrucomicrobiales"))
 #'                             
-#' # labls can also be included via selecting specific rownames of x/y
+#' # labels can also be included via selecting specific rownames of x/y
 #' plotRowGraph(order,
 #'              name = "row_graph",
 #'              colour_by = "Phylum",
@@ -577,7 +577,7 @@ setMethod("plotRowGraph",
                                      size = line_width,
                                      edge_type)
     edge_FUN <- match.fun(paste0("geom_edge_",edge_type))
-    # beginn plotting
+    # begin plotting
     if(!is.null(algorithm)){
         plot_out <- ggraph(object, layout = layout, algorithm = algorithm)
     } else {
