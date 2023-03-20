@@ -13,7 +13,6 @@ NULL
 #' @import methods
 #' @import TreeSummarizedExperiment
 #' @import mia
-#' @import miaTime
 #' @import ggplot2
 #' @import ggraph
 #' @importFrom rlang sym !! :=
