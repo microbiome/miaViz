@@ -492,7 +492,7 @@ setMethod("plotRowGraph",
                              row = nrow(se),
                              column = ncol(se))
             if(dim_graph_nodes[1] != dim_se){
-                stop("The number of nodes in the graph and choosen dimension ",
+                stop("The number of nodes in the graph and chosen dimension ",
                      "of the SummarizedExperiment must be equal.",
                      call. = FALSE)
             }
@@ -577,7 +577,7 @@ setMethod("plotRowGraph",
                                      size = line_width,
                                      edge_type)
     edge_FUN <- match.fun(paste0("geom_edge_",edge_type))
-    # beginn plotting
+    # begin plotting
     if(!is.null(algorithm)){
         plot_out <- ggraph(object, layout = layout, algorithm = algorithm)
     } else {

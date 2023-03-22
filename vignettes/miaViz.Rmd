@@ -188,7 +188,7 @@ plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
 ... whereas node labels can be selectively shown by providing a named logical
 vector to `show_label`.
 
-Please not that currently `ggtree` only can plot node labels in a rectangular
+Please note that currently `ggtree` only can plot node labels in a rectangular
 layout.
 
 ```{r plot3, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown."}
@@ -225,7 +225,7 @@ data(col_graph)
 In the following examples, the `weight` data is automatically generated from the
 graph data. The `SummarizedExperiment` provided is required to have overlapping
 rownames with the node names of the graph. Using this link the graph plot
-can incorporated data from the `SummarizedExperiment`.
+can incorporate data from the `SummarizedExperiment`.
 
 ```{r}
 plotColGraph(col_graph,
