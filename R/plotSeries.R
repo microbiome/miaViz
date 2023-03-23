@@ -60,7 +60,7 @@
 #' data("SilvermanAGutData")
 #' object <- SilvermanAGutData
 #' 
-#' # Plots 2 most abudant taxa, which are colore by their family
+#' # Plots 2 most abundant taxa, which are colored by their family
 #' plotSeries(object,
 #'            x = "DAY_ORDER",
 #'            y = getTopTaxa(object, 2),
@@ -231,7 +231,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
             # rename columns by their usage
             feature_data[[i]]$name <- var_name
         }
-        # squach the feature data
+        # squash the feature data
         if(length(feature_data) > 0L){
             names <- vapply(feature_data,"[[",character(1),"name")
             data <- lapply(feature_data,"[[","value")
