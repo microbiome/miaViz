@@ -188,7 +188,7 @@ plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
 ... whereas node labels can be selectively shown by providing a named logical
 vector to `show_label`.
 
-Please not that currently `ggtree` only can plot node labels in a rectangular
+Please note that currently `ggtree` can only plot node labels in a rectangular
 layout.
 
 ```{r plot3, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown."}
