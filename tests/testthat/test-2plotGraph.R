@@ -16,7 +16,7 @@ test_that("plot graph", {
     expect_error(miaViz:::.norm_layout_edge_type("meep","meep"),
                  "'arg' should be one")
     #
-    data("GlobalPatterns")
+    data(GlobalPatterns)
     data("row_graph")
     data("col_graph")
     se <- GlobalPatterns
