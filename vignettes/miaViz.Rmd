@@ -333,7 +333,9 @@ plotDMNFit(dmn_se, type = "laplace")
 if(!requireNamespace("devtools", quietly = TRUE)){
     install.packages("devtools")
 }
-devtools::install_github("microbiome/miaTime")
+if(!requireNamespace("miaTime", quietly = TRUE)){
+    devtools::install_github("microbiome/miaTime")
+}
 ```
 
 Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
