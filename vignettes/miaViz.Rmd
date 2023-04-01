@@ -332,7 +332,9 @@ plotDMNFit(dmn_se, type = "laplace")
 ```{r, error=FALSE, warning=FALSE, results='hide'}
 if(!requireNamespace("devtools", quietly = TRUE)){
     install.packages("devtools")
- devtools::install_github("microbiome/miaTime")
+}
+if(!requireNamespace("miaTime", quietly = TRUE)){
+    devtools::install_github("microbiome/miaTime")
 }
 ```
 
