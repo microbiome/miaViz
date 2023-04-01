@@ -41,7 +41,7 @@ test_that("plot tree", {
     expect_null(miaViz:::.check_tree_plot_switches("A",TRUE, TRUE, TRUE, 2,
                                                     TRUE, TRUE,TRUE, TRUE))
     #
-    data("GlobalPatterns")
+    data(GlobalPatterns)
     x <- GlobalPatterns
     # .get_trimed_object_and_tree
     expect_error(miaViz:::.get_trimed_object_and_tree(),
