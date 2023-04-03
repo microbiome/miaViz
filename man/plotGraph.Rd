@@ -194,7 +194,7 @@ plotRowGraph(order,
              show_label = c("Sulfolobales","Spirochaetales",
                             "Verrucomicrobiales"))
                             
-# labls can also be included via selecting specific rownames of x/y
+# labels can also be included via selecting specific rownames of x/y
 plotRowGraph(order,
              name = "row_graph",
              colour_by = "Phylum",
