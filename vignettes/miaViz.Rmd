@@ -342,7 +342,6 @@ Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 `hitchip1006` dataset:
 
 ```{r MDS}
-library(miaTime)
 data(hitchip1006, package = "miaTime")
 tse <- hitchip1006
 tse <- transformCounts(tse, method = "relabundance")
