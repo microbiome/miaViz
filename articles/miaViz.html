@@ -367,80 +367,21 @@ the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <span><span class="op">}</span></span>
 <span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"miaTime"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"microbiome/miaTime"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="co">#&gt; Registered S3 method overwritten by 'seriation':</span></span>
-<span><span class="co">#&gt;   method         from </span></span>
-<span><span class="co">#&gt;   reorder.hclust vegan</span></span></code></pre></div>
+<span><span class="op">}</span></span></code></pre></div>
 <p>Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 <code>hitchip1006</code> dataset:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/miaTime" class="external-link">miaTime</a></span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hitchip1006</span>, package <span class="op">=</span> <span class="st">"miaTime"</span><span class="op">)</span></span>
-<span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">hitchip1006</span></span>
-<span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformCounts.html" class="external-link">transformCounts</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
-<span><span class="co">## Ordination with PCoA with Bray-Curtis dissimilarity</span></span>
-<span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">runMDS</a></span><span class="op">(</span><span class="va">tse</span>, FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, method <span class="op">=</span> <span class="st">"bray"</span>, name <span class="op">=</span> <span class="st">"PCoA_BC"</span>,</span>
-<span>              exprs_values <span class="op">=</span> <span class="st">"relabundance"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co"># plot</span></span>
-<span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>, dimred <span class="op">=</span> <span class="st">"PCoA_BC"</span><span class="op">)</span></span>
-<span><span class="va">p</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/MDS-1.png" width="3000"></p>
 <p>Retrieving information about all available trajectories:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:mia':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     full_join, inner_join, left_join, right_join</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:Biostrings':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     collapse, intersect, setdiff, setequal, union</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:XVector':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     slice</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:Biobase':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     combine</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:GenomicRanges':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, union</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:GenomeInfoDb':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:IRanges':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     collapse, desc, intersect, setdiff, slice, union</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:S4Vectors':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     first, intersect, rename, setdiff, setequal, union</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:BiocGenerics':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     combine, intersect, setdiff, union</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:matrixStats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     count</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     filter, lag</span></span>
-<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
 <span></span>
 <span><span class="co"># List subjects with two time points</span></span>
 <span><span class="va">selected.subjects</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tse</span><span class="op">$</span><span class="va">subject</span><span class="op">)</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Subjects counts per number of time points available in the data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tse</span><span class="op">$</span><span class="va">subject</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>Timepoints<span class="op">=</span><span class="va">Var1</span>, Subjects<span class="op">=</span><span class="va">Freq</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   Timepoints Subjects</span></span>
-<span><span class="co">#&gt; 1          1      928</span></span>
-<span><span class="co">#&gt; 2          2       40</span></span>
-<span><span class="co">#&gt; 3          3       23</span></span>
-<span><span class="co">#&gt; 4          4        1</span></span>
-<span><span class="co">#&gt; 5          5       14</span></span></code></pre></div>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>Timepoints<span class="op">=</span><span class="va">Var1</span>, Subjects<span class="op">=</span><span class="va">Freq</span><span class="op">)</span></span></code></pre></div>
 <p>Lets look at all trajectories having two time points in the data:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot</span></span>
 <span><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">X1</span>, y<span class="op">=</span><span class="va">X2</span>, group<span class="op">=</span><span class="va">subject</span><span class="op">)</span>, </span>
 <span>              arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span><span class="op">)</span>,</span>
@@ -450,10 +391,9 @@ the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <span>                            <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"All trajectories with two time points"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/unnamed-chunk-26-1.png" width="3000"></p>
 <p>Filtering the two time point trajectories by divergence and
 displaying top 10%:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/miaTime" class="external-link">miaTime</a></span><span class="op">)</span></span>
 <span><span class="co"># calculating step wise divergence based on the microbial profiles</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/miaTime/man/getStepwiseDivergence.html" class="external-link">getStepwiseDivergence</a></span><span class="op">(</span><span class="va">tse</span>, group <span class="op">=</span> <span class="st">"subject"</span>, time_field <span class="op">=</span> <span class="st">"time"</span><span class="op">)</span></span>
@@ -477,10 +417,9 @@ displaying top 10%:</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Top 10%  divergent trajectories from time point one to two"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_color_gradient2</a></span><span class="op">(</span>low<span class="op">=</span><span class="st">"white"</span>, high<span class="op">=</span><span class="st">"red"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/unnamed-chunk-27-1.png" width="3000"></p>
 <p>Plotting an example of the trajectory with the maximum total
 divergence:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get subject with the maximum total divergence</span></span>
 <span><span class="va">selected.subject</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">subject</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -493,7 +432,6 @@ divergence:</p>
 <span>              arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Longest trajectory by divergence"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/unnamed-chunk-28-1.png" width="3000"></p>
 <p>More examples and materials are available at Orchestrating Microbiome
 Analysis <span class="citation">(Lahti, Shetty, and Ernst
 2021)</span>.</p>
@@ -501,7 +439,7 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R Under development (unstable) (2023-03-16 r83996)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu (64-bit)</span></span>
@@ -527,106 +465,88 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt; [8] base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] dplyr_1.1.1                    miaTime_0.1.20                </span></span>
-<span><span class="co">#&gt;  [3] scater_1.27.8                  scuttle_1.9.4                 </span></span>
-<span><span class="co">#&gt;  [5] patchwork_1.1.2                miaViz_1.7.5                  </span></span>
-<span><span class="co">#&gt;  [7] ggraph_2.1.0                   ggplot2_3.4.1                 </span></span>
-<span><span class="co">#&gt;  [9] mia_1.7.11                     MultiAssayExperiment_1.25.7   </span></span>
-<span><span class="co">#&gt; [11] TreeSummarizedExperiment_2.1.4 Biostrings_2.67.0             </span></span>
-<span><span class="co">#&gt; [13] XVector_0.39.0                 SingleCellExperiment_1.21.1   </span></span>
-<span><span class="co">#&gt; [15] SummarizedExperiment_1.29.1    Biobase_2.59.0                </span></span>
-<span><span class="co">#&gt; [17] GenomicRanges_1.51.4           GenomeInfoDb_1.35.16          </span></span>
-<span><span class="co">#&gt; [19] IRanges_2.33.0                 S4Vectors_0.37.4              </span></span>
-<span><span class="co">#&gt; [21] BiocGenerics_0.45.2            MatrixGenerics_1.11.0         </span></span>
-<span><span class="co">#&gt; [23] matrixStats_0.63.0             BiocStyle_2.27.1              </span></span>
+<span><span class="co">#&gt;  [1] scater_1.27.8                  scuttle_1.9.4                 </span></span>
+<span><span class="co">#&gt;  [3] patchwork_1.1.2                miaViz_1.7.5                  </span></span>
+<span><span class="co">#&gt;  [5] ggraph_2.1.0                   ggplot2_3.4.2                 </span></span>
+<span><span class="co">#&gt;  [7] mia_1.7.11                     MultiAssayExperiment_1.25.7   </span></span>
+<span><span class="co">#&gt;  [9] TreeSummarizedExperiment_2.1.4 Biostrings_2.67.2             </span></span>
+<span><span class="co">#&gt; [11] XVector_0.39.0                 SingleCellExperiment_1.21.1   </span></span>
+<span><span class="co">#&gt; [13] SummarizedExperiment_1.29.1    Biobase_2.59.0                </span></span>
+<span><span class="co">#&gt; [15] GenomicRanges_1.51.4           GenomeInfoDb_1.35.16          </span></span>
+<span><span class="co">#&gt; [17] IRanges_2.33.0                 S4Vectors_0.37.4              </span></span>
+<span><span class="co">#&gt; [19] BiocGenerics_0.45.3            MatrixGenerics_1.11.1         </span></span>
+<span><span class="co">#&gt; [21] matrixStats_0.63.0             BiocStyle_2.27.1              </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
-<span><span class="co">#&gt;   [1] fs_1.6.1                    bitops_1.0-7               </span></span>
-<span><span class="co">#&gt;   [3] DirichletMultinomial_1.41.0 devtools_2.4.5             </span></span>
-<span><span class="co">#&gt;   [5] httr_1.4.5                  RColorBrewer_1.1-3         </span></span>
-<span><span class="co">#&gt;   [7] doParallel_1.0.17           profvis_0.3.7              </span></span>
-<span><span class="co">#&gt;   [9] tools_4.3.0                 utf8_1.2.3                 </span></span>
-<span><span class="co">#&gt;  [11] R6_2.5.1                    vegan_2.6-4                </span></span>
-<span><span class="co">#&gt;  [13] lazyeval_0.2.2              mgcv_1.8-42                </span></span>
-<span><span class="co">#&gt;  [15] GetoptLong_1.0.5            permute_0.9-7              </span></span>
-<span><span class="co">#&gt;  [17] urlchecker_1.0.1            withr_2.5.0                </span></span>
-<span><span class="co">#&gt;  [19] prettyunits_1.1.1           gridExtra_2.3              </span></span>
-<span><span class="co">#&gt;  [21] cli_3.6.1                   textshaping_0.3.6          </span></span>
-<span><span class="co">#&gt;  [23] TSP_1.2-3                   labeling_0.4.2             </span></span>
-<span><span class="co">#&gt;  [25] sass_0.4.5                  genefilter_1.81.0          </span></span>
-<span><span class="co">#&gt;  [27] pkgdown_2.0.7               systemfonts_1.0.4          </span></span>
-<span><span class="co">#&gt;  [29] yulab.utils_0.0.6           decontam_1.19.0            </span></span>
-<span><span class="co">#&gt;  [31] sessioninfo_1.2.2           limma_3.55.5               </span></span>
-<span><span class="co">#&gt;  [33] RSQLite_2.3.0               generics_0.1.3             </span></span>
-<span><span class="co">#&gt;  [35] gridGraphics_0.5-1          shape_1.4.6                </span></span>
-<span><span class="co">#&gt;  [37] zip_2.2.2                   Matrix_1.5-3               </span></span>
-<span><span class="co">#&gt;  [39] ggbeeswarm_0.7.1            fansi_1.0.4                </span></span>
-<span><span class="co">#&gt;  [41] DECIPHER_2.27.0             lifecycle_1.0.3            </span></span>
-<span><span class="co">#&gt;  [43] yaml_2.3.7                  edgeR_3.41.6               </span></span>
-<span><span class="co">#&gt;  [45] Rtsne_0.16                  grid_4.3.0                 </span></span>
-<span><span class="co">#&gt;  [47] blob_1.2.4                  promises_1.2.0.1           </span></span>
-<span><span class="co">#&gt;  [49] crayon_1.5.2                miniUI_0.1.1.1             </span></span>
-<span><span class="co">#&gt;  [51] lattice_0.20-45             beachmat_2.15.0            </span></span>
-<span><span class="co">#&gt;  [53] annotate_1.77.0             KEGGREST_1.39.0            </span></span>
-<span><span class="co">#&gt;  [55] pillar_1.9.0                knitr_1.42                 </span></span>
-<span><span class="co">#&gt;  [57] ComplexHeatmap_2.15.0       rjson_0.2.21               </span></span>
-<span><span class="co">#&gt;  [59] codetools_0.2-19            glue_1.6.2                 </span></span>
-<span><span class="co">#&gt;  [61] V8_4.2.2                    ggfun_0.0.9                </span></span>
-<span><span class="co">#&gt;  [63] data.table_1.14.8           remotes_2.4.2              </span></span>
-<span><span class="co">#&gt;  [65] vctrs_0.6.1                 png_0.1-8                  </span></span>
-<span><span class="co">#&gt;  [67] treeio_1.23.1               gtable_0.3.3               </span></span>
-<span><span class="co">#&gt;  [69] cachem_1.0.7                xfun_0.38                  </span></span>
-<span><span class="co">#&gt;  [71] openxlsx_4.2.5.2            mime_0.12                  </span></span>
-<span><span class="co">#&gt;  [73] tidygraph_1.2.3             survival_3.5-5             </span></span>
-<span><span class="co">#&gt;  [75] pheatmap_1.0.12             seriation_1.4.2            </span></span>
-<span><span class="co">#&gt;  [77] iterators_1.0.14            ellipsis_0.3.2             </span></span>
-<span><span class="co">#&gt;  [79] nlme_3.1-162                ggtree_3.7.1               </span></span>
-<span><span class="co">#&gt;  [81] usethis_2.1.6               bit64_4.0.5                </span></span>
-<span><span class="co">#&gt;  [83] rprojroot_2.0.3             bslib_0.4.2                </span></span>
-<span><span class="co">#&gt;  [85] irlba_2.3.5.1               vipor_0.4.5                </span></span>
-<span><span class="co">#&gt;  [87] colorspace_2.1-0            DBI_1.1.3                  </span></span>
-<span><span class="co">#&gt;  [89] DESeq2_1.39.8               tidyselect_1.2.0           </span></span>
-<span><span class="co">#&gt;  [91] processx_3.8.0              bit_4.0.5                  </span></span>
-<span><span class="co">#&gt;  [93] compiler_4.3.0              curl_5.0.0                 </span></span>
-<span><span class="co">#&gt;  [95] BiocNeighbors_1.17.1        desc_1.4.2                 </span></span>
-<span><span class="co">#&gt;  [97] DelayedArray_0.25.0         bookdown_0.33              </span></span>
-<span><span class="co">#&gt;  [99] scales_1.2.1                callr_3.7.3                </span></span>
-<span><span class="co">#&gt; [101] stringr_1.5.0               digest_0.6.31              </span></span>
-<span><span class="co">#&gt; [103] rmarkdown_2.21              ca_0.71.1                  </span></span>
-<span><span class="co">#&gt; [105] htmltools_0.5.5             pkgconfig_2.0.3            </span></span>
-<span><span class="co">#&gt; [107] sparseMatrixStats_1.11.1    highr_0.10                 </span></span>
-<span><span class="co">#&gt; [109] fastmap_1.1.1               rlang_1.1.0                </span></span>
-<span><span class="co">#&gt; [111] GlobalOptions_0.1.2         htmlwidgets_1.6.2          </span></span>
-<span><span class="co">#&gt; [113] shiny_1.7.4                 DelayedMatrixStats_1.21.0  </span></span>
-<span><span class="co">#&gt; [115] farver_2.1.1                jquerylib_0.1.4            </span></span>
-<span><span class="co">#&gt; [117] jsonlite_1.8.4              BiocParallel_1.33.11       </span></span>
-<span><span class="co">#&gt; [119] BiocSingular_1.15.0         RCurl_1.98-1.12            </span></span>
-<span><span class="co">#&gt; [121] magrittr_2.0.3              GenomeInfoDbData_1.2.10    </span></span>
-<span><span class="co">#&gt; [123] ggplotify_0.1.0             munsell_0.5.0              </span></span>
-<span><span class="co">#&gt; [125] Rcpp_1.0.10                 ape_5.7-1                  </span></span>
-<span><span class="co">#&gt; [127] ggnewscale_0.4.8            viridis_0.6.2              </span></span>
-<span><span class="co">#&gt; [129] stringi_1.7.12              zlibbioc_1.45.0            </span></span>
-<span><span class="co">#&gt; [131] MASS_7.3-58.3               plyr_1.8.8                 </span></span>
-<span><span class="co">#&gt; [133] pkgbuild_1.4.0              parallel_4.3.0             </span></span>
-<span><span class="co">#&gt; [135] randomcoloR_1.1.0.1         ggrepel_0.9.3              </span></span>
-<span><span class="co">#&gt; [137] graphlayouts_0.8.4          splines_4.3.0              </span></span>
-<span><span class="co">#&gt; [139] circlize_0.4.15             locfit_1.5-9.7             </span></span>
-<span><span class="co">#&gt; [141] ps_1.7.3                    igraph_1.4.1               </span></span>
-<span><span class="co">#&gt; [143] reshape2_1.4.4              ScaledMatrix_1.7.0         </span></span>
-<span><span class="co">#&gt; [145] pkgload_1.3.2               XML_3.99-0.13              </span></span>
-<span><span class="co">#&gt; [147] evaluate_0.20               BiocManager_1.30.20        </span></span>
-<span><span class="co">#&gt; [149] sechm_1.7.3                 foreach_1.5.2              </span></span>
-<span><span class="co">#&gt; [151] tweenr_2.0.2                httpuv_1.6.9               </span></span>
-<span><span class="co">#&gt; [153] SEtools_1.13.1              tidyr_1.3.0                </span></span>
-<span><span class="co">#&gt; [155] purrr_1.0.1                 polyclip_1.10-4            </span></span>
-<span><span class="co">#&gt; [157] clue_0.3-64                 ggforce_0.4.1              </span></span>
-<span><span class="co">#&gt; [159] rsvd_1.0.5                  xtable_1.8-4               </span></span>
-<span><span class="co">#&gt; [161] tidytree_0.4.2              later_1.3.0                </span></span>
-<span><span class="co">#&gt; [163] viridisLite_0.4.1           ragg_1.2.5                 </span></span>
-<span><span class="co">#&gt; [165] tibble_3.2.1                aplot_0.1.10               </span></span>
-<span><span class="co">#&gt; [167] AnnotationDbi_1.61.2        memoise_2.0.1              </span></span>
-<span><span class="co">#&gt; [169] beeswarm_0.4.0              registry_0.5-1             </span></span>
-<span><span class="co">#&gt; [171] cluster_2.1.4               sva_3.47.0</span></span></code></pre></div>
+<span><span class="co">#&gt;   [1] splines_4.3.0               later_1.3.0                </span></span>
+<span><span class="co">#&gt;   [3] bitops_1.0-7                ggplotify_0.1.0            </span></span>
+<span><span class="co">#&gt;   [5] tibble_3.2.1                polyclip_1.10-4            </span></span>
+<span><span class="co">#&gt;   [7] DirichletMultinomial_1.41.0 lifecycle_1.0.3            </span></span>
+<span><span class="co">#&gt;   [9] rprojroot_2.0.3             processx_3.8.0             </span></span>
+<span><span class="co">#&gt;  [11] lattice_0.20-45             MASS_7.3-58.3              </span></span>
+<span><span class="co">#&gt;  [13] magrittr_2.0.3              sass_0.4.5                 </span></span>
+<span><span class="co">#&gt;  [15] rmarkdown_2.21              jquerylib_0.1.4            </span></span>
+<span><span class="co">#&gt;  [17] yaml_2.3.7                  remotes_2.4.2              </span></span>
+<span><span class="co">#&gt;  [19] httpuv_1.6.9                sessioninfo_1.2.2          </span></span>
+<span><span class="co">#&gt;  [21] pkgbuild_1.4.0              DBI_1.1.3                  </span></span>
+<span><span class="co">#&gt;  [23] RColorBrewer_1.1-3          pkgload_1.3.2              </span></span>
+<span><span class="co">#&gt;  [25] zlibbioc_1.45.0             purrr_1.0.1                </span></span>
+<span><span class="co">#&gt;  [27] RCurl_1.98-1.12             yulab.utils_0.0.6          </span></span>
+<span><span class="co">#&gt;  [29] tweenr_2.0.2                GenomeInfoDbData_1.2.10    </span></span>
+<span><span class="co">#&gt;  [31] ggrepel_0.9.3               irlba_2.3.5.1              </span></span>
+<span><span class="co">#&gt;  [33] tidytree_0.4.2              vegan_2.6-4                </span></span>
+<span><span class="co">#&gt;  [35] pkgdown_2.0.7               permute_0.9-7              </span></span>
+<span><span class="co">#&gt;  [37] DelayedMatrixStats_1.21.0   codetools_0.2-19           </span></span>
+<span><span class="co">#&gt;  [39] DelayedArray_0.25.0         ggforce_0.4.1              </span></span>
+<span><span class="co">#&gt;  [41] tidyselect_1.2.0            aplot_0.1.10               </span></span>
+<span><span class="co">#&gt;  [43] farver_2.1.1                ScaledMatrix_1.7.0         </span></span>
+<span><span class="co">#&gt;  [45] viridis_0.6.2               jsonlite_1.8.4             </span></span>
+<span><span class="co">#&gt;  [47] BiocNeighbors_1.17.1        decontam_1.19.0            </span></span>
+<span><span class="co">#&gt;  [49] ellipsis_0.3.2              tidygraph_1.2.3            </span></span>
+<span><span class="co">#&gt;  [51] systemfonts_1.0.4           tools_4.3.0                </span></span>
+<span><span class="co">#&gt;  [53] ggnewscale_0.4.8            treeio_1.23.1              </span></span>
+<span><span class="co">#&gt;  [55] ragg_1.2.5                  Rcpp_1.0.10                </span></span>
+<span><span class="co">#&gt;  [57] glue_1.6.2                  gridExtra_2.3              </span></span>
+<span><span class="co">#&gt;  [59] xfun_0.38                   mgcv_1.8-42                </span></span>
+<span><span class="co">#&gt;  [61] usethis_2.1.6               dplyr_1.1.1                </span></span>
+<span><span class="co">#&gt;  [63] withr_2.5.0                 BiocManager_1.30.20        </span></span>
+<span><span class="co">#&gt;  [65] fastmap_1.1.1               fansi_1.0.4                </span></span>
+<span><span class="co">#&gt;  [67] callr_3.7.3                 digest_0.6.31              </span></span>
+<span><span class="co">#&gt;  [69] rsvd_1.0.5                  R6_2.5.1                   </span></span>
+<span><span class="co">#&gt;  [71] mime_0.12                   gridGraphics_0.5-1         </span></span>
+<span><span class="co">#&gt;  [73] textshaping_0.3.6           colorspace_2.1-0           </span></span>
+<span><span class="co">#&gt;  [75] RSQLite_2.3.1               utf8_1.2.3                 </span></span>
+<span><span class="co">#&gt;  [77] tidyr_1.3.0                 generics_0.1.3             </span></span>
+<span><span class="co">#&gt;  [79] DECIPHER_2.27.0             prettyunits_1.1.1          </span></span>
+<span><span class="co">#&gt;  [81] graphlayouts_0.8.4          htmlwidgets_1.6.2          </span></span>
+<span><span class="co">#&gt;  [83] pkgconfig_2.0.3             gtable_0.3.3               </span></span>
+<span><span class="co">#&gt;  [85] blob_1.2.4                  htmltools_0.5.5            </span></span>
+<span><span class="co">#&gt;  [87] profvis_0.3.7               bookdown_0.33              </span></span>
+<span><span class="co">#&gt;  [89] scales_1.2.1                ggfun_0.0.9                </span></span>
+<span><span class="co">#&gt;  [91] knitr_1.42                  reshape2_1.4.4             </span></span>
+<span><span class="co">#&gt;  [93] nlme_3.1-162                cachem_1.0.7               </span></span>
+<span><span class="co">#&gt;  [95] stringr_1.5.0               parallel_4.3.0             </span></span>
+<span><span class="co">#&gt;  [97] miniUI_0.1.1.1              vipor_0.4.5                </span></span>
+<span><span class="co">#&gt;  [99] desc_1.4.2                  pillar_1.9.0               </span></span>
+<span><span class="co">#&gt; [101] grid_4.3.0                  vctrs_0.6.1                </span></span>
+<span><span class="co">#&gt; [103] urlchecker_1.0.1            promises_1.2.0.1           </span></span>
+<span><span class="co">#&gt; [105] BiocSingular_1.15.0         beachmat_2.15.0            </span></span>
+<span><span class="co">#&gt; [107] xtable_1.8-4                cluster_2.1.4              </span></span>
+<span><span class="co">#&gt; [109] beeswarm_0.4.0              evaluate_0.20              </span></span>
+<span><span class="co">#&gt; [111] cli_3.6.1                   compiler_4.3.0             </span></span>
+<span><span class="co">#&gt; [113] rlang_1.1.0                 crayon_1.5.2               </span></span>
+<span><span class="co">#&gt; [115] labeling_0.4.2              ps_1.7.3                   </span></span>
+<span><span class="co">#&gt; [117] plyr_1.8.8                  fs_1.6.1                   </span></span>
+<span><span class="co">#&gt; [119] ggbeeswarm_0.7.1            stringi_1.7.12             </span></span>
+<span><span class="co">#&gt; [121] viridisLite_0.4.1           BiocParallel_1.33.12       </span></span>
+<span><span class="co">#&gt; [123] munsell_0.5.0               lazyeval_0.2.2             </span></span>
+<span><span class="co">#&gt; [125] devtools_2.4.5              Matrix_1.5-3               </span></span>
+<span><span class="co">#&gt; [127] sparseMatrixStats_1.11.1    bit64_4.0.5                </span></span>
+<span><span class="co">#&gt; [129] shiny_1.7.4                 highr_0.10                 </span></span>
+<span><span class="co">#&gt; [131] igraph_1.4.1                memoise_2.0.1              </span></span>
+<span><span class="co">#&gt; [133] miaTime_0.1.21              bslib_0.4.2                </span></span>
+<span><span class="co">#&gt; [135] ggtree_3.7.1                bit_4.0.5                  </span></span>
+<span><span class="co">#&gt; [137] ape_5.7-1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
