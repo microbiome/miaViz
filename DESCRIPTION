@@ -47,7 +47,6 @@ Imports:
     ape,
     DirichletMultinomial
 Suggests:
-    miaTime,
     knitr,
     rmarkdown,
     BiocStyle,

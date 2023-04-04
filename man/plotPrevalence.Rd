@@ -133,7 +133,7 @@ A \code{ggplot2} object or \code{plotly} object, if more than one
 information.
 }
 \details{
-Whereas \code{plotPrevalence} procudes a line plot, \code{plotTaxaPrevalence}
+Whereas \code{plotPrevalence} produces a line plot, \code{plotTaxaPrevalence}
 returns a heatmap.
 
 Agglomeration on different taxonomic levels is available through the
@@ -150,10 +150,10 @@ data(GlobalPatterns, package = "mia")
 plotPrevalence(GlobalPatterns, rank = "Phylum")
 plotPrevalence(GlobalPatterns, rank = "Phylum") + scale_x_log10()
 
-# plotting prevalence per taxa for different detectio thresholds as heatmap
+# plotting prevalence per taxa for different detection thresholds as heatmap
 plotTaxaPrevalence(GlobalPatterns, rank = "Phylum")
 
-# by default a continous scale is used for different detections levels, 
+# by default a continuous scale is used for different detection levels, 
 # but this can be adjusted
 plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
                    detections = c(0, 0.001, 0.01, 0.1, 0.2))
