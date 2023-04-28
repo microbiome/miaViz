@@ -2,7 +2,7 @@
 context("plot abundance")
 test_that("plot abundance", {
     #
-    data("GlobalPatterns")
+    data(GlobalPatterns)
     x <- GlobalPatterns
     # .check_tree_plot_switches
     expect_error(miaViz:::.get_abundance_data(),

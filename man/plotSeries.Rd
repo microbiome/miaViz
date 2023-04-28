@@ -86,10 +86,10 @@ y-axis abundances of selected taxa.
 library(mia)
 # Load data from miaTime package
 library("miaTime")
-data("SilvermanAGutData")
+data(SilvermanAGutData)
 object <- SilvermanAGutData
 
-# Plots 2 most abudant taxa, which are colore by their family
+# Plots 2 most abundant taxa, which are colored by their family
 plotSeries(object,
            x = "DAY_ORDER",
            y = getTopTaxa(object, 2),

@@ -1,7 +1,7 @@
 
 context("tree data")
 test_that("tree data", {
-    data("GlobalPatterns")
+    data(GlobalPatterns)
     x <- GlobalPatterns
     # .get_tree_data
     expect_error(miaViz:::.get_tree_data(),

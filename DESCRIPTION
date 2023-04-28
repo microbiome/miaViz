@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.7.4
+Version: 1.7.5
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -48,7 +48,6 @@ Imports:
     ape,
     DirichletMultinomial
 Suggests:
-    miaTime,
     knitr,
     rmarkdown,
     BiocStyle,
