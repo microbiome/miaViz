@@ -492,7 +492,7 @@ setMethod("plotRowGraph",
                              row = nrow(se),
                              column = ncol(se))
             if(dim_graph_nodes[1] != dim_se){
-                stop("The number of nodes in the graph and choosen dimension ",
+                stop("The number of nodes in the graph and chosen dimension ",
                      "of the SummarizedExperiment must be equal.",
                      call. = FALSE)
             }
