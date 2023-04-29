@@ -99,7 +99,7 @@ setGeneric("plotSeries", signature = c("object"),
                     colour_by = NULL,
                     size_by = NULL,
                     linetype_by = NULL,
-                    assay.type   vssdv = assay_name, assay_name = "counts",
+                    assay.type = assay_name, assay_name = "counts",
                     ...)
                standardGeneric("plotSeries"))
 
