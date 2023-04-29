@@ -57,7 +57,7 @@
 #' library(mia)
 #' # Load data from miaTime package
 #' library("miaTime")
-#' data("SilvermanAGutData")
+#' data(SilvermanAGutData)
 #' object <- SilvermanAGutData
 #' 
 #' # Plots 2 most abundant taxa, which are colored by their family
