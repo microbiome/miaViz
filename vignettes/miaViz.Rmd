@@ -348,7 +348,7 @@ tse <- hitchip1006
 tse <- transformCounts(tse, method = "relabundance")
 ## Ordination with PCoA with Bray-Curtis dissimilarity
 tse <- runMDS(tse, FUN = vegan::vegdist, method = "bray", name = "PCoA_BC",
-              exprs_values = "relabundance", na.rm = TRUE)
+              assay.type = "relabundance", na.rm = TRUE)
 # plot
 p <- plotReducedDim(tse, dimred = "PCoA_BC")
 p
