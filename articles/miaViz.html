@@ -85,7 +85,16 @@ function from <code>BiocManager</code> and load <code>miaViz</code>.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"BiocManager"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
-<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"miaViz"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocManager/man/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"miaViz"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 'getOption("repos")' replaces Bioconductor standard repositories, see</span></span>
+<span><span class="co">#&gt; 'help("repositories", package = "BiocManager")' for details.</span></span>
+<span><span class="co">#&gt; Replacement repositories:</span></span>
+<span><span class="co">#&gt;     CRAN: https://cloud.r-project.org</span></span>
+<span><span class="co">#&gt; Bioconductor version 3.18 (BiocManager 1.30.20), R 4.3.0 (2023-04-21)</span></span>
+<span><span class="co">#&gt; Warning: package(s) not installed when version(s) same as or greater than current; use</span></span>
+<span><span class="co">#&gt;   `force = TRUE` to re-install: 'miaViz'</span></span>
+<span><span class="co">#&gt; Old packages: 'BiocNeighbors', 'dir.expiry', 'TreeSummarizedExperiment',</span></span>
+<span><span class="co">#&gt;   'rlang', 'MASS'</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">miaViz</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></code></pre></div>
@@ -310,7 +319,8 @@ features can plotted at the same time.</p>
 <span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
 <span>           y <span class="op">=</span> <span class="va">taxa</span>,</span>
 <span>           colour_by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></code></pre></div>
-<p>If replicated data is present, data is automatically used for
+<p><img src="miaViz_files/figure-html/unnamed-chunk-19-1.png" width="3000">
+If replicated data is present, data is automatically used for
 calculation of the <code>mean</code> and <code>sd</code> and plotted as
 a range. Data from different assays can be used for plotting via the
 <code>assay.type</code>.</p>
@@ -320,6 +330,7 @@ a range. Data from different assays can be used for plotting via the
 <span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>           assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/unnamed-chunk-20-1.png" width="3000"></p>
 <p>Additional variables can be used to modify line type aesthetics.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span>,</span>
@@ -328,6 +339,7 @@ a range. Data from different assays can be used for plotting via the
 <span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>           assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/unnamed-chunk-21-1.png" width="3000"></p>
 </div>
 <div class="section level2">
 <h2 id="plotting-factor-data">Plotting factor data<a class="anchor" aria-label="anchor" href="#plotting-factor-data"></a>
@@ -355,8 +367,10 @@ the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "DMN"</span></span>
 <span><span class="co"># plot the fit</span></span>
 <span><span class="fu"><a href="../reference/plotDMN.html">plotDMNFit</a></span><span class="op">(</span><span class="va">dmn_se</span>, type <span class="op">=</span> <span class="st">"laplace"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/unnamed-chunk-23-1.png" width="3000"></p>
 </div>
 <div class="section level2">
 <h2 id="serial-data-ordination-and-trajectories">Serial data ordination and trajectories<a class="anchor" aria-label="anchor" href="#serial-data-ordination-and-trajectories"></a>
@@ -373,13 +387,57 @@ the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <p>Retrieving information about all available trajectories:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:mia':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     full_join, inner_join, left_join, right_join</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:Biostrings':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     collapse, intersect, setdiff, setequal, union</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:XVector':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     slice</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:Biobase':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     combine</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:GenomicRanges':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, union</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:GenomeInfoDb':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:IRanges':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     collapse, desc, intersect, setdiff, slice, union</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:S4Vectors':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     first, intersect, rename, setdiff, setequal, union</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:BiocGenerics':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     combine, intersect, setdiff, union</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:matrixStats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     count</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
 <span></span>
 <span><span class="co"># List subjects with two time points</span></span>
 <span><span class="va">selected.subjects</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/which.html" class="external-link">which</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tse</span><span class="op">$</span><span class="va">subject</span><span class="op">)</span><span class="op">==</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Subjects counts per number of time points available in the data</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tse</span><span class="op">$</span><span class="va">subject</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>Timepoints<span class="op">=</span><span class="va">Var1</span>, Subjects<span class="op">=</span><span class="va">Freq</span><span class="op">)</span></span></code></pre></div>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>Timepoints<span class="op">=</span><span class="va">Var1</span>, Subjects<span class="op">=</span><span class="va">Freq</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   Timepoints Subjects</span></span>
+<span><span class="co">#&gt; 1          1      928</span></span>
+<span><span class="co">#&gt; 2          2       40</span></span>
+<span><span class="co">#&gt; 3          3       23</span></span>
+<span><span class="co">#&gt; 4          4        1</span></span>
+<span><span class="co">#&gt; 5          5       14</span></span></code></pre></div>
 <p>Lets look at all trajectories having two time points in the data:</p>
 <div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot</span></span>
@@ -391,12 +449,1020 @@ the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <span>                            <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"All trajectories with two time points"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/unnamed-chunk-26-1.png" width="3000"></p>
 <p>Filtering the two time point trajectories by divergence and
 displaying top 10%:</p>
 <div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/miaTime" class="external-link">miaTime</a></span><span class="op">)</span></span>
 <span><span class="co"># calculating step wise divergence based on the microbial profiles</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/miaTime/man/getStepwiseDivergence.html" class="external-link">getStepwiseDivergence</a></span><span class="op">(</span><span class="va">tse</span>, group <span class="op">=</span> <span class="st">"subject"</span>, time_field <span class="op">=</span> <span class="st">"time"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Merging with full join...</span></span>
+<span><span class="co">#&gt; 1/1006</span></span>
+<span><span class="fl">2</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">3</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">4</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">5</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">6</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">7</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">8</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">9</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">10</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">11</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">12</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">13</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">14</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">15</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">16</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">17</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">18</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">19</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">20</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">21</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">22</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">23</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">24</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">25</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">26</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">27</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">28</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">29</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">30</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">31</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">32</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">33</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">34</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">35</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">36</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">37</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">38</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">39</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">40</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">41</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">42</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">43</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">44</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">45</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">46</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">47</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">48</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">49</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">50</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">51</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">52</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">53</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">54</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">55</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">56</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">57</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">58</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">59</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">60</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">61</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">62</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">63</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">64</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">65</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">66</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">67</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">68</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">69</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">70</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">71</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">72</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">73</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">74</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">75</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">76</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">77</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">78</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">79</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">80</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">81</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">82</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">83</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">84</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">85</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">86</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">87</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">88</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">89</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">90</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">91</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">92</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">93</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">94</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">95</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">96</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">97</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">98</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">99</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">100</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">101</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">102</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">103</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">104</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">105</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">106</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">107</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">108</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">109</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">110</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">111</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">112</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">113</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">114</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">115</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">116</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">117</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">118</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">119</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">120</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">121</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">122</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">123</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">124</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">125</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">126</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">127</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">128</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">129</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">130</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">131</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">132</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">133</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">134</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">135</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">136</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">137</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">138</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">139</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">140</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">141</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">142</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">143</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">144</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">145</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">146</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">147</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">148</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">149</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">150</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">151</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">152</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">153</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">154</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">155</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">156</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">157</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">158</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">159</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">160</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">161</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">162</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">163</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">164</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">165</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">166</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">167</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">168</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">169</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">170</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">171</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">172</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">173</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">174</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">175</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">176</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">177</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">178</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">179</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">180</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">181</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">182</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">183</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">184</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">185</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">186</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">187</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">188</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">189</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">190</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">191</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">192</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">193</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">194</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">195</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">196</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">197</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">198</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">199</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">200</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">201</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">202</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">203</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">204</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">205</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">206</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">207</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">208</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">209</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">210</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">211</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">212</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">213</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">214</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">215</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">216</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">217</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">218</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">219</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">220</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">221</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">222</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">223</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">224</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">225</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">226</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">227</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">228</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">229</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">230</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">231</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">232</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">233</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">234</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">235</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">236</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">237</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">238</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">239</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">240</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">241</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">242</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">243</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">244</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">245</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">246</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">247</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">248</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">249</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">250</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">251</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">252</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">253</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">254</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">255</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">256</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">257</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">258</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">259</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">260</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">261</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">262</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">263</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">264</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">265</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">266</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">267</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">268</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">269</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">270</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">271</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">272</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">273</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">274</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">275</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">276</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">277</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">278</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">279</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">280</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">281</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">282</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">283</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">284</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">285</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">286</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">287</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">288</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">289</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">290</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">291</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">292</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">293</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">294</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">295</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">296</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">297</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">298</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">299</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">300</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">301</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">302</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">303</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">304</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">305</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">306</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">307</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">308</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">309</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">310</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">311</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">312</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">313</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">314</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">315</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">316</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">317</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">318</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">319</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">320</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">321</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">322</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">323</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">324</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">325</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">326</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">327</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">328</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">329</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">330</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">331</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">332</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">333</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">334</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">335</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">336</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">337</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">338</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">339</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">340</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">341</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">342</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">343</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">344</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">345</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">346</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">347</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">348</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">349</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">350</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">351</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">352</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">353</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">354</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">355</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">356</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">357</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">358</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">359</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">360</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">361</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">362</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">363</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">364</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">365</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">366</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">367</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">368</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">369</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">370</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">371</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">372</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">373</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">374</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">375</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">376</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">377</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">378</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">379</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">380</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">381</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">382</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">383</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">384</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">385</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">386</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">387</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">388</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">389</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">390</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">391</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">392</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">393</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">394</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">395</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">396</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">397</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">398</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">399</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">400</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">401</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">402</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">403</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">404</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">405</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">406</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">407</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">408</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">409</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">410</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">411</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">412</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">413</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">414</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">415</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">416</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">417</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">418</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">419</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">420</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">421</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">422</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">423</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">424</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">425</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">426</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">427</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">428</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">429</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">430</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">431</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">432</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">433</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">434</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">435</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">436</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">437</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">438</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">439</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">440</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">441</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">442</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">443</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">444</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">445</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">446</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">447</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">448</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">449</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">450</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">451</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">452</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">453</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">454</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">455</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">456</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">457</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">458</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">459</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">460</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">461</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">462</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">463</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">464</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">465</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">466</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">467</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">468</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">469</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">470</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">471</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">472</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">473</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">474</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">475</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">476</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">477</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">478</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">479</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">480</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">481</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">482</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">483</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">484</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">485</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">486</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">487</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">488</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">489</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">490</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">491</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">492</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">493</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">494</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">495</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">496</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">497</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">498</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">499</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">500</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">501</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">502</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">503</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">504</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">505</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">506</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">507</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">508</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">509</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">510</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">511</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">512</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">513</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">514</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">515</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">516</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">517</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">518</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">519</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">520</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">521</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">522</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">523</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">524</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">525</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">526</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">527</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">528</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">529</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">530</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">531</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">532</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">533</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">534</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">535</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">536</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">537</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">538</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">539</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">540</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">541</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">542</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">543</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">544</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">545</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">546</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">547</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">548</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">549</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">550</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">551</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">552</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">553</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">554</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">555</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">556</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">557</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">558</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">559</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">560</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">561</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">562</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">563</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">564</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">565</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">566</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">567</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">568</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">569</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">570</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">571</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">572</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">573</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">574</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">575</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">576</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">577</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">578</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">579</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">580</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">581</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">582</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">583</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">584</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">585</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">586</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">587</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">588</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">589</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">590</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">591</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">592</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">593</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">594</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">595</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">596</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">597</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">598</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">599</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">600</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">601</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">602</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">603</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">604</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">605</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">606</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">607</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">608</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">609</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">610</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">611</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">612</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">613</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">614</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">615</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">616</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">617</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">618</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">619</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">620</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">621</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">622</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">623</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">624</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">625</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">626</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">627</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">628</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">629</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">630</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">631</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">632</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">633</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">634</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">635</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">636</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">637</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">638</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">639</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">640</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">641</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">642</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">643</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">644</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">645</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">646</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">647</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">648</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">649</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">650</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">651</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">652</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">653</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">654</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">655</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">656</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">657</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">658</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">659</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">660</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">661</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">662</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">663</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">664</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">665</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">666</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">667</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">668</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">669</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">670</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">671</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">672</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">673</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">674</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">675</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">676</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">677</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">678</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">679</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">680</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">681</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">682</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">683</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">684</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">685</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">686</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">687</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">688</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">689</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">690</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">691</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">692</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">693</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">694</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">695</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">696</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">697</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">698</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">699</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">700</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">701</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">702</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">703</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">704</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">705</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">706</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">707</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">708</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">709</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">710</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">711</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">712</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">713</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">714</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">715</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">716</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">717</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">718</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">719</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">720</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">721</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">722</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">723</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">724</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">725</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">726</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">727</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">728</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">729</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">730</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">731</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">732</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">733</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">734</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">735</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">736</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">737</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">738</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">739</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">740</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">741</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">742</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">743</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">744</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">745</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">746</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">747</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">748</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">749</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">750</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">751</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">752</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">753</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">754</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">755</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">756</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">757</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">758</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">759</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">760</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">761</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">762</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">763</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">764</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">765</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">766</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">767</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">768</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">769</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">770</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">771</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">772</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">773</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">774</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">775</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">776</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">777</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">778</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">779</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">780</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">781</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">782</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">783</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">784</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">785</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">786</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">787</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">788</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">789</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">790</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">791</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">792</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">793</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">794</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">795</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">796</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">797</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">798</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">799</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">800</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">801</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">802</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">803</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">804</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">805</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">806</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">807</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">808</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">809</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">810</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">811</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">812</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">813</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">814</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">815</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">816</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">817</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">818</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">819</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">820</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">821</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">822</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">823</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">824</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">825</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">826</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">827</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">828</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">829</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">830</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">831</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">832</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">833</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">834</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">835</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">836</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">837</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">838</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">839</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">840</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">841</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">842</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">843</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">844</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">845</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">846</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">847</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">848</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">849</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">850</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">851</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">852</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">853</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">854</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">855</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">856</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">857</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">858</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">859</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">860</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">861</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">862</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">863</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">864</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">865</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">866</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">867</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">868</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">869</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">870</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">871</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">872</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">873</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">874</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">875</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">876</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">877</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">878</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">879</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">880</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">881</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">882</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">883</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">884</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">885</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">886</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">887</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">888</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">889</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">890</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">891</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">892</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">893</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">894</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">895</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">896</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">897</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">898</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">899</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">900</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">901</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">902</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">903</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">904</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">905</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">906</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">907</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">908</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">909</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">910</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">911</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">912</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">913</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">914</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">915</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">916</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">917</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">918</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">919</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">920</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">921</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">922</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">923</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">924</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">925</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">926</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">927</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">928</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">929</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">930</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">931</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">932</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">933</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">934</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">935</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">936</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">937</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">938</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">939</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">940</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">941</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">942</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">943</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">944</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">945</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">946</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">947</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">948</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">949</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">950</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">951</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">952</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">953</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">954</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">955</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">956</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">957</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">958</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">959</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">960</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">961</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">962</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">963</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">964</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">965</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">966</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">967</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">968</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">969</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">970</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">971</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">972</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">973</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">974</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">975</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">976</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">977</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">978</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">979</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">980</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">981</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">982</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">983</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">984</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">985</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">986</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">987</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">988</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">989</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">990</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">991</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">992</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">993</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">994</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">995</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">996</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">997</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">998</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">999</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">1000</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">1001</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">1002</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">1003</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">1004</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">1005</span><span class="op">/</span><span class="fl">1006</span></span>
+<span><span class="fl">1006</span><span class="op">/</span><span class="fl">1006</span></span>
 <span><span class="co"># retrieving the top 10% divergent subjects having two time points</span></span>
 <span><span class="va">top.selected.subjects</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
 <span>                            <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -417,6 +1483,7 @@ displaying top 10%:</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Top 10%  divergent trajectories from time point one to two"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_color_gradient2</a></span><span class="op">(</span>low<span class="op">=</span><span class="st">"white"</span>, high<span class="op">=</span><span class="st">"red"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/unnamed-chunk-27-1.png" width="3000"></p>
 <p>Plotting an example of the trajectory with the maximum total
 divergence:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
@@ -432,6 +1499,7 @@ divergence:</p>
 <span>              arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Longest trajectory by divergence"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/unnamed-chunk-28-1.png" width="3000"></p>
 <p>More examples and materials are available at Orchestrating Microbiome
 Analysis <span class="citation">(Lahti, Shetty, and Ernst
 2021)</span>.</p>
@@ -465,17 +1533,18 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt; [8] base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] scater_1.28.0                  scuttle_1.11.0                </span></span>
-<span><span class="co">#&gt;  [3] patchwork_1.1.2                miaViz_1.9.1                  </span></span>
-<span><span class="co">#&gt;  [5] ggraph_2.1.0                   ggplot2_3.4.2                 </span></span>
-<span><span class="co">#&gt;  [7] mia_1.9.1                      MultiAssayExperiment_1.27.0   </span></span>
-<span><span class="co">#&gt;  [9] TreeSummarizedExperiment_2.1.4 Biostrings_2.69.0             </span></span>
-<span><span class="co">#&gt; [11] XVector_0.41.0                 SingleCellExperiment_1.23.0   </span></span>
-<span><span class="co">#&gt; [13] SummarizedExperiment_1.31.0    Biobase_2.61.0                </span></span>
-<span><span class="co">#&gt; [15] GenomicRanges_1.53.0           GenomeInfoDb_1.37.0           </span></span>
-<span><span class="co">#&gt; [17] IRanges_2.35.0                 S4Vectors_0.39.0              </span></span>
-<span><span class="co">#&gt; [19] BiocGenerics_0.47.0            MatrixGenerics_1.13.0         </span></span>
-<span><span class="co">#&gt; [21] matrixStats_0.63.0             BiocStyle_2.29.0              </span></span>
+<span><span class="co">#&gt;  [1] dplyr_1.1.2                    miaTime_0.1.21                </span></span>
+<span><span class="co">#&gt;  [3] scater_1.28.0                  scuttle_1.11.0                </span></span>
+<span><span class="co">#&gt;  [5] patchwork_1.1.2                miaViz_1.9.1                  </span></span>
+<span><span class="co">#&gt;  [7] ggraph_2.1.0                   ggplot2_3.4.2                 </span></span>
+<span><span class="co">#&gt;  [9] mia_1.9.2                      MultiAssayExperiment_1.27.0   </span></span>
+<span><span class="co">#&gt; [11] TreeSummarizedExperiment_2.1.4 Biostrings_2.69.0             </span></span>
+<span><span class="co">#&gt; [13] XVector_0.41.0                 SingleCellExperiment_1.23.0   </span></span>
+<span><span class="co">#&gt; [15] SummarizedExperiment_1.31.0    Biobase_2.61.0                </span></span>
+<span><span class="co">#&gt; [17] GenomicRanges_1.53.0           GenomeInfoDb_1.37.0           </span></span>
+<span><span class="co">#&gt; [19] IRanges_2.35.0                 S4Vectors_0.39.0              </span></span>
+<span><span class="co">#&gt; [21] BiocGenerics_0.47.0            MatrixGenerics_1.13.0         </span></span>
+<span><span class="co">#&gt; [23] matrixStats_0.63.0             BiocStyle_2.29.0              </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;   [1] splines_4.3.0               later_1.3.0                </span></span>
@@ -508,45 +1577,44 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt;  [55] ragg_1.2.5                  Rcpp_1.0.10                </span></span>
 <span><span class="co">#&gt;  [57] glue_1.6.2                  gridExtra_2.3              </span></span>
 <span><span class="co">#&gt;  [59] xfun_0.39                   mgcv_1.8-42                </span></span>
-<span><span class="co">#&gt;  [61] usethis_2.1.6               dplyr_1.1.2                </span></span>
-<span><span class="co">#&gt;  [63] withr_2.5.0                 BiocManager_1.30.20        </span></span>
-<span><span class="co">#&gt;  [65] fastmap_1.1.1               fansi_1.0.4                </span></span>
-<span><span class="co">#&gt;  [67] callr_3.7.3                 digest_0.6.31              </span></span>
-<span><span class="co">#&gt;  [69] rsvd_1.0.5                  R6_2.5.1                   </span></span>
-<span><span class="co">#&gt;  [71] mime_0.12                   gridGraphics_0.5-1         </span></span>
-<span><span class="co">#&gt;  [73] textshaping_0.3.6           colorspace_2.1-0           </span></span>
-<span><span class="co">#&gt;  [75] RSQLite_2.3.1               utf8_1.2.3                 </span></span>
-<span><span class="co">#&gt;  [77] tidyr_1.3.0                 generics_0.1.3             </span></span>
-<span><span class="co">#&gt;  [79] DECIPHER_2.29.0             prettyunits_1.1.1          </span></span>
-<span><span class="co">#&gt;  [81] graphlayouts_0.8.4          htmlwidgets_1.6.2          </span></span>
-<span><span class="co">#&gt;  [83] pkgconfig_2.0.3             gtable_0.3.3               </span></span>
-<span><span class="co">#&gt;  [85] blob_1.2.4                  htmltools_0.5.5            </span></span>
-<span><span class="co">#&gt;  [87] profvis_0.3.7               bookdown_0.33              </span></span>
-<span><span class="co">#&gt;  [89] scales_1.2.1                ggfun_0.0.9                </span></span>
-<span><span class="co">#&gt;  [91] knitr_1.42                  reshape2_1.4.4             </span></span>
-<span><span class="co">#&gt;  [93] nlme_3.1-162                cachem_1.0.7               </span></span>
-<span><span class="co">#&gt;  [95] stringr_1.5.0               parallel_4.3.0             </span></span>
-<span><span class="co">#&gt;  [97] miniUI_0.1.1.1              vipor_0.4.5                </span></span>
-<span><span class="co">#&gt;  [99] desc_1.4.2                  pillar_1.9.0               </span></span>
-<span><span class="co">#&gt; [101] grid_4.3.0                  vctrs_0.6.2                </span></span>
-<span><span class="co">#&gt; [103] urlchecker_1.0.1            promises_1.2.0.1           </span></span>
-<span><span class="co">#&gt; [105] BiocSingular_1.16.0         beachmat_2.17.0            </span></span>
-<span><span class="co">#&gt; [107] xtable_1.8-4                cluster_2.1.4              </span></span>
-<span><span class="co">#&gt; [109] beeswarm_0.4.0              evaluate_0.20              </span></span>
-<span><span class="co">#&gt; [111] cli_3.6.1                   compiler_4.3.0             </span></span>
-<span><span class="co">#&gt; [113] rlang_1.1.1                 crayon_1.5.2               </span></span>
-<span><span class="co">#&gt; [115] labeling_0.4.2              ps_1.7.5                   </span></span>
-<span><span class="co">#&gt; [117] plyr_1.8.8                  fs_1.6.2                   </span></span>
-<span><span class="co">#&gt; [119] ggbeeswarm_0.7.1            stringi_1.7.12             </span></span>
-<span><span class="co">#&gt; [121] viridisLite_0.4.1           BiocParallel_1.35.0        </span></span>
-<span><span class="co">#&gt; [123] munsell_0.5.0               lazyeval_0.2.2             </span></span>
-<span><span class="co">#&gt; [125] devtools_2.4.5              Matrix_1.5-4               </span></span>
-<span><span class="co">#&gt; [127] sparseMatrixStats_1.13.0    bit64_4.0.5                </span></span>
-<span><span class="co">#&gt; [129] shiny_1.7.4                 highr_0.10                 </span></span>
-<span><span class="co">#&gt; [131] igraph_1.4.2                memoise_2.0.1              </span></span>
-<span><span class="co">#&gt; [133] miaTime_0.1.21              bslib_0.4.2                </span></span>
-<span><span class="co">#&gt; [135] ggtree_3.9.0                bit_4.0.5                  </span></span>
-<span><span class="co">#&gt; [137] ape_5.7-1</span></span></code></pre></div>
+<span><span class="co">#&gt;  [61] usethis_2.1.6               withr_2.5.0                </span></span>
+<span><span class="co">#&gt;  [63] BiocManager_1.30.20         fastmap_1.1.1              </span></span>
+<span><span class="co">#&gt;  [65] fansi_1.0.4                 callr_3.7.3                </span></span>
+<span><span class="co">#&gt;  [67] digest_0.6.31               rsvd_1.0.5                 </span></span>
+<span><span class="co">#&gt;  [69] R6_2.5.1                    mime_0.12                  </span></span>
+<span><span class="co">#&gt;  [71] gridGraphics_0.5-1          textshaping_0.3.6          </span></span>
+<span><span class="co">#&gt;  [73] colorspace_2.1-0            RSQLite_2.3.1              </span></span>
+<span><span class="co">#&gt;  [75] utf8_1.2.3                  tidyr_1.3.0                </span></span>
+<span><span class="co">#&gt;  [77] generics_0.1.3              DECIPHER_2.29.0            </span></span>
+<span><span class="co">#&gt;  [79] prettyunits_1.1.1           graphlayouts_0.8.4         </span></span>
+<span><span class="co">#&gt;  [81] htmlwidgets_1.6.2           pkgconfig_2.0.3            </span></span>
+<span><span class="co">#&gt;  [83] gtable_0.3.3                blob_1.2.4                 </span></span>
+<span><span class="co">#&gt;  [85] htmltools_0.5.5             profvis_0.3.7              </span></span>
+<span><span class="co">#&gt;  [87] bookdown_0.33               scales_1.2.1               </span></span>
+<span><span class="co">#&gt;  [89] ggfun_0.0.9                 knitr_1.42                 </span></span>
+<span><span class="co">#&gt;  [91] reshape2_1.4.4              nlme_3.1-162               </span></span>
+<span><span class="co">#&gt;  [93] cachem_1.0.7                stringr_1.5.0              </span></span>
+<span><span class="co">#&gt;  [95] parallel_4.3.0              miniUI_0.1.1.1             </span></span>
+<span><span class="co">#&gt;  [97] vipor_0.4.5                 desc_1.4.2                 </span></span>
+<span><span class="co">#&gt;  [99] pillar_1.9.0                grid_4.3.0                 </span></span>
+<span><span class="co">#&gt; [101] vctrs_0.6.2                 urlchecker_1.0.1           </span></span>
+<span><span class="co">#&gt; [103] promises_1.2.0.1            BiocSingular_1.16.0        </span></span>
+<span><span class="co">#&gt; [105] beachmat_2.17.0             xtable_1.8-4               </span></span>
+<span><span class="co">#&gt; [107] cluster_2.1.4               beeswarm_0.4.0             </span></span>
+<span><span class="co">#&gt; [109] evaluate_0.20               cli_3.6.1                  </span></span>
+<span><span class="co">#&gt; [111] compiler_4.3.0              rlang_1.1.1                </span></span>
+<span><span class="co">#&gt; [113] crayon_1.5.2                labeling_0.4.2             </span></span>
+<span><span class="co">#&gt; [115] ps_1.7.5                    plyr_1.8.8                 </span></span>
+<span><span class="co">#&gt; [117] fs_1.6.2                    ggbeeswarm_0.7.1           </span></span>
+<span><span class="co">#&gt; [119] stringi_1.7.12              viridisLite_0.4.1          </span></span>
+<span><span class="co">#&gt; [121] BiocParallel_1.35.0         munsell_0.5.0              </span></span>
+<span><span class="co">#&gt; [123] lazyeval_0.2.2              devtools_2.4.5             </span></span>
+<span><span class="co">#&gt; [125] Matrix_1.5-4                sparseMatrixStats_1.13.0   </span></span>
+<span><span class="co">#&gt; [127] bit64_4.0.5                 shiny_1.7.4                </span></span>
+<span><span class="co">#&gt; [129] highr_0.10                  igraph_1.4.2               </span></span>
+<span><span class="co">#&gt; [131] memoise_2.0.1               bslib_0.4.2                </span></span>
+<span><span class="co">#&gt; [133] ggtree_3.9.0                bit_4.0.5                  </span></span>
+<span><span class="co">#&gt; [135] ape_5.7-1</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
