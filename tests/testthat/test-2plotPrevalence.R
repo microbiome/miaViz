@@ -3,7 +3,7 @@ context("plot prevalence")
 test_that("plot prevalence", {
     library(DelayedArray)
     #
-    data("GlobalPatterns")
+    data(GlobalPatterns)
     se <- GlobalPatterns
     # .get_prevalence_value
     assay(se,"counts") <- DelayedArray(assay(se,"counts"))

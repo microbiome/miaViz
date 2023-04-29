@@ -9,7 +9,7 @@ test_that("plot series", {
         devtools::install_github("microbiome/miaTime")
         library("miaTime")
     }
-    data("SilvermanAGutData")
+    data(SilvermanAGutData)
     tse <- SilvermanAGutData
     tse_sub <- tse[1:5]
     
