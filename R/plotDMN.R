@@ -43,7 +43,13 @@ setGeneric("plotDMNFit", signature = "x",
 setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN", type = c("laplace","AIC","BIC")){
         #
-        dmn <- getDMN(x, name)
+        if (!is.null(metadata(x)[[name]]$dmm)) {
+            dmn <- metadata(x)[[name]]$dmm
+        } else {
+            .Deprecated(old="getDMN", new="cluster", 
+                    "Now runDMN and calculate DMN are deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
+            dmn <- metadata(x)$name
+        }
         fit_FUN <- mia:::.get_dmn_fit_FUN(type)
         #
         k <- vapply(dmn, function(d){ncol(mixture(d))}, numeric(1))
