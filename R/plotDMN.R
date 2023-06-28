@@ -27,7 +27,9 @@
 #' names(metadata(dmn_se))
 #'
 #' # plot the fit
-#' plotDMNFit(dmn_se, type = "laplace")
+#' suppressWarnings({
+#'      plotDMNFit(dmn_se, type = "laplace")
+#' })
 NULL
 
 #' @rdname plotDMN
