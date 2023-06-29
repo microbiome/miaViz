@@ -23,13 +23,15 @@
 #' @name plotDMN
 #'
 #' @examples
+#' library("bluster")
 #' data(dmn_se, package = "mia")
-#' names(metadata(dmn_se))
+#' tse_dmm <- cluster(dmn_se, name = "DMM",
+#'                    DmmParam(k = 1:4, type = "laplace"),
+#'                    MARGIN = "samples", full = TRUE)
 #'
 #' # plot the fit
-#' suppressWarnings({
-#'      plotDMNFit(dmn_se, type = "laplace")
-#' })
+#' plotDMNFit(tse_dmm, name = "DMM", type = "laplace")
+#' 
 NULL
 
 #' @rdname plotDMN
