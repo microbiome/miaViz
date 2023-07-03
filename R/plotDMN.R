@@ -23,14 +23,13 @@
 #' @name plotDMN
 #'
 #' @examples
-#' library("bluster")
 #' data(dmn_se, package = "mia")
-#' tse_dmm <- cluster(dmn_se, name = "DMM",
-#'                    DmmParam(k = 1:4, type = "laplace"),
-#'                    MARGIN = "samples", full = TRUE)
-#'
+#' 
+#' # Put metadata in correct place
+#' metadata(dmn_se)$DMM$dmm <- metadata(dmn_se)$DMN
+#' 
 #' # plot the fit
-#' plotDMNFit(tse_dmm, name = "DMM", type = "laplace")
+#' plotDMNFit(dmn_se, name = "DMM", type = "laplace")
 #' 
 NULL
 
@@ -51,8 +50,8 @@ setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
             dmn <- metadata(x)[[name]]$dmm
         } else {
             .Deprecated(old="getDMN", new="cluster", 
-                    "Now runDMN and calculate DMN are deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
-            dmn <- metadata(x)$name
+                    "Now runDMN and calculateDMN are deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
+            dmn <- metadata(x)[[name]]
         }
         fit_FUN <- mia:::.get_dmn_fit_FUN(type)
         #

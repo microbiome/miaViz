@@ -166,7 +166,6 @@ jobs:
           
           BiocManager::install("HDF5Array")
           BiocManager::install("fionarhuang/TreeSummarizedExperiment")
-          devtools::install_github("LTLA/bluster")
           BiocManager::install("microbiome/mia")
           devtools::install_github("microbiome/miaTime")	  
           
