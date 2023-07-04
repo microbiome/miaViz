@@ -30,13 +30,18 @@ object contain the DMN data in \code{metadata}.}
 To plot DMN fits generated with \code{mia} use \code{plotDMNFit}.
 }
 \examples{
-data(dmn_se, package = "mia")
+library(mia)
+library(bluster)
 
-# Put metadata in correct place
-metadata(dmn_se)$DMM$dmm <- metadata(dmn_se)$DMN
+# Get dataset
+data("peerj13075", package = "mia")
+tse <- peerj13075
 
-# plot the fit
-plotDMNFit(dmn_se, name = "DMM", type = "laplace")
+# Cluster the samples
+tse <- cluster(tse, DmmParam(k = 1:4), name = "DMM", full = TRUE)
+
+# Plot the fit
+plotDMNFit(tse, name = "DMM", type = "laplace")
 
 }
 \seealso{
