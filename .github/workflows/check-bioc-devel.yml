@@ -167,7 +167,8 @@ jobs:
           BiocManager::install("HDF5Array")
           BiocManager::install("fionarhuang/TreeSummarizedExperiment")
           BiocManager::install("microbiome/mia")
-          devtools::install_github("microbiome/miaTime")	  
+          devtools::install_github("microbiome/miaTime")
+          remotes::install_github("LTLA/bluster")
           
           # rspm is out of date
           install.packages("matrixStats", repos = "https://cran.rstudio.com/")
