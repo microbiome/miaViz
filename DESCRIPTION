@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.9.1
+Version: 1.9.2
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -30,7 +30,6 @@ Imports:
     methods,
     stats,
     S4Vectors,
-    miaTime,    
     BiocGenerics,
     BiocParallel,
     DelayedArray,
@@ -54,7 +53,8 @@ Suggests:
     testthat,
     patchwork,
     vegan,
-    microbiomeDataSets
+    microbiomeDataSets,
+    miaTime
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
