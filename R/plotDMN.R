@@ -23,11 +23,19 @@
 #' @name plotDMN
 #'
 #' @examples
-#' data(dmn_se, package = "mia")
-#' names(metadata(dmn_se))
-#'
-#' # plot the fit
-#' plotDMNFit(dmn_se, type = "laplace")
+#' library(mia)
+#' library(bluster)
+#' 
+#' # Get dataset
+#' data("peerj13075", package = "mia")
+#' tse <- peerj13075
+#' 
+#' # Cluster the samples
+#' tse <- cluster(tse, DmmParam(k = 1:4), name = "DMM", full = TRUE)
+#' 
+#' # Plot the fit
+#' plotDMNFit(tse, name = "DMM", type = "laplace")
+#' 
 NULL
 
 #' @rdname plotDMN
@@ -43,7 +51,13 @@ setGeneric("plotDMNFit", signature = "x",
 setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN", type = c("laplace","AIC","BIC")){
         #
-        dmn <- getDMN(x, name)
+        if (!is.null(metadata(x)[[name]]$dmm)) {
+            dmn <- metadata(x)[[name]]$dmm
+        } else {
+            .Deprecated(old="getDMN", new="cluster", 
+                    "Now runDMN and calculateDMN are deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
+            dmn <- metadata(x)[[name]]
+        }
         fit_FUN <- mia:::.get_dmn_fit_FUN(type)
         #
         k <- vapply(dmn, function(d){ncol(mixture(d))}, numeric(1))
