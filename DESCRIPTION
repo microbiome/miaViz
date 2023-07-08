@@ -31,7 +31,6 @@ Imports:
     methods,
     stats,
     S4Vectors,
-    miaTime,    
     BiocGenerics,
     BiocParallel,
     DelayedArray,
@@ -56,7 +55,8 @@ Suggests:
     patchwork,
     vegan,
     microbiomeDataSets,
-    bluster
+    bluster,
+    miaTime
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
