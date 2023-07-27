@@ -82,8 +82,8 @@ on compositional (relative) abundances? Passed onto
 \item{rank, ...}{additional arguments
 \itemize{
 \item{If \code{!is.null(rank)} matching arguments are passed on to
-\code{\link[=agglomerate-methods]{`mergeFeaturesByRank}}. See
-\code{\link[=agglomerate-methods]{?`mergeFeaturesByRank}} for more details.
+\code{\link[=agglomerate-methods]{mergeFeaturesByRank}}. See
+\code{\link[=agglomerate-methods]{?mergeFeaturesByRank}} for more details.
 }
 \item{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
@@ -141,7 +141,7 @@ Agglomeration on different taxonomic levels is available through the
 
 To exclude certain taxa, preprocess \code{x} to your liking, for example
 with subsetting via \code{getPrevalentTaxa} or
-\code{`mergeFeaturesByPrevalence}.
+\code{mergeFeaturesByPrevalence}.
 }
 \examples{
 data(GlobalPatterns, package = "mia")
@@ -172,6 +172,6 @@ plotPrevalentAbundance(GlobalPatterns, rank = "Family",
 }
 \seealso{
 \code{\link[mia:getPrevalence]{getPrevalence}},
-\code{\link[mia:getPrevalence]{`mergeFeaturesByPrevalence}},
-\code{\link[mia:agglomerate-methods]{`mergeFeaturesByRank}}
+\code{\link[mia:getPrevalence]{mergeFeaturesByPrevalence}},
+\code{\link[mia:agglomerate-methods]{mergeFeaturesByRank}}
 }

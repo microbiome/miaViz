@@ -142,9 +142,9 @@ data(row_graph)
 data(row_graph_order)
 metadata(GlobalPatterns)$col_graph <- col_graph
 
-genus <- `mergeFeaturesByRank(GlobalPatterns,"Genus",na.rm=TRUE)
+genus <- mergeFeaturesByRank(GlobalPatterns,"Genus",na.rm=TRUE)
 metadata(genus)$row_graph <- row_graph
-order <- `mergeFeaturesByRank(genus,"Order",na.rm=TRUE)
+order <- mergeFeaturesByRank(genus,"Order",na.rm=TRUE)
 metadata(order)$row_graph <- row_graph_order
 
 # plot a graph independently

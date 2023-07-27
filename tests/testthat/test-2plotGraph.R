@@ -50,7 +50,7 @@ test_that("plot graph", {
     expect_equal(miaViz:::.colnames_tbl_graph(actual,"edges"),
                  c("from","to","weight"))
     #
-    genus <- `mergeFeaturesByRank(GlobalPatterns,"Genus",na.rm=TRUE)
+    genus <- mergeFeaturesByRank(GlobalPatterns,"Genus",na.rm=TRUE)
     plot <- plotColGraph(col_graph,
                          genus,
                          colour_by = "SampleType",
