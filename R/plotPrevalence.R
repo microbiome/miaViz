@@ -13,8 +13,8 @@
 #' @param rank,... additional arguments
 #' \itemize{
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to
-#'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
-#'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
+#'     \code{\link[=agglomerate-methods]{`mergeFeaturesByRank}}. See
+#'     \code{\link[=agglomerate-methods]{?`mergeFeaturesByRank}} for more details.
 #'   }
 #'   \item{additional arguments for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
@@ -79,7 +79,7 @@
 #' 
 #' To exclude certain taxa, preprocess \code{x} to your liking, for example 
 #' with subsetting via \code{getPrevalentTaxa} or 
-#' \code{agglomerateByPrevalence}.
+#' \code{`mergeFeaturesByPrevalence}.
 #' 
 #' @return 
 #' A \code{ggplot2} object or \code{plotly} object, if more than one 
@@ -87,8 +87,8 @@
 #' 
 #' @seealso 
 #' \code{\link[mia:getPrevalence]{getPrevalence}},
-#' \code{\link[mia:getPrevalence]{agglomerateByPrevalence}},
-#' \code{\link[mia:agglomerate-methods]{agglomerateByRank}}
+#' \code{\link[mia:getPrevalence]{`mergeFeaturesByPrevalence}},
+#' \code{\link[mia:agglomerate-methods]{`mergeFeaturesByRank}}
 #' 
 #' @name plotPrevalence
 #' 

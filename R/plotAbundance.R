@@ -111,7 +111,7 @@
 #' 
 #' # Getting top taxa on a Phylum level
 #' se <- transformCounts(se, method="relabundance")
-#' se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
+#' se_phylum <- `mergeFeaturesByRank(se, rank ="Phylum", onRankOnly=TRUE)
 #' top_taxa <- getTopTaxa(se_phylum,top = 5, assay.type = "relabundance")
 #' 
 #' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"

@@ -58,7 +58,7 @@ test_that("plot tree", {
     library(scater)
     library(mia)
     data(GlobalPatterns)
-    altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus", make_unique = FALSE)
+    altExp(GlobalPatterns,"genus") <- `mergeFeaturesByRank(GlobalPatterns,"Genus", make_unique = FALSE)
     altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
     rowData(altExp(GlobalPatterns,"genus"))$log_mean <- log(rowData(altExp(GlobalPatterns,"genus"))$mean)
     top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
