@@ -20,3 +20,4 @@ Changes in version 1.7.x
 
 Changes in version 1.9.x
 + Updated plotDMN to work with newest mia version
++ deprecate agglomerateByRank and agglomerateByPrevalence

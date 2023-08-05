@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.9.2
+Version: 1.9.3
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -12,6 +12,7 @@ Authors@R:
              email = "leo.lahti@iki.fi",
              comment = c(ORCID = "0000-0001-5537-637X")),
       person(given = "Basil", family = "Courbayre", role = c("ctb"))
+      person(given = "Muluh", family = "Muluh", role=c("ctb"))
 	     )
 Description: The miaViz package implements functions to visualize
     TreeSummarizedExperiment objects especially in the context of microbiome
