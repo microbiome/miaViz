@@ -46,7 +46,8 @@ Imports:
     tidyr,
     dplyr,
     ape,
-    DirichletMultinomial
+    DirichletMultinomial,
+    ggrepel
 Suggests:
     knitr,
     rmarkdown,
