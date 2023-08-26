@@ -27,36 +27,31 @@
 #' @name plotRDA
 #'
 #' @examples
-#' \dontrun{
-#' library(mia)
 #' 
-#' tse <- runRDA()
-#' plotRDA()
-#' 
-#' 
-#' rda <- calculateCCA()
-#' plotCCA()
-#' 
-#' rda <- attributes(tse)$rda
-#' 
-#' plotRDA()
+#'  data(peerj13075)
+#'  tse <- peerj13075
+#'  # Perform RDA
+#'  tse <- runRDA(tse, data ~ Age + Geographical_location, FUN = vegan::vegdist, method = "bray")
+#'  # Create a plot
+#'  plotRDA(tse, "RDA", colour_by = "Geographical_location")
+#'  
 NULL
 
 #' @rdname plotRDA
 #' @export
 setGeneric("plotRDA", signature = c("object"),
-    function(object, ...) standardGeneric("plotRDA"))
+    function(object, dimred, ...) standardGeneric("plotRDA"))
 
 
 #' @rdname plotRDA
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
-    function(object, ...){
+    function(object, dimred, ...){
         ###################### Input check #######################
         
         ###################### Input check end ####################
         # Get data for plotting
-        plot_data <- .incorporate_rda_vis(object, ...)
+        plot_data <- .incorporate_rda_vis(object, dimred, ...)
         # Create a plot
         plot <- .rda_plotter(plot_data, ...)
         return(plot)
@@ -64,11 +59,16 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 )
 
 ################## HELP FUNCTIONS ##########################
+
 # Get data for plotting
+#' @importFrom scater plotReducedDim
 .incorporate_rda_vis <- function(
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
         add_ellipse = TRUE, add_vectors = TRUE, add_significance = TRUE, add_expl_var = TRUE,
         vec_lab = NULL, ...){
+    # TODO: Catch all plotReducedDim parameters and feed them to plotReducedDim
+    # (plotReducedDim cannot accept unknown parameteers, ... is not possibel to use)
+    
     # Check dimred
     if( !dimred %in% reducedDimNames(tse) ){
         stop("'dimred' must specify reducedDim.", call. = FALSE)
@@ -83,7 +83,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     ncomponents <- 2
     
     # Get scatter plot with plotReducedDim --> keep theme similar between ordination methods
-    plot <- plotReducedDim(tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by, ...)
+    plot <- plotReducedDim(tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by)
     
     # Get data for ellipse
     ellipse_data <- NULL
@@ -108,26 +108,41 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
             vector_data[["group"]] <- rownames(vector_data)
         } else{
             # If it cannot be found, give warning
-            warning("CCA object was not found. Please calculate CCA by using runCCA/calculateCCA.", call. = FALSE)
+            warning(
+                "CCA object was not found. Please calculate CCA by using runCCA.",
+                call. = FALSE)
         }
     }
+    
     # Get variable names from sample metadata
-    variable_names <- colnames(colData(tse))
+    coldata <- colData(tse)
+    variable_names <- colnames(coldata)
+    # Check if variable names can be found metadata
+    all_var_found <- FALSE
+    if( !is.null(vector_data) && length(variable_names) > 0 ){
+        all_var_found <- all(colSums(
+            sapply(rownames(vector_data), function(x)
+                sapply(variable_names, function(y) grepl(y, x)) )) == 1)
+    }
+    
     # Get vector labels
     if( !is.null(vector_data) ){
+        # Get those names that are present in data
+        
         # If user has not provided vector labels
         if( is.null(vec_lab) ){
             vector_label <- rownames(vector_data)
             # Make labels more tidy
-            if( length(variable_names) > 0 ){
-                vector_label <- .tidy_vector_labels(vector_label, variable_names)
+            if( all_var_found ){
+                vector_label <- .tidy_vector_labels(vector_label, coldata)
             }
             # Add to df
             vector_data$vector_label <- vector_label
         } else{
             # Check that user-provided labels are correct length
             if( length(vec_lab) != nrow(vector_data) ){
-                stop("Number of labels in 'vec_lab' do not match with number of vectors.", call. = FALSE)
+                stop("Number of labels in 'vec_lab' do not match with number of vectors.",
+                     call. = FALSE)
             }
             # If they are, add labels to data
             vector_data$vector_label <- vec_lab
@@ -136,7 +151,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     
     # Get significance data
     signif_data <- NULL
-    if( add_significance && !is.null(vector_data) ){
+    if( add_significance && !is.null(vector_data) && all_var_found ){
         # Check if data is available
         ind <- names(attributes(reduced_dim)) %in% c("significance")
         # If it can be found
@@ -145,20 +160,17 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
             signif_data <- attributes(reduced_dim)[ind][[1]]
             signif_data <- signif_data[["permanova"]]
             signif_data <- as.data.frame(signif_data)
+            # Add significance to vector labels
+            # Get vector labels
+            vector_label <- vector_data[["vector_label"]]
+            # Add significance to vector labels
+            vector_label <- .add_signif_to_vector_labels(vector_label, variable_names, signif_data)
+            vector_data[["vector_label"]] <- vector_label
         } else{
             # If it cannot be found, give warning
-            warning("Significance data was not found. please calculate CCA by using runCCA/calculateCCA.", call. = FALSE)
+            warning("Significance data was not found. please calculate CCA by using runCCA.",
+                    call. = FALSE)
         }
-    }
-    # Add significance to vector labels
-    if( !is.null(signif_data) ){
-        # Get vector labels
-        vector_label <- vector_data[["vector_label"]]
-        # Add significance to vector labels
-        if( length(variable_names) > 0 ){
-            vector_label <- .add_signif_to_vector_labels(vector_label, variable_names)
-        }
-        vector_data[["vector_label"]] <- vector_label
     }
     
     # Create labels for axis
@@ -179,7 +191,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
                 format(round( summary(rda)$concont$importance[2, 2]*100, 1 ), nsmall = 1 ), "%)")
         } else{
             # If it cannot be found, give warning
-            warning("CCA object was not found. Please calculate CCA by using runCCA/calculateCCA.", call. = FALSE)
+            warning("CCA object was not found. Please calculate CCA by using runCCA.", call. = FALSE)
         }
     }
     
@@ -194,61 +206,66 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     return(result)
 }
 
-# Make vector labels more tidy
-.tidy_vector_labels <- function(vector_label, variable_names){
-    # Check that every label can be found from the variable names
-    all_found <- all(colSums(
-        sapply(rownames(rda$CCA$biplot), function(x)
-            sapply(variable_names, function(y) grepl(y, x)) )) == 1)
-    if( all_found ){
-        # Loop through vector labels
-        vector_label <- sapply(vector_label, FUN = function(name){
-            # Get the real variable name from sample metadata
-            variable_name <- variable_names[ sapply(variable_names, function(x) grepl(x, name)) ]
-            # If the vector label includes also group name
-            if( !name %in% variable_names ){
-                # Get the group name
-                group_name <- unique( coldata[[variable_name]] )[ 
-                    which( paste0(variable_name, unique( coldata[[variable_name]] )) == name ) ]
-                # Modify vector so that group is separated from variable name
-                new_name <- paste0(variable_name, " \U2012 ", group_name)
-            } else{
-                new_name <- name
-            }
-            return(new_name)
-        })
-    }
+# Make vector labels more tidy, i.e, separate variable and group names.
+# Replace also underscores with space
+.tidy_vector_labels <- function(
+        vector_label, coldata, sep_group = "\U2012", sep_underscore = " "){
+    # Get variable names from sample metadata
+    var_names <- colnames(coldata)
+    # Loop through vector labels
+    vector_label <- sapply(vector_label, FUN = function(name){
+        # Get the real variable name from sample metadata
+        var_name <- var_names[ sapply(var_names, function(x) grepl(x, name)) ]
+        # If the vector label includes also group name
+        if( !name %in% var_names ){
+            # Get the group name
+            group_name <- unique( coldata[[var_name]] )[ 
+                which( paste0(var_name, unique( coldata[[var_name]] )) == name ) ]
+            # Modify vector so that group is separated from variable name
+            new_name <- paste0(var_name, " ", sep_group, " ", group_name)
+        } else{
+            new_name <- name
+        }
+        # Replace underscores with space
+        new_name <- gsub("_", sep_underscore, new_name)
+        return(new_name)
+    })
     return(vector_label)
 }
 
-.add_signif_to_vector_labels <- function(vector_label, variable_names){
-    # Check that every label can be found from the variable names
-    all_found <- all(colSums(
-        sapply(rownames(rda$CCA$biplot), function(x)
-            sapply(variable_names, function(y) grepl(y, x)) )) == 1)
-    if( all_found ){
-        # Loop through vector labels
-        vector_label <- sapply(vector_label, FUN = function(name){
-            # Get the real variable name from sample metadata
-            variable_name <- variable_names[ sapply(variable_names, function(x) grepl(x, name)) ]
-            # Add percentage how much this variable explains, and p-value
-            new_name <- expr(
-                paste(!!name, " (", 
-                      !!format(
-                          round( signif_data[variable_name, "Explained variance"]*100, 1),
-                          nsmall = 1), "%, ", italic("P"), " = ",
-                      !!gsub("0\\.","\\.", format(
-                          round( signif_data[variable_name, "Pr(>F)"], 3),
-                          nsmall = 3)), ")"))
-            
-            return(new_name)
-        })
-    }
+# This function adds significance info to vector labels
+.add_signif_to_vector_labels <- function(vector_label, var_names, signif_data, sep_underscore = " "){
+    # Replace underscores from significance data and variable names to match labels
+    rownames(signif_data) <- sapply(rownames(signif_data), function(x) gsub("_", sep_underscore, x))
+    var_names <- sapply(var_names, function(x) gsub("_", sep_underscore, x))
+    # Loop through vector labels
+    vector_label <- sapply(vector_label, FUN = function(name){
+        # Get the real variable name from sample metadata
+        var_name <- var_names[ sapply(var_names, function(x) grepl(x, name)) ]
+        # Add percentage how much this variable explains, and p-value
+        new_name <- expr(
+            paste(!!name, " (", 
+                  !!format(
+                      round( signif_data[var_name, "Explained variance"]*100, 1),
+                      nsmall = 1), "%, ", italic("P"), " = ",
+                  !!gsub("0\\.","\\.", format(
+                      round( signif_data[var_name, "Pr(>F)"], 3),
+                      nsmall = 3)), ")"))
+        
+        return(new_name)
+    })
     return(vector_label)
 }
 
 # Plot based on the data
-.rda_plotter <- function(plot_data, alpha = 0.2, vec_size = 0.25, vec_color = vec_colour, vec_colour = "black", ...){
+#' @importFrom ggrepel geom_text_repel
+.rda_plotter <- function(
+        plot_data, alpha = 0.2, vec_size = 0.25, vec_color = vec_colour,
+        vec_colour = "black", ...){
+    # TODO: Ellipse: fill or just an edge? --> Edge line type?
+    # TODO: vector: vector line type, vector arrow size and line bulkiness
+    # TODO: vector labels: Adjust labels position, turn off ggrepel, text color, text size, text label?, parse off?
+    
     # Get the scatter plot
     plot <- plot_data[["plot"]]
     # Add ellipse
@@ -262,7 +279,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         plot <- plot +
             stat_ellipse(data = data,
                          aes(x = .data[[xvar]], y = .data[[yvar]], fill = .data[[colour_var]]),
-                         geom="polygon", alpha = alpha)
+                         geom = "polygon", alpha = alpha)
     }
     # Add vectors
     if( !is.null(plot_data$vector_data) ){
