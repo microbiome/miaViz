@@ -258,10 +258,10 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 }
 
 # Plot based on the data
-#' @importFrom ggrepel geom_text_repel
+#' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter <- function(
         plot_data, alpha = 0.2, vec_size = 0.25, vec_color = vec_colour,
-        vec_colour = "black", ...){
+        vec_colour = "black", min.segment.length = 5, parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, ...){
     # TODO: Ellipse: fill or just an edge? --> Edge line type?
     # TODO: vector: vector line type, vector arrow size and line bulkiness
     # TODO: vector labels: Adjust labels position, turn off ggrepel, text color, text size, text label?, parse off?
@@ -275,11 +275,19 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         xvar <- colnames(data)[[1]]
         yvar <- colnames(data)[[2]]
         colour_var <- attributes(plot_data$ellipse_data)$colour_by
-        # Add ellipses to plot
-        plot <- plot +
-            stat_ellipse(data = data,
-                         aes(x = .data[[xvar]], y = .data[[yvar]], fill = .data[[colour_var]]),
-                         geom = "polygon", alpha = alpha)
+        # Add ellipses to plot (fill or colour the edge)
+        if( ellipse_fill ){
+            plot <- plot +
+                stat_ellipse(data = data,
+                             aes(x = .data[[xvar]], y = .data[[yvar]], fill = .data[[colour_var]]),
+                             geom = "polygon", alpha = alpha)
+        } else{
+            plot <- plot +
+                stat_ellipse(data = data,
+                             aes(x = .data[[xvar]], y = .data[[yvar]], color = .data[[colour_var]]),
+                             geom = "polygon", alpha = 0)
+        }
+        
     }
     # Add vectors
     if( !is.null(plot_data$vector_data) ){
@@ -293,11 +301,21 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
                          aes(x = 0, y = 0, xend = .data[[xvar]], yend = .data[[yvar]],
                              group = .data[["group"]]),
                          arrow = arrow(length = unit(vec_size, "cm")), color = vec_color)
-        # Add vector labels
-        plot <- plot +
-            geom_text_repel(data = data, aes(x = .data[[xvar]], y = .data[[yvar]]),
-                            label = data[["vector_label"]], parse = TRUE
-            )
+        # Add vector labels (text or label)
+        if( vec_text ){
+            plot <- plot +
+                geom_text_repel(data = data, aes(x = .data[[xvar]], y = .data[[yvar]]),
+                                label = data[["vector_label"]], parse = parse,
+                                min.segment.length = min.segment.length, ...
+                )
+        } else{
+            plot <- plot +
+                geom_label_repel(data = data, aes(x = .data[[xvar]], y = .data[[yvar]]),
+                                label = data[["vector_label"]], parse = parse,
+                                min.segment.length = min.segment.length, ...
+                )
+        }
+        
         
     }
     # Add axis labels
