@@ -265,6 +265,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     # TODO: Ellipse: fill or just an edge? --> Edge line type?
     # TODO: vector: vector line type, vector arrow size and line bulkiness
     # TODO: vector labels: Adjust labels position, turn off ggrepel, text color, text size, text label?, parse off?
+    # --> catch all geomrepel parameters (there will be a warning if we try to feed there parameter that doesbeong to plotReducedDim for example)
     
     # Get the scatter plot
     plot <- plot_data[["plot"]]
