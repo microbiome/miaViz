@@ -260,7 +260,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 # Plot based on the data
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter <- function(
-        plot_data, alpha = 0.2, vec_size = 0.25, vec_color = vec_colour,
+        plot_data, alpha = 0.2, ellipse_size = 0.1, vec_size = 0.25, vec_color = vec_colour,
         vec_colour = "black", min.segment.length = 5, parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, ...){
     # TODO: Ellipse: fill or just an edge? --> Edge line type?
     # TODO: vector: vector line type, vector arrow size and line bulkiness
@@ -280,8 +280,9 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         if( ellipse_fill ){
             plot <- plot +
                 stat_ellipse(data = data,
-                             aes(x = .data[[xvar]], y = .data[[yvar]], fill = .data[[colour_var]]),
-                             geom = "polygon", alpha = alpha)
+                             aes(x = .data[[xvar]], y = .data[[yvar]],
+                                 color = .data[[colour_var]], fill = after_scale(color)),
+                             geom = "polygon", alpha = alpha, size = ellipse_size)
         } else{
             plot <- plot +
                 stat_ellipse(data = data,
