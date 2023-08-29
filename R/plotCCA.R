@@ -260,12 +260,13 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 # Plot based on the data
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter <- function(
-        plot_data, alpha = 0.2, ellipse_size = 0.1, vec_size = 0.25, vec_color = vec_colour,
-        vec_colour = "black", min.segment.length = 5, parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, ...){
-    # TODO: Ellipse: fill or just an edge? --> Edge line type?
-    # TODO: vector: vector line type, vector arrow size and line bulkiness
-    # TODO: vector labels: Adjust labels position, turn off ggrepel, text color, text size, text label?, parse off?
-    # --> catch all geomrepel parameters (there will be a warning if we try to feed there parameter that doesbeong to plotReducedDim for example)
+        plot_data, alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
+        vec_size = 0.5, vec_color = vec_colour, vec_colour = "black",
+        vec_linetype = 1, arrow_size = 0.25, min.segment.length = 5,
+        text_color = text_colour, text_colour = "black", text_size = 4,
+        parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, ...){
+    # TODO: vector labels: Adjust labels position, turn off ggrepel
+    # --> catch all geomrepel parameters (there will be a warning if we try to feed there parameter that belongs to plotReducedDim for example)
     
     # Get the scatter plot
     plot <- plot_data[["plot"]]
@@ -282,12 +283,13 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
                 stat_ellipse(data = data,
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
-                             geom = "polygon", alpha = alpha, size = ellipse_size)
+                             geom = "polygon", alpha = alpha, size = ellipse_size,
+                             linetype = ellipse_linetype)
         } else{
             plot <- plot +
                 stat_ellipse(data = data,
                              aes(x = .data[[xvar]], y = .data[[yvar]], color = .data[[colour_var]]),
-                             geom = "polygon", alpha = 0)
+                             geom = "polygon", alpha = 0, linetype = ellipse_linetype)
         }
         
     }
@@ -302,22 +304,22 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
             geom_segment(data = data,
                          aes(x = 0, y = 0, xend = .data[[xvar]], yend = .data[[yvar]],
                              group = .data[["group"]]),
-                         arrow = arrow(length = unit(vec_size, "cm")), color = vec_color)
+                         arrow = arrow(length = unit(arrow_size, "cm")),
+                         color = vec_color, linetype = vec_linetype, size = vec_size)
         # Add vector labels (text or label)
         if( vec_text ){
             plot <- plot +
                 geom_text_repel(data = data, aes(x = .data[[xvar]], y = .data[[yvar]]),
                                 label = data[["vector_label"]], parse = parse,
-                                min.segment.length = min.segment.length, ...
-                )
+                                min.segment.length = min.segment.length,
+                                color = text_color, size = text_size, ...)
         } else{
             plot <- plot +
                 geom_label_repel(data = data, aes(x = .data[[xvar]], y = .data[[yvar]]),
-                                label = data[["vector_label"]], parse = parse,
-                                min.segment.length = min.segment.length, ...
-                )
+                                 label = data[["vector_label"]], parse = parse,
+                                 min.segment.length = min.segment.length,
+                                 color = text_color, size = text_size, ...)
         }
-        
         
     }
     # Add axis labels
