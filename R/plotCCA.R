@@ -264,10 +264,10 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         vec_size = 0.5, vec_color = vec_colour, vec_colour = "black",
         vec_linetype = 1, arrow_size = 0.25, min.segment.length = 5,
         text_color = text_colour, text_colour = "black", text_size = 4,
-        parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, ...){
-    # TODO: vector labels: Adjust labels position, turn off ggrepel
-    # --> catch all geomrepel parameters (there will be a warning if we try to feed there parameter that belongs to plotReducedDim for example)
-    
+        parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, repel_text = TRUE,
+        nudge_x = 0, nudge_y = 0, direction = "both",
+        max.overlaps = 10, check_overlap = FALSE, ...){
+
     # Get the scatter plot
     plot <- plot_data[["plot"]]
     # Add ellipse
@@ -307,18 +307,41 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
                          arrow = arrow(length = unit(arrow_size, "cm")),
                          color = vec_color, linetype = vec_linetype, size = vec_size)
         # Add vector labels (text or label)
-        if( vec_text ){
-            plot <- plot +
-                geom_text_repel(data = data, aes(x = .data[[xvar]], y = .data[[yvar]]),
-                                label = data[["vector_label"]], parse = parse,
-                                min.segment.length = min.segment.length,
-                                color = text_color, size = text_size, ...)
+        # Make list of arguments for geom_text/geom_label
+        text_args <- list(
+                      data = data,
+                      mapping = aes(x = .data[[xvar]], y = .data[[yvar]]),
+                      label = data[["vector_label"]], parse = parse,
+                      color = text_color, size = text_size, stat = "identity",
+                      nudge_x = nudge_x, nudge_y = nudge_y, show.legend = NA,
+                      na.rm = FALSE, inherit.aes = TRUE
+                     )
+        # Repel text
+        if( repel_text ){
+          # Add arguments for geom_text_repel/geom_label_repel to list
+          text_args <- c(
+            text_args, min.segment.length = min.segment.length,
+            box.padding = 0.25, point.padding = 1e-06, force = 1, force_pull = 1,
+            max.time = 0.5, max.iter = 10000, max.overlaps = max.overlaps,
+            direction = direction, seed = NA, verbose = FALSE
+          )
+          # repelled text
+          if( vec_text ){
+            plot <- plot + do.call("geom_text_repel", text_args)
+          # repelled labels
+          } else{
+            plot <- plot + do.call("geom_label_repel", text_args)
+          }
+        # Do not repel text
         } else{
-            plot <- plot +
-                geom_label_repel(data = data, aes(x = .data[[xvar]], y = .data[[yvar]]),
-                                 label = data[["vector_label"]], parse = parse,
-                                 min.segment.length = min.segment.length,
-                                 color = text_color, size = text_size, ...)
+          # not repelled text
+          if( vec_text ){
+            text_args <- c(text_args, check_overlap = check_overlap)
+            plot <- plot + do.call("geom_text", text_args)
+          # not repelled labels
+          } else{
+            plot <- plot + do.call("geom_label", text_args)
+          }
         }
         
     }
