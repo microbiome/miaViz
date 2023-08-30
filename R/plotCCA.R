@@ -64,10 +64,10 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 #' @importFrom scater plotReducedDim
 .incorporate_rda_vis <- function(
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
-        add_ellipse = TRUE, add_vectors = TRUE, add_significance = TRUE, add_expl_var = TRUE,
-        vec_lab = NULL, ...){
-    # TODO: Catch all plotReducedDim parameters and feed them to plotReducedDim
-    # (plotReducedDim cannot accept unknown parameteers, ... is not possibel to use)
+        shape_by = NULL, size_by = NULL, order_by = NULL, text_by = NULL,
+        other_fields = list(), swap_rownames = NULL, point.padding = NA,
+        add_ellipse = TRUE, add_vectors = TRUE, add_significance = TRUE,
+        add_expl_var = TRUE, vec_lab = NULL, bins = NULL, ...){
     
     # Check dimred
     if( !dimred %in% reducedDimNames(tse) ){
@@ -81,9 +81,17 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     }
     # Only 2 dimensions are supported currently
     ncomponents <- 2
-    
+    # Make list of arguments for plotReducedDim
+    plotReducedDim_args <- list(
+      object = tse, dimred = dimred, ncomponents = ncomponents, colour_by = color_by,
+      color_by = color_by, shape_by = shape_by, size_by = size_by, order_by = order_by,
+      text_by = text_by, text_size = 5, text_colour = "black", text_color = "black",
+      label_format = c("%s %i", " (%i%%)"), other_fields = other_fields,
+      swap_rownames = swap_rownames, point.padding = point.padding, force = 1,
+      rasterise = FALSE, scattermore = FALSE, summary_fun = "sum", hex = FALSE
+    )
     # Get scatter plot with plotReducedDim --> keep theme similar between ordination methods
-    plot <- plotReducedDim(tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by)
+    plot <- do.call("plotReducedDim", plotReducedDim_args)
     
     # Get data for ellipse
     ellipse_data <- NULL
