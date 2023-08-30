@@ -94,7 +94,7 @@
 #' plotAbundanceDensity(tse, assay.type = "counts")
 #' 
 #' # Counts relative abundances
-#' tse <- transformCounts(tse, method = "relabundance")
+#' tse <- transformAssay(tse, method = "relabundance")
 #' 
 #' # Plots the relative abundance of 10 most abundant taxa. 
 #' # "nationality" information is used to color the points. X-axis is log-scaled.
