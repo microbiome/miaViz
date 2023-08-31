@@ -141,7 +141,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 ################## HELP FUNCTIONS ##########################
 
 # Get data for plotting
-#' @importFrom scater plotReducedDim
+#' @importFrom scater plotReducedDim retrieveCellInfo
 .incorporate_rda_vis <- function(
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
         shape_by = NULL, size_by = NULL, order_by = NULL, text_by = NULL,
@@ -178,7 +178,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     if( add_ellipse && !is.null(colour_by) ){
         ellipse_data <- reduced_dim
         ellipse_data <- as.data.frame(ellipse_data)
-        ellipse_data[[colour_by]] <- colData(tse)[[colour_by]]
+        ellipse_data[[colour_by]] <- retrieveCellInfo(tse, colour_by)[["value"]]
         attributes(ellipse_data)$colour_by <- colour_by
     }
     
