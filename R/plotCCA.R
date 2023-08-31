@@ -1,25 +1,58 @@
 #' Plot RDA or CCA object
 #'
 #'
-#' @param object a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'    object or (db)RDA or CCA object..
+#' @param tse a
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or a
+#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
+#'   object.
+#' 
+#' @param dimred A string or integer scalar indicating the reduced dimension to
+#'   plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
+#'   \code{reducedDim(tse, dimred)}.
 #'
-#' @param assay.type a single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   plotted. (default: \code{assay.type = "counts"})
-#'   
-#'   
-#' @param ... additional parameters for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
+#' @param colour_by String specifying the name of a column in colData to colour by
+#'   (Default: NULL).
+#' 
+#' @param color_by Alias for `colour_by`.
+#' 
+#' @param ellipse_fill if TRUE, ellipses are filled. (Default: TRUE).
 #'
+#' @param alpha Number between 0 and 1 to adjust the opacity of ellipses (Default: 0.2).
+#'
+#' @param ellipse_size Number specifying the size of ellipses (Default: 0.1).
+#' 
+#' @param ellipse_linetype Discrete number specifying the style of ellipses (Default: 1).
+#' 
+#' @param vec_size Number specifying the size of vectors (Default: 0.5).
+#' 
+#' @param vec_colour String specifying the colour of vectors (Default: "black").
+#' 
+#' @param vec_color Alias for `vec_colour`.
+#' 
+#' @param vec_linetype Discrete number specifying the style of vector lines (Default: 1).
+#' 
+#' @param arrow_size Number specifying the size of arrows (Defaults: 0.25).
+#' 
+#' @param text_size Number specifying the size of text and labels (Default: 4).
+#' 
+#' @param text_colour String specifying the colour of text and labels (Default: "black").
+#' 
+#' @param text_color Alias for `text_colour`.
+#' 
+#' @param vec_text If TRUE, text instead of labels are used to label vectors (Default: TRUE).
+#' 
+#' @param repel_text If TRUE, labels are repelled (Default: TRUE).
+#' 
+#' @param ... additional parameters for plotting, inherited from
+#'   \code{\link[scater:plotReducedDim]{plotReducedDim}},
+#'   \code{\link[ggplot2:geom_label]{geom_label}} and
+#'   \code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.
+#' 
 #' @details
-#' This function creates a RDA/CCA plot. If the input is TreeSE, the input
-#' 
-#' If the input is result of calculateRDA...
-#' 
-#' If the input is rda/cca object...
-#' 
+#' plotRDA and plotCCA create an RDA/CCA plot. Currently, only
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' objects are supported as input, and they should contain the output of
+#' \code{\link[mia:runCCA]{runRDA}}.
 #' 
 #' @return 
 #' A \code{ggplot2} object 
@@ -28,12 +61,35 @@
 #'
 #' @examples
 #' 
-#'  data(peerj13075)
-#'  tse <- peerj13075
+#'  # Load dataset
+#'  data("enterotype", package = "mia")
+#'  tse <- enterotype
+#'  
 #'  # Perform RDA
-#'  tse <- runRDA(tse, data ~ Age + Geographical_location, FUN = vegan::vegdist, method = "bray")
-#'  # Create a plot
-#'  plotRDA(tse, "RDA", colour_by = "Geographical_location")
+#'  tse <- runRDA(tse,
+#`                formula = assay ~ ClinicalStatus + Gender + Age,
+#'                FUN = vegan::vegdist,
+#'                distance = "bray")
+#'                
+#'  # Create RDA plot coloured by variable
+#'  plotRDA(tse, "RDA",
+#'          colour_by = "ClinicalStatus")
+#'  
+#'  # Create RDA plot with empty ellipses
+#'  plotRDA(tse, "RDA",
+#'          colour_by = "ClinicalStatus,
+#'          ellipse_fill = FALSE)
+#'  
+#'  # Create RDA plot with text encased in labels
+#'  plotRDA(tse, "RDA",
+#'          colour_by = "ClinicalStatus,
+#'          vec_text = FALSE)
+#'  
+#'  # Create RDA plot without repelling text
+#'  plotRDA(tse, "RDA",
+#'          colour_by = "ClinicalStatus,
+#'          repel_text = FALSE)
+#'  
 #'  
 NULL
 
@@ -273,7 +329,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         vec_linetype = 1, arrow_size = 0.25, min.segment.length = 5,
         text_color = text_colour, text_colour = "black", text_size = 4,
         parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, repel_text = TRUE,
-        nudge_x = 0, nudge_y = 0, direction = "both",
+        position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
 
     # Get the scatter plot
