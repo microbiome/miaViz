@@ -334,7 +334,7 @@ if(!requireNamespace("devtools", quietly = TRUE)){
     BiocManager::install("devtools")
 }
 if(!requireNamespace("miaTime", quietly = TRUE)){
-    devtools::install_github("microbiome/miaTime")
+    devtools::install_github("microbiome/miaTime", upgrade = "never")
 }
 ```
 

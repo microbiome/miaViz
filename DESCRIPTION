@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.9.1
+Version: 1.9.2
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -10,7 +10,8 @@ Authors@R:
              comment = c(ORCID = "0000-0001-5064-0928")),
       person(given = "Leo", family = "Lahti", role = c("aut"),
              email = "leo.lahti@iki.fi",
-             comment = c(ORCID = "0000-0001-5537-637X"))
+             comment = c(ORCID = "0000-0001-5537-637X")),
+      person(given = "Basil", family = "Courbayre", role = c("ctb"))
 	     )
 Description: The miaViz package implements functions to visualize
     TreeSummarizedExperiment objects especially in the context of microbiome
@@ -30,7 +31,6 @@ Imports:
     methods,
     stats,
     S4Vectors,
-    miaTime,    
     BiocGenerics,
     BiocParallel,
     DelayedArray,
@@ -55,7 +55,9 @@ Suggests:
     testthat,
     patchwork,
     vegan,
-    microbiomeDataSets
+    microbiomeDataSets,
+    bluster,
+    miaTime
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr

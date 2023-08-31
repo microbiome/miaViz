@@ -17,3 +17,6 @@ Changes in version 1.5.x
 
 Changes in version 1.7.x
 + Fixed plotGraph* that was broked due changes in dependencies
+
+Changes in version 1.9.x
++ Updated plotDMN to work with newest mia version
