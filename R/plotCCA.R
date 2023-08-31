@@ -1,7 +1,7 @@
 #' Plot RDA or CCA object
 #'
 #'
-#' @param tse a
+#' @param object a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 #'   object.
@@ -62,7 +62,8 @@
 #' @examples
 #' 
 #'  # Load dataset
-#'  data("enterotype", package = "mia")
+#'  library(miaViz)
+#'  data(enterotype)
 #'  tse <- enterotype
 #'  
 #'  # Perform RDA
@@ -94,12 +95,35 @@
 NULL
 
 #' @rdname plotRDA
+#' @aliases plotRDA
+#' @export
+setGeneric("plotCCA", signature = c("object"),
+           function(object, dimred, ...) standardGeneric("plotCCA"))
+
+#' @rdname plotCCA
+#' @aliases plotRDA
+#' @export
+setMethod("plotCCA", signature = c(object = "SingleCellExperiment"),
+    function(object, dimred, ...){
+        ###################### Input check #######################
+            
+        ###################### Input check end ####################
+        # Get data for plotting
+        plot_data <- .incorporate_rda_vis(object, dimred, ...)
+        # Create a plot
+        plot <- .rda_plotter(plot_data, ...)
+        return(plot)
+    }
+)
+
+#' @rdname plotRDA
+#' @aliases plotCCA
 #' @export
 setGeneric("plotRDA", signature = c("object"),
     function(object, dimred, ...) standardGeneric("plotRDA"))
 
-
 #' @rdname plotRDA
+#' @aliases plotCCA
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     function(object, dimred, ...){
