@@ -142,7 +142,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
             vector_label <- rownames(vector_data)
             # Make labels more tidy
             if( all_var_found ){
-                vector_label <- .tidy_vector_labels(vector_label, coldata)
+                vector_label <- .tidy_vector_labels(vector_label, coldata, ...)
             }
             # Add to df
             vector_data$vector_label <- vector_label
@@ -172,7 +172,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
             # Get vector labels
             vector_label <- vector_data[["vector_label"]]
             # Add significance to vector labels
-            vector_label <- .add_signif_to_vector_labels(vector_label, variable_names, signif_data)
+            vector_label <- .add_signif_to_vector_labels(vector_label, variable_names, signif_data, ...)
             vector_data[["vector_label"]] <- vector_label
         } else{
             # If it cannot be found, give warning
@@ -217,7 +217,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 # Make vector labels more tidy, i.e, separate variable and group names.
 # Replace also underscores with space
 .tidy_vector_labels <- function(
-        vector_label, coldata, sep_group = "\U2012", sep_underscore = " "){
+        vector_label, coldata, sep_group = "\U2012", sep_underscore = " ", ...){
     # Get variable names from sample metadata
     var_names <- colnames(coldata)
     # Loop through vector labels
@@ -242,7 +242,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 }
 
 # This function adds significance info to vector labels
-.add_signif_to_vector_labels <- function(vector_label, var_names, signif_data, sep_underscore = " "){
+.add_signif_to_vector_labels <- function(vector_label, var_names, signif_data, sep_underscore = " ", ...){
     # Replace underscores from significance data and variable names to match labels
     rownames(signif_data) <- sapply(rownames(signif_data), function(x) gsub("_", sep_underscore, x))
     var_names <- sapply(var_names, function(x) gsub("_", sep_underscore, x))
