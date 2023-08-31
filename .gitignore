@@ -3,9 +3,6 @@ inst/doc
 docs
 .Rhistory
 *.RData
-<<<<<<< HEAD
 .DS_Store
-=======
 /doc/
 /Meta/
->>>>>>> origin/plotRDA
