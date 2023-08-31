@@ -2,9 +2,9 @@
 #'
 #'
 #' @param object a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}} or a
+#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}, a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-#'   object.
+#'   or a rda/cca object. The latter is the output of \code{\link[mia:runCCA]{calculateRDA}}.
 #' 
 #' @param dimred A string or integer scalar indicating the reduced dimension to
 #'   plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
@@ -49,10 +49,18 @@
 #'   \code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.
 #' 
 #' @details
-#' plotRDA and plotCCA create an RDA/CCA plot. Currently, only
+#' plotRDA and plotCCA create an RDA/CCA plot starting from the output of
+#' \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods for
+#' supervised ordination of microbiome data. Both
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' objects are supported as input, and they should contain the output of
-#' \code{\link[mia:runCCA]{runRDA}}.
+#' and rda/cca objects are supported as input. When the input is a SummarizedExperiment
+#' or a TreeSummarizedExperiment, this should contain the output of runRDA
+#' in the reducedDim slot and the argument \code{dimred} needs to be defined.
+#' When the input is an rda/cca object, this should be returned from
+#' calculateRDA and the argument \code{dimred} needs not be defined. However,
+#' the first method is recommended because it provides the option to adjust
+#' aesthetics to the colData variables through the arguments inherited from
+#' \code{\link[scater:plotReducedDim]{plotReducedDim}}.
 #' 
 #' @return 
 #' A \code{ggplot2} object 
@@ -100,7 +108,7 @@ NULL
 setGeneric("plotCCA", signature = c("object"),
            function(object, dimred, ...) standardGeneric("plotCCA"))
 
-#' @rdname plotCCA
+#' @rdname plotRDA
 #' @aliases plotRDA
 #' @export
 setMethod("plotCCA", signature = c(object = "SingleCellExperiment"),
@@ -110,6 +118,24 @@ setMethod("plotCCA", signature = c(object = "SingleCellExperiment"),
         ###################### Input check end ####################
         # Get data for plotting
         plot_data <- .incorporate_rda_vis(object, dimred, ...)
+        # Create a plot
+        plot <- .rda_plotter(plot_data, ...)
+        return(plot)
+    }
+)
+
+#' @rdname plotRDA
+#' @aliases plotRDA
+#' @export
+setMethod("plotCCA", signature = c(object = "matrix"),
+    function(object, ...){
+        ###################### Input check #######################
+            
+        ###################### Input check end ####################
+        # Construct TreeSE from rda/cca object
+        object <- .rda2tse(object)
+        # Get data for plotting
+        plot_data <- .incorporate_rda_vis(object, "RDA", ...)
         # Create a plot
         plot <- .rda_plotter(plot_data, ...)
         return(plot)
@@ -138,7 +164,46 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     }
 )
 
+#' @rdname plotRDA
+#' @aliases plotCCA
+#' @export
+setMethod("plotRDA", signature = c(object = "matrix"),
+    function(object, ...){
+        ###################### Input check #######################
+            
+        ###################### Input check end ####################
+        # Construct TreeSE from rda/cca object
+        object <- .rda2tse(object)
+        # Get data for plotting
+        plot_data <- .incorporate_rda_vis(object, "RDA", ...)
+        # Create a plot
+        plot <- .rda_plotter(plot_data, ...)
+        return(plot)
+    }
+)
+
+
 ################## HELP FUNCTIONS ##########################
+
+# Construct TreeSE from rda/cca object to pass it to downstream functions
+.rda2tse <- function(object) {
+    # If rda/cca object, convert it to TreeSE
+    if (is.matrix(object)) {
+        # Remove significance attribute if present
+        attr(rda, "significance") <- NULL
+        # Make empty colData
+        coldata <- data.frame(ID = rownames(rda))
+        rownames(coldata) <- coldata[["ID"]]
+        coldata[["ID"]] <- NULL
+        # Convert rda/cca object to TreeSE
+        object <- TreeSummarizedExperiment(
+          assays = SimpleList(),
+          colData = coldata,
+          reducedDims = list(RDA = rda)
+        )
+    }
+    return(object)
+}
 
 # Get data for plotting
 #' @importFrom scater plotReducedDim retrieveCellInfo
