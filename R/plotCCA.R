@@ -2,20 +2,14 @@
 #'
 #'
 #' @param object a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}, a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-#'   or a rda/cca object. The latter is the output of \code{\link[mia:runCCA]{calculateRDA}}.
+#'   or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{calculateRDA}}.
 #' 
 #' @param dimred A string or integer scalar indicating the reduced dimension to
 #'   plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
 #'   \code{reducedDim(tse, dimred)}.
-#'
-#' @param colour_by String specifying the name of a column in colData to colour by
-#'   (Default: NULL).
 #' 
-#' @param color_by Alias for `colour_by`.
-#' 
-#' @param ellipse_fill if TRUE, ellipses are filled. (Default: TRUE).
+#' @param ellipse_fill if TRUE, ellipses are opacity filled (Default: TRUE).
 #'
 #' @param alpha Number between 0 and 1 to adjust the opacity of ellipses (Default: 0.2).
 #'
@@ -52,11 +46,11 @@
 #' plotRDA and plotCCA create an RDA/CCA plot starting from the output of
 #' \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods for
 #' supervised ordination of microbiome data. Both
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' and rda/cca objects are supported as input. When the input is a SummarizedExperiment
-#' or a TreeSummarizedExperiment, this should contain the output of runRDA
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
+#' and matrix objects are supported as input. When the input is a
+#' TreeSummarizedExperiment, this should contain the output of runRDA
 #' in the reducedDim slot and the argument \code{dimred} needs to be defined.
-#' When the input is an rda/cca object, this should be returned from
+#' When the input is an matrix, this should be returned as output from
 #' calculateRDA and the argument \code{dimred} needs not be defined. However,
 #' the first method is recommended because it provides the option to adjust
 #' aesthetics to the colData variables through the arguments inherited from
@@ -74,7 +68,7 @@
 #'  data(enterotype)
 #'  tse <- enterotype
 #'  
-#'  # Perform RDA
+#'  # Run RDA and store results into TreeSE
 #'  tse <- runRDA(tse,
 #`                formula = assay ~ ClinicalStatus + Gender + Age,
 #'                FUN = vegan::vegdist,
@@ -99,6 +93,14 @@
 #'          colour_by = "ClinicalStatus,
 #'          repel_text = FALSE)
 #'  
+#'  # Calculate RDA as a separate object
+#'  rda_mat <- calculateRDA(tse,
+#`                          formula = assay ~ ClinicalStatus + Gender + Age,
+#'                          FUN = vegan::vegdist,
+#'                          distance = "bray")
+#'  
+#'  # Create RDA plot from RDA matrix
+#'  plotRDA(rda_mat)
 #'  
 NULL
 
@@ -114,13 +116,10 @@ setGeneric("plotCCA", signature = c("object"),
 setMethod("plotCCA", signature = c(object = "SingleCellExperiment"),
     function(object, dimred, ...){
         ###################### Input check #######################
-            
+
         ###################### Input check end ####################
-        # Get data for plotting
-        plot_data <- .incorporate_rda_vis(object, dimred, ...)
-        # Create a plot
-        plot <- .rda_plotter(plot_data, ...)
-        return(plot)
+        # Reproduce plotRDA function
+        return(plotRDA(object, dimred, ...))
     }
 )
 
@@ -132,13 +131,8 @@ setMethod("plotCCA", signature = c(object = "matrix"),
         ###################### Input check #######################
             
         ###################### Input check end ####################
-        # Construct TreeSE from rda/cca object
-        object <- .rda2tse(object)
-        # Get data for plotting
-        plot_data <- .incorporate_rda_vis(object, "RDA", ...)
-        # Create a plot
-        plot <- .rda_plotter(plot_data, ...)
-        return(plot)
+        # Reproduce plotRDA function
+        return(plotRDA(object, ...))
     }
 )
 
@@ -174,11 +168,8 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         ###################### Input check end ####################
         # Construct TreeSE from rda/cca object
         object <- .rda2tse(object)
-        # Get data for plotting
-        plot_data <- .incorporate_rda_vis(object, "RDA", ...)
-        # Create a plot
-        plot <- .rda_plotter(plot_data, ...)
-        return(plot)
+        # Run plotRDA method for TreeSE
+        return(plotRDA(object, "RDA", ...))
     }
 )
 
@@ -187,21 +178,12 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 
 # Construct TreeSE from rda/cca object to pass it to downstream functions
 .rda2tse <- function(object) {
-    # If rda/cca object, convert it to TreeSE
-    if (is.matrix(object)) {
-        # Remove significance attribute if present
-        attr(rda, "significance") <- NULL
-        # Make empty colData
-        coldata <- data.frame(ID = rownames(rda))
-        rownames(coldata) <- coldata[["ID"]]
-        coldata[["ID"]] <- NULL
-        # Convert rda/cca object to TreeSE
-        object <- TreeSummarizedExperiment(
-          assays = SimpleList(),
-          colData = coldata,
-          reducedDims = list(RDA = rda)
-        )
-    }
+    # Convert rda/cca object to TreeSE
+    object <- TreeSummarizedExperiment(
+      assays = matrix(ncol = nrow(object), dimnames = list(NULL, rownames(object))),
+      colData = DataFrame(row.names = rownames(object)),
+      reducedDims = list(RDA = object)
+    )
     return(object)
 }
 
