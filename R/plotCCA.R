@@ -11,7 +11,7 @@
 #' 
 #' @param ellipse_fill if TRUE, ellipses are opacity filled (Default: TRUE).
 #'
-#' @param alpha Number between 0 and 1 to adjust the opacity of ellipses (Default: 0.2).
+#' @param ellipse_alpha Number between 0 and 1 to adjust the opacity of ellipses (Default: 0.2).
 #'
 #' @param ellipse_size Number specifying the size of ellipses (Default: 0.1).
 #' 
@@ -27,11 +27,11 @@
 #' 
 #' @param arrow_size Number specifying the size of arrows (Defaults: 0.25).
 #' 
-#' @param text_size Number specifying the size of text and labels (Default: 4).
+#' @param label_size Number specifying the size of text and labels (Default: 4).
 #' 
-#' @param text_colour String specifying the colour of text and labels (Default: "black").
+#' @param label_colour String specifying the colour of text and labels (Default: "black").
 #' 
-#' @param text_color Alias for `text_colour`.
+#' @param label_color Alias for `label_colour`.
 #' 
 #' @param vec_text If TRUE, text instead of labels are used to label vectors (Default: TRUE).
 #' 
@@ -140,13 +140,21 @@ setMethod("plotCCA", signature = c(object = "matrix"),
 #' @aliases plotCCA
 #' @export
 setGeneric("plotRDA", signature = c("object"),
-    function(object, dimred, ...) standardGeneric("plotRDA"))
+    function(object, dimred,
+             ellipse_fill = TRUE, ellipse_alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
+             vec_size = 0.5, vec_color = vec_colour, vec_colour = "black", vec_linetype = 1,
+             arrow_size = 0.25, label_color = label_colour, label_colour = "black", label_size = 4,
+             vec_text = TRUE, repel_text = TRUE, ...) standardGeneric("plotRDA"))
 
 #' @rdname plotRDA
 #' @aliases plotCCA
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
-    function(object, dimred, ...){
+    function(object, dimred,
+             ellipse_fill = TRUE, ellipse_alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
+             vec_size = 0.5, vec_color = vec_colour, vec_colour = "black", vec_linetype = 1,
+             arrow_size = 0.25, label_color = label_colour, label_colour = "black", label_size = 4,
+             vec_text = TRUE, repel_text = TRUE, ...){
         ###################### Input check #######################
         
         ###################### Input check end ####################
@@ -210,9 +218,9 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     ncomponents <- 2
     # Make list of arguments for plotReducedDim
     plotReducedDim_args <- list(
-      object = tse, dimred = dimred, ncomponents = ncomponents, colour_by = color_by,
-      color_by = color_by, shape_by = shape_by, size_by = size_by, order_by = order_by,
-      text_by = text_by, text_size = 5, text_colour = "black", text_color = "black",
+      object = tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by,
+      shape_by = shape_by, size_by = size_by, order_by = order_by, text_by = text_by,
+      text_size = 5, text_colour = "black", text_color = "black",
       label_format = c("%s %i", " (%i%%)"), other_fields = other_fields,
       swap_rownames = swap_rownames, point.padding = point.padding, force = 1,
       rasterise = FALSE, scattermore = FALSE, summary_fun = "sum", hex = FALSE
@@ -395,10 +403,10 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 # Plot based on the data
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter <- function(
-        plot_data, alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
+        plot_data, ellipse_alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
         vec_size = 0.5, vec_color = vec_colour, vec_colour = "black",
         vec_linetype = 1, arrow_size = 0.25, min.segment.length = 5,
-        text_color = text_colour, text_colour = "black", text_size = 4,
+        label_color = label_colour, label_colour = "black", label_size = 4,
         parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, repel_text = TRUE,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
@@ -418,8 +426,8 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                 stat_ellipse(data = data,
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
-                             geom = "polygon", alpha = alpha, size = ellipse_size,
-                             linetype = ellipse_linetype)
+                             geom = "polygon", alpha = ellipse_alpha,
+                             size = ellipse_size, linetype = ellipse_linetype)
         } else{
             plot <- plot +
                 stat_ellipse(data = data,
@@ -443,39 +451,39 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                          color = vec_color, linetype = vec_linetype, size = vec_size)
         # Add vector labels (text or label)
         # Make list of arguments for geom_text/geom_label
-        text_args <- list(
-                      data = data,
-                      mapping = aes(x = .data[[xvar]], y = .data[[yvar]]),
-                      label = data[["vector_label"]], parse = parse,
-                      color = text_color, size = text_size, stat = "identity",
-                      nudge_x = nudge_x, nudge_y = nudge_y, show.legend = NA,
-                      na.rm = FALSE, inherit.aes = TRUE
-                     )
+        label_args <- list(
+                        data = data,
+                        mapping = aes(x = .data[[xvar]], y = .data[[yvar]]),
+                        label = data[["vector_label"]], parse = parse,
+                        color = label_color, size = label_size, stat = "identity",
+                        nudge_x = nudge_x, nudge_y = nudge_y, show.legend = NA,
+                        na.rm = FALSE, inherit.aes = TRUE
+                      )
         # Repel text
         if( repel_text ){
           # Add arguments for geom_text_repel/geom_label_repel to list
-          text_args <- c(
-            text_args, min.segment.length = min.segment.length,
+          label_args <- c(
+            label_args, min.segment.length = min.segment.length,
             box.padding = 0.25, point.padding = 1e-06, force = 1, force_pull = 1,
             max.time = 0.5, max.iter = 10000, max.overlaps = max.overlaps,
             direction = direction, seed = NA, verbose = FALSE
           )
           # repelled text
           if( vec_text ){
-            plot <- plot + do.call("geom_text_repel", text_args)
+            plot <- plot + do.call("geom_text_repel", label_args)
           # repelled labels
           } else{
-            plot <- plot + do.call("geom_label_repel", text_args)
+            plot <- plot + do.call("geom_label_repel", label_args)
           }
         # Do not repel text
         } else{
           # not repelled text
           if( vec_text ){
-            text_args <- c(text_args, check_overlap = check_overlap)
-            plot <- plot + do.call("geom_text", text_args)
+            label_args <- c(label_args, check_overlap = check_overlap)
+            plot <- plot + do.call("geom_text", label_args)
           # not repelled labels
           } else{
-            plot <- plot + do.call("geom_label", text_args)
+            plot <- plot + do.call("geom_label", label_args)
           }
         }
         
