@@ -9,33 +9,45 @@
 #'   plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
 #'   \code{reducedDim(tse, dimred)}.
 #' 
-#' @param ellipse_fill if TRUE, ellipses are opacity filled (Default: TRUE).
+#' @param ellipse_fill TRUE or FALSE, should ellipses be opacity filled.
+#'   (default: \code{ellipse_fill = TRUE})
 #'
-#' @param ellipse_alpha Number between 0 and 1 to adjust the opacity of ellipses (Default: 0.2).
+#' @param ellipse_alpha Number between 0 and 1 to adjust the opacity of ellipses.
+#'   (default: \code{ellipse_alpha = 0.2})
 #'
-#' @param ellipse_size Number specifying the size of ellipses (Default: 0.1).
+#' @param ellipse_size Number specifying the size of ellipses.
+#'   (default: \code{ellipse_size = 0.1})
 #' 
-#' @param ellipse_linetype Discrete number specifying the style of ellipses (Default: 1).
+#' @param ellipse_linetype Discrete number specifying the style of ellipses
+#'   (default: \code{ellipse_linetype = 1})
 #' 
-#' @param vec_size Number specifying the size of vectors (Default: 0.5).
+#' @param vec_size Number specifying the size of vectors.
+#'   (default: \code{vec_size = 0.5})
 #' 
-#' @param vec_colour String specifying the colour of vectors (Default: "black").
+#' @param vec_colour String specifying the colour of vectors.
+#'   (default: \code{vec_color = "black"})
 #' 
 #' @param vec_color Alias for `vec_colour`.
 #' 
-#' @param vec_linetype Discrete number specifying the style of vector lines (Default: 1).
+#' @param vec_linetype Discrete number specifying the style of vector lines.
+#'   (default: \code{vec_linetype = 1})
 #' 
-#' @param arrow_size Number specifying the size of arrows (Defaults: 0.25).
+#' @param arrow_size Number specifying the size of arrows.
+#'   (defaults: \code{arrow_size = 0.25})
 #' 
-#' @param label_size Number specifying the size of text and labels (Default: 4).
+#' @param label_size Number specifying the size of text and labels.
+#'   (default: \code{label_size = 4})
 #' 
-#' @param label_colour String specifying the colour of text and labels (Default: "black").
+#' @param label_colour String specifying the colour of text and labels.
+#'   (default: \code{label_color = "black"})
 #' 
 #' @param label_color Alias for `label_colour`.
 #' 
-#' @param vec_text If TRUE, text instead of labels are used to label vectors (Default: TRUE).
+#' @param vec_text TRUE or FALSE, should text instead of labels be used to label vectors.
+#'   (default: \code{vec_text = TRUE})
 #' 
-#' @param repel_labels If TRUE, labels are repelled (Default: TRUE).
+#' @param repel_labels TRUE or FALSE, should labels be repelled
+#'   (default: \code{repel_labels = TRUE})
 #' 
 #' @param ... additional parameters for plotting, inherited from
 #'   \code{\link[scater:plotReducedDim]{plotReducedDim}},
@@ -149,8 +161,43 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
              vec_size = 0.5, vec_color = vec_colour, vec_colour = "black", vec_linetype = 1,
              arrow_size = 0.25, label_color = label_colour, label_colour = "black", label_size = 4,
              vec_text = TRUE, repel_labels = TRUE, ...){
-        ###################### Input check #######################
-        
+        ###################### Input check ########################
+        if(!.is_a_bool(ellipse_fill)){
+            stop("'ellipse_fill' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if(!.is_a_bool(vec_text)){
+            stop("'vec_text' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if(!.is_a_bool(repel_labels)){
+            stop("'repel_labels' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if(!.are_whole_numbers(ellipse_linetype)){
+            stop("'ellipse_linetype' must be a whole number.", call. = FALSE)
+        }
+        if(!.are_whole_numbers(ellipse_linetype)){
+            stop("'vec_linetype' must be a whole number.", call. = FALSE)
+        }
+        if( ellipse_alpha < 0 || ellipse_alpha > 1 ){
+            stop("'ellipse_alpha' must be a number between 0 and 1.", call. = FALSE)
+        }
+        if ( !is.numeric(ellipse_size) && ellipse_size > 0 ) {
+            stop("'ellipse_size' must be a positive number.", call. = FALSE)
+        }
+        if ( !is.numeric(vec_size) && vec_size > 0 ) {
+            stop("'vec_size' must be a positive number.", call. = FALSE)
+        }
+        if ( !is.numeric(arrow_size) && arrow_size > 0 ) {
+            stop("'arrow_size' must be a positive number.", call. = FALSE)
+        }
+        if ( !is.numeric(label_size) && label_size > 0 ) {
+            stop("'label_size' must be a positive number.", call. = FALSE)
+        }
+        if ( !.is_non_empty_string(vec_color) ) {
+            stop("'vec_color' must be a non-empty string specifying a colour", call. = FALSE)
+        }
+        if ( !.is_non_empty_string(label_color) ) {
+            stop("'label_color' must be a non-empty string specifying a colour", call. = FALSE)
+        }
         ###################### Input check end ####################
         # Get data for plotting
         plot_data <- .incorporate_rda_vis(object, dimred, ...)
@@ -165,9 +212,6 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 #' @export
 setMethod("plotRDA", signature = c(object = "matrix"),
     function(object, ...){
-        ###################### Input check #######################
-            
-        ###################### Input check end ####################
         # Construct TreeSE from rda/cca object
         object <- .rda2tse(object)
         # Run plotRDA method for TreeSE
@@ -197,7 +241,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         other_fields = list(), swap_rownames = NULL, point.padding = NA,
         add_ellipse = TRUE, add_vectors = TRUE, add_significance = TRUE,
         add_expl_var = TRUE, vec_lab = NULL, bins = NULL, ...){
-    
+
     # Check dimred
     if( !dimred %in% reducedDimNames(tse) ){
         stop("'dimred' must specify reducedDim.", call. = FALSE)
