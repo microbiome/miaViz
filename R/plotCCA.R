@@ -35,7 +35,7 @@
 #' 
 #' @param vec_text If TRUE, text instead of labels are used to label vectors (Default: TRUE).
 #' 
-#' @param repel_text If TRUE, labels are repelled (Default: TRUE).
+#' @param repel_labels If TRUE, labels are repelled (Default: TRUE).
 #' 
 #' @param ... additional parameters for plotting, inherited from
 #'   \code{\link[scater:plotReducedDim]{plotReducedDim}},
@@ -91,7 +91,7 @@
 #'  # Create RDA plot without repelling text
 #'  plotRDA(tse, "RDA",
 #'          colour_by = "ClinicalStatus,
-#'          repel_text = FALSE)
+#'          repel_labels = FALSE)
 #'  
 #'  # Calculate RDA as a separate object
 #'  rda_mat <- calculateRDA(tse,
@@ -104,39 +104,33 @@
 #'  
 NULL
 
-#' @rdname plotRDA
+#' @rdname plotCCA
 #' @aliases plotRDA
 #' @export
 setGeneric("plotCCA", signature = c("object"),
            function(object, dimred, ...) standardGeneric("plotCCA"))
 
-#' @rdname plotRDA
+#' @rdname plotCCA
 #' @aliases plotRDA
 #' @export
 setMethod("plotCCA", signature = c(object = "SingleCellExperiment"),
     function(object, dimred, ...){
-        ###################### Input check #######################
-
-        ###################### Input check end ####################
         # Reproduce plotRDA function
         return(plotRDA(object, dimred, ...))
     }
 )
 
-#' @rdname plotRDA
+#' @rdname plotCCA
 #' @aliases plotRDA
 #' @export
 setMethod("plotCCA", signature = c(object = "matrix"),
     function(object, ...){
-        ###################### Input check #######################
-            
-        ###################### Input check end ####################
         # Reproduce plotRDA function
         return(plotRDA(object, ...))
     }
 )
 
-#' @rdname plotRDA
+#' @rdname plotCCA
 #' @aliases plotCCA
 #' @export
 setGeneric("plotRDA", signature = c("object"),
@@ -144,9 +138,9 @@ setGeneric("plotRDA", signature = c("object"),
              ellipse_fill = TRUE, ellipse_alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
              vec_size = 0.5, vec_color = vec_colour, vec_colour = "black", vec_linetype = 1,
              arrow_size = 0.25, label_color = label_colour, label_colour = "black", label_size = 4,
-             vec_text = TRUE, repel_text = TRUE, ...) standardGeneric("plotRDA"))
+             vec_text = TRUE, repel_labels = TRUE, ...) standardGeneric("plotRDA"))
 
-#' @rdname plotRDA
+#' @rdname plotCCA
 #' @aliases plotCCA
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
@@ -154,7 +148,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
              ellipse_fill = TRUE, ellipse_alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
              vec_size = 0.5, vec_color = vec_colour, vec_colour = "black", vec_linetype = 1,
              arrow_size = 0.25, label_color = label_colour, label_colour = "black", label_size = 4,
-             vec_text = TRUE, repel_text = TRUE, ...){
+             vec_text = TRUE, repel_labels = TRUE, ...){
         ###################### Input check #######################
         
         ###################### Input check end ####################
@@ -166,7 +160,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     }
 )
 
-#' @rdname plotRDA
+#' @rdname plotCCA
 #' @aliases plotCCA
 #' @export
 setMethod("plotRDA", signature = c(object = "matrix"),
@@ -407,7 +401,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         vec_size = 0.5, vec_color = vec_colour, vec_colour = "black",
         vec_linetype = 1, arrow_size = 0.25, min.segment.length = 5,
         label_color = label_colour, label_colour = "black", label_size = 4,
-        parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, repel_text = TRUE,
+        parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, repel_labels = TRUE,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
 
@@ -460,7 +454,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                         na.rm = FALSE, inherit.aes = TRUE
                       )
         # Repel text
-        if( repel_text ){
+        if( repel_labels ){
           # Add arguments for geom_text_repel/geom_label_repel to list
           label_args <- c(
             label_args, min.segment.length = min.segment.length,
