@@ -84,7 +84,7 @@
 #'  
 #' # Run RDA and store results into TreeSE
 #' tse <- runRDA(tse,
-#`               formula = assay ~ ClinicalStatus + Gender + Age,
+#'               formula = assay ~ ClinicalStatus + Gender + Age,
 #'               FUN = vegan::vegdist,
 #'               distance = "bray")
 #'                
@@ -109,7 +109,7 @@
 #'  
 #' # Calculate RDA as a separate object
 #' rda_mat <- calculateRDA(tse,
-#`                         formula = assay ~ ClinicalStatus + Gender + Age,
+#'                         formula = assay ~ ClinicalStatus + Gender + Age,
 #'                         FUN = vegan::vegdist,
 #'                         distance = "bray")
 #'  
