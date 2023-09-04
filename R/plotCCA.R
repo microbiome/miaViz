@@ -74,49 +74,47 @@
 #' @return 
 #' A \code{ggplot2} object 
 #'
-#' @name plotRDA
+#' @name plotCCA
 #'
 #' @examples
-#' 
-#'  # Load dataset
-#'  library(miaViz)
-#'  data(enterotype)
-#'  tse <- enterotype
+#' # Load dataset
+#' library(miaViz)
+#' data("enterotype", package = "mia")
+#' tse <- enterotype
 #'  
-#'  # Run RDA and store results into TreeSE
-#'  tse <- runRDA(tse,
-#`                formula = assay ~ ClinicalStatus + Gender + Age,
-#'                FUN = vegan::vegdist,
-#'                distance = "bray")
+#' # Run RDA and store results into TreeSE
+#' tse <- runRDA(tse,
+#`               formula = assay ~ ClinicalStatus + Gender + Age,
+#'               FUN = vegan::vegdist,
+#'               distance = "bray")
 #'                
-#'  # Create RDA plot coloured by variable
-#'  plotRDA(tse, "RDA",
-#'          colour_by = "ClinicalStatus")
+#' # Create RDA plot coloured by variable
+#' plotRDA(tse, "RDA",
+#'         colour_by = "ClinicalStatus")
 #'  
-#'  # Create RDA plot with empty ellipses
-#'  plotRDA(tse, "RDA",
-#'          colour_by = "ClinicalStatus,
-#'          ellipse_fill = FALSE)
+#' # Create RDA plot with empty ellipses
+#' plotRDA(tse, "RDA",
+#'         colour_by = "ClinicalStatus",
+#'         ellipse_fill = FALSE)
 #'  
-#'  # Create RDA plot with text encased in labels
-#'  plotRDA(tse, "RDA",
-#'          colour_by = "ClinicalStatus,
-#'          vec_text = FALSE)
+#' # Create RDA plot with text encased in labels
+#' plotRDA(tse, "RDA",
+#'         colour_by = "ClinicalStatus",
+#'         vec_text = FALSE)
 #'  
-#'  # Create RDA plot without repelling text
-#'  plotRDA(tse, "RDA",
-#'          colour_by = "ClinicalStatus,
-#'          repel_labels = FALSE)
+#' # Create RDA plot without repelling text
+#' plotRDA(tse, "RDA",
+#'         colour_by = "ClinicalStatus",
+#'         repel_labels = FALSE)
 #'  
-#'  # Calculate RDA as a separate object
-#'  rda_mat <- calculateRDA(tse,
-#`                          formula = assay ~ ClinicalStatus + Gender + Age,
-#'                          FUN = vegan::vegdist,
-#'                          distance = "bray")
+#' # Calculate RDA as a separate object
+#' rda_mat <- calculateRDA(tse,
+#`                         formula = assay ~ ClinicalStatus + Gender + Age,
+#'                         FUN = vegan::vegdist,
+#'                         distance = "bray")
 #'  
-#'  # Create RDA plot from RDA matrix
-#'  plotRDA(rda_mat)
-#'  
+#' # Create RDA plot from RDA matrix
+#' plotRDA(rda_mat)
 NULL
 
 #' @rdname plotCCA
@@ -420,7 +418,6 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 }
 
 # This function adds significance info to vector labels
-#' @importFrom grDevices italic
 .add_signif_to_vector_labels <- function(vector_label, var_names, signif_data, sep_underscore = " ", ...){
     # Replace underscores from significance data and variable names to match labels
     rownames(signif_data) <- sapply(rownames(signif_data), function(x) gsub("_", sep_underscore, x))
@@ -434,7 +431,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             paste(!!name, " (", 
                   !!format(
                       round( signif_data[var_name, "Explained variance"]*100, 1),
-                      nsmall = 1), "%, ", italic("P"), " = ",
+                      nsmall = 1), "%, P = ",
                   !!gsub("0\\.","\\.", format(
                       round( signif_data[var_name, "Pr(>F)"], 3),
                       nsmall = 3)), ")"))

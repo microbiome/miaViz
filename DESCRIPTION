@@ -11,7 +11,10 @@ Authors@R:
       person(given = "Leo", family = "Lahti", role = c("aut"),
              email = "leo.lahti@iki.fi",
              comment = c(ORCID = "0000-0001-5537-637X")),
-      person(given = "Basil", family = "Courbayre", role = c("ctb"))
+      person(given = "Basil", family = "Courbayre", role = c("ctb")),
+      person(given = "Giulio", family = "Benedetti", role = c("ctb"),
+             email = "giulio.benedetti@utu.fi",
+             comment = c(ORCID = "0000-0002-8732-7692"))
 	     )
 Description: The miaViz package implements functions to visualize
     TreeSummarizedExperiment objects especially in the context of microbiome
