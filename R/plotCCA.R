@@ -1,5 +1,8 @@
 #' Plot RDA or CCA object
 #'
+#' \code{plotRDA} and \code{plotCCA} create an RDA/CCA plot starting from the
+#' output of \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods
+#' for supervised ordination of microbiome data.
 #'
 #' @param object a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
@@ -55,9 +58,9 @@
 #'   \code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.
 #' 
 #' @details
-#' plotRDA and plotCCA create an RDA/CCA plot starting from the output of
-#' \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods for
-#' supervised ordination of microbiome data. Both
+#' \code{plotRDA} and \code{plotCCA} create an RDA/CCA plot starting from the
+#' output of \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods
+#' for supervised ordination of microbiome data. Both
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 #' and matrix objects are supported as input. When the input is a
 #' TreeSummarizedExperiment, this should contain the output of runRDA
@@ -223,6 +226,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 ################## HELP FUNCTIONS ##########################
 
 # Construct TreeSE from rda/cca object to pass it to downstream functions
+#' @importFrom S4Vectors DataFrame
 .rda2tse <- function(object) {
     # Convert rda/cca object to TreeSE
     object <- TreeSummarizedExperiment(
@@ -235,6 +239,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 
 # Get data for plotting
 #' @importFrom scater plotReducedDim retrieveCellInfo
+#' @importFrom SingleCellExperiment reducedDim reducedDimNames
 .incorporate_rda_vis <- function(
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
         shape_by = NULL, size_by = NULL, order_by = NULL, text_by = NULL,
@@ -415,6 +420,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 }
 
 # This function adds significance info to vector labels
+#' @importFrom grDevices italic
 .add_signif_to_vector_labels <- function(vector_label, var_names, signif_data, sep_underscore = " ", ...){
     # Replace underscores from significance data and variable names to match labels
     rownames(signif_data) <- sapply(rownames(signif_data), function(x) gsub("_", sep_underscore, x))
