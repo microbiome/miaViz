@@ -156,6 +156,11 @@ aesthetics to the colData variables through the arguments inherited from
 library(miaViz)
 data("enterotype", package = "mia")
 tse <- enterotype
+
+# Remove missing values from covariables
+tse <- tse[ , !is.na(tse$ClinicalStatus)]
+tse <- tse[ , !is.na(tse$Age)]
+tse <- tse[ , !is.na(tse$Gender)]
  
 # Run RDA and store results into TreeSE
 tse <- runRDA(tse,
