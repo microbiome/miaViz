@@ -52,7 +52,6 @@ Imports:
     DirichletMultinomial,
     ggrepel,
     SingleCellExperiment
-
 Suggests:
     knitr,
     rmarkdown,
