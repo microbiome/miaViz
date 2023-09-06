@@ -9,125 +9,105 @@
 \alias{plotRDA,matrix-method}
 \title{Plot RDA or CCA object}
 \usage{
-plotCCA(object, dimred, ...)
+plotCCA(object, ...)
 
 \S4method{plotCCA}{SingleCellExperiment}(object, dimred, ...)
 
-\S4method{plotCCA}{matrix}(object, dimred, ...)
+\S4method{plotCCA}{matrix}(object, ...)
 
-plotRDA(
-  object,
-  dimred,
-  ellipse_fill = TRUE,
-  ellipse_alpha = 0.2,
-  ellipse_size = 0.1,
-  ellipse_linetype = 1,
-  vec_size = 0.5,
-  vec_color = vec_colour,
-  vec_colour = "black",
-  vec_linetype = 1,
-  arrow_size = 0.25,
-  label_color = label_colour,
-  label_colour = "black",
-  label_size = 4,
-  vec_text = TRUE,
-  repel_labels = TRUE,
-  ...
-)
+plotRDA(object, ...)
 
 \S4method{plotRDA}{SingleCellExperiment}(
   object,
   dimred,
-  ellipse_fill = TRUE,
-  ellipse_alpha = 0.2,
-  ellipse_size = 0.1,
-  ellipse_linetype = 1,
-  vec_size = 0.5,
-  vec_color = vec_colour,
-  vec_colour = "black",
-  vec_linetype = 1,
-  arrow_size = 0.25,
-  label_color = label_colour,
-  label_colour = "black",
-  label_size = 4,
-  vec_text = TRUE,
-  repel_labels = TRUE,
+  ellipse.fill = TRUE,
+  ellipse.alpha = 0.2,
+  ellipse.size = 0.1,
+  ellipse.linetype = 1,
+  vec.size = 0.5,
+  vec.color = vec.colour,
+  vec.colour = "black",
+  vec.linetype = 1,
+  arrow.size = 0.25,
+  label.color = label.colour,
+  label.colour = "black",
+  label.size = 4,
+  vec.text = TRUE,
+  repel.labels = TRUE,
+  sep.group = "‒",
+  repl.underscore = " ",
+  add.significance = TRUE,
+  add.expl.var = TRUE,
   ...
 )
 
-\S4method{plotRDA}{matrix}(
-  object,
-  dimred,
-  ellipse_fill = TRUE,
-  ellipse_alpha = 0.2,
-  ellipse_size = 0.1,
-  ellipse_linetype = 1,
-  vec_size = 0.5,
-  vec_color = vec_colour,
-  vec_colour = "black",
-  vec_linetype = 1,
-  arrow_size = 0.25,
-  label_color = label_colour,
-  label_colour = "black",
-  label_size = 4,
-  vec_text = TRUE,
-  repel_labels = TRUE,
-  ...
-)
+\S4method{plotRDA}{matrix}(object, ...)
 }
 \arguments{
 \item{object}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{calculateRDA}}.}
 
-\item{dimred}{A string or integer scalar indicating the reduced dimension to
-plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
-\code{reducedDim(tse, dimred)}.}
-
 \item{...}{additional parameters for plotting, inherited from
 \code{\link[scater:plotReducedDim]{plotReducedDim}},
 \code{\link[ggplot2:geom_label]{geom_label}} and
 \code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.}
 
-\item{ellipse_fill}{TRUE or FALSE, should ellipses be opacity filled.
-(default: \code{ellipse_fill = TRUE})}
+\item{dimred}{A string or integer scalar indicating the reduced dimension to
+plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
+\code{reducedDim(tse, dimred)}.}
 
-\item{ellipse_alpha}{Number between 0 and 1 to adjust the opacity of ellipses.
-(default: \code{ellipse_alpha = 0.2})}
+\item{ellipse.fill}{TRUE or FALSE, should ellipses be opacity filled.
+(default: \code{ellipse.fill = TRUE})}
 
-\item{ellipse_size}{Number specifying the size of ellipses.
-(default: \code{ellipse_size = 0.1})}
+\item{ellipse.alpha}{Number between 0 and 1 to adjust the opacity of ellipses.
+(default: \code{ellipse.alpha = 0.2})}
 
-\item{ellipse_linetype}{Discrete number specifying the style of ellipses
-(default: \code{ellipse_linetype = 1})}
+\item{ellipse.size}{Number specifying the size of ellipses.
+(default: \code{ellipse.size = 0.1})}
 
-\item{vec_size}{Number specifying the size of vectors.
-(default: \code{vec_size = 0.5})}
+\item{ellipse.linetype}{Discrete number specifying the style of ellipses
+(default: \code{ellipse.linetype = 1})}
 
-\item{vec_color}{Alias for \code{vec_colour}.}
+\item{vec.size}{Number specifying the size of vectors.
+(default: \code{vec.size = 0.5})}
 
-\item{vec_colour}{String specifying the colour of vectors.
-(default: \code{vec_color = "black"})}
+\item{vec.color}{Alias for \code{vec.colour}.}
 
-\item{vec_linetype}{Discrete number specifying the style of vector lines.
-(default: \code{vec_linetype = 1})}
+\item{vec.colour}{String specifying the colour of vectors.
+(default: \code{vec.color = "black"})}
 
-\item{arrow_size}{Number specifying the size of arrows.
-(defaults: \code{arrow_size = 0.25})}
+\item{vec.linetype}{Discrete number specifying the style of vector lines.
+(default: \code{vec.linetype = 1})}
 
-\item{label_color}{Alias for \code{label_colour}.}
+\item{arrow.size}{Number specifying the size of arrows.
+(defaults: \code{arrow.size = 0.25})}
 
-\item{label_colour}{String specifying the colour of text and labels.
-(default: \code{label_color = "black"})}
+\item{label.color}{Alias for \code{label.colour}.}
 
-\item{label_size}{Number specifying the size of text and labels.
-(default: \code{label_size = 4})}
+\item{label.colour}{String specifying the colour of text and labels.
+(default: \code{label.color = "black"})}
 
-\item{vec_text}{TRUE or FALSE, should text instead of labels be used to label vectors.
-(default: \code{vec_text = TRUE})}
+\item{label.size}{Number specifying the size of text and labels.
+(default: \code{label.size = 4})}
 
-\item{repel_labels}{TRUE or FALSE, should labels be repelled
-(default: \code{repel_labels = TRUE})}
+\item{vec.text}{TRUE or FALSE, should text instead of labels be used to label vectors.
+(default: \code{vec.text = TRUE})}
+
+\item{repel.labels}{TRUE or FALSE, should labels be repelled
+(default: \code{repel.labels = TRUE})}
+
+\item{sep.group}{String specifying the separator used in the labels.
+(default: \code{sep.group = "\U2012"})}
+
+\item{repl.underscore}{String used to replace underscores in the labels.
+(default: \code{repl.underscore = " "})}
+
+\item{add.significance}{TRUE or FALSE, should explained variance and p-value
+appear in the labels. (default: \code{add.significance = TRUE})}
+
+\item{add.expl.var}{TRUE or FALSE, should explained variance appear on the
+coordinate axes. (default: \code{add.expl.var = TRUE})}
 }
 \value{
 A \code{ggplot2} object
@@ -140,33 +120,28 @@ for supervised ordination of microbiome data.
 \details{
 \code{plotRDA} and \code{plotCCA} create an RDA/CCA plot starting from the
 output of \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods
-for supervised ordination of microbiome data. Both
+for supervised ordination of microbiome data. Either a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-and matrix objects are supported as input. When the input is a
+or a matrix object is supported as input. When the input is a
 TreeSummarizedExperiment, this should contain the output of runRDA
 in the reducedDim slot and the argument \code{dimred} needs to be defined.
-When the input is an matrix, this should be returned as output from
-calculateRDA and the argument \code{dimred} needs not be defined. However,
-the first method is recommended because it provides the option to adjust
-aesthetics to the colData variables through the arguments inherited from
-\code{\link[scater:plotReducedDim]{plotReducedDim}}.
+When the input is a matrix, this should be returned as output from
+calculateRDA. However, the first method is recommended because it provides
+the option to adjust aesthetics to the colData variables through the
+arguments inherited from \code{\link[scater:plotReducedDim]{plotReducedDim}}.
 }
 \examples{
 # Load dataset
 library(miaViz)
 data("enterotype", package = "mia")
 tse <- enterotype
-
-# Remove missing values from covariables
-tse <- tse[ , !is.na(tse$ClinicalStatus)]
-tse <- tse[ , !is.na(tse$Age)]
-tse <- tse[ , !is.na(tse$Gender)]
  
 # Run RDA and store results into TreeSE
 tse <- runRDA(tse,
               formula = assay ~ ClinicalStatus + Gender + Age,
               FUN = vegan::vegdist,
-              distance = "bray")
+              distance = "bray",
+              na.action = na.exclude)
                
 # Create RDA plot coloured by variable
 plotRDA(tse, "RDA",
@@ -175,23 +150,24 @@ plotRDA(tse, "RDA",
 # Create RDA plot with empty ellipses
 plotRDA(tse, "RDA",
         colour_by = "ClinicalStatus",
-        ellipse_fill = FALSE)
+        ellipse.fill = FALSE)
  
 # Create RDA plot with text encased in labels
 plotRDA(tse, "RDA",
         colour_by = "ClinicalStatus",
-        vec_text = FALSE)
+        vec.text = FALSE)
  
 # Create RDA plot without repelling text
 plotRDA(tse, "RDA",
         colour_by = "ClinicalStatus",
-        repel_labels = FALSE)
+        repel.labels = FALSE)
  
 # Calculate RDA as a separate object
 rda_mat <- calculateRDA(tse,
                         formula = assay ~ ClinicalStatus + Gender + Age,
                         FUN = vegan::vegdist,
-                        distance = "bray")
+                        distance = "bray",
+                        na.action = na.exclude)
  
 # Create RDA plot from RDA matrix
 plotRDA(rda_mat)

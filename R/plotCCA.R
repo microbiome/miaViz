@@ -12,45 +12,57 @@
 #'   plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
 #'   \code{reducedDim(tse, dimred)}.
 #' 
-#' @param ellipse_fill TRUE or FALSE, should ellipses be opacity filled.
-#'   (default: \code{ellipse_fill = TRUE})
+#' @param ellipse.fill TRUE or FALSE, should ellipses be opacity filled.
+#'   (default: \code{ellipse.fill = TRUE})
 #'
-#' @param ellipse_alpha Number between 0 and 1 to adjust the opacity of ellipses.
-#'   (default: \code{ellipse_alpha = 0.2})
+#' @param ellipse.alpha Number between 0 and 1 to adjust the opacity of ellipses.
+#'   (default: \code{ellipse.alpha = 0.2})
 #'
-#' @param ellipse_size Number specifying the size of ellipses.
-#'   (default: \code{ellipse_size = 0.1})
+#' @param ellipse.size Number specifying the size of ellipses.
+#'   (default: \code{ellipse.size = 0.1})
 #' 
-#' @param ellipse_linetype Discrete number specifying the style of ellipses
-#'   (default: \code{ellipse_linetype = 1})
+#' @param ellipse.linetype Discrete number specifying the style of ellipses
+#'   (default: \code{ellipse.linetype = 1})
 #' 
-#' @param vec_size Number specifying the size of vectors.
-#'   (default: \code{vec_size = 0.5})
+#' @param vec.size Number specifying the size of vectors.
+#'   (default: \code{vec.size = 0.5})
 #' 
-#' @param vec_colour String specifying the colour of vectors.
-#'   (default: \code{vec_color = "black"})
+#' @param vec.colour String specifying the colour of vectors.
+#'   (default: \code{vec.color = "black"})
 #' 
-#' @param vec_color Alias for `vec_colour`.
+#' @param vec.color Alias for `vec.colour`.
 #' 
-#' @param vec_linetype Discrete number specifying the style of vector lines.
-#'   (default: \code{vec_linetype = 1})
+#' @param vec.linetype Discrete number specifying the style of vector lines.
+#'   (default: \code{vec.linetype = 1})
 #' 
-#' @param arrow_size Number specifying the size of arrows.
-#'   (defaults: \code{arrow_size = 0.25})
+#' @param arrow.size Number specifying the size of arrows.
+#'   (defaults: \code{arrow.size = 0.25})
 #' 
-#' @param label_size Number specifying the size of text and labels.
-#'   (default: \code{label_size = 4})
+#' @param label.size Number specifying the size of text and labels.
+#'   (default: \code{label.size = 4})
 #' 
-#' @param label_colour String specifying the colour of text and labels.
-#'   (default: \code{label_color = "black"})
+#' @param label.colour String specifying the colour of text and labels.
+#'   (default: \code{label.color = "black"})
 #' 
-#' @param label_color Alias for `label_colour`.
+#' @param label.color Alias for `label.colour`.
 #' 
-#' @param vec_text TRUE or FALSE, should text instead of labels be used to label vectors.
-#'   (default: \code{vec_text = TRUE})
+#' @param sep.group String specifying the separator used in the labels.
+#'   (default: \code{sep.group = "\U2012"})
+#'   
+#' @param repl.underscore String used to replace underscores in the labels.
+#'   (default: \code{repl.underscore = " "})
 #' 
-#' @param repel_labels TRUE or FALSE, should labels be repelled
-#'   (default: \code{repel_labels = TRUE})
+#' @param vec.text TRUE or FALSE, should text instead of labels be used to label vectors.
+#'   (default: \code{vec.text = TRUE})
+#' 
+#' @param repel.labels TRUE or FALSE, should labels be repelled
+#'   (default: \code{repel.labels = TRUE})
+#'  
+#' @param add.significance TRUE or FALSE, should explained variance and p-value
+#'   appear in the labels. (default: \code{add.significance = TRUE})
+#'  
+#' @param add.expl.var TRUE or FALSE, should explained variance appear on the
+#'   coordinate axes. (default: \code{add.expl.var = TRUE})
 #' 
 #' @param ... additional parameters for plotting, inherited from
 #'   \code{\link[scater:plotReducedDim]{plotReducedDim}},
@@ -60,16 +72,15 @@
 #' @details
 #' \code{plotRDA} and \code{plotCCA} create an RDA/CCA plot starting from the
 #' output of \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods
-#' for supervised ordination of microbiome data. Both
+#' for supervised ordination of microbiome data. Either a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-#' and matrix objects are supported as input. When the input is a
+#' or a matrix object is supported as input. When the input is a
 #' TreeSummarizedExperiment, this should contain the output of runRDA
 #' in the reducedDim slot and the argument \code{dimred} needs to be defined.
-#' When the input is an matrix, this should be returned as output from
-#' calculateRDA and the argument \code{dimred} needs not be defined. However,
-#' the first method is recommended because it provides the option to adjust
-#' aesthetics to the colData variables through the arguments inherited from
-#' \code{\link[scater:plotReducedDim]{plotReducedDim}}.
+#' When the input is a matrix, this should be returned as output from
+#' calculateRDA. However, the first method is recommended because it provides
+#' the option to adjust aesthetics to the colData variables through the
+#' arguments inherited from \code{\link[scater:plotReducedDim]{plotReducedDim}}.
 #' 
 #' @return 
 #' A \code{ggplot2} object 
@@ -81,17 +92,13 @@
 #' library(miaViz)
 #' data("enterotype", package = "mia")
 #' tse <- enterotype
-#' 
-#' # Remove missing values from covariables
-#' tse <- tse[ , !is.na(tse$ClinicalStatus)]
-#' tse <- tse[ , !is.na(tse$Age)]
-#' tse <- tse[ , !is.na(tse$Gender)]
 #'  
 #' # Run RDA and store results into TreeSE
 #' tse <- runRDA(tse,
 #'               formula = assay ~ ClinicalStatus + Gender + Age,
 #'               FUN = vegan::vegdist,
-#'               distance = "bray")
+#'               distance = "bray",
+#'               na.action = na.exclude)
 #'                
 #' # Create RDA plot coloured by variable
 #' plotRDA(tse, "RDA",
@@ -100,23 +107,24 @@
 #' # Create RDA plot with empty ellipses
 #' plotRDA(tse, "RDA",
 #'         colour_by = "ClinicalStatus",
-#'         ellipse_fill = FALSE)
+#'         ellipse.fill = FALSE)
 #'  
 #' # Create RDA plot with text encased in labels
 #' plotRDA(tse, "RDA",
 #'         colour_by = "ClinicalStatus",
-#'         vec_text = FALSE)
+#'         vec.text = FALSE)
 #'  
 #' # Create RDA plot without repelling text
 #' plotRDA(tse, "RDA",
 #'         colour_by = "ClinicalStatus",
-#'         repel_labels = FALSE)
+#'         repel.labels = FALSE)
 #'  
 #' # Calculate RDA as a separate object
 #' rda_mat <- calculateRDA(tse,
 #'                         formula = assay ~ ClinicalStatus + Gender + Age,
 #'                         FUN = vegan::vegdist,
-#'                         distance = "bray")
+#'                         distance = "bray",
+#'                         na.action = na.exclude)
 #'  
 #' # Create RDA plot from RDA matrix
 #' plotRDA(rda_mat)
@@ -126,7 +134,7 @@ NULL
 #' @aliases plotRDA
 #' @export
 setGeneric("plotCCA", signature = c("object"),
-           function(object, dimred, ...) standardGeneric("plotCCA"))
+           function(object, ...) standardGeneric("plotCCA"))
 
 #' @rdname plotCCA
 #' @aliases plotRDA
@@ -152,63 +160,85 @@ setMethod("plotCCA", signature = c(object = "matrix"),
 #' @aliases plotCCA
 #' @export
 setGeneric("plotRDA", signature = c("object"),
-    function(object, dimred,
-             ellipse_fill = TRUE, ellipse_alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
-             vec_size = 0.5, vec_color = vec_colour, vec_colour = "black", vec_linetype = 1,
-             arrow_size = 0.25, label_color = label_colour, label_colour = "black", label_size = 4,
-             vec_text = TRUE, repel_labels = TRUE, ...) standardGeneric("plotRDA"))
+    function(object, ...) standardGeneric("plotRDA"))
 
 #' @rdname plotCCA
 #' @aliases plotCCA
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     function(object, dimred,
-             ellipse_fill = TRUE, ellipse_alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
-             vec_size = 0.5, vec_color = vec_colour, vec_colour = "black", vec_linetype = 1,
-             arrow_size = 0.25, label_color = label_colour, label_colour = "black", label_size = 4,
-             vec_text = TRUE, repel_labels = TRUE, ...){
+             ellipse.fill = TRUE, ellipse.alpha = 0.2, ellipse.size = 0.1, ellipse.linetype = 1,
+             vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
+             arrow.size = 0.25, label.color = label.colour, label.colour = "black", label.size = 4,
+             vec.text = TRUE, repel.labels = TRUE, sep.group = "\U2012", repl.underscore = " ",
+             add.significance = TRUE, add.expl.var = TRUE, ...){
         ###################### Input check ########################
-        if(!.is_a_bool(ellipse_fill)){
-            stop("'ellipse_fill' must be TRUE or FALSE.", call. = FALSE)
+        if( !.is_a_bool(ellipse.fill) ){
+            stop("'ellipse.fill' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(!.is_a_bool(vec_text)){
-            stop("'vec_text' must be TRUE or FALSE.", call. = FALSE)
+        if( !.is_a_bool(vec.text) ){
+            stop("'vec.text' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(!.is_a_bool(repel_labels)){
-            stop("'repel_labels' must be TRUE or FALSE.", call. = FALSE)
+        if( !.is_a_bool(repel.labels) ){
+            stop("'repel.labels' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(!.are_whole_numbers(ellipse_linetype)){
-            stop("'ellipse_linetype' must be a whole number.", call. = FALSE)
+        if( !.is_a_bool(add.significance) ){
+            stop("'add.significance' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(!.are_whole_numbers(ellipse_linetype)){
-            stop("'vec_linetype' must be a whole number.", call. = FALSE)
+        if( !.is_a_bool(add.significance) ){
+            stop("'add.significance' must be TRUE or FALSE.", call. = FALSE)
         }
-        if( ellipse_alpha < 0 || ellipse_alpha > 1 ){
-            stop("'ellipse_alpha' must be a number between 0 and 1.", call. = FALSE)
+        if( !.is_a_bool(add.expl.var) ){
+            stop("'add.expl.var' must be TRUE or FALSE.", call. = FALSE)
         }
-        if ( !is.numeric(ellipse_size) && ellipse_size > 0 ) {
-            stop("'ellipse_size' must be a positive number.", call. = FALSE)
+        if( !.are_whole_numbers(ellipse.linetype) ){
+            stop("'ellipse.linetype' must be a whole number.", call. = FALSE)
         }
-        if ( !is.numeric(vec_size) && vec_size > 0 ) {
-            stop("'vec_size' must be a positive number.", call. = FALSE)
+        if( !.are_whole_numbers(ellipse.linetype) ){
+            stop("'vec.linetype' must be a whole number.", call. = FALSE)
         }
-        if ( !is.numeric(arrow_size) && arrow_size > 0 ) {
-            stop("'arrow_size' must be a positive number.", call. = FALSE)
+        if( ellipse.alpha < 0 || ellipse.alpha > 1 ){
+            stop("'ellipse.alpha' must be a number between 0 and 1.", call. = FALSE)
         }
-        if ( !is.numeric(label_size) && label_size > 0 ) {
-            stop("'label_size' must be a positive number.", call. = FALSE)
+        if ( !is.numeric(ellipse.size) && ellipse.size > 0 ) {
+            stop("'ellipse.size' must be a positive number.", call. = FALSE)
         }
-        if ( !.is_non_empty_string(vec_color) ) {
-            stop("'vec_color' must be a non-empty string specifying a colour", call. = FALSE)
+        if ( !is.numeric(vec.size) && vec.size > 0 ) {
+            stop("'vec.size' must be a positive number.", call. = FALSE)
         }
-        if ( !.is_non_empty_string(label_color) ) {
-            stop("'label_color' must be a non-empty string specifying a colour", call. = FALSE)
+        if ( !is.numeric(arrow.size) && arrow.size > 0 ) {
+            stop("'arrow.size' must be a positive number.", call. = FALSE)
+        }
+        if ( !is.numeric(label.size) && label.size > 0 ) {
+            stop("'label.size' must be a positive number.", call. = FALSE)
+        }
+        if ( !.is_non_empty_string(vec.color) ) {
+            stop("'vec.color' must be a non-empty string specifying a colour", call. = FALSE)
+        }
+        if ( !.is_non_empty_string(label.color) ) {
+            stop("'label.color' must be a non-empty string specifying a colour", call. = FALSE)
+        }
+        if ( !.is_a_string(sep.group) ) {
+            stop("'sep.group' must be a string specifying a separator.", call. = FALSE)
+        }
+        if ( !.is_a_string(repl.underscore) ) {
+            stop("'repl.underscore' must be a string.", call. = FALSE)
         }
         ###################### Input check end ####################
         # Get data for plotting
-        plot_data <- .incorporate_rda_vis(object, dimred, ...)
+        plot_data <- .incorporate_rda_vis(
+            object, dimred, sep.group = sep.group, repl.underscore = repl.underscore,
+            add.significance = add.significance, add.expl.var = add.expl.var, ...
+        )
         # Create a plot
-        plot <- .rda_plotter(plot_data, ...)
+        plot <- .rda_plotter(
+            plot_data, ellipse.alpha = ellipse.alpha, ellipse.size = ellipse.size,
+            ellipse.linetype = ellipse.linetype, vec.size = vec.size, vec.color = vec.color,
+            vec.colour = vec.colour, vec.linetype = vec.linetype, arrow.size = arrow.size,
+            label.color = label.color, label.colour = label.colour, label.size = label.size,
+            vec.text = vec.text, ellipse.fill = ellipse.fill, repel.labels = repel.labels,
+            parse = add.significance, ...
+        )
         return(plot)
     }
 )
@@ -229,12 +259,10 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 ################## HELP FUNCTIONS ##########################
 
 # Construct TreeSE from rda/cca object to pass it to downstream functions
-#' @importFrom S4Vectors DataFrame
 .rda2tse <- function(object) {
     # Convert rda/cca object to TreeSE
     object <- TreeSummarizedExperiment(
       assays = matrix(ncol = nrow(object), dimnames = list(NULL, rownames(object))),
-      colData = DataFrame(row.names = rownames(object)),
       reducedDims = list(RDA = object)
     )
     return(object)
@@ -247,8 +275,9 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
         shape_by = NULL, size_by = NULL, order_by = NULL, text_by = NULL,
         other_fields = list(), swap_rownames = NULL, point.padding = NA,
-        add_ellipse = TRUE, add_vectors = TRUE, add_significance = TRUE,
-        add_expl_var = TRUE, vec_lab = NULL, bins = NULL, ...){
+        add_ellipse = TRUE, add_vectors = TRUE, add.significance = TRUE,
+        add.expl.var = TRUE, vec_lab = NULL, bins = NULL, sep.group = "\U2012",
+        repl.underscore = " ", ...){
 
     # Check dimred
     if( !dimred %in% reducedDimNames(tse) ){
@@ -297,9 +326,9 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             vector_data[["group"]] <- rownames(vector_data)
         } else{
             # If it cannot be found, give warning
-            warning(
-                "CCA object was not found. Please calculate CCA by using runCCA.",
-                call. = FALSE)
+            warning(paste("RDA/CCA object was not found. Please compute RDA/CCA",
+                          "by using runCCA or calculateCCA."),
+                    call. = FALSE)
         }
     }
     
@@ -323,7 +352,11 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             vector_label <- rownames(vector_data)
             # Make labels more tidy
             if( all_var_found ){
-                vector_label <- .tidy_vector_labels(vector_label, coldata, ...)
+                vector_label <- .tidy_vector_labels(
+                    vector_label, coldata,
+                    sep.group = sep.group,
+                    repl.underscore = repl.underscore
+                )
             }
             # Add to df
             vector_data$vector_label <- vector_label
@@ -340,7 +373,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     
     # Get significance data
     signif_data <- NULL
-    if( add_significance && !is.null(vector_data) && all_var_found ){
+    if( add.significance && !is.null(vector_data) && all_var_found ){
         # Check if data is available
         ind <- names(attributes(reduced_dim)) %in% c("significance")
         # If it can be found
@@ -357,7 +390,8 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             vector_data[["vector_label"]] <- vector_label
         } else{
             # If it cannot be found, give warning
-            warning("Significance data was not found. please calculate CCA by using runCCA.",
+            warning(paste("Significance data was not found. please compute",
+                          "CCA/RDA by using runCCA or calculateCCA."),
                     call. = FALSE)
         }
     }
@@ -365,7 +399,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     # Create labels for axis
     xlab <- paste0(dimred, " 1")
     ylab <- paste0(dimred, " 2")
-    if( add_expl_var ){
+    if( add.expl.var ){
         # Check if data is available
         ind <- names(attributes(reduced_dim)) %in% c("rda", "cca")
         # If it can be found
@@ -380,7 +414,9 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                 format(round( summary(rda)$concont$importance[2, 2]*100, 1 ), nsmall = 1 ), "%)")
         } else{
             # If it cannot be found, give warning
-            warning("CCA object was not found. Please calculate CCA by using runCCA.", call. = FALSE)
+            warning(paste("RDA/CCA object was not found. Please compute",
+                          "RDA/CCA by using runCCA or calculateCCA."),
+                    call. = FALSE)
         }
     }
     
@@ -398,7 +434,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 # Make vector labels more tidy, i.e, separate variable and group names.
 # Replace also underscores with space
 .tidy_vector_labels <- function(
-        vector_label, coldata, sep_group = "\U2012", sep_underscore = " ", ...){
+        vector_label, coldata, sep.group = "\U2012", repl.underscore = " "){
     # Get variable names from sample metadata
     var_names <- colnames(coldata)
     # Loop through vector labels
@@ -411,22 +447,22 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             group_name <- unique( coldata[[var_name]] )[ 
                 which( paste0(var_name, unique( coldata[[var_name]] )) == name ) ]
             # Modify vector so that group is separated from variable name
-            new_name <- paste0(var_name, " ", sep_group, " ", group_name)
+            new_name <- paste0(var_name, " ", sep.group, " ", group_name)
         } else{
             new_name <- name
         }
         # Replace underscores with space
-        new_name <- gsub("_", sep_underscore, new_name)
+        new_name <- gsub("_", repl.underscore, new_name)
         return(new_name)
     })
     return(vector_label)
 }
 
 # This function adds significance info to vector labels
-.add_signif_to_vector_labels <- function(vector_label, var_names, signif_data, sep_underscore = " ", ...){
+.add_signif_to_vector_labels <- function(vector_label, var_names, signif_data, repl.underscore = " ", ...){
     # Replace underscores from significance data and variable names to match labels
-    rownames(signif_data) <- sapply(rownames(signif_data), function(x) gsub("_", sep_underscore, x))
-    var_names <- sapply(var_names, function(x) gsub("_", sep_underscore, x))
+    rownames(signif_data) <- sapply(rownames(signif_data), function(x) gsub("_", repl.underscore, x))
+    var_names <- sapply(var_names, function(x) gsub("_", repl.underscore, x))
     # Loop through vector labels
     vector_label <- sapply(vector_label, FUN = function(name){
         # Get the real variable name from sample metadata
@@ -449,11 +485,11 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 # Plot based on the data
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter <- function(
-        plot_data, ellipse_alpha = 0.2, ellipse_size = 0.1, ellipse_linetype = 1,
-        vec_size = 0.5, vec_color = vec_colour, vec_colour = "black",
-        vec_linetype = 1, arrow_size = 0.25, min.segment.length = 5,
-        label_color = label_colour, label_colour = "black", label_size = 4,
-        parse = TRUE, vec_text = TRUE, ellipse_fill = TRUE, repel_labels = TRUE,
+        plot_data, ellipse.alpha = 0.2, ellipse.size = 0.1, ellipse.linetype = 1,
+        vec.size = 0.5, vec.color = vec.colour, vec.colour = "black",
+        vec.linetype = 1, arrow.size = 0.25, min.segment.length = 5,
+        label.color = label.colour, label.colour = "black", label.size = 4,
+        parse = TRUE, vec.text = TRUE, ellipse.fill = TRUE, repel.labels = TRUE,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
 
@@ -467,18 +503,18 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         yvar <- colnames(data)[[2]]
         colour_var <- attributes(plot_data$ellipse_data)$colour_by
         # Add ellipses to plot (fill or colour the edge)
-        if( ellipse_fill ){
+        if( ellipse.fill ){
             plot <- plot +
                 stat_ellipse(data = data,
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
-                             geom = "polygon", alpha = ellipse_alpha,
-                             size = ellipse_size, linetype = ellipse_linetype)
+                             geom = "polygon", alpha = ellipse.alpha,
+                             size = ellipse.size, linetype = ellipse.linetype)
         } else{
             plot <- plot +
                 stat_ellipse(data = data,
                              aes(x = .data[[xvar]], y = .data[[yvar]], color = .data[[colour_var]]),
-                             geom = "polygon", alpha = 0, linetype = ellipse_linetype)
+                             geom = "polygon", alpha = 0, linetype = ellipse.linetype)
         }
         
     }
@@ -493,20 +529,20 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             geom_segment(data = data,
                          aes(x = 0, y = 0, xend = .data[[xvar]], yend = .data[[yvar]],
                              group = .data[["group"]]),
-                         arrow = arrow(length = unit(arrow_size, "cm")),
-                         color = vec_color, linetype = vec_linetype, size = vec_size)
+                         arrow = arrow(length = unit(arrow.size, "cm")),
+                         color = vec.color, linetype = vec.linetype, size = vec.size)
         # Add vector labels (text or label)
         # Make list of arguments for geom_text/geom_label
         label_args <- list(
                         data = data,
                         mapping = aes(x = .data[[xvar]], y = .data[[yvar]]),
                         label = data[["vector_label"]], parse = parse,
-                        color = label_color, size = label_size, stat = "identity",
+                        color = label.color, size = label.size, stat = "identity",
                         nudge_x = nudge_x, nudge_y = nudge_y, show.legend = NA,
                         na.rm = FALSE, inherit.aes = TRUE
                       )
         # Repel text
-        if( repel_labels ){
+        if( repel.labels ){
           # Add arguments for geom_text_repel/geom_label_repel to list
           label_args <- c(
             label_args, min.segment.length = min.segment.length,
@@ -515,7 +551,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             direction = direction, seed = NA, verbose = FALSE
           )
           # repelled text
-          if( vec_text ){
+          if( vec.text ){
             plot <- plot + do.call("geom_text_repel", label_args)
           # repelled labels
           } else{
@@ -524,7 +560,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         # Do not repel text
         } else{
           # not repelled text
-          if( vec_text ){
+          if( vec.text ){
             label_args <- c(label_args, check_overlap = check_overlap)
             plot <- plot + do.call("geom_text", label_args)
           # not repelled labels
