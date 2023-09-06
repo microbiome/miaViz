@@ -20,7 +20,7 @@ plotRDA(object, ...)
 \S4method{plotRDA}{SingleCellExperiment}(
   object,
   dimred,
-  ellipse.fill = TRUE,
+  add.ellipse = TRUE,
   ellipse.alpha = 0.2,
   ellipse.size = 0.1,
   ellipse.linetype = 1,
@@ -57,7 +57,8 @@ or a matrix of weights. The latter is returned as output from \code{\link[mia:ru
 plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
 \code{reducedDim(tse, dimred)}.}
 
-\item{ellipse.fill}{TRUE or FALSE, should ellipses be opacity filled.
+\item{add.ellipse}{One of \code{c(TRUE, FALSE, "fill", "colour", "color")},
+indicating whether ellipses should be present, absent, filled or colored.
 (default: \code{ellipse.fill = TRUE})}
 
 \item{ellipse.alpha}{Number between 0 and 1 to adjust the opacity of ellipses.
@@ -150,7 +151,7 @@ plotRDA(tse, "RDA",
 # Create RDA plot with empty ellipses
 plotRDA(tse, "RDA",
         colour_by = "ClinicalStatus",
-        ellipse.fill = FALSE)
+        add.ellipse = "colour")
  
 # Create RDA plot with text encased in labels
 plotRDA(tse, "RDA",
