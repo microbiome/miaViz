@@ -12,7 +12,8 @@
 #'   plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
 #'   \code{reducedDim(tse, dimred)}.
 #' 
-#' @param ellipse.fill TRUE or FALSE, should ellipses be opacity filled.
+#' @param add.ellipse One of \code{c(TRUE, FALSE, "fill", "colour", "color")},
+#'   indicating whether ellipses should be present, absent, filled or colored.
 #'   (default: \code{ellipse.fill = TRUE})
 #'
 #' @param ellipse.alpha Number between 0 and 1 to adjust the opacity of ellipses.
@@ -107,7 +108,7 @@
 #' # Create RDA plot with empty ellipses
 #' plotRDA(tse, "RDA",
 #'         colour_by = "ClinicalStatus",
-#'         ellipse.fill = FALSE)
+#'         add.ellipse = "colour")
 #'  
 #' # Create RDA plot with text encased in labels
 #' plotRDA(tse, "RDA",
@@ -167,14 +168,14 @@ setGeneric("plotRDA", signature = c("object"),
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     function(object, dimred,
-             ellipse.fill = TRUE, ellipse.alpha = 0.2, ellipse.size = 0.1, ellipse.linetype = 1,
+             add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.size = 0.1, ellipse.linetype = 1,
              vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
              arrow.size = 0.25, label.color = label.colour, label.colour = "black", label.size = 4,
              vec.text = TRUE, repel.labels = TRUE, sep.group = "\U2012", repl.underscore = " ",
              add.significance = TRUE, add.expl.var = TRUE, ...){
         ###################### Input check ########################
-        if( !.is_a_bool(ellipse.fill) ){
-            stop("'ellipse.fill' must be TRUE or FALSE.", call. = FALSE)
+        if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour")) ){
+            stop("'add.ellipse' must be one of c(TRUE, FALSE, 'fill', 'color', 'colour')", call. = FALSE)
         }
         if( !.is_a_bool(vec.text) ){
             stop("'vec.text' must be TRUE or FALSE.", call. = FALSE)
@@ -228,7 +229,8 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         # Get data for plotting
         plot_data <- .incorporate_rda_vis(
             object, dimred, sep.group = sep.group, repl.underscore = repl.underscore,
-            add.significance = add.significance, add.expl.var = add.expl.var, ...
+            add.significance = add.significance, add.expl.var = add.expl.var,
+            add.ellipse = add.ellipse, ...
         )
         # Create a plot
         plot <- .rda_plotter(
@@ -236,7 +238,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
             ellipse.linetype = ellipse.linetype, vec.size = vec.size, vec.color = vec.color,
             vec.colour = vec.colour, vec.linetype = vec.linetype, arrow.size = arrow.size,
             label.color = label.color, label.colour = label.colour, label.size = label.size,
-            vec.text = vec.text, ellipse.fill = ellipse.fill, repel.labels = repel.labels,
+            vec.text = vec.text, add.ellipse = add.ellipse, repel.labels = repel.labels,
             parse = add.significance, ...
         )
         return(plot)
@@ -275,7 +277,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
         shape_by = NULL, size_by = NULL, order_by = NULL, text_by = NULL,
         other_fields = list(), swap_rownames = NULL, point.padding = NA,
-        add_ellipse = TRUE, add_vectors = TRUE, add.significance = TRUE,
+        add.ellipse = TRUE, add_vectors = TRUE, add.significance = TRUE,
         add.expl.var = TRUE, vec_lab = NULL, bins = NULL, sep.group = "\U2012",
         repl.underscore = " ", ...){
 
@@ -305,7 +307,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     
     # Get data for ellipse
     ellipse_data <- NULL
-    if( add_ellipse && !is.null(colour_by) ){
+    if( add.ellipse != FALSE && !is.null(colour_by) ){
         ellipse_data <- reduced_dim
         ellipse_data <- as.data.frame(ellipse_data)
         ellipse_data[[colour_by]] <- retrieveCellInfo(tse, colour_by)[["value"]]
@@ -489,7 +491,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         vec.size = 0.5, vec.color = vec.colour, vec.colour = "black",
         vec.linetype = 1, arrow.size = 0.25, min.segment.length = 5,
         label.color = label.colour, label.colour = "black", label.size = 4,
-        parse = TRUE, vec.text = TRUE, ellipse.fill = TRUE, repel.labels = TRUE,
+        parse = TRUE, vec.text = TRUE, repel.labels = TRUE, add.ellipse = TRUE,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
 
@@ -503,14 +505,14 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         yvar <- colnames(data)[[2]]
         colour_var <- attributes(plot_data$ellipse_data)$colour_by
         # Add ellipses to plot (fill or colour the edge)
-        if( ellipse.fill ){
+        if( add.ellipse %in% c(TRUE, "fill") ){
             plot <- plot +
                 stat_ellipse(data = data,
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
                              geom = "polygon", alpha = ellipse.alpha,
                              size = ellipse.size, linetype = ellipse.linetype)
-        } else{
+        } else if ( add.ellipse %in% c("color", "colour") ){
             plot <- plot +
                 stat_ellipse(data = data,
                              aes(x = .data[[xvar]], y = .data[[yvar]], color = .data[[colour_var]]),
