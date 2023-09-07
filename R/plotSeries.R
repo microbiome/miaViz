@@ -63,7 +63,7 @@
 #' # Plots 2 most abundant taxa, which are colored by their family
 #' plotSeries(object,
 #'            x = "DAY_ORDER",
-#'            y = getTopTaxa(object, 2),
+#'            y = getTopFeatures(object, 2),
 #'            colour_by = "Family")
 #' 
 #' # Counts relative abundances
@@ -82,7 +82,7 @@
 #' # In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
 #' plotSeries(object,
 #'            x = "DAY_ORDER", 
-#'            y = getTopTaxa(object, 5), 
+#'            y = getTopFeatures(object, 5), 
 #'            colour_by = "Family",
 #'            size_by = "Phylum",
 #'            assay.type = "counts")
