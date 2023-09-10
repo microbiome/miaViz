@@ -19,8 +19,8 @@
 #' @param ellipse.alpha Number between 0 and 1 to adjust the opacity of ellipses.
 #'   (default: \code{ellipse.alpha = 0.2})
 #'
-#' @param ellipse.size Number specifying the size of ellipses.
-#'   (default: \code{ellipse.size = 0.1})
+#' @param ellipse.linewidth Number specifying the size of ellipses.
+#'   (default: \code{ellipse.linewidth = 0.1})
 #' 
 #' @param ellipse.linetype Discrete number specifying the style of ellipses
 #'   (default: \code{ellipse.linetype = 1})
@@ -168,14 +168,14 @@ setGeneric("plotRDA", signature = c("object"),
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     function(object, dimred,
-             add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.size = 0.1, ellipse.linetype = 1,
+             add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1,
              vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
              arrow.size = 0.25, label.color = label.colour, label.colour = "black", label.size = 4,
              vec.text = TRUE, repel.labels = TRUE, sep.group = "\U2012", repl.underscore = " ",
              add.significance = TRUE, add.expl.var = TRUE, ...){
         ###################### Input check ########################
         if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour")) ){
-            stop("'add.ellipse' must be one of c(TRUE, FALSE, 'fill', 'color', 'colour')", call. = FALSE)
+            stop("'add.ellipse' must be one of c(TRUE, FALSE, 'fill', 'color', 'colour').", call. = FALSE)
         }
         if( !.is_a_bool(vec.text) ){
             stop("'vec.text' must be TRUE or FALSE.", call. = FALSE)
@@ -201,8 +201,8 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         if( ellipse.alpha < 0 || ellipse.alpha > 1 ){
             stop("'ellipse.alpha' must be a number between 0 and 1.", call. = FALSE)
         }
-        if ( !is.numeric(ellipse.size) && ellipse.size > 0 ) {
-            stop("'ellipse.size' must be a positive number.", call. = FALSE)
+        if ( !is.numeric(ellipse.linewidth) && ellipse.linewidth > 0 ) {
+            stop("'ellipse.linewidth' must be a positive number.", call. = FALSE)
         }
         if ( !is.numeric(vec.size) && vec.size > 0 ) {
             stop("'vec.size' must be a positive number.", call. = FALSE)
@@ -234,7 +234,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         )
         # Create a plot
         plot <- .rda_plotter(
-            plot_data, ellipse.alpha = ellipse.alpha, ellipse.size = ellipse.size,
+            plot_data, ellipse.alpha = ellipse.alpha, ellipse.linewidth = ellipse.linewidth,
             ellipse.linetype = ellipse.linetype, vec.size = vec.size, vec.color = vec.color,
             vec.colour = vec.colour, vec.linetype = vec.linetype, arrow.size = arrow.size,
             label.color = label.color, label.colour = label.colour, label.size = label.size,
@@ -287,21 +287,34 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     }
     # Get reducedDim
     reduced_dim <- reducedDim(tse, dimred)
-    # Check that there are at least 2 coordinates.
+    # Check that there are at least 2 coordinates
     if( ncol(reduced_dim) < 2 ){
         stop("reducedDim specified by 'dimred' must have at least 2 columns.", call. = FALSE)
     }
+    # Check that each by-argument matches the name of a column in colData
+    by_args <- c(
+        colour_by = colour_by,
+        shape_by = shape_by,
+        size_by = size_by,
+        order_by = order_by,
+        text_by = text_by
+    )
+    correct_args <- sapply(by_args, function(x) x %in% names(colData(tse)))
+    sapply(names(by_args[!correct_args]),
+           function(x) {
+              stop(paste0("'", x, "' must match the name of a column in colData."),
+                   call. = FALSE)
+           })
     # Only 2 dimensions are supported currently
     ncomponents <- 2
     # Make list of arguments for plotReducedDim
-    plotReducedDim_args <- list(
-      object = tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by,
-      shape_by = shape_by, size_by = size_by, order_by = order_by, text_by = text_by,
+    plotReducedDim_args <- c(by_args, list(
+      object = tse, dimred = dimred, ncomponents = ncomponents,
       text_size = 5, text_colour = "black", text_color = "black",
       label_format = c("%s %i", " (%i%%)"), other_fields = other_fields,
       swap_rownames = swap_rownames, point.padding = point.padding, force = 1,
       rasterise = FALSE, scattermore = FALSE, summary_fun = "sum", hex = FALSE
-    )
+    ))
     # Get scatter plot with plotReducedDim --> keep theme similar between ordination methods
     plot <- do.call("plotReducedDim", plotReducedDim_args)
     
@@ -487,7 +500,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 # Plot based on the data
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter <- function(
-        plot_data, ellipse.alpha = 0.2, ellipse.size = 0.1, ellipse.linetype = 1,
+        plot_data, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1,
         vec.size = 0.5, vec.color = vec.colour, vec.colour = "black",
         vec.linetype = 1, arrow.size = 0.25, min.segment.length = 5,
         label.color = label.colour, label.colour = "black", label.size = 4,
@@ -511,7 +524,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
                              geom = "polygon", alpha = ellipse.alpha,
-                             size = ellipse.size, linetype = ellipse.linetype)
+                             size = ellipse.linewidth, linetype = ellipse.linetype)
         } else if ( add.ellipse %in% c("color", "colour") ){
             plot <- plot +
                 stat_ellipse(data = data,
