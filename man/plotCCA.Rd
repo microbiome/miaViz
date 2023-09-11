@@ -22,7 +22,7 @@ plotRDA(object, ...)
   dimred,
   add.ellipse = TRUE,
   ellipse.alpha = 0.2,
-  ellipse.size = 0.1,
+  ellipse.linewidth = 0.1,
   ellipse.linetype = 1,
   vec.size = 0.5,
   vec.color = vec.colour,
@@ -38,6 +38,8 @@ plotRDA(object, ...)
   repl.underscore = " ",
   add.significance = TRUE,
   add.expl.var = TRUE,
+  add.vectors = TRUE,
+  parse.labels = TRUE,
   ...
 )
 
@@ -64,10 +66,10 @@ indicating whether ellipses should be present, absent, filled or colored.
 \item{ellipse.alpha}{Number between 0 and 1 to adjust the opacity of ellipses.
 (default: \code{ellipse.alpha = 0.2})}
 
-\item{ellipse.size}{Number specifying the size of ellipses.
-(default: \code{ellipse.size = 0.1})}
+\item{ellipse.linewidth}{Number specifying the size of ellipses.
+(default: \code{ellipse.linewidth = 0.1})}
 
-\item{ellipse.linetype}{Discrete number specifying the style of ellipses
+\item{ellipse.linetype}{Discrete number specifying the style of ellipses.
 (default: \code{ellipse.linetype = 1})}
 
 \item{vec.size}{Number specifying the size of vectors.
@@ -95,7 +97,7 @@ indicating whether ellipses should be present, absent, filled or colored.
 \item{vec.text}{TRUE or FALSE, should text instead of labels be used to label vectors.
 (default: \code{vec.text = TRUE})}
 
-\item{repel.labels}{TRUE or FALSE, should labels be repelled
+\item{repel.labels}{TRUE or FALSE, should labels be repelled.
 (default: \code{repel.labels = TRUE})}
 
 \item{sep.group}{String specifying the separator used in the labels.
@@ -109,6 +111,12 @@ appear in the labels. (default: \code{add.significance = TRUE})}
 
 \item{add.expl.var}{TRUE or FALSE, should explained variance appear on the
 coordinate axes. (default: \code{add.expl.var = TRUE})}
+
+\item{add.vectors}{TRUE or FALSE, should vectors appear in the plot.
+(default: \code{add.vectors = TRUE})}
+
+\item{parse.labels}{TRUE or FALSE, should labels be parsed.
+(default: \code{parse.labels = TRUE})}
 }
 \value{
 A \code{ggplot2} object
@@ -162,6 +170,11 @@ plotRDA(tse, "RDA",
 plotRDA(tse, "RDA",
         colour_by = "ClinicalStatus",
         repel.labels = FALSE)
+ 
+# Create RDA plot without vectors
+plotRDA(tse, "RDA",
+        colour_by = "ClinicalStatus",
+        add.vectors = FALSE)
  
 # Calculate RDA as a separate object
 rda_mat <- calculateRDA(tse,
