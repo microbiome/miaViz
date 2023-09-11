@@ -22,8 +22,11 @@
 #' @param ellipse.linewidth Number specifying the size of ellipses.
 #'   (default: \code{ellipse.linewidth = 0.1})
 #' 
-#' @param ellipse.linetype Discrete number specifying the style of ellipses
+#' @param ellipse.linetype Discrete number specifying the style of ellipses.
 #'   (default: \code{ellipse.linetype = 1})
+#'
+#' @param add.vectors TRUE or FALSE, should vectors appear in the plot.
+#'    (default: \code{add.vectors = TRUE})
 #' 
 #' @param vec.size Number specifying the size of vectors.
 #'   (default: \code{vec.size = 0.5})
@@ -56,12 +59,15 @@
 #' @param vec.text TRUE or FALSE, should text instead of labels be used to label vectors.
 #'   (default: \code{vec.text = TRUE})
 #' 
-#' @param repel.labels TRUE or FALSE, should labels be repelled
+#' @param repel.labels TRUE or FALSE, should labels be repelled.
 #'   (default: \code{repel.labels = TRUE})
-#'  
+#'
+#' @param parse.labels TRUE or FALSE, should labels be parsed.
+#'   (default: \code{parse.labels = TRUE})
+#'
 #' @param add.significance TRUE or FALSE, should explained variance and p-value
 #'   appear in the labels. (default: \code{add.significance = TRUE})
-#'  
+#'
 #' @param add.expl.var TRUE or FALSE, should explained variance appear on the
 #'   coordinate axes. (default: \code{add.expl.var = TRUE})
 #' 
@@ -120,6 +126,11 @@
 #'         colour_by = "ClinicalStatus",
 #'         repel.labels = FALSE)
 #'  
+#' # Create RDA plot without vectors
+#' plotRDA(tse, "RDA",
+#'         colour_by = "ClinicalStatus",
+#'         add.vectors = FALSE)
+#'  
 #' # Calculate RDA as a separate object
 #' rda_mat <- calculateRDA(tse,
 #'                         formula = assay ~ ClinicalStatus + Gender + Age,
@@ -172,10 +183,16 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
              vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
              arrow.size = 0.25, label.color = label.colour, label.colour = "black", label.size = 4,
              vec.text = TRUE, repel.labels = TRUE, sep.group = "\U2012", repl.underscore = " ",
-             add.significance = TRUE, add.expl.var = TRUE, ...){
+             add.significance = TRUE, add.expl.var = TRUE, add.vectors = TRUE, parse.labels = TRUE, ...){
         ###################### Input check ########################
         if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour")) ){
             stop("'add.ellipse' must be one of c(TRUE, FALSE, 'fill', 'color', 'colour').", call. = FALSE)
+        }
+        if ( !.is_a_bool(add.vectors) ){
+            stop("'add.vectors must be TRUE or FALSE.", call. = FALSE)
+        }
+        if ( !add.vectors ){
+            warning("'add.vectors' is FALSE, so other arguments for vectors and labels will be disregarded.", call. = FALSE)
         }
         if( !.is_a_bool(vec.text) ){
             stop("'vec.text' must be TRUE or FALSE.", call. = FALSE)
@@ -183,11 +200,15 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         if( !.is_a_bool(repel.labels) ){
             stop("'repel.labels' must be TRUE or FALSE.", call. = FALSE)
         }
-        if( !.is_a_bool(add.significance) ){
-            stop("'add.significance' must be TRUE or FALSE.", call. = FALSE)
+        if( !.is_a_bool(parse.labels) ){
+            stop("'parse.labels' must be TRUE or FALSE.", call. = FALSE)
         }
         if( !.is_a_bool(add.significance) ){
             stop("'add.significance' must be TRUE or FALSE.", call. = FALSE)
+        }
+        if( parse.labels && !add.significance ){
+            parse.labels <- FALSE
+            warning("'parse.labels' was turned off because 'add.significance' is FALSE.", call. = FALSE)
         }
         if( !.is_a_bool(add.expl.var) ){
             stop("'add.expl.var' must be TRUE or FALSE.", call. = FALSE)
@@ -230,7 +251,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         plot_data <- .incorporate_rda_vis(
             object, dimred, sep.group = sep.group, repl.underscore = repl.underscore,
             add.significance = add.significance, add.expl.var = add.expl.var,
-            add.ellipse = add.ellipse, ...
+            add.ellipse = add.ellipse, add.vectors = add.vectors, ...
         )
         # Create a plot
         plot <- .rda_plotter(
@@ -239,7 +260,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
             vec.colour = vec.colour, vec.linetype = vec.linetype, arrow.size = arrow.size,
             label.color = label.color, label.colour = label.colour, label.size = label.size,
             vec.text = vec.text, add.ellipse = add.ellipse, repel.labels = repel.labels,
-            parse = add.significance, ...
+            parse.labels = parse.labels, ...
         )
         return(plot)
     }
@@ -277,7 +298,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
         shape_by = NULL, size_by = NULL, order_by = NULL, text_by = NULL,
         other_fields = list(), swap_rownames = NULL, point.padding = NA,
-        add.ellipse = TRUE, add_vectors = TRUE, add.significance = TRUE,
+        add.ellipse = TRUE, add.vectors = TRUE, add.significance = TRUE,
         add.expl.var = TRUE, vec_lab = NULL, bins = NULL, sep.group = "\U2012",
         repl.underscore = " ", ...){
 
@@ -329,7 +350,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     
     # Get data for vectors
     vector_data <- NULL
-    if( add_vectors ){
+    if( add.vectors ){
         # Check if data is available
         ind <- names(attributes(reduced_dim)) %in% c("rda", "cca")
         # If it can be found
@@ -504,7 +525,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         vec.size = 0.5, vec.color = vec.colour, vec.colour = "black",
         vec.linetype = 1, arrow.size = 0.25, min.segment.length = 5,
         label.color = label.colour, label.colour = "black", label.size = 4,
-        parse = TRUE, vec.text = TRUE, repel.labels = TRUE, add.ellipse = TRUE,
+        parse.labels = TRUE, vec.text = TRUE, repel.labels = TRUE, add.ellipse = TRUE,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
 
@@ -551,7 +572,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         label_args <- list(
                         data = data,
                         mapping = aes(x = .data[[xvar]], y = .data[[yvar]]),
-                        label = data[["vector_label"]], parse = parse,
+                        label = data[["vector_label"]], parse = parse.labels,
                         color = label.color, size = label.size, stat = "identity",
                         nudge_x = nudge_x, nudge_y = nudge_y, show.legend = NA,
                         na.rm = FALSE, inherit.aes = TRUE
