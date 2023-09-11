@@ -40,10 +40,13 @@ test_that("plot RDA/CCA", {
   el_false <- plotRDA(tse, "RDA", colour_by = "patient_status", add.ellipse = FALSE)
   el_col <- plotRDA(tse, "RDA", colour_by = "patient_status", add.ellipse = "colour")
   el_fill <- plotRDA(tse, "RDA", colour_by = "patient_status", add.ellipse = "fill")
-  vec_false <- plotRDA(tse, "RDA", colour_by = "patient_status", add.vectors = FALSE)
-  # Filled ellipse has one more layer than no ellipse and two more than no vector plot
+  expect_warning(
+      vec_false <- plotRDA(tse, "RDA", colour_by = "patient_status", add.vectors = FALSE)
+  )
+  # Filled ellipse has one more layer than no ellipse plot
   expect_equal(length(ggplot_build(el_true)[["data"]]), 4)
   expect_equal(length(ggplot_build(el_false)[["data"]]), 3)
+  # No-vector plot has only 2 layers, (points and ellipse)
   expect_equal(length(ggplot_build(vec_false)[["data"]]), 2)
   # Coloured ellipse but not filled ellipse plot has all 0 alpha values
   expect_true(all(ggplot_build(el_col)[["data"]][[2]][["alpha"]] == 0))
