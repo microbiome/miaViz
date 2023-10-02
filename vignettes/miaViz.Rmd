@@ -329,7 +329,7 @@ plotDMNFit(dmn_se, type = "laplace")
 
 # Serial data ordination and trajectories
 
-```{r, error=FALSE, warning=FALSE, results='hide'}
+```{r, eval=FALSE}
 if(!requireNamespace("devtools", quietly = TRUE)){
     BiocManager::install("devtools")
 }
@@ -341,7 +341,7 @@ if(!requireNamespace("miaTime", quietly = TRUE)){
 Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 `hitchip1006` dataset:
 
-```{r MDS, include=FALSE}
+```{r MDS, eval=FALSE}
 library(miaTime)
 data(hitchip1006, package = "miaTime")
 tse <- hitchip1006
@@ -356,7 +356,7 @@ p
 
 Retrieving information about all available trajectories:
 
-```{r}
+```{r, eval=FALSE}
 library(dplyr)
 
 # List subjects with two time points
@@ -369,7 +369,7 @@ table(table(tse$subject)) %>% as.data.frame() %>%
 
 Lets look at all trajectories having two time points in the data:
 
-```{r}
+```{r, eval=FALSE}
 # plot
 p + geom_path(aes(x=X1, y=X2, group=subject), 
               arrow=arrow(length = unit(0.1, "inches")),
@@ -383,7 +383,7 @@ p + geom_path(aes(x=X1, y=X2, group=subject),
 
 Filtering the two time point trajectories by divergence and displaying top 10%:
 
-```{r}
+```{r, eval=FALSE}
 library(miaTime)
 # calculating step wise divergence based on the microbial profiles
 tse <- getStepwiseDivergence(tse, group = "subject", time_field = "time")
@@ -411,7 +411,7 @@ p + geom_path(aes(x=X1, y=X2,
 
 Plotting an example of the trajectory with the maximum total divergence:
 
-```{r}
+```{r, eval=FALSE}
 # Get subject with the maximum total divergence
 selected.subject <- data.frame(reducedDim(tse), colData(tse)) %>%
     group_by(subject) %>% 
