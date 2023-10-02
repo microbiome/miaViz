@@ -60,8 +60,7 @@ Suggests:
     patchwork,
     vegan,
     microbiomeDataSets,
-    bluster,
-    miaTime
+    bluster
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
