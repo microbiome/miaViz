@@ -257,6 +257,15 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 # Plotting of serial data
 
 ```{r, eval=FALSE}
+if(!requireNamespace("devtools", quietly = TRUE)){
+    BiocManager::install("devtools")
+}
+if(!requireNamespace("miaTime", quietly = TRUE)){
+    devtools::install_github("microbiome/miaTime", upgrade = "never")
+}
+```
+
+```{r, eval=FALSE}
 # Load data from miaTime package
 library("miaTime")
 data(SilvermanAGutData, package="miaTime")
@@ -328,15 +337,6 @@ plotDMNFit(dmn_se, type = "laplace")
 ```
 
 # Serial data ordination and trajectories
-
-```{r, eval=FALSE}
-if(!requireNamespace("devtools", quietly = TRUE)){
-    BiocManager::install("devtools")
-}
-if(!requireNamespace("miaTime", quietly = TRUE)){
-    devtools::install_github("microbiome/miaTime", upgrade = "never")
-}
-```
 
 Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 `hitchip1006` dataset:
