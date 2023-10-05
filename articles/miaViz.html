@@ -309,6 +309,13 @@ the graph plot can incorporate data from the
 <h2 id="plotting-of-serial-data">Plotting of serial data<a class="anchor" aria-label="anchor" href="#plotting-of-serial-data"></a>
 </h2>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"miaTime"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"microbiome/miaTime"</span>, upgrade <span class="op">=</span> <span class="st">"never"</span><span class="op">)</span></span>
+<span><span class="op">}</span></span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data from miaTime package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/microbiome/miaTime" class="external-link">"miaTime"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">SilvermanAGutData</span>, package<span class="op">=</span><span class="st">"miaTime"</span><span class="op">)</span></span>
@@ -321,7 +328,7 @@ reference data from the <code>colData</code> to use as descriptor for
 ordering the data. The <code>y</code> argument selects the feature to
 show. Since plotting a lot of features is not advised a maximum of 20
 features can plotted at the same time.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span>,</span>
 <span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
 <span>           y <span class="op">=</span> <span class="va">taxa</span>,</span>
@@ -330,14 +337,14 @@ features can plotted at the same time.</p>
 calculation of the <code>mean</code> and <code>sd</code> and plotted as
 a range. Data from different assays can be used for plotting via the
 <code>assay.type</code>.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span><span class="op">[</span><span class="va">taxa</span>,<span class="op">]</span>,</span>
 <span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
 <span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>           assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
 <p>Additional variables can be used to modify line type aesthetics.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span>,</span>
 <span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
 <span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTopTaxa</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
@@ -351,12 +358,12 @@ a range. Data from different assays can be used for plotting via the
 <p>To visualize the relative relations between two groupings among the
 factor data, two functions are available for the purpose;
 <code>plotColTile</code> and <code>plotRowTile</code>.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span>
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span>
 <span><span class="fu"><a href="../reference/plotColTile.html">plotColTile</a></span><span class="op">(</span><span class="va">se</span>,<span class="st">"SampleType"</span>,<span class="st">"Primer"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x.top <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/unnamed-chunk-22-1.png" width="3000"></p>
+<p><img src="miaViz_files/figure-html/unnamed-chunk-23-1.png" width="3000"></p>
 </div>
 <div class="section level2">
 <h2 id="dmn-fit-plotting">DMN fit plotting<a class="anchor" aria-label="anchor" href="#dmn-fit-plotting"></a>
@@ -368,7 +375,7 @@ using <code>runDMN</code> from the <code>mia</code> package, several k
 values as a number of clusters are used to observe the best fit (see
 also <code>getDMN</code> and <code>getBestDMNFit</code>). To visualize
 the fit using e.g. “laplace” as a measure of goodness of fit:</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "DMN"</span></span>
@@ -377,18 +384,11 @@ the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <span><span class="co">#&gt; Warning: 'getDMN' is deprecated.</span></span>
 <span><span class="co">#&gt; Use 'cluster' instead.</span></span>
 <span><span class="co">#&gt; See help("Deprecated") and help("Now runDMN and calculateDMN are deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.-deprecated").</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/unnamed-chunk-23-1.png" width="3000"></p>
+<p><img src="miaViz_files/figure-html/unnamed-chunk-24-1.png" width="3000"></p>
 </div>
 <div class="section level2">
 <h2 id="serial-data-ordination-and-trajectories">Serial data ordination and trajectories<a class="anchor" aria-label="anchor" href="#serial-data-ordination-and-trajectories"></a>
 </h2>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"devtools"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>    <span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span>
-<span><span class="kw">if</span><span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"miaTime"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
-<span>    <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"microbiome/miaTime"</span>, upgrade <span class="op">=</span> <span class="st">"never"</span><span class="op">)</span></span>
-<span><span class="op">}</span></span></code></pre></div>
 <p>Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 <code>hitchip1006</code> dataset:</p>
 <div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
