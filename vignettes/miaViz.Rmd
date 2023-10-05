@@ -256,7 +256,19 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 
 # Plotting of serial data
 
-```{r}
+```{r, eval=FALSE}
+# miaTime is not in Bioc or CRAN. Package needs to be there if it is utilized
+# in vignette. That is why miaTime-related chunks are eval=FALSE. Remove these
+# when miaTime is in Bioc.
+if(!requireNamespace("devtools", quietly = TRUE)){
+    BiocManager::install("devtools")
+}
+if(!requireNamespace("miaTime", quietly = TRUE)){
+    devtools::install_github("microbiome/miaTime", upgrade = "never")
+}
+```
+
+```{r, eval=FALSE}
 # Load data from miaTime package
 library("miaTime")
 data(SilvermanAGutData, package="miaTime")
@@ -271,7 +283,7 @@ descriptor for ordering the data. The `y` argument selects the feature to show.
 Since plotting a lot of features is not advised a maximum of 20 features can 
 plotted at the same time.
  
-```{r}
+```{r, eval=FALSE}
 plotSeries(tse,
            x = "DAY_ORDER",
            y = taxa,
@@ -281,7 +293,7 @@ If replicated data is present, data is automatically used for calculation of the
 `mean` and `sd` and plotted as a range. Data from different assays can be used
 for plotting via the `assay.type`.
 
-```{r}
+```{r, eval=FALSE}
 plotSeries(tse[taxa,],
            x = "DAY_ORDER",
            colour_by = "Family",
@@ -291,7 +303,7 @@ plotSeries(tse[taxa,],
 
 Additional variables can be used to modify line type aesthetics.
 
-```{r}
+```{r, eval=FALSE}
 plotSeries(tse,
            x = "DAY_ORDER",
            y = getTopTaxa(tse, 5),
@@ -328,15 +340,6 @@ plotDMNFit(dmn_se, type = "laplace")
 ```
 
 # Serial data ordination and trajectories
-
-```{r, eval=FALSE}
-if(!requireNamespace("devtools", quietly = TRUE)){
-    BiocManager::install("devtools")
-}
-if(!requireNamespace("miaTime", quietly = TRUE)){
-    devtools::install_github("microbiome/miaTime", upgrade = "never")
-}
-```
 
 Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 `hitchip1006` dataset:
