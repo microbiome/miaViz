@@ -94,8 +94,8 @@ function from <code>BiocManager</code> and load <code>miaViz</code>.</p>
 <span><span class="co">#&gt; Warning: package(s) not installed when version(s) same as or greater than current; use</span></span>
 <span><span class="co">#&gt;   `force = TRUE` to re-install: 'miaViz'</span></span>
 <span><span class="co">#&gt; Old packages: 'basilisk', 'basilisk.utils', 'densvis', 'dir.expiry',</span></span>
-<span><span class="co">#&gt;   'TreeSummarizedExperiment', 'tinytex', 'foreign', 'KernSmooth', 'lattice',</span></span>
-<span><span class="co">#&gt;   'Matrix', 'mgcv', 'nlme', 'spatial', 'survival'</span></span></code></pre></div>
+<span><span class="co">#&gt;   'GenomeInfoDb', 'TreeSummarizedExperiment', 'curl', 'tinytex', 'foreign',</span></span>
+<span><span class="co">#&gt;   'KernSmooth', 'lattice', 'Matrix', 'mgcv', 'nlme', 'spatial', 'survival'</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">miaViz</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></code></pre></div>
@@ -314,8 +314,7 @@ the graph plot can incorporate data from the
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">SilvermanAGutData</span>, package<span class="op">=</span><span class="st">"miaTime"</span><span class="op">)</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">SilvermanAGutData</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
-<span><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTopTaxa</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: The 'getTopTaxa' function is deprecated. Use 'getTopFeatures' instead.</span></span></code></pre></div>
+<span><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTopTaxa</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>Data from samples collected along time can be visualized using
 <code>plotSeries</code>. The <code>x</code> argument is used to
 reference data from the <code>colData</code> to use as descriptor for
@@ -327,8 +326,7 @@ features can plotted at the same time.</p>
 <span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
 <span>           y <span class="op">=</span> <span class="va">taxa</span>,</span>
 <span>           colour_by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/unnamed-chunk-19-1.png" width="3000">
-If replicated data is present, data is automatically used for
+<p>If replicated data is present, data is automatically used for
 calculation of the <code>mean</code> and <code>sd</code> and plotted as
 a range. Data from different assays can be used for plotting via the
 <code>assay.type</code>.</p>
@@ -338,7 +336,6 @@ a range. Data from different assays can be used for plotting via the
 <span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>           assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/unnamed-chunk-20-1.png" width="3000"></p>
 <p>Additional variables can be used to modify line type aesthetics.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span>,</span>
@@ -346,9 +343,7 @@ a range. Data from different assays can be used for plotting via the
 <span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTopTaxa</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>           assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning: The 'getTopTaxa' function is deprecated. Use 'getTopFeatures' instead.</span></span></code></pre></div>
-<p><img src="miaViz_files/figure-html/unnamed-chunk-21-1.png" width="3000"></p>
+<span>           assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="plotting-factor-data">Plotting factor data<a class="anchor" aria-label="anchor" href="#plotting-factor-data"></a>
@@ -502,18 +497,17 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt; [8] base     </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
-<span><span class="co">#&gt;  [1] miaTime_0.1.21                 scater_1.29.4                 </span></span>
-<span><span class="co">#&gt;  [3] scuttle_1.11.2                 patchwork_1.1.3               </span></span>
-<span><span class="co">#&gt;  [5] miaViz_1.9.3                   ggraph_2.1.0                  </span></span>
-<span><span class="co">#&gt;  [7] ggplot2_3.4.3                  mia_1.9.18                    </span></span>
-<span><span class="co">#&gt;  [9] MultiAssayExperiment_1.27.5    TreeSummarizedExperiment_2.1.4</span></span>
-<span><span class="co">#&gt; [11] Biostrings_2.69.2              XVector_0.41.1                </span></span>
-<span><span class="co">#&gt; [13] SingleCellExperiment_1.23.0    SummarizedExperiment_1.31.1   </span></span>
-<span><span class="co">#&gt; [15] Biobase_2.61.0                 GenomicRanges_1.53.1          </span></span>
-<span><span class="co">#&gt; [17] GenomeInfoDb_1.37.5            IRanges_2.35.2                </span></span>
-<span><span class="co">#&gt; [19] S4Vectors_0.39.2               BiocGenerics_0.47.0           </span></span>
-<span><span class="co">#&gt; [21] MatrixGenerics_1.13.1          matrixStats_1.0.0             </span></span>
-<span><span class="co">#&gt; [23] BiocStyle_2.29.2              </span></span>
+<span><span class="co">#&gt;  [1] scater_1.29.4                  scuttle_1.11.2                </span></span>
+<span><span class="co">#&gt;  [3] patchwork_1.1.3                miaViz_1.9.3                  </span></span>
+<span><span class="co">#&gt;  [5] ggraph_2.1.0                   ggplot2_3.4.3                 </span></span>
+<span><span class="co">#&gt;  [7] mia_1.9.18                     MultiAssayExperiment_1.27.5   </span></span>
+<span><span class="co">#&gt;  [9] TreeSummarizedExperiment_2.1.4 Biostrings_2.69.2             </span></span>
+<span><span class="co">#&gt; [11] XVector_0.41.1                 SingleCellExperiment_1.23.0   </span></span>
+<span><span class="co">#&gt; [13] SummarizedExperiment_1.31.1    Biobase_2.61.0                </span></span>
+<span><span class="co">#&gt; [15] GenomicRanges_1.53.1           GenomeInfoDb_1.37.5           </span></span>
+<span><span class="co">#&gt; [17] IRanges_2.35.2                 S4Vectors_0.39.2              </span></span>
+<span><span class="co">#&gt; [19] BiocGenerics_0.47.0            MatrixGenerics_1.13.1         </span></span>
+<span><span class="co">#&gt; [21] matrixStats_1.0.0              BiocStyle_2.29.2              </span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; loaded via a namespace (and not attached):</span></span>
 <span><span class="co">#&gt;   [1] RColorBrewer_1.1-3          jsonlite_1.8.7             </span></span>
