@@ -257,18 +257,6 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 # Plotting of serial data
 
 ```{r, eval=FALSE}
-# miaTime is not in Bioc or CRAN. Package needs to be there if it is utilized
-# in vignette. That is why miaTime-related chunks are eval=FALSE. Remove these
-# when miaTime is in Bioc.
-if(!requireNamespace("devtools", quietly = TRUE)){
-    BiocManager::install("devtools")
-}
-if(!requireNamespace("miaTime", quietly = TRUE)){
-    devtools::install_github("microbiome/miaTime", upgrade = "never")
-}
-```
-
-```{r, eval=FALSE}
 # Load data from miaTime package
 library("miaTime")
 data(SilvermanAGutData, package="miaTime")
