@@ -296,11 +296,9 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames
 .incorporate_rda_vis <- function(
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
-        shape_by = NULL, size_by = NULL, order_by = NULL, text_by = NULL,
-        other_fields = list(), swap_rownames = NULL, point.padding = NA,
-        add.ellipse = TRUE, add.vectors = TRUE, add.significance = TRUE,
-        add.expl.var = TRUE, vec_lab = NULL, bins = NULL, sep.group = "\U2012",
-        repl.underscore = " ", ...){
+        add.significance = TRUE, add.expl.var = TRUE, add.ellipse = TRUE,
+        add.vectors = TRUE, vec.lab = NULL,
+        sep.group = "\U2012", repl.underscore = " ", ...){
 
     # Check dimred
     if( !dimred %in% reducedDimNames(tse) ){
@@ -312,32 +310,11 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     if( ncol(reduced_dim) < 2 ){
         stop("reducedDim specified by 'dimred' must have at least 2 columns.", call. = FALSE)
     }
-    # Check that each by-argument matches the name of a column in colData
-    by_args <- c(
-        colour_by = colour_by,
-        shape_by = shape_by,
-        size_by = size_by,
-        order_by = order_by,
-        text_by = text_by
-    )
-    correct_args <- sapply(by_args, function(x) x %in% names(colData(tse)))
-    sapply(names(by_args[!correct_args]),
-           function(x) {
-              stop(paste0("'", x, "' must match the name of a column in colData."),
-                   call. = FALSE)
-           })
     # Only 2 dimensions are supported currently
     ncomponents <- 2
-    # Make list of arguments for plotReducedDim
-    plotReducedDim_args <- c(by_args, list(
-      object = tse, dimred = dimred, ncomponents = ncomponents,
-      text_size = 5, text_colour = "black", text_color = "black",
-      label_format = c("%s %i", " (%i%%)"), other_fields = other_fields,
-      swap_rownames = swap_rownames, point.padding = point.padding, force = 1,
-      rasterise = FALSE, scattermore = FALSE, summary_fun = "sum", hex = FALSE
-    ))
     # Get scatter plot with plotReducedDim --> keep theme similar between ordination methods
-    plot <- do.call("plotReducedDim", plotReducedDim_args)
+    plot <- plotReducedDim(
+        tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by, ...)
     
     # Get data for ellipse
     ellipse_data <- NULL
@@ -384,7 +361,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         # Get those names that are present in data
         
         # If user has not provided vector labels
-        if( is.null(vec_lab) ){
+        if( is.null(vec.lab) ){
             vector_label <- rownames(vector_data)
             # Make labels more tidy
             if( all_var_found ){
@@ -398,12 +375,12 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             vector_data$vector_label <- vector_label
         } else{
             # Check that user-provided labels are correct length
-            if( length(vec_lab) != nrow(vector_data) ){
+            if( length(vec.lab) != nrow(vector_data) ){
                 stop("Number of labels in 'vec_lab' do not match with number of vectors.",
                      call. = FALSE)
             }
             # If they are, add labels to data
-            vector_data$vector_label <- vec_lab
+            vector_data$vector_label <- vec.lab
         }
     }
     
@@ -422,7 +399,8 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             # Get vector labels
             vector_label <- vector_data[["vector_label"]]
             # Add significance to vector labels
-            vector_label <- .add_signif_to_vector_labels(vector_label, variable_names, signif_data, ...)
+            vector_label <- .add_signif_to_vector_labels(
+                vector_label, variable_names, signif_data, repl.underscore)
             vector_data[["vector_label"]] <- vector_label
         } else{
             # If it cannot be found, give warning
@@ -470,7 +448,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 # Make vector labels more tidy, i.e, separate variable and group names.
 # Replace also underscores with space
 .tidy_vector_labels <- function(
-        vector_label, coldata, sep.group = "\U2012", repl.underscore = " "){
+        vector_label, coldata, sep.group = "\U2012", repl.underscore = " ", ...){
     # Get variable names from sample metadata
     var_names <- colnames(coldata)
     # Loop through vector labels
@@ -495,7 +473,8 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 }
 
 # This function adds significance info to vector labels
-.add_signif_to_vector_labels <- function(vector_label, var_names, signif_data, repl.underscore = " ", ...){
+.add_signif_to_vector_labels <- function(
+        vector_label, var_names, signif_data, repl.underscore = " ", ...){
     # Replace underscores from significance data and variable names to match labels
     rownames(signif_data) <- sapply(rownames(signif_data), function(x) gsub("_", repl.underscore, x))
     var_names <- sapply(var_names, function(x) gsub("_", repl.underscore, x))
@@ -508,7 +487,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             paste(!!name, " (", 
                   !!format(
                       round( signif_data[var_name, "Explained variance"]*100, 1),
-                      nsmall = 1), "%, P = ",
+                      nsmall = 1), "%, ", italic("P"), " = ",
                   !!gsub("0\\.","\\.", format(
                       round( signif_data[var_name, "Pr(>F)"], 3),
                       nsmall = 3)), ")"))
