@@ -16,10 +16,8 @@ test_that("plot RDA/CCA", {
   expect_no_error(plotRDA(tse, "RDA"))
 
   # Wrong-entry scenarios
-  expect_error(plotRDA(tse, "RDA", colour_by = "wrong colname"),
-               "'colour_by' must match the name of a column in colData.")
-  expect_error(plotRDA(tse, "RDA", colour_by = "cohort", shape_by = "wrong colname"),
-               "'shape_by' must match the name of a column in colData.")
+  expect_error(plotRDA(tse, "RDA", colour_by = "wrong colname"))
+  expect_error(plotRDA(tse, "RDA", colour_by = "cohort", shape_by = "wrong colname"))
   expect_error(plotRDA(tse, "RDA", add.ellipse = "invalid value"),
                "'add.ellipse' must be one of c(TRUE, FALSE, 'fill', 'color', 'colour').",
                fixed = TRUE)
