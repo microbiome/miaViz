@@ -297,7 +297,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 .incorporate_rda_vis <- function(
         tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
         add.significance = TRUE, add.expl.var = TRUE, add.ellipse = TRUE,
-        add.vectors = TRUE, vec.lab = NULL,
+        add.vectors = TRUE, vec.lab = NULL, expl_var = NULL,
         sep.group = "\U2012", repl.underscore = " ", ...){
 
     # Check dimred
@@ -312,9 +312,28 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     }
     # Only 2 dimensions are supported currently
     ncomponents <- 2
+    
+    # If specified, get explained variance
+    if( add.expl.var ){
+        # Check if data is available
+        ind <- names(attributes(reduced_dim)) %in% c("rda", "cca")
+        # If it can be found
+        if( any(ind) ){
+            # Add explained variance
+            rda <- attributes(reduced_dim)[ind][[1]]
+            expl_var <- summary(rda)$concont$importance[2, ]*100
+        } else{
+            # If it cannot be found, give warning
+            warning(paste("RDA/CCA object was not found. Please compute",
+                          "RDA/CCA by using runCCA or calculateCCA."),
+                    call. = FALSE)
+        }
+    }
+    
     # Get scatter plot with plotReducedDim --> keep theme similar between ordination methods
     plot <- plotReducedDim(
-        tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by, ...)
+        tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by,
+        percentVar = expl_var, ...)
     
     # Get data for ellipse
     ellipse_data <- NULL
@@ -413,26 +432,6 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     # Create labels for axis
     xlab <- paste0(dimred, " 1")
     ylab <- paste0(dimred, " 2")
-    if( add.expl.var ){
-        # Check if data is available
-        ind <- names(attributes(reduced_dim)) %in% c("rda", "cca")
-        # If it can be found
-        if( any(ind) ){
-            # Add explained variance
-            rda <- attributes(reduced_dim)[ind][[1]]
-            xlab <- paste0(
-                xlab, " (",
-                format(round( summary(rda)$concont$importance[2, 1]*100, 1 ), nsmall = 1 ), "%)")
-            ylab <- paste0(
-                ylab, " (",
-                format(round( summary(rda)$concont$importance[2, 2]*100, 1 ), nsmall = 1 ), "%)")
-        } else{
-            # If it cannot be found, give warning
-            warning(paste("RDA/CCA object was not found. Please compute",
-                          "RDA/CCA by using runCCA or calculateCCA."),
-                    call. = FALSE)
-        }
-    }
     
     # Create a list to return
     result <- list(
