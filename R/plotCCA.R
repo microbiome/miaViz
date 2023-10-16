@@ -429,17 +429,11 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         }
     }
     
-    # Create labels for axis
-    xlab <- paste0(dimred, " 1")
-    ylab <- paste0(dimred, " 2")
-    
     # Create a list to return
     result <- list(
         plot = plot,
         ellipse_data = ellipse_data,
-        vector_data = vector_data,
-        xlab = xlab,
-        ylab = ylab
+        vector_data = vector_data
     )
     return(result)
 }
@@ -584,7 +578,5 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         }
         
     }
-    # Add axis labels
-    plot <- plot + xlab(plot_data$xlab) + ylab(plot_data$ylab)
     return(plot)
 }
