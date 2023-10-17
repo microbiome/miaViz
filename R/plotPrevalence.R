@@ -445,7 +445,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
     lvls <- rownames(ans)[order(rowSums(ans))]
     ans$ID <- rownames(mat)[rowSums(f) != 0]
     ans <- ans %>%
-        pivot_longer(!.data$ID, 
+        pivot_longer(!ID, 
                      names_to = "detection",
                      values_to = "prevalence")
     colnames(ans) <- c("Y","X","colour_by")
@@ -475,7 +475,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                                 line_alpha = 1,
                                 line_type = NULL,
                                 line_size = 1){
-    plot_out <- ggplot(plot_data, aes_string(x = "X", y = "Y")) +
+    plot_out <- ggplot(plot_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)
     if(layout == "line"){
         point_args <- .get_point_args(colour_by = colour_by, shape_by = NULL,
@@ -486,7 +486,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                                     size_by = NULL,
                                     alpha = line_alpha,
                                     linetype = line_type,
-                                    size = line_size)
+                                    linewidth = line_size)
         point_args$args$mapping$group <- sym("colour_by")
         line_args$args$mapping$group <- sym("colour_by")
         plot_out <- plot_out +

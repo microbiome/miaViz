@@ -645,9 +645,9 @@ setMethod("plotRowGraph",
 #' @importFrom tidyr drop_na
 .add_graph_labels <- function(plot_out, show_label){
     if(show_label){
-        label_data <- plot_out$data %>% drop_na(.data$label)
+        label_data <- plot_out$data %>% drop_na(label)
         plot_out <- plot_out +
-            geom_node_label(mapping = aes_string(label = "label"), 
+            geom_node_label(mapping = aes(label = .data[["label"]]), 
                             data = label_data,
                             repel = TRUE,
                             max.overlaps = 100)

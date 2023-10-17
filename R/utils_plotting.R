@@ -253,20 +253,21 @@ NULL
 .get_bar_args <- function (colour_by, alpha = 0.65, add_border = NULL,
                            n = 0) 
 {
-    aes_args <- list()
     fill_colour <- TRUE
     border <- FALSE
+    aes_args <- aes()
+
     if (!is.null(colour_by)) {
-        aes_args$fill <- "colour_by"
+        aes_args$fill <- substitute(`colour_by`)
     }
     if(!is.null(add_border) && add_border && !is.null(colour_by)){
         border <- TRUE
-        aes_args$colour <- "colour_by"
+        aes_args$colour <- substitute(`colour_by`)
     } else if(is.null(add_border) && n <= 20) {
         border <- TRUE
-        aes_args$colour <- "colour_by"
+        aes_args$colour <- substitute(`colour_by`)
     }
-    new_aes <- do.call(aes_string, aes_args)
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
         geom_args$colour <- "grey20"
@@ -282,24 +283,24 @@ NULL
                             shape = 21,
                             colour = "grey70") 
 {
-    aes_args <- list()
+    aes_args <- aes()
     fill_colour <- TRUE
     if (!is.null(shape_by)) {
-        aes_args$shape <- "shape_by"
+        aes_args$shape <- substitute(`shape_by`)
     }
     if (!is.null(colour_by)) {
         # Only shapes 21 to 25 can be filled. Filling does not work in other shapes.
         if(shape >= 21 && shape <= 25){
-            aes_args$fill <- "colour_by"
+            aes_args$fill <- substitute(`colour_by`)
         } else {
-            aes_args$colour <- "colour_by"
+            aes_args$colour <- subsitute(`colour_by`)
             fill_colour <- FALSE
         }
     }
     if (!is.null(size_by)) {
-        aes_args$size <- "size_by"
+        aes_args$size <- substitute(`size_by`)
     }
-    new_aes <- do.call(aes_string, aes_args)
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
         geom_args$fill <- colour
@@ -316,20 +317,20 @@ NULL
 .get_line_args <- function(colour_by, linetype_by, size_by,
                            alpha = 0.65,
                            linetype = 1,
-                           size = NULL,
+                           linewidth = NULL,
                            colour = "grey70") 
 {
-    aes_args <- list()
+    aes_args <- aes()
     if (!is.null(linetype_by)) {
-        aes_args$linetype <- "linetype_by"
+        aes_args$linetype <- substitute(`linetype_by`)
     }
     if (!is.null(colour_by)) {
-        aes_args$colour <- "colour_by"
+        aes_args$colour <- substitute(`colour_by`)
     }
     if (!is.null(size_by)) {
-        aes_args$size <- "size_by"
+        aes_args$linewidth <- substitute(`size_by`)
     }
-    new_aes <- do.call(aes_string, aes_args)
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
         geom_args$colour <- colour
@@ -338,7 +339,7 @@ NULL
         geom_args$linetype <- linetype
     }
     if (is.null(size_by)) {
-        geom_args$size <- size
+        geom_args$linewidth <- linewidth
     }
     return(list(args = geom_args))
 }
@@ -346,13 +347,11 @@ NULL
 .get_ribbon_args <- function(colour_by,
                              alpha = 0.3) 
 {
-    aes_args <- list()
-    aes_args$ymin <- "Y - sd"
-    aes_args$ymax <- "Y + sd"
+    aes_args <- aes(ymin = .data[["Y"]] - .data[["sd"]], ymax = .data[["Y"]] + .data[["sd"]])
     if (!is.null(colour_by)) {
-        aes_args$fill <- "colour_by"
+        aes_args$fill <- substitute(`colour_by`)
     }
-    new_aes <- do.call(aes_string, aes_args)
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
         geom_args$fill <- "grey70"
@@ -362,14 +361,14 @@ NULL
 
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL,
                            layout = NULL){
-    aes_args <- list()
+    aes_args <- aes()
     if (!is.null(edge_colour_by)) {
-        aes_args$colour <- "edge_colour_by"
+        aes_args$colour <- substitute(`edge_colour_by`)
     }
     if (!is.null(edge_size_by)) {
-        aes_args$size <- "edge_size_by"
+        aes_args$size <- substitute(`edge_size_by`)
     }
-    new_aes <- do.call(aes_string, aes_args)
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(edge_colour_by)) {
         geom_args$colour <- "black"
@@ -398,23 +397,23 @@ NULL
 }
 
 .get_rect_args <- function(colour_by, alpha = 1, colour = "black"){
-    aes_args <- list()
+    aes_args <- aes()
     if (!is.null(colour_by)) {
-        aes_args$fill <- "colour_by"
+        aes_args$fill <- substitute(`colour_by`)
     }
-    new_aes <- do.call(aes_string, aes_args)
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha, colour = colour)
     return(list(args = geom_args))
 }
 
 .get_density_args <- function(colour_by, alpha = 0.65, colour = "black") {
     fill_colour <- TRUE
-    aes_args <- list()
+    aes_args <- aes()
     if (!is.null(colour_by)) {
-        aes_args$colour <- "colour_by"
-        aes_args$fill <- "colour_by"
+        aes_args$colour <- substitute(`colour_by`)
+        aes_args$fill <- substitute(`colour_by`)
     }
-    new_aes <- do.call(aes_string, aes_args)
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes,
                       alpha = alpha)
     if (is.null(colour_by)) {

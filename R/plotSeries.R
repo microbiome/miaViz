@@ -304,7 +304,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     }
     # Creates a "draft" of a plot
     plot_out <- ggplot(plot_data,
-                       aes_string(x = "X", y = "Y")) +
+                       aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)
     # if sd column is present add a ribbon
     if(!is.null(plot_data$sd)){
@@ -313,13 +313,13 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         plot_out <- plot_out +
             do.call(geom_ribbon, ribbon_args$args)
     }
-    # Fetches arguments fpr geom_line
+    # Fetches arguments for geom_line
     line_args <- .get_line_args(colour_by = colour_by,
                                 linetype_by = linetype_by,
                                 size_by = size_by,
                                 alpha = line_alpha,
                                 linetype = line_type,
-                                size = line_width)
+                                linewidth = line_width)
     # Adds arguments to the plot
     plot_out <- plot_out +
         do.call(geom_line, line_args$args)
@@ -359,7 +359,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         guide_args$linetype <- guide_legend(title = linetype_by)
     }
     if (!is.null(size_by)) {
-        guide_args$size <- guide_legend(title = size_by)
+        guide_args$linewidth <- guide_legend(title = size_by)
     }
     if (length(guide_args)) {
         plot_out <- plot_out + do.call(guides, guide_args)
