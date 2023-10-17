@@ -3,3 +3,6 @@ inst/doc
 docs
 .Rhistory
 *.RData
+.DS_Store
+/doc/
+/Meta/
