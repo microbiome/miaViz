@@ -399,7 +399,7 @@ NULL
 .get_rect_args <- function(colour_by, alpha = 1, colour = "black"){
     aes_args <- aes()
     if (!is.null(colour_by)) {
-        aes_args$fill <- substitute(`colour_by`)
+        aes_args$fill <- substitute(.data[["colour_by"]])
     }
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha, colour = colour)
