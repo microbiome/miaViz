@@ -149,10 +149,10 @@ stable package.
 
 From there you can clone your fork of the package and work on it on your
 machine using git.
-Here's an example of cloning, assuming you already forked `mia`:
+Here's an example of cloning, assuming you already forked `miaViz`:
 
 ```sh
-git clone https://github.com/<YOUR_GITHUB_USERNAME_HERE>/mia.git
+git clone https://github.com/<YOUR_GITHUB_USERNAME_HERE>/miaViz.git
 ```
 
 Git will download or "clone" your fork and put it in your local folder.
@@ -265,9 +265,9 @@ freely discuss it with the reviewers.
 
 A minimal workflow for package development is as follows.
 
-1. _Fork_ (with Git) mia R package from [https://github.com/microbiome/mia]
+1. _Fork_ (with Git) miaViz R package from [https://github.com/microbiome/miaViz]
 
-1. _Clone_ (with Git) your own fork of mia; or if you have cloned it
+1. _Clone_ (with Git) your own fork of miaViz; or if you have cloned it
   earlier, then make sure that your branch is in sync with the
   _upstream_ repository (see next section)
 
@@ -296,10 +296,10 @@ A minimal workflow for package development is as follows.
 Final checks after the R tests; run on command line (replace "R" with
 your custom R path if necessary):
 
-- `R CMD build `mia/`
-- `R CMD check mia_x.y.z.tar.gz`
-- `R CMD BiocCheck mia_x.y.z.tar.gz`
-- `R CMD INSTALL mia_x.y.z.tar.gz`
+- `R CMD build `miaViz/`
+- `R CMD check miaViz_x.y.z.tar.gz`
+- `R CMD BiocCheck miaViz_x.y.z.tar.gz`
+- `R CMD INSTALL miaViz_x.y.z.tar.gz`
 
 
 After updating the package, remember to do the following (if applicable):
@@ -312,7 +312,7 @@ After updating the package, remember to do the following (if applicable):
 After accepted pull request, check if further updates are needed in:
 
 - OMA
-- other related packages (e.g. miaViz, miaSim, miaTime)
+- other related packages (e.g. mia, miaSim, miaTime)
 
 
 ## Sync with the official Github development version
@@ -322,7 +322,7 @@ main development version. Command line version goes as follows.
 
 ```
 # Add the main repository as your _upstream_  
-`git remote add upstream git@github.com:microbiome/mia.git`
+`git remote add upstream git@github.com:microbiome/miaViz.git`
 
 # Fetch the changes from upstream (main version) and origin (your fork):
 git fetch --all
@@ -338,12 +338,12 @@ git push origin master
 
 ## Syncing with the official Bioconductor version
 
-This is usually done only by the main developer. In this case, the upstream will be set to Bioconductor: `git remote add upstream git@git.bioconductor.org:packages/mia.git`
+This is usually done only by the main developer. In this case, the upstream will be set to Bioconductor: `git remote add upstream git@git.bioconductor.org:packages/miaViz.git`
 
 - [Workflow to sync between github and bioc versions](https://bioconductor.org/developers/how-to/git/sync-existing-repositories/)
 
 - [Bioconductor Build reports (devel)](https://bioconductor.org/checkResults/devel/bioc-LATEST/)
 
-- [Package page in Bioconductor](https://bioconductor.org/packages/mia/)
+- [Package page in Bioconductor](https://bioconductor.org/packages/miaViz/)
 
 
