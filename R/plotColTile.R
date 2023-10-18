@@ -99,19 +99,19 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
                               "row" = "rowData",
                               "column" = "colData")
     x_group <- data %>% 
-        group_by(X) %>% 
+        group_by(.data$X) %>% 
         summarise(group_n = n()) %>%
-        mutate(group_freq = group_n/sum(group_n),
-               x = cumsum(group_freq),
-               xmin = c(0,x[-length(x)]))
+        mutate(group_freq = .data$group_n/sum(.data$group_n),
+               x = cumsum(.data$group_freq),
+               xmin = c(0,.data$x[-length(.data$x)]))
     data <- data %>%
-        group_by(X, Y) %>%
+        group_by(.data$X, .data$Y) %>%
         summarise(fill_n = n(), .groups = "rowwise") %>%
         dplyr::left_join(x_group, by = "X") %>%
-        mutate(fill_freq = fill_n/group_n) %>%
-        group_by(X) %>%
-        mutate(y = cumsum(fill_freq),
-               ymin = c(0,y[-length(y)])) %>%
+        mutate(fill_freq = .data$fill_n/.data$group_n) %>%
+        group_by(.data$X) %>%
+        mutate(y = cumsum(.data$fill_freq),
+               ymin = c(0,.data$y[-length(.data$y)])) %>%
         ungroup()
     data
 }
@@ -139,9 +139,9 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
 .get_xcoord_mid <- function(data){
     data %>% 
         ungroup() %>%
-        select(X, x, xmin) %>% 
+        select(.data$X, .data$x, .data$xmin) %>% 
         unique() %>%
-        mutate(xmid = xmin + (x - xmin)/2 )
+        mutate(xmid = .data$xmin + (.data$x - .data$xmin)/2 )
 }
 
 .tile_plotter <- function(data,
