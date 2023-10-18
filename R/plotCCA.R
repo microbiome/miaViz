@@ -517,7 +517,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
                              geom = "polygon", alpha = ellipse.alpha,
-                             size = ellipse.linewidth, linetype = ellipse.linetype)
+                             linewidth = ellipse.linewidth, linetype = ellipse.linetype)
         } else if ( add.ellipse %in% c("color", "colour") ){
             plot <- plot +
                 stat_ellipse(data = data,
