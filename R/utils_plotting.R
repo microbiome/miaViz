@@ -258,14 +258,14 @@ NULL
     aes_args <- aes()
 
     if (!is.null(colour_by)) {
-        aes_args$fill <- substitute(.data[["colour_by"]])
+        aes_args$fill <- substitute(`colour_by`)
     }
     if(!is.null(add_border) && add_border && !is.null(colour_by)){
         border <- TRUE
-        aes_args$colour <- substitute(.data[["colour_by"]])
+        aes_args$colour <- substitute(`colour_by`)
     } else if(is.null(add_border) && n <= 20) {
         border <- TRUE
-        aes_args$colour <- substitute(.data[["colour_by"]])
+        aes_args$colour <- substitute(`colour_by`)
     }
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
@@ -286,19 +286,19 @@ NULL
     aes_args <- aes()
     fill_colour <- TRUE
     if (!is.null(shape_by)) {
-        aes_args$shape <- substitute(.data[["shape_by"]])
+        aes_args$shape <- substitute(`shape_by`)
     }
     if (!is.null(colour_by)) {
         # Only shapes 21 to 25 can be filled. Filling does not work in other shapes.
         if(shape >= 21 && shape <= 25){
-            aes_args$fill <- substitute(.data[["colour_by"]])
+            aes_args$fill <- substitute(`colour_by`)
         } else {
-            aes_args$colour <- subsitute(.data[["colour_by"]])
+            aes_args$colour <- subsitute(`colour_by`)
             fill_colour <- FALSE
         }
     }
     if (!is.null(size_by)) {
-        aes_args$size <- substitute(.data[["size_by"]])
+        aes_args$size <- substitute(`size_by`)
     }
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
@@ -322,13 +322,13 @@ NULL
 {
     aes_args <- aes()
     if (!is.null(linetype_by)) {
-        aes_args$linetype <- substitute(.data[["linetype_by"]])
+        aes_args$linetype <- substitute(`linetype_by`)
     }
     if (!is.null(colour_by)) {
-        aes_args$colour <- substitute(.data[["colour_by"]])
+        aes_args$colour <- substitute(`colour_by`)
     }
     if (!is.null(size_by)) {
-        aes_args$linewidth <- substitute(.data[["size_by"]])
+        aes_args$linewidth <- substitute(`size_by`)
     }
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
@@ -349,7 +349,7 @@ NULL
 {
     aes_args <- aes(ymin = .data[["Y"]] - .data[["sd"]], ymax = .data[["Y"]] + .data[["sd"]])
     if (!is.null(colour_by)) {
-        aes_args$fill <- substitute(.data[["colour_by"]])
+        aes_args$fill <- substitute(`colour_by`)
     }
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
@@ -363,10 +363,10 @@ NULL
                            layout = NULL){
     aes_args <- aes()
     if (!is.null(edge_colour_by)) {
-        aes_args$colour <- substitute(.data[["edge_colour_by"]])
+        aes_args$colour <- substitute(`edge_colour_by`)
     }
     if (!is.null(edge_size_by)) {
-        aes_args$size <- substitute(.data[["edge_size_by"]])
+        aes_args$size <- substitute(`edge_size_by`)
     }
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
@@ -410,8 +410,8 @@ NULL
     fill_colour <- TRUE
     aes_args <- aes()
     if (!is.null(colour_by)) {
-        aes_args$colour <- substitute(.data[["colour_by"]])
-        aes_args$fill <- substitute(.datda[["colour_by"]])
+        aes_args$colour <- substitute(`colour_by`)
+        aes_args$fill <- substitute(`colour_by`)
     }
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes,
