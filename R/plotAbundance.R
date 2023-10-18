@@ -292,12 +292,12 @@ MELT_VALUES <- "Value"
         lvl <- lvl[order(lvl)]
     } else if(order_rank_by %in% c("abund","revabund")){
         o <- data %>% 
-            select(!X) %>%
-            group_by(colour_by) %>% 
-            summarize(sum = sum(Y))
+            select(!.data$X) %>%
+            group_by(.data$colour_by) %>% 
+            summarize(sum = sum(.data$Y))
         decreasing <- ifelse(order_rank_by == "abund",TRUE,FALSE)
         lvl <- o[order(o$sum, decreasing = decreasing),] %>% 
-            pull(colour_by) %>%
+            pull(.data$colour_by) %>%
             as.character()
     } else {
         stop(".")
