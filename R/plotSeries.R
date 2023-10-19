@@ -134,7 +134,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
             .check_taxonomic_rank(rank, object)
             
             # Agglomerates the object
-            object <- agglomerateByRank(object, rank = rank)
+            object <- mergeFeaturesByRank(object, rank = rank)
         }
         
         # Checks Y
