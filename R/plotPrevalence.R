@@ -421,6 +421,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                                         as_relative = TRUE, 
                                         min_prevalence,
                                         BPPARAM = BiocParallel::SerialParam()){
+    ID <- NULL # disable note: no global binding for variable
     mat <- assay(x, assay.type, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)

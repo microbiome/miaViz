@@ -500,7 +500,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         parse.labels = TRUE, vec.text = TRUE, repel.labels = TRUE, add.ellipse = TRUE,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
-
+    color <- NULL # disable note: no global binding for variable
     # Get the scatter plot
     plot <- plot_data[["plot"]]
     # Add ellipse
