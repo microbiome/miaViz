@@ -134,7 +134,7 @@ wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
 ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
 
 # Getting top taxa on a Phylum level
-se <- transformCounts(se, method="relabundance")
+se <- transformAssay(se, method="relabundance")
 se_phylum <- mergeFeaturesByRank(se, rank ="Phylum", onRankOnly=TRUE)
 top_taxa <- getTopTaxa(se_phylum,top = 5, assay.type = "relabundance")
 

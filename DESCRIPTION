@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.9.3
+Version: 1.9.5
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -12,6 +12,9 @@ Authors@R:
              email = "leo.lahti@iki.fi",
              comment = c(ORCID = "0000-0001-5537-637X")),
       person(given = "Basil", family = "Courbayre", role = c("ctb")),
+      person(given = "Giulio", family = "Benedetti", role = c("ctb"),
+             email = "giulio.benedetti@utu.fi",
+             comment = c(ORCID = "0000-0002-8732-7692")),
       person(given = "Muluh", family = "Muluh", role=c("ctb"))
 	     )
 Description: The miaViz package implements functions to visualize
@@ -47,7 +50,9 @@ Imports:
     tidyr,
     dplyr,
     ape,
-    DirichletMultinomial
+    DirichletMultinomial,
+    ggrepel,
+    SingleCellExperiment
 Suggests:
     knitr,
     rmarkdown,
@@ -56,8 +61,7 @@ Suggests:
     patchwork,
     vegan,
     microbiomeDataSets,
-    bluster,
-    miaTime
+    bluster
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr

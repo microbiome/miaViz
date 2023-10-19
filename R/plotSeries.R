@@ -67,7 +67,7 @@
 #'            colour_by = "Family")
 #' 
 #' # Counts relative abundances
-#' object <- transformCounts(object, method = "relabundance")
+#' object <- transformAssay(object, method = "relabundance")
 #' 
 #' # Selects taxa
 #' taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")

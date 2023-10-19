@@ -63,7 +63,7 @@ However, if the `rank` is set not `NULL` a bar plot is returned. At the same
 time the `features` argument can be set to `NULL` (default).
 
 ```{r}
-GlobalPatterns <- transformCounts(GlobalPatterns, method = "relabundance")
+GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
 ```
 
 ```{r}
@@ -256,12 +256,21 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 
 # Plotting of serial data
 
-```{r}
+```{r, eval=FALSE}
+if(!requireNamespace("devtools", quietly = TRUE)){
+    BiocManager::install("devtools")
+}
+if(!requireNamespace("miaTime", quietly = TRUE)){
+    devtools::install_github("microbiome/miaTime", upgrade = "never")
+}
+```
+
+```{r, eval=FALSE}
 # Load data from miaTime package
 library("miaTime")
 data(SilvermanAGutData, package="miaTime")
 tse <- SilvermanAGutData
-tse <- transformCounts(tse, method = "relabundance")
+tse <- transformAssay(tse, method = "relabundance")
 taxa <- getTopTaxa(tse, 2)
 ```
 
@@ -271,7 +280,7 @@ descriptor for ordering the data. The `y` argument selects the feature to show.
 Since plotting a lot of features is not advised a maximum of 20 features can 
 plotted at the same time.
  
-```{r}
+```{r, eval=FALSE}
 plotSeries(tse,
            x = "DAY_ORDER",
            y = taxa,
@@ -281,7 +290,7 @@ If replicated data is present, data is automatically used for calculation of the
 `mean` and `sd` and plotted as a range. Data from different assays can be used
 for plotting via the `assay.type`.
 
-```{r}
+```{r, eval=FALSE}
 plotSeries(tse[taxa,],
            x = "DAY_ORDER",
            colour_by = "Family",
@@ -291,7 +300,7 @@ plotSeries(tse[taxa,],
 
 Additional variables can be used to modify line type aesthetics.
 
-```{r}
+```{r, eval=FALSE}
 plotSeries(tse,
            x = "DAY_ORDER",
            y = getTopTaxa(tse, 5),
@@ -329,23 +338,14 @@ plotDMNFit(dmn_se, type = "laplace")
 
 # Serial data ordination and trajectories
 
-```{r, error=FALSE, warning=FALSE, results='hide'}
-if(!requireNamespace("devtools", quietly = TRUE)){
-    BiocManager::install("devtools")
-}
-if(!requireNamespace("miaTime", quietly = TRUE)){
-    devtools::install_github("microbiome/miaTime")
-}
-```
-
 Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 `hitchip1006` dataset:
 
-```{r MDS, include=FALSE}
+```{r MDS, eval=FALSE}
 library(miaTime)
 data(hitchip1006, package = "miaTime")
 tse <- hitchip1006
-tse <- transformCounts(tse, method = "relabundance")
+tse <- transformAssay(tse, method = "relabundance")
 ## Ordination with PCoA with Bray-Curtis dissimilarity
 tse <- runMDS(tse, FUN = vegan::vegdist, method = "bray", name = "PCoA_BC",
               assay.type = "relabundance", na.rm = TRUE)
@@ -356,7 +356,7 @@ p
 
 Retrieving information about all available trajectories:
 
-```{r}
+```{r, eval=FALSE}
 library(dplyr)
 
 # List subjects with two time points
@@ -369,7 +369,7 @@ table(table(tse$subject)) %>% as.data.frame() %>%
 
 Lets look at all trajectories having two time points in the data:
 
-```{r}
+```{r, eval=FALSE}
 # plot
 p + geom_path(aes(x=X1, y=X2, group=subject), 
               arrow=arrow(length = unit(0.1, "inches")),
@@ -383,7 +383,7 @@ p + geom_path(aes(x=X1, y=X2, group=subject),
 
 Filtering the two time point trajectories by divergence and displaying top 10%:
 
-```{r}
+```{r, eval=FALSE}
 library(miaTime)
 # calculating step wise divergence based on the microbial profiles
 tse <- getStepwiseDivergence(tse, group = "subject", time_field = "time")
@@ -411,7 +411,7 @@ p + geom_path(aes(x=X1, y=X2,
 
 Plotting an example of the trajectory with the maximum total divergence:
 
-```{r}
+```{r, eval=FALSE}
 # Get subject with the maximum total divergence
 selected.subject <- data.frame(reducedDim(tse), colData(tse)) %>%
     group_by(subject) %>% 
