@@ -34,7 +34,7 @@ plotRDA(object, ...)
   label.size = 4,
   vec.text = TRUE,
   repel.labels = TRUE,
-  sep.group = "-",
+  sep.group = "‒",
   repl.underscore = " ",
   add.significance = TRUE,
   add.expl.var = TRUE,
