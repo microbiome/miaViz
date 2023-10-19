@@ -45,5 +45,5 @@ plotDMNFit(tse, name = "DMM", type = "laplace")
 
 }
 \seealso{
-\code{\link[mia:calculateDMN]{calculateDMN}}
+\code{\link[mia:cluster]{cluster}}
 }

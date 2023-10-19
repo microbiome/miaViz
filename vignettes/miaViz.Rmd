@@ -149,7 +149,7 @@ library(scater)
 library(mia)
 ```
 ```{r}
-altExp(GlobalPatterns,"Genus") <- agglomerateByRank(GlobalPatterns,"Genus")
+altExp(GlobalPatterns,"Genus") <- mergeFeaturesByRank(GlobalPatterns,"Genus")
 altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
 rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
     log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
