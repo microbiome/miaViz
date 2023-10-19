@@ -101,7 +101,7 @@ indicating whether ellipses should be present, absent, filled or colored.
 (default: \code{repel.labels = TRUE})}
 
 \item{sep.group}{String specifying the separator used in the labels.
-(default: \code{sep.group = "\U2012"})}
+(default: \code{sep.group = "-"})}
 
 \item{repl.underscore}{String used to replace underscores in the labels.
 (default: \code{repl.underscore = " "})}
