@@ -413,7 +413,7 @@ NULL
 
 .get_density_args <- function(colour_by, alpha = 0.65, colour = "black") {
     fill_colour <- TRUE
-    aes_args <- aes()
+    aes_args <- list()
     if (!is.null(colour_by)) {
         aes_args$colour <- "colour_by"
         aes_args$fill <- "colour_by"
