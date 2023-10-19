@@ -255,18 +255,19 @@ NULL
 {
     fill_colour <- TRUE
     border <- FALSE
-    aes_args <- aes()
+    aes_args <- list()
 
     if (!is.null(colour_by)) {
-        aes_args$fill <- substitute(`colour_by`)
+        aes_args$fill <- "colour_by"
     }
     if(!is.null(add_border) && add_border && !is.null(colour_by)){
         border <- TRUE
-        aes_args$colour <- substitute(`colour_by`)
+        aes_args$colour <- "colour_by"
     } else if(is.null(add_border) && n <= 20) {
         border <- TRUE
-        aes_args$colour <- substitute(`colour_by`)
+        aes_args$colour <- "colour_by"
     }
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
@@ -283,23 +284,24 @@ NULL
                             shape = 21,
                             colour = "grey70") 
 {
-    aes_args <- aes()
+    aes_args <- list()
     fill_colour <- TRUE
     if (!is.null(shape_by)) {
-        aes_args$shape <- substitute(`shape_by`)
+        aes_args$shape <- "shape_by"
     }
     if (!is.null(colour_by)) {
         # Only shapes 21 to 25 can be filled. Filling does not work in other shapes.
         if(shape >= 21 && shape <= 25){
-            aes_args$fill <- substitute(`colour_by`)
+            aes_args$fill <- "colour_by"
         } else {
-            aes_args$colour <- subsitute(`colour_by`)
+            aes_args$colour <- "colour_by"
             fill_colour <- FALSE
         }
     }
     if (!is.null(size_by)) {
-        aes_args$size <- substitute(`size_by`)
+        aes_args$size <- "size_by"
     }
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
@@ -320,16 +322,17 @@ NULL
                            linewidth = NULL,
                            colour = "grey70") 
 {
-    aes_args <- aes()
+    aes_args <- list()
     if (!is.null(linetype_by)) {
-        aes_args$linetype <- substitute(`linetype_by`)
+        aes_args$linetype <- "linetype_by"
     }
     if (!is.null(colour_by)) {
-        aes_args$colour <- substitute(`colour_by`)
+        aes_args$colour <- "colour_by"
     }
     if (!is.null(size_by)) {
-        aes_args$linewidth <- substitute(`size_by`)
+        aes_args$linewidth <- "size_by"
     }
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
@@ -361,13 +364,14 @@ NULL
 
 .get_edge_args <- function(edge_colour_by, edge_size_by, alpha = 1, size = NULL,
                            layout = NULL){
-    aes_args <- aes()
+    aes_args <- list()
     if (!is.null(edge_colour_by)) {
-        aes_args$colour <- substitute(`edge_colour_by`)
+        aes_args$colour <- "edge_colour_by"
     }
     if (!is.null(edge_size_by)) {
-        aes_args$size <- substitute(`edge_size_by`)
+        aes_args$size <- "edge_size_by"
     }
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(edge_colour_by)) {
@@ -397,10 +401,11 @@ NULL
 }
 
 .get_rect_args <- function(colour_by, alpha = 1, colour = "black"){
-    aes_args <- aes()
+    aes_args <- list()
     if (!is.null(colour_by)) {
-        aes_args$fill <- substitute(.data[["colour_by"]])
+        aes_args$fill <- "colour_by"
     }
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha, colour = colour)
     return(list(args = geom_args))
@@ -410,9 +415,10 @@ NULL
     fill_colour <- TRUE
     aes_args <- aes()
     if (!is.null(colour_by)) {
-        aes_args$colour <- substitute(`colour_by`)
-        aes_args$fill <- substitute(`colour_by`)
+        aes_args$colour <- "colour_by"
+        aes_args$fill <- "colour_by"
     }
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes,
                       alpha = alpha)
