@@ -642,8 +642,9 @@ setMethod("plotRowGraph",
     plot_out
 }
 
-#' @importFrom tidyr drop_na tags
+#' @importFrom tidyr drop_na
 .add_graph_labels <- function(plot_out, show_label){
+    label <- NULL # disable note: no global binding for variable
     if(show_label){
         label_data <- plot_out$data %>% drop_na(label)
         plot_out <- plot_out +
