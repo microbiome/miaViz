@@ -243,7 +243,7 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
     tree_data
 }
 
-#' @importFrom tidytree as.treedata tidyselect
+#' @importFrom tidytree as.treedata
 .combine_tree_and_other_fields <- function(tree, other_fields = list()){
     tree_data <- .get_tree_data(tree)
     other_fields <- .norm_other_fields(other_fields)
