@@ -82,8 +82,8 @@ on compositional (relative) abundances? Passed onto
 \item{rank, ...}{additional arguments
 \itemize{
 \item{If \code{!is.null(rank)} matching arguments are passed on to
-\code{\link[=agglomerate-methods]{agglomerateByRank}}. See
-\code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
+\code{\link[=agglomerate-methods]{mergeFeaturesByRank}}. See
+\code{\link[=agglomerate-methods]{?mergeFeaturesByRank}} for more details.
 }
 \item{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
@@ -173,5 +173,5 @@ plotPrevalentAbundance(GlobalPatterns, rank = "Family",
 \seealso{
 \code{\link[mia:getPrevalence]{getPrevalence}},
 \code{\link[mia:getPrevalence]{agglomerateByPrevalence}},
-\code{\link[mia:agglomerate-methods]{agglomerateByRank}}
+\code{\link[mia:agglomerate-methods]{mergeFeaturesByRank}}
 }
