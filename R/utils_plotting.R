@@ -253,9 +253,10 @@ NULL
 .get_bar_args <- function (colour_by, alpha = 0.65, add_border = NULL,
                            n = 0) 
 {
-    aes_args <- list()
     fill_colour <- TRUE
     border <- FALSE
+    aes_args <- list()
+
     if (!is.null(colour_by)) {
         aes_args$fill <- "colour_by"
     }
@@ -266,7 +267,8 @@ NULL
         border <- TRUE
         aes_args$colour <- "colour_by"
     }
-    new_aes <- do.call(aes_string, aes_args)
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
         geom_args$colour <- "grey20"
@@ -299,7 +301,8 @@ NULL
     if (!is.null(size_by)) {
         aes_args$size <- "size_by"
     }
-    new_aes <- do.call(aes_string, aes_args)
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
         geom_args$fill <- colour
@@ -316,7 +319,7 @@ NULL
 .get_line_args <- function(colour_by, linetype_by, size_by,
                            alpha = 0.65,
                            linetype = 1,
-                           size = NULL,
+                           linewidth = NULL,
                            colour = "grey70") 
 {
     aes_args <- list()
@@ -327,9 +330,10 @@ NULL
         aes_args$colour <- "colour_by"
     }
     if (!is.null(size_by)) {
-        aes_args$size <- "size_by"
+        aes_args$linewidth <- "size_by"
     }
-    new_aes <- do.call(aes_string, aes_args)
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
         geom_args$colour <- colour
@@ -338,7 +342,7 @@ NULL
         geom_args$linetype <- linetype
     }
     if (is.null(size_by)) {
-        geom_args$size <- size
+        geom_args$linewidth <- linewidth
     }
     return(list(args = geom_args))
 }
@@ -346,13 +350,11 @@ NULL
 .get_ribbon_args <- function(colour_by,
                              alpha = 0.3) 
 {
-    aes_args <- list()
-    aes_args$ymin <- "Y - sd"
-    aes_args$ymax <- "Y + sd"
+    aes_args <- aes(ymin = .data[["Y"]] - .data[["sd"]], ymax = .data[["Y"]] + .data[["sd"]])
     if (!is.null(colour_by)) {
-        aes_args$fill <- "colour_by"
+        aes_args$fill <- substitute(`colour_by`)
     }
-    new_aes <- do.call(aes_string, aes_args)
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {
         geom_args$fill <- "grey70"
@@ -369,7 +371,8 @@ NULL
     if (!is.null(edge_size_by)) {
         aes_args$size <- "edge_size_by"
     }
-    new_aes <- do.call(aes_string, aes_args)
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(edge_colour_by)) {
         geom_args$colour <- "black"
@@ -402,7 +405,8 @@ NULL
     if (!is.null(colour_by)) {
         aes_args$fill <- "colour_by"
     }
-    new_aes <- do.call(aes_string, aes_args)
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha, colour = colour)
     return(list(args = geom_args))
 }
@@ -414,7 +418,8 @@ NULL
         aes_args$colour <- "colour_by"
         aes_args$fill <- "colour_by"
     }
-    new_aes <- do.call(aes_string, aes_args)
+    aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
+    new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes,
                       alpha = alpha)
     if (is.null(colour_by)) {

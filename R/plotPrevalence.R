@@ -1,9 +1,9 @@
 #' Plot prevalence information
 #' 
-#' \code{plotPrevalence} and \code{plotTaxaPrevalence} visualize prevalence 
+#' \code{plotPrevalence} and \code{plotFeaturePrevalence} visualize prevalence 
 #' information.
 #' 
-#' Whereas \code{plotPrevalence} produces a line plot, \code{plotTaxaPrevalence}
+#' Whereas \code{plotPrevalence} produces a line plot, \code{plotFeaturePrevalence}
 #' returns a heatmap. 
 #' 
 #' @param x a
@@ -100,14 +100,14 @@
 #' plotPrevalence(GlobalPatterns, rank = "Phylum") + scale_x_log10()
 #' 
 #' # plotting prevalence per taxa for different detection thresholds as heatmap
-#' plotTaxaPrevalence(GlobalPatterns, rank = "Phylum")
+#' plotFeaturePrevalence(GlobalPatterns, rank = "Phylum")
 #' 
 #' # by default a continuous scale is used for different detection levels, 
 #' # but this can be adjusted
-#' plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
+#' plotFeaturePrevalence(GlobalPatterns, rank = "Phylum",
 #'                    detections = c(0, 0.001, 0.01, 0.1, 0.2))
 #'                    
-#' # point layout for plotTaxaPrevalence can be used to visualize by additional
+#' # point layout for plotFeaturePrevalence can be used to visualize by additional
 #' # information
 #' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
 #'                        colour_by = "Phylum") +
@@ -337,16 +337,17 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 }
 
 ################################################################################
-# plotTaxaPrevalence
+# plotFeaturePrevalence
+
+#' @rdname plotPrevalence
+#' @aliases plotTaxaPrevalence
+#' @export
+setGeneric("plotFeaturePrevalence", signature = c("x"),
+           function(x, ...) standardGeneric("plotFeaturePrevalence"))
 
 #' @rdname plotPrevalence
 #' @export
-setGeneric("plotTaxaPrevalence", signature = c("x"),
-           function(x, ...) standardGeneric("plotTaxaPrevalence"))
-
-#' @rdname plotPrevalence
-#' @export
-setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
+setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
           function(x,
                    rank = taxonomyRanks(x)[1L],
                    assay.type = assay_name, assay_name = "counts",
@@ -444,7 +445,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
     lvls <- rownames(ans)[order(rowSums(ans))]
     ans$ID <- rownames(mat)[rowSums(f) != 0]
     ans <- ans %>%
-        pivot_longer(!.data$ID, 
+        pivot_longer(!ID, 
                      names_to = "detection",
                      values_to = "prevalence")
     colnames(ans) <- c("Y","X","colour_by")
@@ -474,7 +475,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                                 line_alpha = 1,
                                 line_type = NULL,
                                 line_size = 1){
-    plot_out <- ggplot(plot_data, aes_string(x = "X", y = "Y")) +
+    plot_out <- ggplot(plot_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)
     if(layout == "line"){
         point_args <- .get_point_args(colour_by = colour_by, shape_by = NULL,
@@ -485,7 +486,7 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                                     size_by = NULL,
                                     alpha = line_alpha,
                                     linetype = line_type,
-                                    size = line_size)
+                                    linewidth = line_size)
         point_args$args$mapping$group <- sym("colour_by")
         line_args$args$mapping$group <- sym("colour_by")
         plot_out <- plot_out +
@@ -542,3 +543,20 @@ setMethod("plotTaxaPrevalence", signature = c(x = "SummarizedExperiment"),
                            angle_x_text = FALSE)
     plot_out
 }
+
+#' @rdname plotPrevalence
+#' @aliases plotFeaturePrevalence
+#' @export
+setGeneric("plotTaxaPrevalence", signature = c("x"),
+           function(x, ...) 
+             standardGeneric("plotTaxaPrevalence"))
+
+#' @rdname plotPrevalence
+#' @aliases plotFeaturePrevalence
+#' @export
+setMethod("plotTaxaPrevalence", signature = c(x = "ANY"),
+          function(x, ...){
+            .Deprecated(old ="plotTaxaPrevalence", new = "plotFeaturePrevalence", msg = "The 'plotTaxaPrevalence' function is deprecated. Use 'plotFeaturePrevalence' instead.")
+            plotFeaturePrevalence(x, ...)
+          }
+)

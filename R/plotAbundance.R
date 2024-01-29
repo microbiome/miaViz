@@ -112,7 +112,7 @@
 #' # Getting top taxa on a Phylum level
 #' se <- transformAssay(se, method="relabundance")
 #' se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
-#' top_taxa <- getTopTaxa(se_phylum,top = 5, assay.type = "relabundance")
+#' top_taxa <- getTopFeatures(se_phylum,top = 5, assay.type = "relabundance")
 #' 
 #' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
 #' phylum_renamed <- lapply(rowData(se)$Phylum,
@@ -274,7 +274,7 @@ MELT_VALUES <- "Value"
     data <- data %>%
         as.data.frame() %>%
         mutate(rank = factor(rowData(x)[,rank], unique(rowData(x)[,rank]))) %>%
-        pivot_longer(cols = !.data$rank,
+        pivot_longer(cols = !rank,
                     names_to = MELT_NAME,
                     values_to = MELT_VALUES) %>%
         mutate(!!sym(MELT_NAME) := factor(!!sym(MELT_NAME), unique(!!sym(MELT_NAME)))) %>%
@@ -292,7 +292,7 @@ MELT_VALUES <- "Value"
         lvl <- lvl[order(lvl)]
     } else if(order_rank_by %in% c("abund","revabund")){
         o <- data %>% 
-            select(!.data$X) %>% 
+            select(!.data$X) %>%
             group_by(.data$colour_by) %>% 
             summarize(sum = sum(.data$Y))
         decreasing <- ifelse(order_rank_by == "abund",TRUE,FALSE)
@@ -304,7 +304,7 @@ MELT_VALUES <- "Value"
     }
     data$colour_by <- factor(data$colour_by, lvl)
     data <- data[order(data$colour_by),]
-    #
+    
     data
 }
 
@@ -424,7 +424,7 @@ MELT_VALUES <- "Value"
                         point_alpha = 1,
                         point_size = 2){
     # start plotting
-    plot_out <- ggplot(object, aes_string(x="X", y="Y")) +
+    plot_out <- ggplot(object, aes(x=.data[["X"]], y=.data[["Y"]])) +
         xlab(xlab) +
         ylab(ylab)
     # either bar or point plot
@@ -471,7 +471,7 @@ MELT_VALUES <- "Value"
     plot_out
 }
 
-#' @importFrom ggplot2 ggplot aes_string labs geom_point geom_raster
+#' @importFrom ggplot2 ggplot aes labs geom_point geom_raster
 .feature_plotter <- function(feature_data,
                             name,
                             xlab,
@@ -485,7 +485,7 @@ MELT_VALUES <- "Value"
         feature_data$Y <- ""
         colour_by <- unique(feature_data$feature_name)
     }
-    feature_plot_out <- ggplot(feature_data, aes_string(x="X", y="Y")) +
+    feature_plot_out <- ggplot(feature_data, aes(x=.data[["X"]], y=.data[["Y"]])) +
         labs(x = xlab, y = name)
     if(length(unique(feature_data$Y)) == 1L){
         feature_out <- .get_bar_args(colour_by,

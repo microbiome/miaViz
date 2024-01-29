@@ -46,7 +46,7 @@ setGeneric("plotDMNFit", signature = "x",
 
 #' @rdname plotDMN
 #' @importFrom DirichletMultinomial mixture
-#' @importFrom ggplot2 ggplot aes_string geom_point geom_line theme_bw labs
+#' @importFrom ggplot2 ggplot aes geom_point geom_line theme_bw labs
 #' @export
 setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN", type = c("laplace","AIC","BIC")){
@@ -62,7 +62,7 @@ setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
         #
         k <- vapply(dmn, function(d){ncol(mixture(d))}, numeric(1))
         fit <- vapply(dmn, fit_FUN, numeric(1))
-        ggplot(data.frame(k = k, fit = fit), aes_string(x = k, y = fit)) +
+        ggplot(data.frame(k = k, fit = fit), aes(x = k, y = fit)) +
           geom_point() +
           geom_line() +
           theme_bw() +
