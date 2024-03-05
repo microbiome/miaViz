@@ -239,8 +239,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             stop("'facet_by' must be in taxonomyRanks.",  call. = FALSE)
         }
         
-        x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, relabel = TRUE,
-                                       ...)
+        x <- mia:::.agg_for_prevalence(
+            x, rank, agg.na.rm = TRUE, relabel = TRUE, ...)
         label <- .norm_label(label, x)
         #
         plot_data <- .get_prevalence_plot_point_data(x, assay.type, 
