@@ -19,7 +19,7 @@ Information on the edges have to provided manually."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.11.2</span>
       </span>
     </div>
 
@@ -221,6 +221,7 @@ be used.</p>
 <span class="r-in"><span><span class="va">genus</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span>,na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">genus</span><span class="op">)</span><span class="op">$</span><span class="va">row_graph</span> <span class="op">&lt;-</span> <span class="va">row_graph</span></span></span>
 <span class="r-in"><span><span class="va">order</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">genus</span>,<span class="st">"Order"</span>,na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The following values are already present in `metadata` and will be overwritten: 'agglomerated_by_rank'. Consider using the 'name' argument to specify alternative names.</span>
 <span class="r-in"><span><span class="fu">metadata</span><span class="op">(</span><span class="va">order</span><span class="op">)</span><span class="op">$</span><span class="va">row_graph</span> <span class="op">&lt;-</span> <span class="va">row_graph_order</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
