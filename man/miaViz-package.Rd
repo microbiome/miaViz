@@ -2,6 +2,7 @@
 % Please edit documentation in R/miaViz.R
 \docType{package}
 \name{miaViz-package}
+\alias{miaViz}
 \alias{miaViz-package}
 \title{miaViz - Microbiome Analysis Plotting and Visualization}
 \description{
@@ -11,4 +12,20 @@ class.
 }
 \seealso{
 \link[mia:mia-package]{mia} class
+}
+\author{
+\strong{Maintainer}: Tuomas Borman \email{tuomas.v.borman@utu.fi} (\href{https://orcid.org/0000-0002-8563-8884}{ORCID})
+
+Authors:
+\itemize{
+  \item Felix G.M. Ernst \email{felix.gm.ernst@outlook.com} (\href{https://orcid.org/0000-0001-5064-0928}{ORCID})
+  \item Leo Lahti \email{leo.lahti@iki.fi} (\href{https://orcid.org/0000-0001-5537-637X}{ORCID})
+}
+
+Other contributors:
+\itemize{
+  \item Basil Courbayre [contributor]
+  \item Giulio Benedetti \email{giulio.benedetti@utu.fi} (\href{https://orcid.org/0000-0002-8732-7692}{ORCID}) [contributor]
+}
+
 }

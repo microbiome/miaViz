@@ -223,7 +223,7 @@ altExps(GlobalPatterns) <-
               y
           })
 x <- unsplitByRanks(GlobalPatterns)
-x <- addTaxonomyTree(x)
+x <- addHierarchyTree(x)
 
 highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
                 "Family:Pseudomonadaceae","Order:Bifidobacteriales")
