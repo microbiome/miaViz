@@ -38,7 +38,7 @@ data("peerj13075", package = "mia")
 tse <- peerj13075
 
 # Cluster the samples
-tse <- cluster(tse, DmmParam(k = 1:4), name = "DMM", full = TRUE)
+tse <- addCluster(tse, DmmParam(k = 1:4), name = "DMM", full = TRUE)
 
 # Plot the fit
 plotDMNFit(tse, name = "DMM", type = "laplace")
