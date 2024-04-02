@@ -22,3 +22,6 @@ Changes in version 1.9.x
 + Updated plotDMN to work with newest mia version
 + Added plotCCA and plotRDA functions
 + deprecate agglomerateByRank and agglomerateByPrevalence
+
+Changes in version 1.11.x
++ replace addTaxonomyTree with addHierarchyTree after renaming in mia package

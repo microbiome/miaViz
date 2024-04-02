@@ -61,7 +61,7 @@ test_that("plot tree", {
     altExp(GlobalPatterns,"genus") <- mergeFeaturesByRank(GlobalPatterns,"Genus", make_unique = FALSE)
     altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
     rowData(altExp(GlobalPatterns,"genus"))$log_mean <- log(rowData(altExp(GlobalPatterns,"genus"))$mean)
-    top_taxa <- getTopTaxa(altExp(GlobalPatterns,"genus"),
+    top_taxa <- getTopFeatures(altExp(GlobalPatterns,"genus"),
                            method="mean",
                            top=100L,
                            assay.type="counts")

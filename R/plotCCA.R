@@ -500,7 +500,6 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         parse.labels = TRUE, vec.text = TRUE, repel.labels = TRUE, add.ellipse = TRUE,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
-
     # Get the scatter plot
     plot <- plot_data[["plot"]]
     # Add ellipse
@@ -517,7 +516,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
                              geom = "polygon", alpha = ellipse.alpha,
-                             size = ellipse.linewidth, linetype = ellipse.linetype)
+                             linewidth = ellipse.linewidth, linetype = ellipse.linetype)
         } else if ( add.ellipse %in% c("color", "colour") ){
             plot <- plot +
                 stat_ellipse(data = data,

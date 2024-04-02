@@ -112,7 +112,7 @@
 #'   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
 #' rowData(altExp(GlobalPatterns,"Genus"))$detected <-
 #'    rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
-#' top_genus <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
+#' top_genus <- getTopFeatures(altExp(GlobalPatterns,"Genus"),
 #'                         method="mean",
 #'                         top=100L,
 #'                         assay.type="counts")
@@ -149,7 +149,7 @@
 #' # please note that the original tree of GlobalPatterns is dropped by
 #' # unsplitByRanks
 #' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
-#' top_phyla <- getTopTaxa(altExp(GlobalPatterns,"Phylum"),
+#' top_phyla <- getTopFeatures(altExp(GlobalPatterns,"Phylum"),
 #'                         method="mean",
 #'                         top=10L,
 #'                         assay.type="counts")
@@ -162,7 +162,7 @@
 #'               y
 #'           })
 #' x <- unsplitByRanks(GlobalPatterns)
-#' x <- addTaxonomyTree(x)
+#' x <- addHierarchyTree(x)
 #' 
 #' highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
 #'                 "Family:Pseudomonadaceae","Order:Bifidobacteriales")

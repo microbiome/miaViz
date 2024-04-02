@@ -214,7 +214,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
     # Gets the assay
     mat <- assay(object, assay.type, withDimnames = TRUE)
     # Gets the most abundant taxa
-    top_taxa <- getTopTaxa(object, top = n, assay.type = assay.type)
+    top_taxa <- getTopFeatures(object, top = n, assay.type = assay.type)
     # Subsets abundance table  by taking taxa of highest abundance
     mat <- mat[top_taxa, , drop=FALSE]
     # enable conversion to data.frame for non-matrix assays, e.g. sparseMatrices
@@ -282,7 +282,7 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
                              scales_free = TRUE,
                              angle_x_text = TRUE){
     # start plotting
-    plot_out <- ggplot(density_data, aes_string(x="X")) +
+    plot_out <- ggplot(density_data, aes(x=.data[["X"]])) +
         xlab(xlab) +
         ylab(ylab)
     # Layout can be "density", "jitter", or "point"
