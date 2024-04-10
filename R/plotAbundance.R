@@ -140,6 +140,18 @@ setGeneric("plotAbundance", signature = c("x"),
     }
 }
 
+.find_lowest_taxonomy_level<- function(x){
+    levels <- taxonomyRanks(x)
+    for(tax_index in 1:length(levels)){
+        if(anyNA(rowData(x)[,levels[tax_index]])){
+            return(levels[tax_index-1])
+        }
+        
+    }
+    return(levels[length(levels)])
+}
+
+
 
 #' @rdname plotAbundance
 #' @importFrom scater plotExpression
@@ -147,7 +159,7 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
-            rank = taxonomyRanks(x)[1],
+            rank = .find_lowest_taxonomy_level(x),
             features = NULL,
             order_rank_by = c("name","abund","revabund"),
             order_sample_by = NULL,
