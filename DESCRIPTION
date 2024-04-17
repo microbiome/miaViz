@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.11.2
+Version: 1.11.3
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -61,6 +61,8 @@ Suggests:
     vegan,
     microbiomeDataSets,
     bluster
+Remotes:
+    github::microbiome/miaTime
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.1
 VignetteBuilder: knitr
