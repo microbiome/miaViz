@@ -6,7 +6,7 @@ test_that("plot series", {
         if( !require("devtools") ){
             BiocManager::install("devtools")
         }
-        devtools::install_github("microbiome/miaTime")
+        remotes::install_github("microbiome/miaTime", upgrade = "never")
         library("miaTime")
     }
     data(SilvermanAGutData)
