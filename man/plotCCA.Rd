@@ -48,7 +48,7 @@ plotRDA(object, ...)
 \arguments{
 \item{object}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{calculateRDA}}.}
+or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{getRDA}}.}
 
 \item{...}{additional parameters for plotting, inherited from
 \code{\link[scater:plotReducedDim]{plotReducedDim}},
@@ -135,7 +135,7 @@ or a matrix object is supported as input. When the input is a
 TreeSummarizedExperiment, this should contain the output of runRDA
 in the reducedDim slot and the argument \code{dimred} needs to be defined.
 When the input is a matrix, this should be returned as output from
-calculateRDA. However, the first method is recommended because it provides
+getRDA. However, the first method is recommended because it provides
 the option to adjust aesthetics to the colData variables through the
 arguments inherited from \code{\link[scater:plotReducedDim]{plotReducedDim}}.
 }
@@ -177,7 +177,7 @@ plotRDA(tse, "RDA",
         add.vectors = FALSE)
  
 # Calculate RDA as a separate object
-rda_mat <- calculateRDA(tse,
+rda_mat <- getRDA(tse,
                         formula = assay ~ ClinicalStatus + Gender + Age,
                         FUN = vegan::vegdist,
                         distance = "bray",

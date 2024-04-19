@@ -10,7 +10,7 @@ test_that("plot RDA/CCA", {
   
   # Run/calculate RDA
   tse <- runRDA(tse, assay ~ patient_status + cohort)
-  rda <- calculateRDA(tse, assay ~ patient_status + cohort)
+  rda <- getRDA(tse, assay ~ patient_status + cohort)
   
   # Minimal functionality
   expect_no_error(plotRDA(tse, "RDA"))
