@@ -30,7 +30,7 @@
 #'   
 #' @param as_relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? Passed onto
-#'   \code{\link[mia:getPrevalence]{getPrevalence}}. (default: \code{TRUE})
+#'   \code{\link[mia:addPrevalence]{addPrevalence}}. (default: \code{TRUE})
 #'   
 #' @param colour_by Specification of a feature to colour points by, see the 
 #'   \code{by} argument in 
@@ -86,8 +86,8 @@
 #' \code{prevalences} was defined.
 #' 
 #' @seealso 
-#' \code{\link[mia:getPrevalence]{getPrevalence}},
-#' \code{\link[mia:getPrevalence]{agglomerateByPrevalence}},
+#' \code{\link[mia:addPrevalence]{addPrevalence}},
+#' \code{\link[mia:addPrevalence]{agglomerateByPrevalence}},
 #' \code{\link[mia:agglomerate-methods]{agglomerateByRank}}
 #' 
 #' @name plotPrevalence

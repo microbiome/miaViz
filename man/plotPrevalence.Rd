@@ -83,7 +83,7 @@ will be disabled.)}
 
 \item{as_relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? Passed onto
-\code{\link[mia:getPrevalence]{getPrevalence}}. (default: \code{TRUE})}
+\code{\link[mia:addPrevalence]{addPrevalence}}. (default: \code{TRUE})}
 
 \item{rank, ...}{additional arguments
 \itemize{
@@ -177,7 +177,7 @@ plotPrevalentAbundance(GlobalPatterns, rank = "Family",
     scale_x_log10()
 }
 \seealso{
-\code{\link[mia:getPrevalence]{getPrevalence}},
-\code{\link[mia:getPrevalence]{agglomerateByPrevalence}},
+\code{\link[mia:addPrevalence]{addPrevalence}},
+\code{\link[mia:addPrevalence]{agglomerateByPrevalence}},
 \code{\link[mia:agglomerate-methods]{agglomerateByRank}}
 }
