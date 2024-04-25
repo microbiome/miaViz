@@ -18,13 +18,13 @@ test_that("plot abundance", {
     expect_true(is.factor(actual$X))
     expect_true(is.numeric(actual$Y))
     expect_error(miaViz:::.get_abundance_data(x,"Phylum","counts",
-                                              order_rank_by = "meep"))
+                                              order_features_by = "meep"))
     actual2 <- miaViz:::.get_abundance_data(x,"Phylum","counts",
-                                           order_rank_by = "abund")
+                                           order_features_by = "abund")
     expect_equal(as.character(actual[1,1,drop=TRUE]),"ABY1_OD1")
     expect_equal(as.character(actual2[1,1,drop=TRUE]),"Proteobacteria")
     actual3 <- miaViz:::.get_abundance_data(x,"Phylum","counts",
-                                            order_rank_by = "abund",
+                                            order_features_by = "abund",
                                             use_relative = FALSE)
     expect_true(max(actual3$Y) > 1)
     # .norm_order_sample_by

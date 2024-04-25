@@ -30,7 +30,7 @@
 #'   character will be plotted as colour-code bar. (default: \code{features =
 #'   NULL})
 #'   
-#' @param order_rank_by How to order abundance value: By name (\dQuote{name}) 
+#' @param order_features_by How to order abundance value: By name (\dQuote{name}) 
 #' for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
 #' sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).
 #'  
@@ -121,7 +121,7 @@
 #' 
 #' # Compositional barplot
 #' plotAbundance(se, assay.type="relabundance", rank = "Phylum",
-#'            order_rank_by="abund", order_sample_by = "Bacteroidetes")
+#'            order_features_by="abund", order_sample_by = "Bacteroidetes")
 NULL
 
 #' @rdname plotAbundance
@@ -149,7 +149,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
             rank = taxonomyRanks(x)[1],
             features = NULL,
-            order_rank_by = c("name","abund","revabund"),
+            order_features_by = c("name","abund","revabund"),
             order_sample_by = NULL,
             decreasing = TRUE,
             use_relative = TRUE,
@@ -187,14 +187,14 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         .check_taxonomic_rank(rank, x)
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
-        order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
+        order_features_by <- match.arg(order_features_by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
                             ncol = ncol)
         if( !is.null(features) ){
             features <- match.arg(features, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
-        abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
+        abund_data <- .get_abundance_data(x, rank, assay.type, order_features_by,
                                         use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
                                                 unique(abund_data$colour_by),
@@ -253,7 +253,7 @@ MELT_VALUES <- "Value"
 #' @importFrom tidyr pivot_longer nest unnest
 #' @importFrom tibble rownames_to_column
 #' @importFrom purrr map
-.get_abundance_data <- function(x, rank, assay.type, order_rank_by = "name",
+.get_abundance_data <- function(x, rank, assay.type, order_features_by = "name",
                                 use_relative = TRUE){
     data <- assay(x, assay.type, withDimnames = TRUE)
     if(use_relative){
@@ -287,15 +287,15 @@ MELT_VALUES <- "Value"
                     X = MELT_NAME,
                     Y = MELT_VALUES)
     # order values
-    if(order_rank_by == "name"){
+    if(order_features_by == "name"){
         lvl <- levels(data$colour_by)
         lvl <- lvl[order(lvl)]
-    } else if(order_rank_by %in% c("abund","revabund")){
+    } else if(order_features_by %in% c("abund","revabund")){
         o <- data %>% 
             select(!.data$X) %>%
             group_by(.data$colour_by) %>% 
             summarize(sum = sum(.data$Y))
-        decreasing <- ifelse(order_rank_by == "abund",TRUE,FALSE)
+        decreasing <- ifelse(order_features_by == "abund",TRUE,FALSE)
         lvl <- o[order(o$sum, decreasing = decreasing),] %>% 
             pull(.data$colour_by) %>%
             as.character()
