@@ -34,7 +34,7 @@ plotRDA(object, ...)
   label.size = 4,
   vec.text = TRUE,
   repel.labels = TRUE,
-  sep.group = "‒",
+  sep.group = "—",
   repl.underscore = " ",
   add.significance = TRUE,
   add.expl.var = TRUE,
@@ -101,7 +101,7 @@ indicating whether ellipses should be present, absent, filled or colored.
 (default: \code{repel.labels = TRUE})}
 
 \item{sep.group}{String specifying the separator used in the labels.
-(default: \code{sep.group = "\U2012"})}
+(default: \code{sep.group = "\U2014"})}
 
 \item{repl.underscore}{String used to replace underscores in the labels.
 (default: \code{repl.underscore = " "})}
