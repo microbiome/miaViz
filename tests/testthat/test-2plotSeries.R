@@ -2,14 +2,8 @@
 context("plot series")
 test_that("plot series", {
     # Load data from miaTime package
-    if( !require("miaTime") ){
-        if( !require("devtools") ){
-            BiocManager::install("devtools")
-        }
-        devtools::install_github("microbiome/miaTime")
-        library("miaTime")
-    }
-    data(SilvermanAGutData)
+    skip_if_not_installed("miatime")
+    data(SilvermanAGutData, package = "miaTime")
     tse <- SilvermanAGutData
     tse_sub <- tse[1:5]
     
