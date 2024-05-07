@@ -25,7 +25,7 @@
 #' @param ellipse.linetype Discrete number specifying the style of ellipses.
 #'   (default: \code{ellipse.linetype = 1})
 #'   
-#' @param ellipse.level Number between 0 and 1 to adjust confidence level
+#' @param ellipse.level Number between 0 and 1 to adjust confidence level.
 #'   (default: \code{ellipse.level = 0.95})
 #'
 #' @param add.vectors TRUE or FALSE, should vectors appear in the plot.
