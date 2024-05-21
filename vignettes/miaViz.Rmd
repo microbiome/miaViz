@@ -257,11 +257,8 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 # Plotting of serial data
 
 ```{r, eval=FALSE}
-if(!requireNamespace("devtools", quietly = TRUE)){
-    BiocManager::install("devtools")
-}
 if(!requireNamespace("miaTime", quietly = TRUE)){
-    devtools::install_github("microbiome/miaTime", upgrade = "never")
+    remotes::install_github("microbiome/miaTime", upgrade = "never")
 }
 ```
 

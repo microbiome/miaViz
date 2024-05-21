@@ -407,11 +407,12 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                               abbr_label = abbr_label,
                               add_legend = add_legend)
     #
-    tree_out <- .get_trimed_object_and_tree(object,
-                                            tree_name = tree_name,
-                                            type = type,
-                                            relabel = relabel_tree,
-                                            order = order_tree)
+    tree_out <- .get_object_and_trimmed_tree(
+        object,
+        tree_name = tree_name,
+        type = type,
+        relabel = relabel_tree,
+        order = order_tree)
     object <- tree_out$object
     tree <- tree_out$tree
     tree_data <- .get_tree_data(tree)
@@ -477,60 +478,103 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                   ...)
 }
 
-
-#' @importFrom ape keep.tip as.phylo
+#' @importFrom ape keep.tip as.phylo drop.tip
 #' @importFrom tidytree as_tibble 
-.get_trimed_object_and_tree <- function(object,
-                                        tree_name = "phylo",
-                                        type = c("row","column"),
-                                        relabel = FALSE,
-                                        order = FALSE){
+.get_object_and_trimmed_tree <- function(
+        object,
+        tree_name = "phylo",
+        type = c("row","column"),
+        relabel = FALSE,
+        order = FALSE){
+    # Check type
     type <- match.arg(type)
+    # Get correct functions based on the margin/direction
     tree_FUN <- switch(type, row = rowTree, column = colTree, stop("."))
     links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
     dimnames_FUN <- switch(type, row = rownames, column = colnames, stop("."))
+    add_names_FUN <- switch(
+        type, row = `rownames<-`, column = `colnames<-`, stop("."))
+    # Check that the tree is compatible with the data, i.e., rows are matched
+    # with the tree.
+    links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
+    links <- links_FUN(object)
+    ind <- links[["whichTree"]] == tree_name
+    if( all(!ind) ){
+        stop("Tree does not have any ", type, "s to plot.", call. = FALSE)
+    }
+    # Get only those rows/columns that are found from the tree
+    if( type == "row" ){
+        object <- object[ind, ]
+    } else{
+        object <- object[, ind]
+    }
+    # Get tree and links
     tree <- tree_FUN(object, tree_name)
     links <- links_FUN(object)
-    #
+    
+    # Remove those tips that are not leaves
     tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
     drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
     oldTree <- tree
-    newTree <- ape::drop.tip(oldTree, tip = drop_tip, collapse.singles = FALSE)
+    newTree <- drop.tip(oldTree, tip = drop_tip, collapse.singles = FALSE)
+    # Add alias labels to tree
     track <- trackNode(oldTree)
-    track <- ape::drop.tip(track, tip = drop_tip, collapse.singles = FALSE)
-    #
+    track <- drop.tip(track, tip = drop_tip, collapse.singles = FALSE)
+    # Link tree with alias labels
     oldAlias <- links$nodeLab_alias
     newNode <- convertNode(tree = track, node = oldAlias)
     newAlias <- convertNode(tree = newTree, node = newNode)
-    if(type == "row"){
-        object <- changeTree(x = object, rowTree = newTree, rowNodeLab = newAlias)
+    # Change the tree with trimmed tree and add aliases as node labels
+    if( type == "row" ){
+        object <- changeTree(
+            x = object, rowTree = newTree, rowNodeLab = newAlias)
     } else {
-        object <- changeTree(x = object, colTree = newTree, colNodeLab = newAlias)
+        object <- changeTree(
+            x = object, colTree = newTree, colNodeLab = newAlias)
     }
-    #
+    
+    # Get tree, links and row/colnames
     tree <- tree_FUN(object)
     links <- links_FUN(object)
     dimnames <- dimnames_FUN(object)
-    #
-    tree_data <- as_tibble(newTree)
+    # Get tree as table and get which node represent which row/col
+    tree_data <- as_tibble(tree)
     m <- match(links$nodeNum,tree_data$node)
     node_labels <- tree_data$label[m]
-    if(relabel || 
-       !all(node_labels %in% dimnames)){
-        new_node_labels <- getTaxonomyLabels(object, with_rank = TRUE,
-                                             resolve_loops = TRUE)
-        if(type == "row"){
-            rownames(object) <- new_node_labels
-        } else {
-            colnames(object) <- new_node_labels
-        }
-        tree_data$label[m] <- new_node_labels
-        tree <- as.phylo(tree_data)
+    # If user wants to rename rows/cols or if some nodes cannot be found from
+    # rows/cols 
+    if( relabel || !all(node_labels %in% dimnames) ){
+        # Rename rows/cols
+        new_node_labels <- getTaxonomyLabels(
+            object, with_rank = TRUE, resolve_loops = TRUE)
+        object <- add_names_FUN(object, new_node_labels)
     }
+    # Check if there are rows/cols that are ununique. If there are, make them
+    # unique.
+    if( anyDuplicated(rownames(object)) ){
+        warning(
+            "Data includes ununique ", type, "s. Making them unique.",
+            call. = FALSE)
+        object <- add_names_FUN(object, make.unique(dimnames_FUN(object)))
+        
+    }
+    # Rename labels of tree with row/colnames
+    tree_data$label[m] <- dimnames_FUN(object)
+    # Check if there are nodes that are not unique
+    if( anyDuplicated(tree_data$label[-m]) ){
+        warning(
+            "Tree includes ununique nodes. Making them unique.", call. = FALSE)
+        tree_data$label[-m] <- make.unique( tree_data$label[-m] )
+    }
+    
+    # Convert tree data back to tree-format
+    tree <- as.phylo(tree_data)
+    # If specified, order the tree based on alphabetical order 
     if(order){
         tree <- .order_tree(tree)
     }
-    list(object = object, tree = tree)
+    res <- list(object = object, tree = tree)
+    return(res)
 }
 
 #' @importFrom tidytree child
@@ -564,7 +608,6 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
 }
 
 ################################################################################
-## TODO refactor the next three functions into one
 
 .remove_taxonomic_level_from_labels <- function(labels){
     for(rank in TAXONOMY_RANKS){
@@ -761,7 +804,6 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                 show_highlight_label = show_highlight_label))
 }
 
-## TODO END
 ################################################################################
 
 #' @importFrom tibble tibble
@@ -870,7 +912,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
             feature_info <- feature_info %>%
                 mutate(label = rownames(se)) %>%
                 relocate("label")
-            tree_data <- .merge_tree_vis_data(tree_data, feature_info)
+            tree_data <- .merge_tree_vis_data(tree_data, feature_info, se)
         }
         tree_data <- .merge_tip_node_tree_data(tree_data)
     }
@@ -880,7 +922,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
             other <- other %>%
                 mutate(label = rownames(se)) %>%
                 relocate("label")
-            tree_data <- .merge_tree_vis_data(tree_data, other)
+            tree_data <- .merge_tree_vis_data(tree_data, other, se)
         }
     }
     return(list(df = tree_data,
@@ -939,12 +981,13 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     tree_data[match(bak_o,tree_data$node),]
 }
 
-.merge_tree_vis_data <- function(tree_data, feature_info){
+.merge_tree_vis_data <- function(tree_data, feature_info, tse){
     if(anyDuplicated(tree_data$label) || anyDuplicated(feature_info$label)){
-        stop(".")
+        stop("Tree is not compatible with the data.", call. = FALSE)
     }
-    tree_data %>%
+    tree_data <- tree_data %>%
         dplyr::left_join(feature_info, by = "label")
+    return(tree_data)
 }
 
 # due to a bug in ggtree/tidytree the treedata object needs to be constructed
