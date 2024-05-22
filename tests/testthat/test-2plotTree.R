@@ -43,16 +43,16 @@ test_that("plot tree", {
     #
     data(GlobalPatterns)
     x <- GlobalPatterns
-    # .get_trimed_object_and_tree
-    expect_error(miaViz:::.get_trimed_object_and_tree(),
+    # .get_object_and_trimmed_tree
+    expect_error(miaViz:::.get_object_and_trimmed_tree(),
                  'argument "object" is missing')
-    actual <- miaViz:::.get_trimed_object_and_tree(x["549322",])
+    actual <- miaViz:::.get_object_and_trimmed_tree(x["549322",])
     expect_s3_class(actual$tree,"phylo")
     expect_s4_class(actual$object,"TreeSummarizedExperiment")
     expect_equal(unique(actual$tree$tip.label), c("549322"))
-    actual <- miaViz:::.get_trimed_object_and_tree(x)
+    actual <- miaViz:::.get_object_and_trimmed_tree(x)
     expect_equal(actual$tree$tip.label, rownames(x))
-    actual <- miaViz:::.get_trimed_object_and_tree(x, relabel = TRUE)
+    actual <- miaViz:::.get_object_and_trimmed_tree(x, relabel = TRUE)
     expect_equal(actual$tree$tip.label[1L], "Class:Thermoprotei")
     #
     library(scater)
