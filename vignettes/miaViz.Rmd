@@ -103,14 +103,14 @@ Further example about composition barplot can be found at Orchestrating Microbio
 # Prevalence plotting
 
 To visualize prevalence within the dataset, two functions are available,
-`plotTaxaPrevalence`, `plotPrevalenceAbundance` and `plotPrevalence`.
+`plotFeaturePrevalence`, `plotPrevalenceAbundance` and `plotPrevalence`.
 
 
-`plotTaxaPrevalence` produces a so-called landscape plot, which
+`plotFeaturePrevalence` produces a so-called landscape plot, which
 visualizes the prevalence of samples across abundance thresholds.
 
 ```{r}
-plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
+plotFeaturePrevalence(GlobalPatterns, rank = "Phylum",
                    detections = c(0, 0.001, 0.01, 0.1, 0.2))
 ```
 
@@ -155,7 +155,7 @@ rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
     log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
 rowData(altExp(GlobalPatterns,"Genus"))$detected <- 
     rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
-top_taxa <- getTopTaxa(altExp(GlobalPatterns,"Genus"),
+top_taxa <- getTopFeatures(altExp(GlobalPatterns,"Genus"),
                        method="mean",
                        top=100L,
                        assay.type="counts")
@@ -257,11 +257,8 @@ plotColGraph(altExp(GlobalPatterns,"Genus"),
 # Plotting of serial data
 
 ```{r, eval=FALSE}
-if(!requireNamespace("devtools", quietly = TRUE)){
-    BiocManager::install("devtools")
-}
 if(!requireNamespace("miaTime", quietly = TRUE)){
-    devtools::install_github("microbiome/miaTime", upgrade = "never")
+    remotes::install_github("microbiome/miaTime", upgrade = "never")
 }
 ```
 
@@ -271,7 +268,7 @@ library("miaTime")
 data(SilvermanAGutData, package="miaTime")
 tse <- SilvermanAGutData
 tse <- transformAssay(tse, method = "relabundance")
-taxa <- getTopTaxa(tse, 2)
+taxa <- getTopFeatures(tse, 2)
 ```
 
 Data from samples collected along time can be visualized using `plotSeries`.
@@ -303,7 +300,7 @@ Additional variables can be used to modify line type aesthetics.
 ```{r, eval=FALSE}
 plotSeries(tse,
            x = "DAY_ORDER",
-           y = getTopTaxa(tse, 5),
+           y = getTopFeatures(tse, 5),
            colour_by = "Family",
            linetype_by = "Phylum",
            assay.type = "counts")

@@ -5,8 +5,10 @@
 \alias{plotPrevalence,SummarizedExperiment-method}
 \alias{plotPrevalentAbundance}
 \alias{plotPrevalentAbundance,SummarizedExperiment-method}
+\alias{plotFeaturePrevalence}
 \alias{plotTaxaPrevalence}
-\alias{plotTaxaPrevalence,SummarizedExperiment-method}
+\alias{plotFeaturePrevalence,SummarizedExperiment-method}
+\alias{plotTaxaPrevalence,ANY-method}
 \title{Plot prevalence information}
 \usage{
 plotPrevalence(x, ...)
@@ -39,9 +41,9 @@ plotPrevalentAbundance(x, ...)
   ...
 )
 
-plotTaxaPrevalence(x, ...)
+plotFeaturePrevalence(x, ...)
 
-\S4method{plotTaxaPrevalence}{SummarizedExperiment}(
+\S4method{plotFeaturePrevalence}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1L],
   assay.type = assay_name,
@@ -53,6 +55,10 @@ plotTaxaPrevalence(x, ...)
   BPPARAM = BiocParallel::SerialParam(),
   ...
 )
+
+plotTaxaPrevalence(x, ...)
+
+\S4method{plotTaxaPrevalence}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a
@@ -129,11 +135,11 @@ A \code{ggplot2} object or \code{plotly} object, if more than one
 \code{prevalences} was defined.
 }
 \description{
-\code{plotPrevalence} and \code{plotTaxaPrevalence} visualize prevalence
+\code{plotPrevalence} and \code{plotFeaturePrevalence} visualize prevalence
 information.
 }
 \details{
-Whereas \code{plotPrevalence} produces a line plot, \code{plotTaxaPrevalence}
+Whereas \code{plotPrevalence} produces a line plot, \code{plotFeaturePrevalence}
 returns a heatmap.
 
 Agglomeration on different taxonomic levels is available through the
@@ -151,14 +157,14 @@ plotPrevalence(GlobalPatterns, rank = "Phylum")
 plotPrevalence(GlobalPatterns, rank = "Phylum") + scale_x_log10()
 
 # plotting prevalence per taxa for different detection thresholds as heatmap
-plotTaxaPrevalence(GlobalPatterns, rank = "Phylum")
+plotFeaturePrevalence(GlobalPatterns, rank = "Phylum")
 
 # by default a continuous scale is used for different detection levels, 
 # but this can be adjusted
-plotTaxaPrevalence(GlobalPatterns, rank = "Phylum",
+plotFeaturePrevalence(GlobalPatterns, rank = "Phylum",
                    detections = c(0, 0.001, 0.01, 0.1, 0.2))
                    
-# point layout for plotTaxaPrevalence can be used to visualize by additional
+# point layout for plotFeaturePrevalence can be used to visualize by additional
 # information
 plotPrevalentAbundance(GlobalPatterns, rank = "Family",
                        colour_by = "Phylum") +

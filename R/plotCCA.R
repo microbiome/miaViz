@@ -51,7 +51,7 @@
 #' @param label.color Alias for `label.colour`.
 #' 
 #' @param sep.group String specifying the separator used in the labels.
-#'   (default: \code{sep.group = "\U2012"})
+#'   (default: \code{sep.group = "\U2014"})
 #'   
 #' @param repl.underscore String used to replace underscores in the labels.
 #'   (default: \code{repl.underscore = " "})
@@ -182,7 +182,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
              add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1,
              vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
              arrow.size = 0.25, label.color = label.colour, label.colour = "black", label.size = 4,
-             vec.text = TRUE, repel.labels = TRUE, sep.group = "\U2012", repl.underscore = " ",
+             vec.text = TRUE, repel.labels = TRUE, sep.group = "\U2014", repl.underscore = " ",
              add.significance = TRUE, add.expl.var = TRUE, add.vectors = TRUE, parse.labels = TRUE, ...){
         ###################### Input check ########################
         if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour")) ){
@@ -441,7 +441,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 # Make vector labels more tidy, i.e, separate variable and group names.
 # Replace also underscores with space
 .tidy_vector_labels <- function(
-        vector_label, coldata, sep.group = "\U2012", repl.underscore = " ", ...){
+        vector_label, coldata, sep.group = "\U2014", repl.underscore = " ", ...){
     # Get variable names from sample metadata
     var_names <- colnames(coldata)
     # Loop through vector labels
@@ -500,7 +500,6 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         parse.labels = TRUE, vec.text = TRUE, repel.labels = TRUE, add.ellipse = TRUE,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
         max.overlaps = 10, check_overlap = FALSE, ...){
-
     # Get the scatter plot
     plot <- plot_data[["plot"]]
     # Add ellipse
@@ -517,7 +516,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
                              geom = "polygon", alpha = ellipse.alpha,
-                             size = ellipse.linewidth, linetype = ellipse.linetype)
+                             linewidth = ellipse.linewidth, linetype = ellipse.linetype)
         } else if ( add.ellipse %in% c("color", "colour") ){
             plot <- plot +
                 stat_ellipse(data = data,

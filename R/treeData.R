@@ -118,7 +118,7 @@ setMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
 DEFAULT_TREE_DATA_COLS <- c("parent","node","branch.length","label")
 .clean_tree_data <- function(tree_data){
     tree_data %>%
-        select(DEFAULT_TREE_DATA_COLS)
+        select(all_of(DEFAULT_TREE_DATA_COLS))
 }
 
 #' @rdname treeData
