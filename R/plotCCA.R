@@ -182,8 +182,8 @@ setGeneric("plotRDA", signature = c("object"),
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     function(object, dimred,
-             add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1, confidence.level = 0.95,
-             vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
+             add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1, 
+             confidence.level = 0.95, vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
              arrow.size = 0.25, label.color = label.colour, label.colour = "black", label.size = 4,
              vec.text = TRUE, repel.labels = TRUE, sep.group = "\U2014", repl.underscore = " ",
              add.significance = TRUE, add.expl.var = TRUE, add.vectors = TRUE, parse.labels = TRUE, ...){
