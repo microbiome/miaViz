@@ -24,4 +24,7 @@ Changes in version 1.9.x
 
 Changes in version 1.11.x
 + replace addTaxonomyTree with addHierarchyTree after renaming in mia package
+
+Changes in version 1.13.x
++ plot*Tree: bugfix, ununique nodes
 + replace splitByRanks with agglomerateByRanks 
