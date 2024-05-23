@@ -7,8 +7,8 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #' 
-#' @param K An integer to specify the number of feature loadings to plot.
-#'   (default: \code{K = 2})
+#' @param nfeatures An integer to specify the number of feature loadings to plot (i.e. number of topics).
+#'   (default: \code{nfeatures = 2})
 #' 
 #' @param taxonomyLevel 
 #' # ADD ALL PARAMS
