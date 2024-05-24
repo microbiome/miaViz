@@ -55,8 +55,9 @@ setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
             dmn <- metadata(x)[[name]]$dmm
         } else {
             .Deprecated(old="getDMN", new="addCluster", 
-               "Now runDMN and calculateDMN are deprecated. Use addCluster with ",
-               "DMMParam parameter and full parameter set as true instead.")
+               "Now runDMN and calculateDMN are deprecated. Use addCluster ",
+               "with DMMParam parameter and full parameter set as true ",
+               "instead.")
             dmn <- metadata(x)[[name]]
         }
         fit_FUN <- mia:::.get_dmn_fit_FUN(type)
