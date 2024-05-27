@@ -37,27 +37,30 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
                    ...){
             library(mia)
             library(ggtree)
-            library(miaViz)
             library(scater)
             data("GlobalPatterns", package = "mia")
             tse <- GlobalPatterns
-            tse <- getUniqueFeatures(tse, rank = "Phylum")
             tse <- logNormCounts(tse)
-            tse <- runPCA(tse, name = "PCA", ncomponents = 2, ntop = 10)
+            tse <- tse[rowData(tse)$Phylum %in% c("Actinobacteria", "Caldiserica","Synergistetes","Crenarchaeota","Euryarchaeota"), ]
+            tse <- agglomerateByRank(tse, rank = "Class", agglomerate.tree = TRUE)
+            tse <- runPCA(tse, name = "PCA", ncomponents = 2, ntop = 100)
             loadings_matrix <- attr(reducedDim(tse,"PCA"), "rotation")
             phylo <- rowTree(tse)
             circ <- ggtree(phylo, layout = "circular")
             df <- rowData(tse)
-            rownames(df) <- phylo$tip.label
-
             color <- randomcoloR::distinctColorPalette(
               length(
                 unique(
-                  df$Class
+                    df$Phylum
                 )
-              )
+              )  
             )
-            df <- data.frame(Class = df$Class)
+            df <- data.frame(Class = df$Phylum)
+            rownames(df) <- phylo$tip.label
+            
+            df2 <- data.frame(loadings_matrix)
+            rownames(df2) <- phylo$tip.label
+            
             p <- gheatmap(
               p = circ,
               data = df,
@@ -65,7 +68,8 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
               width = .1,
               colnames_angle = 95,
               colnames_offset_y = .5,
-              font.size = 5) +
+              font.size = 4,
+              color = "black") +
               ggplot2::scale_fill_manual(
                 values = color,
                 name = "Class"
@@ -76,27 +80,23 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
                 p <- p +
                   ggnewscale::new_scale_fill()
               }
-              df2 <- dplyr::select(
-                data.frame(loadings_matrix), (i)
+              df3 <- dplyr::select(
+                df2, (i)
               )
               p <- gheatmap(
                 p,
-                df2,
-                offset = i*.08,
+                df3,
+                offset = i*.065,
                 width = .1,
                 colnames_angle = 90,
-                colnames_offset_y = .25,
-                font.size = 6,
-                high = "dodgerblue",
-                low = "gray98")
+                font.size = 4,
+                high = "darkslateblue",
+                low = "gray98",
+                color = "black",
+                legend_title = expression(beta[k]))
             }
-            p <- p +
-              theme_minimal(
-                base_size = 3
-              ) +
-              theme(
-                plot.title = element_text(hjust = 0.5)
-              )
+          
+            p
            
             
             
