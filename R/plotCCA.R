@@ -228,7 +228,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         if ( !is.numeric(ellipse.linewidth) && ellipse.linewidth > 0 ) {
             stop("'ellipse.linewidth' must be a positive number.", call. = FALSE)
         }
-        if( confidence.level < 0 || confidence.level > 1 ){
+        if( is.numeric(confidence.level) < 0 || is.numeric(confidence.level) > 1 ){
           stop("'confidence.level' must be a number between 0 and 1.", call. = FALSE)
         }
         if ( !is.numeric(vec.size) && vec.size > 0 ) {
