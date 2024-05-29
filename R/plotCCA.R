@@ -9,7 +9,7 @@
 #'   or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{getRDA}}.
 #' 
 #' @param dimred A string or integer scalar indicating the reduced dimension to
-#'   plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
+#'   plot. This is the output of \code{\link[mia:runCCA]{addRDA}} and resides in
 #'   \code{reducedDim(tse, dimred)}.
 #' 
 #' @param add.ellipse One of \code{c(TRUE, FALSE, "fill", "colour", "color")},
@@ -82,7 +82,7 @@
 #' for supervised ordination of microbiome data. Either a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 #' or a matrix object is supported as input. When the input is a
-#' TreeSummarizedExperiment, this should contain the output of runRDA
+#' TreeSummarizedExperiment, this should contain the output of addRDA
 #' in the reducedDim slot and the argument \code{dimred} needs to be defined.
 #' When the input is a matrix, this should be returned as output from
 #' getRDA. However, the first method is recommended because it provides
@@ -101,7 +101,7 @@
 #' tse <- enterotype
 #'  
 #' # Run RDA and store results into TreeSE
-#' tse <- runRDA(tse,
+#' tse <- addRDA(tse,
 #'               formula = assay ~ ClinicalStatus + Gender + Age,
 #'               FUN = vegan::vegdist,
 #'               distance = "bray",
@@ -325,7 +325,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         } else{
             # If it cannot be found, give warning
             warning(paste("RDA/CCA object was not found. Please compute",
-                          "RDA/CCA by using runCCA or getCCA."),
+                          "RDA/CCA by using addCCA or getCCA."),
                     call. = FALSE)
         }
     }
@@ -359,7 +359,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         } else{
             # If it cannot be found, give warning
             warning(paste("RDA/CCA object was not found. Please compute RDA/CCA",
-                          "by using runCCA or getCCA."),
+                          "by using addCCA or getCCA."),
                     call. = FALSE)
         }
     }
@@ -424,7 +424,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         } else{
             # If it cannot be found, give warning
             warning(paste("Significance data was not found. please compute",
-                          "CCA/RDA by using runCCA or getCCA."),
+                          "CCA/RDA by using addCCA or getCCA."),
                     call. = FALSE)
         }
     }

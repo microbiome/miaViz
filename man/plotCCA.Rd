@@ -56,7 +56,7 @@ or a matrix of weights. The latter is returned as output from \code{\link[mia:ru
 \code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.}
 
 \item{dimred}{A string or integer scalar indicating the reduced dimension to
-plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
+plot. This is the output of \code{\link[mia:runCCA]{addRDA}} and resides in
 \code{reducedDim(tse, dimred)}.}
 
 \item{add.ellipse}{One of \code{c(TRUE, FALSE, "fill", "colour", "color")},
@@ -132,7 +132,7 @@ output of \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods
 for supervised ordination of microbiome data. Either a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 or a matrix object is supported as input. When the input is a
-TreeSummarizedExperiment, this should contain the output of runRDA
+TreeSummarizedExperiment, this should contain the output of addRDA
 in the reducedDim slot and the argument \code{dimred} needs to be defined.
 When the input is a matrix, this should be returned as output from
 getRDA. However, the first method is recommended because it provides
@@ -146,7 +146,7 @@ data("enterotype", package = "mia")
 tse <- enterotype
  
 # Run RDA and store results into TreeSE
-tse <- runRDA(tse,
+tse <- addRDA(tse,
               formula = assay ~ ClinicalStatus + Gender + Age,
               FUN = vegan::vegdist,
               distance = "bray",
