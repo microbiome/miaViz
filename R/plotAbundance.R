@@ -149,7 +149,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
             rank = taxonomyRanks(x)[1],
             features = NULL,
-            order_rank_by = c("name","abund","revabund"),
+            order.rows.by = c("name", "abund","revabund"),
+            order_rank_by = order.rows.by,
             order_sample_by = NULL,
             decreasing = TRUE,
             use_relative = TRUE,
@@ -159,6 +160,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             scales = "fixed",
             assay.type = assay_name, assay_name = "counts",
             ...){
+        # Deprecation check
+        .Deprecated(old = "order_rank_by", new = "order.rows.by", 
+                    "The order_rank_by argument is deprecated. 
+                    Please use order.rows.by instead.")
         # input checks
         if(nrow(x) == 0L){
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
@@ -187,14 +192,14 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         .check_taxonomic_rank(rank, x)
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
-        order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
+        order.rows.by <- match.arg(order.rows.by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
                             ncol = ncol)
         if( !is.null(features) ){
             features <- match.arg(features, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
-        abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
+        abund_data <- .get_abundance_data(x, rank, assay.type, order.rows.by,
                                         use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
                                                 unique(abund_data$colour_by),
@@ -253,7 +258,8 @@ MELT_VALUES <- "Value"
 #' @importFrom tidyr pivot_longer nest unnest
 #' @importFrom tibble rownames_to_column
 #' @importFrom purrr map
-.get_abundance_data <- function(x, rank, assay.type, order_rank_by = "name",
+.get_abundance_data <- function(x, rank, assay.type, order.rows.by = "name",
+                                order_rank_by = order.rows.by,
                                 use_relative = TRUE){
     data <- assay(x, assay.type, withDimnames = TRUE)
     if(use_relative){
@@ -287,15 +293,15 @@ MELT_VALUES <- "Value"
                     X = MELT_NAME,
                     Y = MELT_VALUES)
     # order values
-    if(order_rank_by == "name"){
+    if(order.rows.by == "name"){
         lvl <- levels(data$colour_by)
         lvl <- lvl[order(lvl)]
-    } else if(order_rank_by %in% c("abund","revabund")){
+    } else if(order.rows.by %in% c("abund","revabund")){
         o <- data %>% 
             select(!.data$X) %>%
             group_by(.data$colour_by) %>% 
             summarize(sum = sum(.data$Y))
-        decreasing <- ifelse(order_rank_by == "abund",TRUE,FALSE)
+        decreasing <- ifelse(order.rows.by == "abund",TRUE,FALSE)
         lvl <- o[order(o$sum, decreasing = decreasing),] %>% 
             pull(.data$colour_by) %>%
             as.character()
