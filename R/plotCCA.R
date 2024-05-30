@@ -222,22 +222,22 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         if( !.are_whole_numbers(ellipse.linetype) ){
             stop("'vec.linetype' must be a whole number.", call. = FALSE)
         }
-        if( ellipse.alpha < 0 || ellipse.alpha > 1 ){
+        if ( !(is.numeric(ellipse.alpha) && ellipse.alpha > 0 && ellipse.alpha < 1 ) ) {
             stop("'ellipse.alpha' must be a number between 0 and 1.", call. = FALSE)
         }
-        if ( !is.numeric(ellipse.linewidth) && ellipse.linewidth > 0 ) {
+        if ( !(is.numeric(ellipse.linewidth) && ellipse.linewidth > 0) ) {
             stop("'ellipse.linewidth' must be a positive number.", call. = FALSE)
         }
-        if( !is.numeric(confidence.level) && confidence.level > 0 && confidence.level < 1 ) {
+        if( !(is.numeric(confidence.level) && confidence.level > 0 && confidence.level < 1) ) {
           stop("'confidence.level' must be a number between 0 and 1.", call. = FALSE)
         }
-        if ( !is.numeric(vec.size) && vec.size > 0 ) {
+        if ( !(is.numeric(vec.size) && vec.size > 0) ) {
             stop("'vec.size' must be a positive number.", call. = FALSE)
         }
-        if ( !is.numeric(arrow.size) && arrow.size > 0 ) {
+        if ( !(is.numeric(arrow.size) && arrow.size > 0) ) {
             stop("'arrow.size' must be a positive number.", call. = FALSE)
         }
-        if ( !is.numeric(label.size) && label.size > 0 ) {
+        if ( !(is.numeric(label.size) && label.size > 0) ) {
             stop("'label.size' must be a positive number.", call. = FALSE)
         }
         if ( !.is_non_empty_string(vec.color) ) {
