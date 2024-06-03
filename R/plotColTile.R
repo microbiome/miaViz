@@ -129,7 +129,7 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
     tile_data <- .summarise_tile_data(object,
                                       tile_data,
                                       type)
-    tile_data$colour_by <- tile_data$Y
+    tile_data$colour.by <- tile_data$Y
     .tile_plotter(tile_data,
                   xlab = xlab,
                   ylab = ylab,
@@ -145,7 +145,7 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
 }
 
 .tile_plotter <- function(data,
-                          add_legend = TRUE,
+                          add.legend = TRUE,
                           xlab,
                           ylab,
                           rect_alpha = 1,
@@ -153,7 +153,7 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
                           na.value = "grey80"){
     coord <- .get_xcoord_mid(data)
     # get plotting arguments for rect
-    rect_args <- .get_rect_args(colour_by = ylab, 
+    rect_args <- .get_rect_args(colour.by = ylab, 
                                 alpha = rect_alpha,
                                 colour = rect_colour)
     rect_args$args$mapping$xmin <- sym("xmin")
@@ -177,14 +177,14 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
                            breaks = seq(0,1,0.1))
     # resolve the fill colours
     plot_out <- .resolve_plot_colours(plot_out,
-                                      data$colour_by,
+                                      data$colour.by,
                                       ylab,
                                       fill = TRUE,
                                       na.value = na.value)
     # add legend and theme
     plot_out <- plot_out +
         theme_classic()
-    if (!add_legend) {
+    if (!add.legend) {
         plot_out <- plot_out + theme(legend.position = "none")
     }
     plot_out

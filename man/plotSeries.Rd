@@ -10,7 +10,9 @@ plotSeries(
   x,
   y = NULL,
   rank = NULL,
+  colour.by = colour_by,
   colour_by = NULL,
+  size.by = size_by,
   size_by = NULL,
   linetype_by = NULL,
   assay.type = assay_name,
@@ -23,7 +25,9 @@ plotSeries(
   x,
   y = NULL,
   rank = NULL,
+  colour.by = colour_by,
   colour_by = NULL,
+  size.by = size_by,
   size_by = NULL,
   linetype_by = NULL,
   assay.type = assay_name,
@@ -48,12 +52,16 @@ This parameter specifies taxa whose abundances will be plotted.}
 to agglomerate the data. Must be a value of \code{taxonomicRanks()}
 function.}
 
-\item{colour_by}{a single character value defining a taxonomic rank, that is used to
+\item{colour.by}{a single character value defining a taxonomic rank, that is used to
 color plot. Must be a value of \code{taxonomicRanks()} function.}
 
-\item{size_by}{a single character value defining a taxonomic rank, that is
+\item{colour_by}{Deprecated. Use \code{colour.by} instead.}
+
+\item{size.by}{a single character value defining a taxonomic rank, that is
 used to divide taxa to different line size types. Must be a value of
 \code{taxonomicRanks()} function.}
+
+\item{size_by}{Deprecated. Use \code{size.by} instead.}
 
 \item{linetype_by}{a single character value defining a taxonomic rank, that
 is used to divide taxa to different line types. Must be a value of
@@ -93,7 +101,7 @@ object <- SilvermanAGutData
 plotSeries(object,
            x = "DAY_ORDER",
            y = getTopFeatures(object, 2),
-           colour_by = "Family")
+           colour.by = "Family")
 
 # Counts relative abundances
 object <- transformAssay(object, method = "relabundance")
@@ -104,16 +112,16 @@ taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
 # Plots relative abundances of phylums
 plotSeries(object[taxa,],
            x = "DAY_ORDER", 
-           colour_by = "Family",
+           colour.by = "Family",
            linetype_by = "Phylum",
            assay.type = "relabundance")
 
-# In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
+# In addition to 'colour.by' and 'linetype_by', 'size.by' can also be used to group taxa.
 plotSeries(object,
            x = "DAY_ORDER", 
            y = getTopFeatures(object, 5), 
-           colour_by = "Family",
-           size_by = "Phylum",
+           colour.by = "Family",
+           size.by = "Phylum",
            assay.type = "counts")
 }
 }

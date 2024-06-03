@@ -32,14 +32,14 @@ test_that("plot series", {
     colour_by_test <- rowData(tse)[, "Phylum"]
     linetype_by_test <- rowData(tse)[,"Family"]
     size_by_test <- rowData(tse)[,"Kingdom"]
-    colour_linetype_and_size <- data.frame(colour_by = colour_by_test, 
+    colour_linetype_and_size <- data.frame(colour.by = colour_by_test, 
                                           linetype_by = linetype_by_test, 
-                                          size_by = size_by_test)
+                                          size.by = size_by_test)
     
     # Get data from function
     data_from_function <- miaViz:::.incorporate_series_vis(tse, x = "DAY_ORDER", 
-                                                           colour_by = "Phylum", linetype_by = "Family",
-                                                           size_by = "Kingdom")
+                                                           colour.by = "Phylum", linetype_by = "Family",
+                                                           size.by = "Kingdom")
     
     # Divide list to 2 data frames
     series_data_test <- data_from_function$series_data
@@ -78,11 +78,11 @@ test_that("plot series", {
         expect_equal(round(melted_assay_mean_value, 2), round(assay_mean_value,2))
         expect_equal(round(melted_assay_sd_value, 2), round(assay_sd_value), 2)
         
-        # Phylum was chosen to be value of colour_by
+        # Phylum was chosen to be value of colour.by
         rowData_colour_by_value <- rowData(tse)[taxa, "Phylum"]
         melted_colour_by_value <- melted[melted[, "feature"] == taxa, ][melted[melted[, "feature"] == taxa, ]["X"] == timepoint[,1]][5]
         
-        ######### Expect that colour_by values are melted correctly ########
+        ######### Expect that colour.by values are melted correctly ########
         expect_equal(melted_colour_by_value, rowData_colour_by_value)
         
         # Family was chosen to be value of linetype_by
@@ -92,7 +92,7 @@ test_that("plot series", {
         ######### Expect that linetype_by is melted correctly ########
         expect_equal(melted_linetype_by_value, rowData_linetype_by_value)
         
-        # Kingdom was chosen to be value of size_by
+        # Kingdom was chosen to be value of size.by
         rowData_size_by_value <- rowData(tse)[taxa, "Kingdom"]
         melted_size_by_value <- melted[melted[, "feature"] == taxa, ][melted[melted[, "feature"] == taxa, ]["X"] == timepoint[,1]][7]
         

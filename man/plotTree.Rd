@@ -8,85 +8,131 @@
 \alias{plotRowTree,TreeSummarizedExperiment-method}
 \title{Plotting tree information enriched with information}
 \usage{
-plotRowTree(object, ...)
+plotRowTree(x, ...)
 
-plotColTree(object, ...)
+plotColTree(x, ...)
 
 \S4method{plotColTree}{TreeSummarizedExperiment}(
-  object,
+  x,
+  tree.name = tree_name,
   tree_name = "phylo",
+  relabel.tree = relabel_tree,
   relabel_tree = FALSE,
+  order.tree = order_tree,
   order_tree = FALSE,
+  remove.levels = remove_levels,
   remove_levels = FALSE,
+  show.label = show_label,
   show_label = FALSE,
+  show.highlights = show_highlights,
   show_highlights = FALSE,
+  show.highlight.label = show_highlight_label,
   show_highlight_label = FALSE,
+  abbr.label = abbr_label,
   abbr_label = FALSE,
+  add.legend = add_legend,
   add_legend = TRUE,
   layout = "circular",
+  edge.colour.by = edge.colour.by,
   edge_colour_by = NULL,
+  edge.size.by = edge_size_by,
   edge_size_by = NULL,
+  tip.colour.by = tip_colour_by,
   tip_colour_by = NULL,
+  tip.shape.by = tip_shape_by,
   tip_shape_by = NULL,
+  tip.size.by = tip_size_by,
   tip_size_by = NULL,
+  node.colour.by = node_colour_by,
   node_colour_by = NULL,
+  node.shape.by = node_shape_by,
   node_shape_by = NULL,
+  node.size.by = node_size_by,
   node_size_by = NULL,
+  colour.highlights.by = colour_highlights_by,
   colour_highlights_by = NULL,
+  assay.type = by_exprs_values,
   by_exprs_values = "counts",
+  other.fields = other_fields,
   other_fields = list(),
   ...
 )
 
 \S4method{plotRowTree}{TreeSummarizedExperiment}(
-  object,
+  x,
+  tree.name = tree_name,
   tree_name = "phylo",
+  relabel.tree = relabel_tree,
   relabel_tree = FALSE,
+  order.tree = order_tree,
   order_tree = FALSE,
+  remove.levels = remove_levels,
   remove_levels = FALSE,
+  show.label = show_label,
   show_label = FALSE,
+  show.highlights = show_highlights,
   show_highlights = FALSE,
+  show.highlight.label = show_highlight_label,
   show_highlight_label = FALSE,
+  abbr.label = abbr_label,
   abbr_label = FALSE,
+  add.legend = add_legend,
   add_legend = TRUE,
   layout = "circular",
+  edge.colour.by = edge.colour.by,
   edge_colour_by = NULL,
+  edge.size.by = edge_size_by,
   edge_size_by = NULL,
+  tip.colour.by = tip_colour_by,
   tip_colour_by = NULL,
-  tip_shape_by = NULL,
-  tip_size_by = NULL,
+  tip.shape.by = NULL,
+  tip.size.by = NULL,
+  node.colour.by = node_colour_by,
   node_colour_by = NULL,
+  node.shape.by = node_shape_by,
   node_shape_by = NULL,
+  node.size.by = node_size_by,
   node_size_by = NULL,
+  colour.highlights.by = colour_highlights_by,
   colour_highlights_by = NULL,
+  assay.type = by_exprs_values,
   by_exprs_values = "counts",
+  other.fields = other_fields,
   other_fields = list(),
   ...
 )
 }
 \arguments{
-\item{object}{a
+\item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-object.}
+x.}
 
 \item{...}{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
-\item{tree_name}{a single \code{character} value specifying a rowTree/colTree from
-\code{object}. (By default: \code{tree_name = "phylo"})}
+\item{tree.name}{a single \code{character} value specifying a rowTree/colTree from
+\code{x}. (By default: \code{tree.name = "phylo"})}
 
-\item{relabel_tree}{logical scalar, Should the tip labels be relabeled using
-the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?
-(default: \code{relabel_tree = FALSE})}
+\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
-\item{order_tree}{logical scalar, Should the tree be ordered based on
+\item{relabel.tree}{logical scalar, Should the tip labels be relabeled using
+the output of \code{getTaxonomyLabels(x, with_rank = TRUE)}?
+(default: \code{relabel.tree = FALSE})}
+
+\item{relabel_tree}{Deprecated. Use \code{relavel.tree} instead.}
+
+\item{order.tree}{logical scalar, Should the tree be ordered based on
 alphabetic order of taxonomic levels?
-(default: \code{order_tree = FALSE})}
+(default: \code{order.tree = FALSE})}
 
-\item{remove_levels}{logical scalar, Should taxonomic level information
-be removed from labels? (default: \code{relabel_tree = FALSE})}
+\item{order_tree}{Deprecated. Use \code{order.tree} instead.}
 
-\item{show_label, show_highlights, show_highlight_label, abbr_label}{\code{logical} (scalar), \code{integer} or \code{character} vector. If a
+\item{remove.levels}{logical scalar, Should taxonomic level information
+be removed from labels? (default: \code{relabel.tree = FALSE})}
+
+\item{remove_levels}{Deprecated. Use \code{remove.levels} instead.}
+
+\item{show.label, show.highlights, show.highlight.label, abbr.label}{\code{logical} (scalar), \code{integer} or \code{character} vector. If a
 \code{logical} scalar is given, should tip labels be plotted or if a
 logical vector is provided, which labels should be shown? If an
 \code{integer} or \code{character} vector is provided, it will be converted
@@ -97,57 +143,84 @@ match values of the \code{label} column in the node data. In case of a
 plotted and if no labels are provided no labels will be shown. (default:
 \code{FALSE})}
 
-\item{add_legend}{logical scalar. Should legends be plotted?
-(default: \code{add_legend = TRUE})}
+\item{show_label, show_highlights, show_highlight_label, abbr_label}{Deprecated.
+Use \code{show.label, show.highlights, show.highlight.label, abbr_label} instead.}
+
+\item{add.legend}{logical scalar. Should legends be plotted?
+(default: \code{add.legend = TRUE})}
+
+\item{add_legend}{Deprecated. Use \code{add.legend} instead.}
 
 \item{layout}{layout for the plotted tree. See
 \code{\link[ggtree:ggtree]{ggtree}} for details.}
 
-\item{edge_colour_by}{Specification of a column metadata field or a feature
+\item{edge.colour.by}{Specification of a column metadata field or a feature
 to colour tree edges by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
-\item{edge_size_by}{Specification of a column metadata field or a feature
+\item{edge_colour_by}{Deprecated. Use \code{edge.colour.by} instead.}
+
+\item{edge.size.by}{Specification of a column metadata field or a feature
 to size tree edges by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
-\item{tip_colour_by}{Specification of a column metadata field or a feature to
+\item{edge_size_by}{Deprecated. Use \code{edge.size.by} instead.}
+
+\item{tip.colour.by}{Specification of a column metadata field or a feature to
 colour tree tips by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
-\item{tip_shape_by}{Specification of a column metadata field or a feature to
+\item{tip_colour_by}{Deprecated. Use \code{tip.colour.by} instead.}
+
+\item{tip.shape.by}{Specification of a column metadata field or a feature to
 shape tree tips by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
-\item{tip_size_by}{Specification of a column metadata field or a feature to
+\item{tip_shape_by}{Deprecated. Use \code{tip.shape.by} isntead.}
+
+\item{tip.size.by}{Specification of a column metadata field or a feature to
 size tree tips by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
-\item{node_colour_by}{Specification of a column metadata field or a feature to
-colour tree nodes by. Must be a field from \code{other_fields}.}
+\item{tip_size_by}{Deprecated. Use \code{tip.size.by} instead.}
 
-\item{node_shape_by}{Specification of a column metadata field or a feature to
-shape tree nodes by. Must be a field from \code{other_fields}.}
+\item{node.colour.by}{Specification of a column metadata field or a feature to
+colour tree nodes by. Must be a field from \code{other.fields}.}
 
-\item{node_size_by}{Specification of a column metadata field or a feature to
-size tree nodes by. Must be a field from \code{other_fields}.}
+\item{node_colour_by}{Deprecated. Use \code{node.colour.by} instead.}
 
-\item{colour_highlights_by}{Should the highlights be colour differently?
-If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
+\item{node.shape.by}{Specification of a column metadata field or a feature to
+shape tree nodes by. Must be a field from \code{other.fields}.}
+
+\item{node_shape_by}{Deprecated. Use \code{node.shape.by} instead.}
+
+\item{node.size.by}{Specification of a column metadata field or a feature to
+size tree nodes by. Must be a field from \code{other.fields}.}
+
+\item{node_size_by}{Deprecated. Use \code{node.size.by} instead.}
+
+\item{colour.highlights.by}{Should the highlights be colour differently?
+If \code{show.highlights = TRUE}, \code{colour_highlights} will be set to
 \code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
 
-\item{by_exprs_values}{A string or integer scalar specifying which assay to
+\item{colour_highlights_by}{Deprecated. Use \code{colour.highlights.by} isntead.}
+
+\item{assay.type}{A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 \code{exprs_values} argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.}
 
-\item{other_fields}{Additional fields to include in the node information
+\item{by_exprs_values}{Deprecated. Use \code{assay.type} instead.}
+
+\item{other.fields}{Additional fields to include in the node information
 without plotting them.}
+
+\item{other_fields}{Deprecated. Use \code|{other.fields} instead.}
 }
 \value{
 a \code{\link{ggtree}} plot
@@ -159,7 +232,7 @@ be plotted. From the \code{rowData}, the \code{assays} as well as the
 additional information.
 }
 \details{
-If \code{show_label} or \code{show_highlight_label} have the same length
+If \code{show.label} or \code{show.highlight.label} have the same length
 as the number of nodes, the vector will be used to relabel the nodes.
 }
 \examples{
@@ -180,31 +253,31 @@ top_genus <- getTopFeatures(altExp(GlobalPatterns,"Genus"),
 #
 x <- altExp(GlobalPatterns,"Genus")
 plotRowTree(x[rownames(x) \%in\% top_genus,],
-            tip_colour_by = "log_mean",
-            tip_size_by = "detected")
+            tip.colour.by = "log_mean",
+            tip.size.by = "detected")
 
 # plot with tip labels
 plotRowTree(x[rownames(x) \%in\% top_genus,],
-            tip_colour_by = "log_mean",
-            tip_size_by = "detected",
-            show_label = TRUE)
+            tip.colour.by = "log_mean",
+            tip.size.by = "detected",
+            show.label = TRUE)
 # plot with selected labels
 labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
 plotRowTree(x[rownames(x) \%in\% top_genus,],
-            tip_colour_by = "log_mean",
-            tip_size_by = "detected",
-            show_label = labels,
+            tip.colour.by = "log_mean",
+            tip.size.by = "detected",
+            show.label = labels,
             layout="rectangular")
 
 # plot with labeled edges
 plotRowTree(x[rownames(x) \%in\% top_genus,],
-            edge_colour_by = "Phylum",
-            tip_colour_by = "log_mean")
+            edge.colour.by = "Phylum",
+            tip.colour.by = "log_mean")
 # if edges are sized, colours might disappear depending on plotting device
 plotRowTree(x[rownames(x) \%in\% top_genus,],
-            edge_colour_by = "Phylum",
-            edge_size_by = "detected",
-            tip_colour_by = "log_mean")
+            edge.colour.by = "Phylum",
+            edge.size.by = "detected",
+            tip.colour.by = "log_mean")
 
 # aggregating data over the taxonomic levels for plotting a taxonomic tree
 # please note that the original tree of GlobalPatterns is dropped by
@@ -228,17 +301,17 @@ x <- addHierarchyTree(x)
 highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
                 "Family:Pseudomonadaceae","Order:Bifidobacteriales")
 plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
-            tip_colour_by = "log_mean",
-            node_colour_by = "log_mean",
-            show_highlights = highlights,
-            show_highlight_label = highlights,
-            colour_highlights_by = "Phylum")
+            tip.colour.by = "log_mean",
+            node.colour.by = "log_mean",
+            show.highlights = highlights,
+            show.highlight.label = highlights,
+            colour.highlights.by = "Phylum")
 
 plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
-            edge_colour_by = "Phylum",
-            edge_size_by = "detected",
-            tip_colour_by = "log_mean",
-            node_colour_by = "log_mean")
+            edge.colour.by = "Phylum",
+            edge.size.by = "detected",
+            tip.colour.by = "log_mean",
+            node.colour.by = "log_mean")
 }
 \seealso{
 \code{\link[mia:splitByRanks]{splitByRanks}}

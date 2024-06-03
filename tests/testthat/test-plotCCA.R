@@ -16,8 +16,8 @@ test_that("plot RDA/CCA", {
   expect_no_error(plotRDA(tse, "RDA"))
 
   # Wrong-entry scenarios
-  expect_error(plotRDA(tse, "RDA", colour_by = "wrong colname"))
-  expect_error(plotRDA(tse, "RDA", colour_by = "cohort", shape_by = "wrong colname"))
+  expect_error(plotRDA(tse, "RDA", colour.by = "wrong colname"))
+  expect_error(plotRDA(tse, "RDA", colour.by = "cohort", shape.by = "wrong colname"))
   expect_error(plotRDA(tse, "RDA", add.ellipse = "invalid value"),
                "'add.ellipse' must be one of c(TRUE, FALSE, 'fill', 'color', 'colour').",
                fixed = TRUE)
@@ -34,12 +34,12 @@ test_that("plot RDA/CCA", {
 
   ### 2). TEST plot layers ###
   
-  el_true <- plotRDA(tse, "RDA", colour_by = "patient_status")
-  el_false <- plotRDA(tse, "RDA", colour_by = "patient_status", add.ellipse = FALSE)
-  el_col <- plotRDA(tse, "RDA", colour_by = "patient_status", add.ellipse = "colour")
-  el_fill <- plotRDA(tse, "RDA", colour_by = "patient_status", add.ellipse = "fill")
+  el_true <- plotRDA(tse, "RDA", colour.by = "patient_status")
+  el_false <- plotRDA(tse, "RDA", colour.by = "patient_status", add.ellipse = FALSE)
+  el_col <- plotRDA(tse, "RDA", colour.by = "patient_status", add.ellipse = "colour")
+  el_fill <- plotRDA(tse, "RDA", colour.by = "patient_status", add.ellipse = "fill")
   expect_warning(
-      vec_false <- plotRDA(tse, "RDA", colour_by = "patient_status", add.vectors = FALSE)
+      vec_false <- plotRDA(tse, "RDA", colour.by = "patient_status", add.vectors = FALSE)
   )
   # Filled ellipse has one more layer than no ellipse plot
   expect_equal(length(ggplot_build(el_true)[["data"]]), 4)
@@ -51,7 +51,7 @@ test_that("plot RDA/CCA", {
   expect_false(all(ggplot_build(el_fill)[["data"]][[2]][["alpha"]] == 0))
   
   # Check ggplot aesthetics
-  p_aes <- plotRDA(tse, "RDA", colour_by = "patient_status", ellipse.alpha = 0.5,
+  p_aes <- plotRDA(tse, "RDA", colour.by = "patient_status", ellipse.alpha = 0.5,
                    ellipse.linewidth = 0.2, ellipse.linetype = 3, vec.size = 0.6,
                    vec.colour = "red", vec.linetype = 2, arrow.size = 0.15,
                    label.colour = "blue", label.size = 5)
@@ -72,8 +72,8 @@ test_that("plot RDA/CCA", {
   # expect_true(arrow_size == 0.15)
   
   # Vector or label text
-  p_vec <- plotRDA(tse, "RDA", colour_by = "patient_status", vec.text = TRUE)
-  p_lab <- plotRDA(tse, "RDA", colour_by = "patient_status", vec.text = FALSE)
+  p_vec <- plotRDA(tse, "RDA", colour.by = "patient_status", vec.text = TRUE)
+  p_lab <- plotRDA(tse, "RDA", colour.by = "patient_status", vec.text = FALSE)
   # Column "fill" is present in p_vec and missing in p_lab, so length differs by 1
   expect_length(ggplot_build(p_vec)[["data"]][[4]], 29)
   expect_length(ggplot_build(p_lab)[["data"]][[4]], 28)

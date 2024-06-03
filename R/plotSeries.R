@@ -27,16 +27,20 @@
 #'   to agglomerate the data. Must be a value of \code{taxonomicRanks()} 
 #'   function.
 #'  
-#' @param colour_by a single character value defining a taxonomic rank, that is used to
+#' @param colour.by a single character value defining a taxonomic rank, that is used to
 #'   color plot. Must be a value of \code{taxonomicRanks()} function.
+#'   
+#' @param colour_by Deprecated. Use \code{colour.by} instead.
 #' 
 #' @param linetype_by a single character value defining a taxonomic rank, that
 #'   is used to divide taxa to different line types. Must be a value of
 #'   \code{taxonomicRanks()} function.
 #' 
-#' @param size_by a single character value defining a taxonomic rank, that is
+#' @param size.by a single character value defining a taxonomic rank, that is
 #'   used to divide taxa to different line size types. Must be a value of
 #'   \code{taxonomicRanks()} function.
+#'   
+#' @param size_by Deprecated. Use \code{size.by} instead.
 #'   
 #' @param ... additional parameters for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
@@ -64,7 +68,7 @@
 #' plotSeries(object,
 #'            x = "DAY_ORDER",
 #'            y = getTopFeatures(object, 2),
-#'            colour_by = "Family")
+#'            colour.by = "Family")
 #' 
 #' # Counts relative abundances
 #' object <- transformAssay(object, method = "relabundance")
@@ -75,16 +79,16 @@
 #' # Plots relative abundances of phylums
 #' plotSeries(object[taxa,],
 #'            x = "DAY_ORDER", 
-#'            colour_by = "Family",
+#'            colour.by = "Family",
 #'            linetype_by = "Phylum",
 #'            assay.type = "relabundance")
 #' 
-#' # In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
+#' # In addition to 'colour.by' and 'linetype_by', 'size.by' can also be used to group taxa.
 #' plotSeries(object,
 #'            x = "DAY_ORDER", 
 #'            y = getTopFeatures(object, 5), 
-#'            colour_by = "Family",
-#'            size_by = "Phylum",
+#'            colour.by = "Family",
+#'            size.by = "Phylum",
 #'            assay.type = "counts")
 #' }
 NULL
@@ -96,7 +100,9 @@ setGeneric("plotSeries", signature = c("object"),
                     x,
                     y = NULL,
                     rank = NULL,
+                    colour.by = colour_by,
                     colour_by = NULL,
+                    size.by = size_by,
                     size_by = NULL,
                     linetype_by = NULL,
                     assay.type = assay_name, assay_name = "counts",
@@ -112,7 +118,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
              x,
              y = NULL,
              rank = NULL,
+             colour.by = colour_by,
              colour_by = NULL,
+             size.by = size_by,
              size_by = NULL,
              linetype_by = NULL,
              assay.type = assay_name, assay_name = "counts",
@@ -157,15 +165,15 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         # Fetches sample and features data as a list. 
         vis_out <- .incorporate_series_vis(object,
                                            x,
-                                           colour_by,
+                                           colour.by,
                                            linetype_by,
-                                           size_by)
+                                           size.by)
         series_data <- vis_out$series_data
         feature_data <- vis_out$feature_data
         x <- vis_out$x
-        colour_by <- vis_out$colour_by
+        colour.by <- vis_out$colour.by
         linetype_by <- vis_out$linetype_by
-        size_by <- vis_out$size_by
+        size.by <- vis_out$size.by
         
         # Melts the data
         plot_data <- .melt_series_data(assay,
@@ -178,9 +186,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         .series_plotter(plot_data, 
                         xlab = xlab,
                         ylab = ylab,
-                        colour_by = colour_by,
+                        colour.by = colour.by,
                         linetype_by = linetype_by,
-                        size_by = size_by,
+                        size.by = size.by,
                         ...)
     }
 )
@@ -203,7 +211,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     return(assay)
 }
 
-.incorporate_series_vis <- function(object, x, colour_by, linetype_by, size_by){
+.incorporate_series_vis <- function(object, x, colour.by, linetype_by, size.by){
     
     # This variable is set by defaults
     series_data <- retrieveCellInfo(object, x, search = "colData")
@@ -211,12 +219,12 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     series_data <- series_data$value
     
     # This variables are optional
-    row_vars <- c(colour_by = colour_by,
+    row_vars <- c(colour.by = colour.by,
                   linetype_by = linetype_by,
-                  size_by = size_by)
-    colour_by <- NULL
+                  size.by = size.by)
+    colour.by <- NULL
     linetype_by <- NULL
-    size_by <- NULL
+    size.by <- NULL
     feature_data <- NULL
     if(!is.null(row_vars)){
         feature_data <- list()
@@ -243,9 +251,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     return(list(series_data = series_data,
                 feature_data = feature_data,
                 x = x,
-                colour_by = colour_by,
+                colour.by = colour.by,
                 linetype_by = linetype_by,
-                size_by = size_by))
+                size.by = size.by))
 }
 
 #' @importFrom tidyr pivot_longer
@@ -288,19 +296,19 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 .series_plotter <- function(plot_data,
                             xlab = NULL,
                             ylab = NULL,
-                            colour_by = NULL,
+                            colour.by = NULL,
                             linetype_by = NULL,
-                            size_by = NULL,
-                            add_legend = TRUE,
+                            size.by = NULL,
+                            add.legend = TRUE,
                             line_alpha = 1,
                             line_type = NULL,
                             line_width = 1,
                             line_width_range = c(0.5,3),
                             ribbon_alpha = 0.3){
     # fall back for feature grouping
-    if(is.null(colour_by)){
-        colour_by <- "feature"
-        plot_data$colour_by <-  plot_data$feature
+    if(is.null(colour.by)){
+        colour.by <- "feature"
+        plot_data$colour.by <-  plot_data$feature
     }
     # Creates a "draft" of a plot
     plot_out <- ggplot(plot_data,
@@ -308,15 +316,15 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         labs(x = xlab, y = ylab)
     # if sd column is present add a ribbon
     if(!is.null(plot_data$sd)){
-        ribbon_args <- .get_ribbon_args(colour_by = colour_by,
+        ribbon_args <- .get_ribbon_args(colour.by = colour.by,
                                         alpha = ribbon_alpha)
         plot_out <- plot_out +
             do.call(geom_ribbon, ribbon_args$args)
     }
     # Fetches arguments for geom_line
-    line_args <- .get_line_args(colour_by = colour_by,
+    line_args <- .get_line_args(colour.by = colour.by,
                                 linetype_by = linetype_by,
-                                size_by = size_by,
+                                size.by = size.by,
                                 alpha = line_alpha,
                                 linetype = line_type,
                                 linewidth = line_width)
@@ -324,8 +332,8 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     plot_out <- plot_out +
         do.call(geom_line, line_args$args)
     # apply line_width_range
-    if (!is.null(size_by)) {
-        if(is.numeric(plot_data$size_by)){
+    if (!is.null(size.by)) {
+        if(is.numeric(plot_data$size.by)){
             SIZEFUN <- scale_size_continuous
         } else {
             SIZEFUN <- scale_size_discrete
@@ -335,31 +343,31 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     }
     # Resolves the colours
     plot_out <- .resolve_plot_colours(plot_out,
-                                      plot_data$colour_by,
-                                      colour_by,
+                                      plot_data$colour.by,
+                                      colour.by,
                                       fill = FALSE)
     if(!is.null(plot_data$sd)){
         plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colour_by,
-                                          colour_by,
+                                          plot_data$colour.by,
+                                          colour.by,
                                           fill = TRUE)
     } 
     # add additional guides
-    plot_out <- .add_extra_line_guide(plot_out, linetype_by, size_by)
+    plot_out <- .add_extra_line_guide(plot_out, linetype_by, size.by)
     # To choose if legend is kept, and its position
-    plot_out <- .add_legend(plot_out, add_legend)
+    plot_out <- .add_legend(plot_out, add.legend)
     plot_out <- plot_out +
         theme_classic()
     plot_out
 }
 
-.add_extra_line_guide <- function(plot_out, linetype_by, size_by) {
+.add_extra_line_guide <- function(plot_out, linetype_by, size.by) {
     guide_args <- list()
     if (!is.null(linetype_by)) {
         guide_args$linetype <- guide_legend(title = linetype_by)
     }
-    if (!is.null(size_by)) {
-        guide_args$linewidth <- guide_legend(title = size_by)
+    if (!is.null(size.by)) {
+        guide_args$linewidth <- guide_legend(title = size.by)
     }
     if (length(guide_args)) {
         plot_out <- plot_out + do.call(guides, guide_args)

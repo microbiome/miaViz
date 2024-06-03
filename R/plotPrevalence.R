@@ -28,26 +28,36 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param as_relative logical scalar: Should the detection threshold be applied
+#' @param as.relative logical scalar: Should the detection threshold be applied
 #'   on compositional (relative) abundances? Passed onto
 #'   \code{\link[mia:getPrevalence]{getPrevalence}}. (default: \code{TRUE})
 #'   
-#' @param colour_by Specification of a feature to colour points by, see the 
-#'   \code{by} argument in 
-#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}.
-#' @param shape_by Specification of a feature to shape points by, see the 
-#'   \code{by} argument in 
-#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}.
-#' @param size_by Specification of a feature to size points by, see the 
+#' @param colur.by Specification of a feature to colour points by, see the 
 #'   \code{by} argument in 
 #'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
 #'   possible values. Only used with \code{layout = "point"}.
 #'   
-#' @param facet_by Taxonomic rank to facet the plot by. 
+#' @param colour_by Deprecated. Use \code{colour.by} instead.
+#'   
+#' @param shape.by Specification of a feature to shape points by, see the 
+#'   \code{by} argument in 
+#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}.
+#'
+#' @param shape_by Deprecated. Use \code{shape.by} instead.   
+#'   
+#' @param size.by Specification of a feature to size points by, see the 
+#'   \code{by} argument in 
+#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}.
+#'   
+#' @param size_by Deprecated. Use \cod{size.by} instead.
+#'   
+#' @param facet.by Taxonomic rank to facet the plot by. 
 #' Value must be of \code{taxonomyRanks(x)}
 #' Argument can only be used in function plotPrevalentAbundance. 
+#' 
+#' @param facet_by Deprecated. Use \code{facet.by} instead.
 #' 
 #' @param label a \code{logical}, \code{character} or \code{integer} vector
 #'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
@@ -55,18 +65,20 @@
 #'
 #' @param detections Detection thresholds for absence/presence. Either an
 #'   absolutes value compared directly to the values of \code{x} or a relative
-#'   value between 0 and 1, if \code{as_relative = TRUE}.
+#'   value between 0 and 1, if \code{as.relative = TRUE}.
 #'   
 #' @param prevalences Prevalence thresholds (in 0 to 1). The
 #'   required prevalence is strictly greater by default. To include the
 #'   limit, set \code{include_lowest} to \code{TRUE}.
 #'   
-#' @param min_prevalence a single numeric value to apply as a threshold for 
+#' @param min.prevalence a single numeric value to apply as a threshold for 
 #'   plotting. The threshold is applied per row and column.
-#'   (default: \code{min_prevalence = 0})
+#'   (default: \code{min.prevalence = 0})
+#'   
+#' @param min_prevalence Deprecated. Use \code{min.prevalence} instead.
 #' 
 #' @param ndetections If \code{detections} is \code{NULL}, a number of breaks 
-#'   are calculated automatically. \code{as_relative} is then also regarded as 
+#'   are calculated automatically. \code{as.relative} is then also regarded as 
 #'   \code{TRUE}.
 #' 
 #' @param BPPARAM A
@@ -110,13 +122,13 @@
 #' # point layout for plotFeaturePrevalence can be used to visualize by additional
 #' # information
 #' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-#'                        colour_by = "Phylum") +
+#'                        colur.by = "Phylum") +
 #'     scale_x_log10()
 #' 
 #' # When using function plotPrevalentAbundace, it is possible to create facets
-#' # with 'facet_by'.
+#' # with 'facet.by'.
 #' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-#'                        colour_by = "Phylum", facet_by = "Kingdom") +
+#'                        colur.by = "Phylum", facet.by = "Kingdom") +
 #'     scale_x_log10()
 NULL
 
@@ -135,7 +147,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
                    detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
                    prevalences = seq(0.1, 1, 0.1),
                    assay.type = assay_name, assay_name = "counts",
-                   as_relative = TRUE,
+                   as.relative = TRUE,
                    rank = NULL,
                    BPPARAM = BiocParallel::SerialParam(),
                    ...){
@@ -149,26 +161,26 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        if(!.is_a_bool(as_relative)){
-            stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(as.relative)){
+            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(as_relative && (any(detections < 0) || any(detections > 1))){
-            stop("If 'as_relative' == TRUE, detections' must be numeric ",
+        if(as.relative && (any(detections < 0) || any(detections > 1))){
+            stop("If 'as.relative' == TRUE, detections' must be numeric ",
                  "values between 0 and 1.", call. = FALSE)
         }
         #
         x <- mia:::.agg_for_prevalence(x, rank, ...)
         plot_data <- .get_prevalence_plot_data(x, assay.type, detections,
-                                               prevalences, as_relative,
+                                               prevalences, as.relative,
                                                BPPARAM)
-        plot_data$colour_by <- plot_data$colour_by * 100
+        plot_data$colur.by <- plot_data$colur.by * 100
         .prevalence_plotter(plot_data, 
                             layout = "line",
-                            xlab = ifelse(as_relative,"Abundance [%]","Detection"),
+                            xlab = ifelse(as.relative,"Abundance [%]","Detection"),
                             ylab = "N",
-                            colour_by = "Prevalence [%]",
-                            size_by = NULL,
-                            shape_by = NULL,
+                            colur.by = "Prevalence [%]",
+                            size.by = NULL,
+                            shape.by = NULL,
                             ...)
     }
 )
@@ -186,10 +198,10 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom BiocParallel bpmapply bpisup bpstart bpstop SerialParam
 #' @importFrom SummarizedExperiment assay
 .get_prevalence_plot_data <- function(x, assay.type, detections, prevalences,
-                                      as_relative = TRUE, 
+                                      as.relative = TRUE, 
                                       BPPARAM = BiocParallel::SerialParam()){
     mat <- assay(x, assay.type, withDimnames = TRUE)
-    if(as_relative){
+    if(as.relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
     ans <- expand.grid(detection = detections, prevalence = prevalences)
@@ -203,7 +215,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
                              MoreArgs = list(mat = mat),
                              BPPARAM = BPPARAM,
                              SIMPLIFY = FALSE))
-    colnames(ans) <- c("X","colour_by","Y")
+    colnames(ans) <- c("X","colur.by","Y")
     ans
 }
 
@@ -221,22 +233,25 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x,
              rank = taxonomyRanks(x)[1L],
              assay.type = assay_name, assay_name = "counts",
-             as_relative = TRUE,
-             colour_by = NULL,
+             as.relative = TRUE,
+             colur.by = NULL,
+             size.by = size_by,
              size_by = NULL,
+             shape.by = shape_by,
              shape_by = NULL,
              label = NULL,
+             facet.by = facet_by,
              facet_by = NULL,
              ...){
         # input check
         .check_assay_present(assay.type, x)
-        if(!.is_a_bool(as_relative)){
-            stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(as.relative)){
+            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
         }
-        # Check facet_by. It is FALSE by default, but user can specify it, but 
+        # Check facet.by. It is FALSE by default, but user can specify it, but 
         # the value must be in taxonomyRanks.
-        if(!(is.null(facet_by) || facet_by %in% taxonomyRanks(x))){
-            stop("'facet_by' must be in taxonomyRanks.",  call. = FALSE)
+        if(!(is.null(facet.by) || facet.by %in% taxonomyRanks(x))){
+            stop("'facet.by' must be in taxonomyRanks.",  call. = FALSE)
         }
         
         x <- mia:::.agg_for_prevalence(
@@ -244,37 +259,37 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         label <- .norm_label(label, x)
         #
         plot_data <- .get_prevalence_plot_point_data(x, assay.type, 
-                                                     as_relative = as_relative,
+                                                     as.relative = as.relative,
                                                      label = label)
         vis_out <- .incorporate_prevalence_vis(plot_data,
                                                se = x,
-                                               colour_by = colour_by,
-                                               size_by = size_by,
-                                               shape_by = shape_by,
+                                               colur.by = colur.by,
+                                               size.by = size.by,
+                                               shape.by = shape.by,
                                                label = label,
-                                               facet_by = facet_by)
+                                               facet.by = facet.by)
         plot_data <- vis_out$df
-        colour_by <- vis_out$colour_by
-        size_by <- vis_out$size_by
-        shape_by <- vis_out$shape_by
-        facet_by <- vis_out$facet_by
-        xlab <- paste0(ifelse(as_relative, "Rel. ", ""),"Abundance")
+        colur.by <- vis_out$colur.by
+        size.by <- vis_out$size.by
+        shape.by <- vis_out$shape.by
+        facet.by <- vis_out$facet.by
+        xlab <- paste0(ifelse(as.relative, "Rel. ", ""),"Abundance")
         ylab <- paste0("Prevalence(", ifelse(is.null(rank), "Features", rank),
                        ") [%]")
         plot <- .prevalence_plotter(plot_data, 
                             layout = "point",
                             xlab = xlab,
                             ylab = ylab,
-                            colour_by = colour_by,
-                            size_by = size_by,
-                            shape_by = shape_by,
+                            colur.by = colur.by,
+                            size.by = size.by,
+                            shape.by = shape.by,
                             ...)
 
-        # If facet_by is not NULL, user has specified it. Adds the facets to the plot.
-        if(!is.null(facet_by)){
+        # If facet.by is not NULL, user has specified it. Adds the facets to the plot.
+        if(!is.null(facet.by)){
             plot <- plot + 
                 # Create facets
-                facet_wrap(vars(!!sym("facet_by")))
+                facet_wrap(vars(!!sym("facet.by")))
         }
         
         return(plot)
@@ -283,10 +298,10 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom DelayedArray rowMeans
 #' @importFrom SummarizedExperiment assay
-.get_prevalence_plot_point_data <- function(x, assay.type, as_relative = TRUE,
+.get_prevalence_plot_point_data <- function(x, assay.type, as.relative = TRUE,
                                             label = NULL){
     mat <- assay(x, assay.type, withDimnames = TRUE)
-    if(as_relative){
+    if(as.relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
     ans <- data.frame(X = rowMeans(mat, na.rm = TRUE),
@@ -301,15 +316,15 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @importFrom scater retrieveFeatureInfo
 .incorporate_prevalence_vis <- function(plot_data,
                                         se = se,
-                                        colour_by = NULL,
-                                        size_by = NULL,
-                                        shape_by = NULL,
+                                        colur.by = NULL,
+                                        size.by = NULL,
+                                        shape.by = NULL,
                                         label = NULL,
-                                        facet_by = NULL){
-    variables <- c(colour_by = colour_by,
-                   size_by = size_by,
-                   shape_by = shape_by,
-                   facet_by = facet_by)
+                                        facet.by = NULL){
+    variables <- c(colur.by = colur.by,
+                   size.by = size.by,
+                   shape.by = shape.by,
+                   facet.by = facet.by)
     if(!is.null(variables)){
         for(i in seq_along(variables)){
             # get data
@@ -330,10 +345,10 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         }
     }
     return(list(df = plot_data,
-                colour_by = colour_by,
-                size_by = size_by,
-                shape_by = shape_by,
-                facet_by = facet_by))
+                colur.by = colur.by,
+                size.by = size.by,
+                shape.by = shape.by,
+                facet.by = facet.by))
 }
 
 ################################################################################
@@ -353,7 +368,8 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                    assay.type = assay_name, assay_name = "counts",
                    detections = NULL,
                    ndetections = 20,
-                   as_relative = TRUE,
+                   as.relative = TRUE,
+                   min.prevalence = min_prevalence,
                    min_prevalence = 0,
                    BPPARAM = BiocParallel::SerialParam(),
                    ...){
@@ -370,38 +386,38 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                      call. = FALSE)
             }
             detections <- seq(0,1,length.out = ndetections + 1L)
-            as_relative <- TRUE
+            as.relative <- TRUE
         }
         .check_assay_present(assay.type, x)
-        if(!.is_a_bool(as_relative)){
-            stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
+        if(!.is_a_bool(as.relative)){
+            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
         }
-        if(as_relative && (any(detections < 0) || any(detections > 1))){
-            stop("If 'as_relative' == TRUE, detections' must be numeric ",
+        if(as.relative && (any(detections < 0) || any(detections > 1))){
+            stop("If 'as.relative' == TRUE, detections' must be numeric ",
                  "values between 0 and 1.", call. = FALSE)
         }
-        if(length(min_prevalence) != 1 || !.is_numeric_string(min_prevalence)){
-            stop("'min_prevalence' must be single numeric values.",
+        if(length(min.prevalence) != 1 || !.is_numeric_string(min.prevalence)){
+            stop("'min.prevalence' must be single numeric values.",
                  call. = FALSE)
         }
         #
         x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, relabel = TRUE,
                                        ...)
         plot_data <- .get_prevalence_plot_matrix(x, assay.type, detections,
-                                                 as_relative, 
-                                                 min_prevalence,
+                                                 as.relative, 
+                                                 min.prevalence,
                                                  BPPARAM)
-        plot_data$colour_by <- plot_data$colour_by * 100
-        xlab <- ifelse(as_relative,"Abundance [%]","Detection")
+        plot_data$colur.by <- plot_data$colur.by * 100
+        xlab <- ifelse(as.relative,"Abundance [%]","Detection")
         ylab <- ifelse(is.null(rank), "Features", rank)
-        colour_by <- "Prevalence [%]"
+        colur.by <- "Prevalence [%]"
         .prevalence_plotter(plot_data, 
                             layout = "heatmap",
                             xlab = xlab,
                             ylab = ylab,
-                            colour_by = colour_by,
-                            size_by = NULL,
-                            shape_by = NULL,
+                            colur.by = colur.by,
+                            size.by = NULL,
+                            shape.by = NULL,
                             ...)
     }
 )
@@ -418,11 +434,11 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tidyr pivot_longer
 #' @importFrom DelayedArray rowSums
 .get_prevalence_plot_matrix <- function(x, assay.type, detections, 
-                                        as_relative = TRUE, 
-                                        min_prevalence,
+                                        as.relative = TRUE, 
+                                        min.prevalence,
                                         BPPARAM = BiocParallel::SerialParam()){
     mat <- assay(x, assay.type, withDimnames = TRUE)
-    if(as_relative){
+    if(as.relative){
         mat <- mia:::.calc_rel_abund(mat)
     }
     
@@ -436,10 +452,10 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                     BPPARAM = BPPARAM)
     ans <- data.frame(ans)
     colnames(ans) <- detections
-    f <- ans >= min_prevalence
+    f <- ans >= min.prevalence
     ans <- ans[rowSums(f) != 0,colSums(f) != 0,drop=FALSE]
     if(any(dim(ans) == 0)){
-        stop("No data left after apply threshold 'min_prevalence'.",
+        stop("No data left after apply threshold 'min.prevalence'.",
              call. = FALSE)
     }
     lvls <- rownames(ans)[order(rowSums(ans))]
@@ -448,7 +464,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
         pivot_longer(!ID, 
                      names_to = "detection",
                      values_to = "prevalence")
-    colnames(ans) <- c("Y","X","colour_by")
+    colnames(ans) <- c("Y","X","colur.by")
     ans$X <- round(as.numeric(ans$X),4) * 100
     if(!.is_continuous(ans$X)){
         ans$X <- factor(ans$X,
@@ -465,63 +481,63 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                                 layout = c("line","point","heatmap"),
                                 xlab = NULL,
                                 ylab = NULL,
-                                colour_by = NULL,
-                                size_by = NULL,
-                                shape_by = NULL,
+                                colur.by = NULL,
+                                size.by = NULL,
+                                shape.by = NULL,
                                 flipped = FALSE,
-                                add_legend = TRUE,
-                                point_alpha = 1,
-                                point_size = 2,
+                                add.legend = TRUE,
+                                point.alpha = 1,
+                                point.sizze = 2,
                                 line_alpha = 1,
                                 line_type = NULL,
                                 line_size = 1){
     plot_out <- ggplot(plot_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)
     if(layout == "line"){
-        point_args <- .get_point_args(colour_by = colour_by, shape_by = NULL,
-                                      size_by = NULL,
-                                      alpha = point_alpha,
-                                      size = point_size)
-        line_args <- .get_line_args(colour_by = colour_by, linetype_by = NULL,
-                                    size_by = NULL,
+        point_args <- .get_point_args(colur.by = colur.by, shape.by = NULL,
+                                      size.by = NULL,
+                                      alpha = point.alpha,
+                                      size = point.sizze)
+        line_args <- .get_line_args(colur.by = colur.by, linetype_by = NULL,
+                                    size.by = NULL,
                                     alpha = line_alpha,
                                     linetype = line_type,
                                     linewidth = line_size)
-        point_args$args$mapping$group <- sym("colour_by")
-        line_args$args$mapping$group <- sym("colour_by")
+        point_args$args$mapping$group <- sym("colur.by")
+        line_args$args$mapping$group <- sym("colur.by")
         plot_out <- plot_out +
             do.call(geom_point, point_args$args) +
             do.call(geom_line, line_args$args)
         # resolve the colours
         plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colour_by,
-                                          colour_by,
+                                          plot_data$colur.by,
+                                          colur.by,
                                           fill = TRUE)
         plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colour_by,
-                                          colour_by,
+                                          plot_data$colur.by,
+                                          colur.by,
                                           fill = FALSE)
     } else if(layout == "point"){
-        point_args <- .get_point_args(colour_by = colour_by, shape_by = shape_by,
-                                      size_by = size_by,
-                                      alpha = point_alpha,
-                                      size = point_size)
+        point_args <- .get_point_args(colur.by = colur.by, shape.by = shape.by,
+                                      size.by = size.by,
+                                      alpha = point.alpha,
+                                      size = point.sizze)
         plot_out <- plot_out +
             do.call(geom_point, point_args$args)
         # resolve the colours
         plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colour_by,
-                                          colour_by,
+                                          plot_data$colur.by,
+                                          colur.by,
                                           fill = TRUE,
                                           na.translate = FALSE)
         # add additional guides
-        plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
+        plot_out <- .add_extra_guide(plot_out, shape.by, size.by)
     } else if(layout == "heatmap"){
-        raster_args <- .get_bar_args(colour_by = colour_by, alpha = 1,
+        raster_args <- .get_bar_args(colur.by = colur.by, alpha = 1,
                                      add_border = FALSE)
         plot_out <- plot_out +
             do.call(geom_raster, raster_args$args) +
-            scale_fill_distiller(palette = "RdYlBu", name = colour_by) +
+            scale_fill_distiller(palette = "RdYlBu", name = colur.by) +
             scale_y_discrete(expand = c(0,0))
         if(is.factor(plot_data$X)){
             plot_out <- plot_out + 
@@ -537,9 +553,9 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
     plot_out <- plot_out +
         theme_classic()
     # add legend
-    plot_out <- .add_legend(plot_out, add_legend)
+    plot_out <- .add_legend(plot_out, add.legend)
     # flip
-    plot_out <- .flip_plot(plot_out, flipped, add_x_text = TRUE,
+    plot_out <- .flip_plot(plot_out, flipped, add.x.text = TRUE,
                            angle_x_text = FALSE)
     plot_out
 }

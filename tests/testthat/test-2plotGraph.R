@@ -4,11 +4,11 @@ test_that("plot graph", {
     library(tidygraph)
     # .check_graph_plot_switches
     expect_error(miaViz:::.check_graph_plot_switches(),
-                 'argument "show_label" is missing')
+                 'argument "show.label" is missing')
     expect_error(miaViz:::.check_graph_plot_switches(TRUE),
-                 'argument "add_legend" is missing')
+                 'argument "add.legend" is missing')
     expect_error(miaViz:::.check_graph_plot_switches(TRUE, 1),
-                 "'add_legend' must be either TRUE or FALSE")
+                 "'add.legend' must be either TRUE or FALSE")
     expect_null(miaViz:::.check_graph_plot_switches(1, FALSE))
     # .norm_layout_edge_type
     expect_error(miaViz:::.norm_layout_edge_type(),
@@ -33,13 +33,13 @@ test_that("plot graph", {
     df <- actual2$df %>% activate("nodes") %>% as.data.frame()
     expect_named(df, c("name","label"))
     expect_equal(df$name,df$label)
-    show_label <- c(TRUE,
+    show.label <- c(TRUE,
                     rep(FALSE,
                         nrow(actual %>% activate("nodes") %>% as.data.frame())))
-    expect_error(miaViz:::.add_graph_node_labels(actual,show_label),
-                 "If 'show_label' is logical")
-    show_label <- show_label[-length(show_label)]
-    actual2 <- miaViz:::.add_graph_node_labels(actual,show_label)
+    expect_error(miaViz:::.add_graph_node_labels(actual,show.label),
+                 "If 'show.label' is logical")
+    show.label <- show.label[-length(show.label)]
+    actual2 <- miaViz:::.add_graph_node_labels(actual,show.label)
     expect_named(actual2$df %>% activate("nodes") %>% as.data.frame(),
                  c("name","label"))
     df <- actual2$df %>% activate("nodes") %>% as.data.frame()
@@ -53,17 +53,17 @@ test_that("plot graph", {
     genus <- agglomerateByRank(GlobalPatterns,"Genus",na.rm=TRUE)
     plot <- plotColGraph(col_graph,
                          genus,
-                         colour_by = "SampleType",
-                         edge_colour_by = "weight",
-                         edge_width_by = "weight",
-                         show_label = TRUE)
+                         colour.by = "SampleType",
+                         edge.colour.by = "weight",
+                         edge.width.by = "weight",
+                         show.label = TRUE)
     expect_s3_class(plot,"ggplot")
     metadata(genus)$col_graph <- col_graph
     plot2 <- plotColGraph(genus,
                           name = "col_graph",
-                         colour_by = "SampleType",
-                         edge_colour_by = "weight",
-                         edge_width_by = "weight",
-                         show_label = TRUE)
+                         colour.by = "SampleType",
+                         edge.colour.by = "weight",
+                         edge.width.by = "weight",
+                         show.label = TRUE)
     expect_true(all(plot$data == plot2$data))
 })

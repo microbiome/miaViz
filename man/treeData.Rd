@@ -19,25 +19,25 @@ rowTreeData(x, ...)
 
 colTreeData(x, ...)
 
-rowTreeData(x, tree_name = "phylo") <- value
+rowTreeData(x, tree.name = tree_name, tree_name = "phylo") <- value
 
-colTreeData(x, tree_name = "phylo") <- value
+colTreeData(x, tree.name = tree_name, tree_name = "phylo") <- value
 
-combineTreeData(x, other_fields = list())
+combineTreeData(x, other.fields = other_fields, other_fields = list())
 
-combineTreeData(x, other_fields = list())
+combineTreeData(x, other.fields = other_fields, other_fields = list())
 
-\S4method{colTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo")
+\S4method{colTreeData}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo")
 
-\S4method{rowTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo")
+\S4method{rowTreeData}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo")
 
-\S4method{colTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo") <- value
+\S4method{colTreeData}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo") <- value
 
-\S4method{rowTreeData}{TreeSummarizedExperiment}(x, tree_name = "phylo") <- value
+\S4method{rowTreeData}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo") <- value
 
-\S4method{combineTreeData}{phylo}(x, other_fields = list())
+\S4method{combineTreeData}{phylo}(x, other.fields = list())
 
-\S4method{combineTreeData}{treedata}(x, other_fields = list())
+\S4method{combineTreeData}{treedata}(x, other.fields = list())
 }
 \arguments{
 \item{x}{a
@@ -46,11 +46,15 @@ object.}
 
 \item{...}{additional arguments, currently not used.}
 
-\item{tree_name}{a single \code{character} value specifying a rowTree/colTree from
-\code{x}. (By default: \code{tree_name = "phylo"})}
+\item{tree.name}{a single \code{character} value specifying a rowTree/colTree from
+\code{x}. (By default: \code{tree.name = "phylo"})}
 
-\item{other_fields, value}{a \code{data.frame} or coercible to one, with at least one type
+\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
+
+\item{other.fields, }{value a \code{data.frame} or coercible to one, with at least one type
 of id information. See details.}
+
+\item{other_fields}{Deprecated. Use \code{other.fields} instead.}
 }
 \value{
 a \code{data.frame} for the accessor and the modified
@@ -63,7 +67,7 @@ To facilitate the dressing of the tree data stored in a
 \code{colTreeData} can be used.
 }
 \details{
-To match information to nodes, the id information in \code{other_fields} are used.
+To match information to nodes, the id information in \code{other.fields} are used.
 These can either be a column, named \sQuote{node} or \sQuote{label}
 (\sQuote{node} taking precedent), or rownames. If all rownames can be coerced
 to \code{integer}, they are considered as \sQuote{node} values, otherwise as

@@ -19,7 +19,7 @@ plotPrevalence(x, ...)
   prevalences = seq(0.1, 1, 0.1),
   assay.type = assay_name,
   assay_name = "counts",
-  as_relative = TRUE,
+  as.relative = TRUE,
   rank = NULL,
   BPPARAM = BiocParallel::SerialParam(),
   ...
@@ -32,11 +32,14 @@ plotPrevalentAbundance(x, ...)
   rank = taxonomyRanks(x)[1L],
   assay.type = assay_name,
   assay_name = "counts",
-  as_relative = TRUE,
-  colour_by = NULL,
+  as.relative = TRUE,
+  colur.by = NULL,
+  size.by = size_by,
   size_by = NULL,
+  shape.by = shape_by,
   shape_by = NULL,
   label = NULL,
+  facet.by = facet_by,
   facet_by = NULL,
   ...
 )
@@ -50,7 +53,8 @@ plotFeaturePrevalence(x, ...)
   assay_name = "counts",
   detections = NULL,
   ndetections = 20,
-  as_relative = TRUE,
+  as.relative = TRUE,
+  min.prevalence = min_prevalence,
   min_prevalence = 0,
   BPPARAM = BiocParallel::SerialParam(),
   ...
@@ -67,7 +71,7 @@ object.}
 
 \item{detections}{Detection thresholds for absence/presence. Either an
 absolutes value compared directly to the values of \code{x} or a relative
-value between 0 and 1, if \code{as_relative = TRUE}.}
+value between 0 and 1, if \code{as.relative = TRUE}.}
 
 \item{prevalences}{Prevalence thresholds (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
@@ -81,7 +85,7 @@ assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
 
-\item{as_relative}{logical scalar: Should the detection threshold be applied
+\item{as.relative}{logical scalar: Should the detection threshold be applied
 on compositional (relative) abundances? Passed onto
 \code{\link[mia:getPrevalence]{getPrevalence}}. (default: \code{TRUE})}
 
@@ -99,36 +103,46 @@ on compositional (relative) abundances? Passed onto
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the UniFrac calculation should be parallelized.}
 
-\item{colour_by}{Specification of a feature to colour points by, see the
+\item{colur.by}{Specification of a feature to colour points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
 
-\item{size_by}{Specification of a feature to size points by, see the
+\item{size.by}{Specification of a feature to size points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
 
-\item{shape_by}{Specification of a feature to shape points by, see the
+\item{size_by}{Deprecated. Use \cod{size.by} instead.}
+
+\item{shape.by}{Specification of a feature to shape points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
+
+\item{shape_by}{Deprecated. Use \code{shape.by} instead.}
 
 \item{label}{a \code{logical}, \code{character} or \code{integer} vector
 for selecting labels from the rownames of \code{x}. If \code{rank} is not
 \code{NULL} the rownames might change. (default: \code{label = NULL})}
 
-\item{facet_by}{Taxonomic rank to facet the plot by.
+\item{facet.by}{Taxonomic rank to facet the plot by.
 Value must be of \code{taxonomyRanks(x)}
 Argument can only be used in function plotPrevalentAbundance.}
 
+\item{facet_by}{Deprecated. Use \code{facet.by} instead.}
+
 \item{ndetections}{If \code{detections} is \code{NULL}, a number of breaks
-are calculated automatically. \code{as_relative} is then also regarded as
+are calculated automatically. \code{as.relative} is then also regarded as
 \code{TRUE}.}
 
-\item{min_prevalence}{a single numeric value to apply as a threshold for
+\item{min.prevalence}{a single numeric value to apply as a threshold for
 plotting. The threshold is applied per row and column.
-(default: \code{min_prevalence = 0})}
+(default: \code{min.prevalence = 0})}
+
+\item{min_prevalence}{Deprecated. Use \code{min.prevalence} instead.}
+
+\item{colour_by}{Deprecated. Use \code{colour.by} instead.}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one
@@ -167,13 +181,13 @@ plotFeaturePrevalence(GlobalPatterns, rank = "Phylum",
 # point layout for plotFeaturePrevalence can be used to visualize by additional
 # information
 plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-                       colour_by = "Phylum") +
+                       colur.by = "Phylum") +
     scale_x_log10()
 
 # When using function plotPrevalentAbundace, it is possible to create facets
-# with 'facet_by'.
+# with 'facet.by'.
 plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-                       colour_by = "Phylum", facet_by = "Kingdom") +
+                       colur.by = "Phylum", facet.by = "Kingdom") +
     scale_x_log10()
 }
 \seealso{

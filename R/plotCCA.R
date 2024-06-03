@@ -4,7 +4,7 @@
 #' output of \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods
 #' for supervised ordination of microbiome data.
 #'
-#' @param object a
+#' @param x a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 #'   or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{calculateRDA}}.
 #' 
@@ -112,26 +112,26 @@
 #'                
 #' # Create RDA plot coloured by variable
 #' plotRDA(tse, "RDA",
-#'         colour_by = "ClinicalStatus")
+#'         colour.by = "ClinicalStatus")
 #'  
 #' # Create RDA plot with empty ellipses
 #' plotRDA(tse, "RDA",
-#'         colour_by = "ClinicalStatus",
+#'         colour.by = "ClinicalStatus",
 #'         add.ellipse = "colour")
 #'  
 #' # Create RDA plot with text encased in labels
 #' plotRDA(tse, "RDA",
-#'         colour_by = "ClinicalStatus",
+#'         colour.by = "ClinicalStatus",
 #'         vec.text = FALSE)
 #'  
 #' # Create RDA plot without repelling text
 #' plotRDA(tse, "RDA",
-#'         colour_by = "ClinicalStatus",
+#'         colour.by = "ClinicalStatus",
 #'         repel.labels = FALSE)
 #'  
 #' # Create RDA plot without vectors
 #' plotRDA(tse, "RDA",
-#'         colour_by = "ClinicalStatus",
+#'         colour.by = "ClinicalStatus",
 #'         add.vectors = FALSE)
 #'  
 #' # Calculate RDA as a separate object
@@ -148,40 +148,40 @@ NULL
 #' @rdname plotCCA
 #' @aliases plotRDA
 #' @export
-setGeneric("plotCCA", signature = c("object"),
-           function(object, ...) standardGeneric("plotCCA"))
+setGeneric("plotCCA", signature = c("x"),
+           function(x, ...) standardGeneric("plotCCA"))
 
 #' @rdname plotCCA
 #' @aliases plotRDA
 #' @export
-setMethod("plotCCA", signature = c(object = "SingleCellExperiment"),
-    function(object, dimred, ...){
+setMethod("plotCCA", signature = c(x = "SingleCellExperiment"),
+    function(x, dimred, ...){
         # Reproduce plotRDA function
-        return(plotRDA(object, dimred, ...))
+        return(plotRDA(x, dimred, ...))
     }
 )
 
 #' @rdname plotCCA
 #' @aliases plotRDA
 #' @export
-setMethod("plotCCA", signature = c(object = "matrix"),
-    function(object, ...){
+setMethod("plotCCA", signature = c(x = "matrix"),
+    function(x, ...){
         # Reproduce plotRDA function
-        return(plotRDA(object, ...))
+        return(plotRDA(x, ...))
     }
 )
 
 #' @rdname plotCCA
 #' @aliases plotCCA
 #' @export
-setGeneric("plotRDA", signature = c("object"),
-    function(object, ...) standardGeneric("plotRDA"))
+setGeneric("plotRDA", signature = c("x"),
+    function(x, ...) standardGeneric("plotRDA"))
 
 #' @rdname plotCCA
 #' @aliases plotCCA
 #' @export
-setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
-    function(object, dimred,
+setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
+    function(x, dimred,
              add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1, 
              confidence.level = 0.95, vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
              arrow.size = 0.25, label.color = label.colour, label.colour = "black", label.size = 4,
@@ -255,7 +255,7 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         ###################### Input check end ####################
         # Get data for plotting
         plot_data <- .incorporate_rda_vis(
-            object, dimred, sep.group = sep.group, repl.underscore = repl.underscore,
+            x, dimred, sep.group = sep.group, repl.underscore = repl.underscore,
             add.significance = add.significance, add.expl.var = add.expl.var,
             add.ellipse = add.ellipse, add.vectors = add.vectors, ...
         )
@@ -275,12 +275,12 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
 #' @rdname plotCCA
 #' @aliases plotCCA
 #' @export
-setMethod("plotRDA", signature = c(object = "matrix"),
-    function(object, ...){
+setMethod("plotRDA", signature = c(x = "matrix"),
+    function(x, ...){
         # Construct TreeSE from rda/cca object
-        object <- .rda2tse(object)
+        x <- .rda2tse(x)
         # Run plotRDA method for TreeSE
-        return(plotRDA(object, "RDA", ...))
+        return(plotRDA(x, "RDA", ...))
     }
 )
 
@@ -288,20 +288,20 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 ################## HELP FUNCTIONS ##########################
 
 # Construct TreeSE from rda/cca object to pass it to downstream functions
-.rda2tse <- function(object) {
+.rda2tse <- function(x) {
     # Convert rda/cca object to TreeSE
-    object <- TreeSummarizedExperiment(
-      assays = matrix(ncol = nrow(object), dimnames = list(NULL, rownames(object))),
-      reducedDims = list(RDA = object)
+    x <- TreeSummarizedExperiment(
+      assays = matrix(ncol = nrow(x), dimnames = list(NULL, rownames(x))),
+      reducedDims = list(RDA = x)
     )
-    return(object)
+    return(x)
 }
 
 # Get data for plotting
 #' @importFrom scater plotReducedDim retrieveCellInfo
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames
 .incorporate_rda_vis <- function(
-        tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
+        tse, dimred, ncomponents = 2, colour.by = color_by, color_by = NULL,
         add.significance = TRUE, add.expl.var = TRUE, add.ellipse = TRUE,
         add.vectors = TRUE, vec.lab = NULL, expl_var = NULL,
         sep.group = "\U2012", repl.underscore = " ", ...){
@@ -338,16 +338,16 @@ setMethod("plotRDA", signature = c(object = "matrix"),
     
     # Get scatter plot with plotReducedDim --> keep theme similar between ordination methods
     plot <- plotReducedDim(
-        tse, dimred = dimred, ncomponents = ncomponents, colour_by = colour_by,
+        tse, dimred = dimred, ncomponents = ncomponents, colour.by = colour.by,
         percentVar = expl_var, ...)
     
     # Get data for ellipse
     ellipse_data <- NULL
-    if( add.ellipse != FALSE && !is.null(colour_by) ){
+    if( add.ellipse != FALSE && !is.null(colour.by) ){
         ellipse_data <- reduced_dim
         ellipse_data <- as.data.frame(ellipse_data)
-        ellipse_data[[colour_by]] <- retrieveCellInfo(tse, colour_by)[["value"]]
-        attributes(ellipse_data)$colour_by <- colour_by
+        ellipse_data[[colour.by]] <- retrieveCellInfo(tse, colour.by)[["value"]]
+        attributes(ellipse_data)$colour.by <- colour.by
     }
     
     # Get data for vectors
@@ -514,7 +514,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
         data <- plot_data$ellipse_data
         xvar <- colnames(data)[[1]]
         yvar <- colnames(data)[[2]]
-        colour_var <- attributes(plot_data$ellipse_data)$colour_by
+        colour_var <- attributes(plot_data$ellipse_data)$colour.by
         # Add ellipses to plot (fill or colour the edge)
         if( add.ellipse %in% c(TRUE, "fill") ){
             plot <- plot +

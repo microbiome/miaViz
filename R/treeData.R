@@ -8,16 +8,20 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #'
-#' @param other_fields,value a \code{data.frame} or coercible to one, with at least one type
+#' @param other.fields, value a \code{data.frame} or coercible to one, with at least one type
 #'   of id information. See details.
+#'   
+#' @param other_fields Deprecated. Use \code{other.fields} instead.
 #'  
-#' @param tree_name a single \code{character} value specifying a rowTree/colTree from
-#'   \code{x}. (By default: \code{tree_name = "phylo"})
+#' @param tree.name a single \code{character} value specifying a rowTree/colTree from
+#'   \code{x}. (By default: \code{tree.name = "phylo"})
+#'   
+#' @param tree_name  Deprecated. Use \code{tree.name} instead.
 #'   
 #' @param ... additional arguments, currently not used.
 #'
 #' @details
-#' To match information to nodes, the id information in \code{other_fields} are used.
+#' To match information to nodes, the id information in \code{other.fields} are used.
 #' These can either be a column, named \sQuote{node} or \sQuote{label}
 #' (\sQuote{node} taking precedent), or rownames. If all rownames can be coerced
 #' to \code{integer}, they are considered as \sQuote{node} values, otherwise as
@@ -55,22 +59,22 @@ setGeneric("colTreeData", signature = c("x"),
 
 #' @rdname treeData
 setGeneric("rowTreeData<-", signature = c("x"),
-           function(x, tree_name = "phylo", value)
+           function(x, tree.name = tree_name, tree_name = "phylo", value)
                standardGeneric("rowTreeData<-"))
 
 #' @rdname treeData
 setGeneric("colTreeData<-", signature = c("x"),
-           function(x, tree_name = "phylo", value)
+           function(x, tree.name = tree_name, tree_name = "phylo", value)
                standardGeneric("colTreeData<-"))
 
 #' @rdname treeData
 setGeneric("combineTreeData", signature = c("x"),
-           function(x, other_fields = list())
+           function(x, other.fields = other_fields, other_fields = list())
                standardGeneric("combineTreeData"))
 
 #' @rdname treeData
 setGeneric("combineTreeData", signature = c("x"),
-           function(x, other_fields = list())
+           function(x, other.fields = other_fields, other_fields = list())
                standardGeneric("combineTreeData"))
 
 #' @importFrom tidytree as_tibble
@@ -84,16 +88,16 @@ setGeneric("combineTreeData", signature = c("x"),
 #' @importFrom dplyr last_col
 #' @export
 setMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree_name = "phylo"){
-        # Check tree_name
-        if( !.is_a_string(tree_name) ){
-            stop("'tree_name' must be a single character value specifying a colTree.",
+    function(x, tree.name = tree_name, tree_name = "phylo"){
+        # Check tree.name
+        if( !.is_a_string(tree.name) ){
+            stop("'tree.name' must be a single character value specifying a colTree.",
                  call. = FALSE)
         }
-        if(is.null(colTree(x, tree_name))){
+        if(is.null(colTree(x, tree.name))){
          return(NULL)
         }
-        .get_tree_data(colTree(x, tree_name)) %>%
+        .get_tree_data(colTree(x, tree.name)) %>%
             select(c("node","label":last_col()))
     }
 )
@@ -101,16 +105,16 @@ setMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom dplyr last_col
 #' @export
 setMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree_name = "phylo"){
-        # Check tree_name
-        if( !.is_a_string(tree_name) ){
-            stop("'tree_name' must be a single character value specifying a rowTree.",
+    function(x, tree.name = tree_name, tree_name = "phylo"){
+        # Check tree.name
+        if( !.is_a_string(tree.name) ){
+            stop("'tree.name' must be a single character value specifying a rowTree.",
                  call. = FALSE)
         }
-        if(is.null(rowTree(x, tree_name))){
+        if(is.null(rowTree(x, tree.name))){
             return(NULL)
         }
-        .get_tree_data(rowTree(x, tree_name)) %>%
+        .get_tree_data(rowTree(x, tree.name)) %>%
             select(c("node","label":last_col()))
     }
 )
@@ -124,19 +128,19 @@ DEFAULT_TREE_DATA_COLS <- c("parent","node","branch.length","label")
 #' @rdname treeData
 #' @export
 setReplaceMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree_name = "phylo", value){
-        # Check tree_name
-        if( !.is_a_string(tree_name) ){
-            stop("'tree_name' must be a single character value specifying a colTree.",
+    function(x, tree.name = tree_name, tree_name = "phylo", value){
+        # Check tree.name
+        if( !.is_a_string(tree.name) ){
+            stop("'tree.name' must be a single character value specifying a colTree.",
                  call. = FALSE)
         }
-        tree <- colTree(x, tree_name)
+        tree <- colTree(x, tree.name)
         # input check
         if(is.null(tree)){
-            stop("'colTree(x, tree_name)' is NULL.", call. = FALSE)
+            stop("'colTree(x, tree.name)' is NULL.", call. = FALSE)
         }
         # this is just temporary solution since phylo does not support data
-        x@colTree[[tree_name]] <- tidytree::as.phylo(combineTreeData(tree, value))
+        x@colTree[[tree.name]] <- tidytree::as.phylo(combineTreeData(tree, value))
         return(x)
     }
 )
@@ -145,10 +149,10 @@ setReplaceMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom tidytree as.phylo
 #' @export
 setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
-    function(x, tree_name = "phylo", value){
-        # Check tree_name
-        if( !.is_a_string(tree_name) ){
-            stop("'tree_name' must be a single character value specifying a rowTree.",
+    function(x, tree.name = tree_name, tree_name = "phylo", value){
+        # Check tree.name
+        if( !.is_a_string(tree.name) ){
+            stop("'tree.name' must be a single character value specifying a rowTree.",
                  call. = FALSE)
         }
         tree <- rowTree(x)
@@ -157,101 +161,101 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
           stop("'rowTree(x)' is NULL.", call. = FALSE)
         }
         # this is just temporary solution since phylo does not support data
-        x@rowTree[[tree_name]] <- tidytree::as.phylo(combineTreeData(tree, value))
+        x@rowTree[[tree.name]] <- tidytree::as.phylo(combineTreeData(tree, value))
         return(x)
     }
 )
 
 #' @importFrom tibble rownames_to_column
 #' @importFrom dplyr select relocate
-.norm_other_fields <- function(other_fields){
-    if(is.null(other_fields) || length(other_fields) == 0L){
+.norm_other_fields <- function(other.fields){
+    if(is.null(other.fields) || length(other.fields) == 0L){
         return(NULL)
     }
-    if(is(other_fields,"DataFrame") || !is.data.frame(other_fields)){
-        other_fields <- as.data.frame(other_fields)
+    if(is(other.fields,"DataFrame") || !is.data.frame(other.fields)){
+        other.fields <- as.data.frame(other.fields)
     }
-    if(!is.data.frame(other_fields)){
-        stop("'other_fields' must be a data.frame or coercible to one.",
+    if(!is.data.frame(other.fields)){
+        stop("'other.fields' must be a data.frame or coercible to one.",
              call. = FALSE)
     }
-    if(nrow(other_fields) == 0L){
+    if(nrow(other.fields) == 0L){
         return(NULL)
     }
     # check for node or label column and rownames
-    rn <- rownames(other_fields)
-    cn <- colnames(other_fields)
+    rn <- rownames(other.fields)
+    cn <- colnames(other.fields)
     f <- c("node","label") %in% cn
     if(!any(f)){
         # populate if necessary
         if(is.null(rn)){
             stop("Neither one of the following columns 'node'/'label' nor ",
-                 "rownames set for 'other_fields'.", call. = FALSE)
+                 "rownames set for 'other.fields'.", call. = FALSE)
         }
         rn_i <- suppressWarnings(as.integer(rn))
         if(!anyNA(rn_i)){
-            other_fields <- other_fields %>%
+            other.fields <- other.fields %>%
                 rownames_to_column("node")
         } else {
-            other_fields <- other_fields %>%
+            other.fields <- other.fields %>%
                 rownames_to_column("label")
         }
     } else {
-        other_fields <- other_fields %>%
+        other.fields <- other.fields %>%
             relocate(c("node","label")[f])
     }
-    other_fields
+    other.fields
 }
 
-.norm_id_col_of_other_fields <- function(other_fields, tree_data){
-    if(is.null(other_fields)){
-        return(other_fields)
+.norm_id_col_of_other_fields <- function(other.fields, tree_data){
+    if(is.null(other.fields)){
+        return(other.fields)
     }
     if(missing(tree_data)){
         stop(".")
     }
-    cn <- colnames(other_fields)
+    cn <- colnames(other.fields)
     # select one id column and reorder columns
     f <- which(cn %in% c("label","node"))
     if(length(f) == 2L){
-        other_fields <- other_fields %>%
+        other.fields <- other.fields %>%
             select(!sym(cn[f[2L]]))
     }
-    other_fields <- other_fields %>%
+    other.fields <- other.fields %>%
         relocate(sym(cn[f[1L]]))
     #
-    by_col_name <- colnames(other_fields)[1L]
-    if(anyDuplicated(other_fields[[by_col_name]])){
+    by_col_name <- colnames(other.fields)[1L]
+    if(anyDuplicated(other.fields[[by_col_name]])){
         stop("'",by_col_name,"' contains duplicate entries.", call. = FALSE)
     }
-    if(!all(other_fields[[by_col_name]] %in% tree_data[[by_col_name]])){
+    if(!all(other.fields[[by_col_name]] %in% tree_data[[by_col_name]])){
         warning("Not all '",by_col_name,"' values found in tree data.",
                 call. = FALSE)
-    } else if(!any(other_fields[[by_col_name]] %in% tree_data[[by_col_name]])){
+    } else if(!any(other.fields[[by_col_name]] %in% tree_data[[by_col_name]])){
         stop("No overlap between '",by_col_name,"'and tree data.",
              call. = FALSE)
     }
-    other_fields
+    other.fields
 }
 
-.combine_tree_data_and_other_fields <- function(tree_data, other_fields){
-    if(!is.null(other_fields)){
-        by_col_name <- colnames(other_fields)[1L]
+.combine_tree_data_and_other_fields <- function(tree_data, other.fields){
+    if(!is.null(other.fields)){
+        by_col_name <- colnames(other.fields)[1L]
         tree_data <- tree_data %>%
-            dplyr::left_join(other_fields, by = by_col_name)
+            dplyr::left_join(other.fields, by = by_col_name)
     }
     tree_data
 }
 
 #' @importFrom tidytree as.treedata
-.combine_tree_and_other_fields <- function(tree, other_fields = list()){
+.combine_tree_and_other_fields <- function(tree, other.fields = list()){
     tree_data <- .get_tree_data(tree)
-    other_fields <- .norm_other_fields(other_fields)
-    if(is.null(other_fields)){
+    other.fields <- .norm_other_fields(other.fields)
+    if(is.null(other.fields)){
         tree_data <- .clean_tree_data(tree_data)
     } else {
-        other_fields <- .norm_id_col_of_other_fields(other_fields, tree_data)
-        tree_data <- .combine_tree_data_and_other_fields(tree_data, other_fields)
+        other.fields <- .norm_id_col_of_other_fields(other.fields, tree_data)
+        tree_data <- .combine_tree_data_and_other_fields(tree_data, other.fields)
     }
     tidytree::as.treedata(tree_data)
 }
@@ -259,15 +263,15 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname treeData
 #' @export
 setMethod("combineTreeData", signature = c(x = "phylo"),
-    function(x, other_fields = list()){
-        .combine_tree_and_other_fields(x, other_fields)
+    function(x, other.fields = list()){
+        .combine_tree_and_other_fields(x, other.fields)
     }
 )
 
 #' @rdname treeData
 #' @export
 setMethod("combineTreeData", signature = c(x = "treedata"),
-    function(x, other_fields = list()){
-        .combine_tree_and_other_fields(x, other_fields)
+    function(x, other.fields = list()){
+        .combine_tree_and_other_fields(x, other.fields)
     }
 )

@@ -9,16 +9,16 @@
 \alias{plotRDA,matrix-method}
 \title{Plot RDA or CCA object}
 \usage{
-plotCCA(object, ...)
+plotCCA(x, ...)
 
-\S4method{plotCCA}{SingleCellExperiment}(object, dimred, ...)
+\S4method{plotCCA}{SingleCellExperiment}(x, dimred, ...)
 
-\S4method{plotCCA}{matrix}(object, ...)
+\S4method{plotCCA}{matrix}(x, ...)
 
-plotRDA(object, ...)
+plotRDA(x, ...)
 
 \S4method{plotRDA}{SingleCellExperiment}(
-  object,
+  x,
   dimred,
   add.ellipse = TRUE,
   ellipse.alpha = 0.2,
@@ -44,10 +44,10 @@ plotRDA(object, ...)
   ...
 )
 
-\S4method{plotRDA}{matrix}(object, ...)
+\S4method{plotRDA}{matrix}(x, ...)
 }
 \arguments{
-\item{object}{a
+\item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{calculateRDA}}.}
 
@@ -158,26 +158,26 @@ tse <- runRDA(tse,
                
 # Create RDA plot coloured by variable
 plotRDA(tse, "RDA",
-        colour_by = "ClinicalStatus")
+        colour.by = "ClinicalStatus")
  
 # Create RDA plot with empty ellipses
 plotRDA(tse, "RDA",
-        colour_by = "ClinicalStatus",
+        colour.by = "ClinicalStatus",
         add.ellipse = "colour")
  
 # Create RDA plot with text encased in labels
 plotRDA(tse, "RDA",
-        colour_by = "ClinicalStatus",
+        colour.by = "ClinicalStatus",
         vec.text = FALSE)
  
 # Create RDA plot without repelling text
 plotRDA(tse, "RDA",
-        colour_by = "ClinicalStatus",
+        colour.by = "ClinicalStatus",
         repel.labels = FALSE)
  
 # Create RDA plot without vectors
 plotRDA(tse, "RDA",
-        colour_by = "ClinicalStatus",
+        colour.by = "ClinicalStatus",
         add.vectors = FALSE)
  
 # Calculate RDA as a separate object

@@ -21,13 +21,13 @@ test_that("plot prevalence", {
                                                  c(0.1,0.2))
     expect_s3_class(actual,"data.frame")
     expect_equal(dim(actual),c(4,3))
-    expect_named(actual,c("X","colour_by","Y"))
+    expect_named(actual,c("X","colour.by","Y"))
     #
     plot <- plotPrevalence(se, rank = "Phylum")
     expect_s3_class(plot,"ggplot")
     expect_equal(dim(plot$data),c(70,3))
     plot <- plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-                                   colour_by = "Phylum")
+                                   colour.by = "Phylum")
     expect_s3_class(plot,"ggplot")
     expect_equal(dim(plot$data),c(341,4))
 })
