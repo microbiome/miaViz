@@ -140,26 +140,13 @@ setGeneric("plotAbundance", signature = c("x"),
     }
 }
 
-.find_lowest_taxonomy_level<- function(x){
-    levels <- taxonomyRanks(x)
-    for(tax_index in 1:length(levels)){
-        if(anyNA(rowData(x)[,levels[tax_index]])){
-            return(levels[tax_index-1])
-        }
-        
-    }
-    return(levels[length(levels)])
-}
-
-
-
 #' @rdname plotAbundance
 #' @importFrom scater plotExpression
 #' @importFrom ggplot2 facet_wrap
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
-            rank = .find_lowest_taxonomy_level(x),
+            rank = NULL,
             features = NULL,
             order_rank_by = c("name","abund","revabund"),
             order_sample_by = NULL,
@@ -176,19 +163,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        # if rank is set to NULL, default to plotExpression 
-        if(is.null(rank)){
-            plot <- plotExpression(x, features = features, 
-                                exprs_values = assay.type,
-                                one_facet = one_facet,
-                                ncol = ncol, scales = scales, ...)
-            ylab <- gsub("Expression","Abundance",plot$labels$y)
-            plot <- plot +
-                ylab(ylab)
-            return(plot)
-        }
         ############################# INPUT CHECK #############################
-        if(!.is_non_empty_string(rank)){
+        if(!.is_non_empty_string(rank) & !is.null(rank)){
             stop("'rank' must be an non empty single character value.",
                 call. = FALSE)
         }
@@ -196,7 +172,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             stop("'use_relative' must be TRUE or FALSE.",
                 call. = FALSE)
         }
-        .check_taxonomic_rank(rank, x)
+        if(!is.null(rank)){
+            .check_taxonomic_rank(rank, x)
+        }
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
         order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
@@ -205,7 +183,16 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         if( !is.null(features) ){
             features <- match.arg(features, colnames(colData(x)))
         }
+        if(is.null(rank) & ! is.null(order_sample_by)){
+            stop("'order_sample_by' must be set to null when 'rank' 
+                 is not specified.",
+                 call. = FALSE)
+        }
         ########################### INPUT CHECK END ###########################
+        if(is.null(rank)){
+           rowData(x)$rowNames <- row.names(rowData(x)) 
+           rank <- "rowNames"
+        }
         abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
                                         use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
