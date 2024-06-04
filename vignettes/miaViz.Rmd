@@ -46,11 +46,11 @@ data(GlobalPatterns, package = "mia")
 
 # Abundance plotting
 
-in contrast to other fields of sequencing based fields of research for which
+In contrast to other fields of sequencing based fields of research for which
 expression of genes is usually studied, microbiome research uses the more 
 term ~Abundance~ to described the numeric data measured and analyzed.
 Technically, especially in context of `SummarizedExperiment` objects, there is
-no difference. Therefore `plotExpression` can be used to plot `Abundance` data..
+no difference. Therefore `plotExpression` can be used to plot `Abundance` data of a particular feature.
 
 ```{r}
 plotExpression(GlobalPatterns, 
