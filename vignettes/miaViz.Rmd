@@ -40,6 +40,7 @@ BiocManager::install("miaViz")
 
 ```{r setup, message=FALSE}
 library(miaViz)
+library(scater)
 data(GlobalPatterns, package = "mia")
 ```
 
