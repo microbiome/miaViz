@@ -180,7 +180,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
                             ncol = ncol)
-        if( !is.null(features) ){
+        if( !is.null(features) & !is.null(rank) ){
             features <- match.arg(features, colnames(colData(x)))
         }
         if(is.null(rank) & ! is.null(order_sample_by)){

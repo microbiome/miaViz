@@ -49,17 +49,14 @@ in contrast to other fields of sequencing based fields of research for which
 expression of genes is usually studied, microbiome research uses the more 
 term ~Abundance~ to described the numeric data measured and analyzed.
 Technically, especially in context of `SummarizedExperiment` objects, there is
-no difference. Therefore `plotExpression` can be used to plot `Abundance` data.
-
-`plotAbundance` can be used as well and as long as `rank` is set `NULL`, it
-behaves as `plotExpression`.
+no difference. Therefore `plotExpression` can be used to plot `Abundance` data..
 
 ```{r}
-plotAbundance(GlobalPatterns, rank = NULL, 
+plotExpression(GlobalPatterns, 
               features = "549322", assay.type = "counts")
 ```
 
-However, if the `rank` is set not `NULL` a bar plot is returned. At the same
+On the other hand, plotAbundance can be used to plot abundance by  `rank`. A bar plot is returned showing the relative abundance within each sample for a given `rank`. At the same
 time the `features` argument can be set to `NULL` (default).
 
 ```{r}
