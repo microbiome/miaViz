@@ -96,8 +96,8 @@ features present.
 data(GlobalPatterns, package="mia")
 se <- GlobalPatterns
 
-## Plotting abundance using the first taxonomic rank as default
-plotAbundance(se, assay.type="counts")
+## Plotting counts using the first taxonomic rank as default
+plotAbundance(se, assay.type="counts", use_relative=FALSE) + ylab("Counts")
 
 ## Using "Phylum" as rank
 plotAbundance(se, assay.type="counts", rank = "Phylum", add_legend = FALSE)
