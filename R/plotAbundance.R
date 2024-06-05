@@ -180,18 +180,14 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
                             ncol = ncol)
-        if( !is.null(features) & !is.null(rank) ){
+        if( !is.null(features)){
             features <- match.arg(features, colnames(colData(x)))
-        }
-        if(is.null(rank) & ! is.null(order_sample_by)){
-            stop("'order_sample_by' must be set to null when 'rank' 
-                 is not specified.",
-                 call. = FALSE)
         }
         ########################### INPUT CHECK END ###########################
         if(is.null(rank)){
-           rowData(x)$rowNames <- row.names(rowData(x)) 
-           rank <- "rowNames"
+           rank <- "Feature"
+           rowData(x)[[ rank ]] <- rownames(x)
+           order_sample_by <- NULL
         }
         abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
                                         use_relative)
