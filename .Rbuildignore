@@ -1,3 +1,5 @@
+^renv$
+^renv\.lock$
 ^miaViz\.Rproj$
 ^\.Rproj\.user$
 .github
@@ -7,3 +9,4 @@
 inst/extras/
 ^doc$
 ^Meta$
+^\.Rprofile$
