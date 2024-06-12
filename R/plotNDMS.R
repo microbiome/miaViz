@@ -9,7 +9,7 @@
 #'   the first dimension. Alternatively, a numeric vector specifying the 
 #'   dimensions to be plotted. (Default: 2)
 #'   
-#' @param ... additional arguments passed to scater::plotReducedDim()
+#' @param ... additional arguments passed to scater::plotReducedDim().
 #'   
 #' @name plotNMDS
 NULL
