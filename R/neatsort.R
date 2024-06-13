@@ -57,13 +57,7 @@ setGeneric("neatsort", signature = c("x"),
                standardGeneric("neatsort"))
 
 
-#' .check_neatsort_args
-#' @description Checks if the input arguments for the neatsort function are valid.
-#' @param x A matrix containing the ordinated data to be sorted.
-#' @param subset A vector specifying a subset of rows to be used and retained.
-#' @param dimensions A vector of length 2 specifying the columns of the matrix to use for the X and Y coordinates.
-#' @param centering_method A character string specifying the method to center the data.
-#' @param sorting_order A character string specifying the order of sorting.
+# Checks if the input arguments for the neatsort function are valid.
 .check_neatsort_args <- function(x, subset, dimensions, centering_method, sorting_order) {
     # Check data is a matrix
     if (!is.matrix(x)) {
@@ -151,33 +145,21 @@ setMethod("neatsort", signature = c("matrix"),
     )
 
 
-#' .take_subset
-#' @description Takes a subset of rows from the data matrix.
-#' @param data The data matrix
-#' @param subset The subset of rows to be retained
-#' @return The subset of the data matrix
+# Takes a subset of rows from the data matrix.
 .take_subset <- function(data, subset) {
     data <- data[subset, , drop = FALSE]
     return(data)
 }
 
 
-#' .take_dimensions
-#' @description Takes the specified columns (dimensions) from the data matrix.
-#' @param data The data matrix
-#' @param dimensions The columns to retain
-#' @return The data matrix with only the specified dimensions
+# Takes the specified columns (dimensions) from the data matrix.
 .take_dimensions <- function(data, dimensions) {
     data <- data[, dimensions, drop = FALSE]
     return(data)
 }
 
 
-#' .radial_theta
-#' @description Computes the radial theta values for each row in the data matrix.
-#' @param data The data matrix
-#' @param centering_method The method used for centering the data
-#' @return A named vector of theta values for each row
+# Computes the radial theta values for each row in the data matrix.
 .radial_theta <- function(data, centering_method) {
     if (centering_method == "mean") {
         centered_data <- scale(data, center = TRUE, scale = FALSE)
@@ -195,11 +177,7 @@ setMethod("neatsort", signature = c("matrix"),
     return(theta)
 }
 
-#' .get_sorted_rownames
-#' @description Sorts the theta values and returns the ordered row names.
-#' @param theta_values A named vector of theta values
-#' @param sorting_order The order of sorting (ascending or descending)
-#' @return A vector of row names in the sorted order
+# Sorts the theta values and returns the ordered row names.
 .get_sorted_rownames <- function(theta_values, sorting_order) {
     sorted_indices <- order(theta_values, decreasing = (sorting_order == "descending"))
     rownames <- names(theta_values)[sorted_indices]
