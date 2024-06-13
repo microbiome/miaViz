@@ -7,5 +7,6 @@ docs
 /doc/
 /Meta/
 renv/
+renv.lock
 .Rprofile
-
+.idea
