@@ -2,7 +2,7 @@
 context("plot series")
 test_that("plot series", {
     # Load data from miaTime package
-    skip_if_not_installed("miatime")
+    skip_if_not_installed("miaTime")
     data(SilvermanAGutData, package = "miaTime")
     tse <- SilvermanAGutData
     tse_sub <- tse[1:5]
