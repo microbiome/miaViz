@@ -1,6 +1,6 @@
 #' Sorting by radial theta angle
 #' 
-#' @description \code{neatsort} sorts already ordinated data by the radial theta angle.
+#' @description \code{getNeatOrder} sorts already ordinated data by the radial theta angle.
 #' This method is useful for organizing data points based on their angular 
 #' position in a 2D space, typically after an ordination technique such as PCA or NMDS 
 #' has been applied. 
@@ -21,11 +21,11 @@
 #' @param subset A vector specifying a subset of rows to be used and retained. If NULL, all rows are used.
 #' @param dimensions A vector of length 2 specifying the columns of the matrix to use for the X and Y coordinates.
 #' @param centering_method A character string specifying the method to center the data. Options are "mean", "median", or "none" if your data is already centred.
-#' @param sorting_order A character string specifying the order of sorting. Options are "ascending" or "descending".
+#' @param decreasing A boolean that when true sorts the rows in a descending order by radial theta angle. Default is False.
 #' @param ... Additional arguments passed to other methods.
 #' @return A vector of row names in the sorted order.
 #' 
-#' @name neatsort
+#' @name getNeatOrder
 #' 
 #' @examples
 #' # Load required libraries
@@ -35,7 +35,7 @@
 #' data(peerj13075)
 #' 
 #' # Agglomerate by Order and transform the data
-#' tse_order <- mergeFeaturesByRank(peerj13075, rank = "order", onRankOnly = TRUE)
+#' tse_order <- agglomerateByRank(peerj13075, rank = "order", onRankOnly = TRUE)
 #' tse_order <- transformAssay(tse_order, assay.type = "counts", method="relabundance", MARGIN = "samples", name="relabundance")
 #' tse_order <- transformAssay(tse_order, assay.type="relabundance", method="z", MARGIN = "features", name="z")
 #' z_transformed_data <- assay(tse_order, "z")
@@ -47,115 +47,107 @@
 #' scores_pca <- pca_results$x[, 1:2]
 #' 
 #' # Sort by radial theta and subset the transformed data
-#' sorted_order <- neatsort(scores_pca, dimensions = c(1, 2), centering_method = "mean", sorting_order = "ascending")
+#' sorted_order <- getNeatOrder(scores_pca, dimensions = c(1, 2), centering_method = "mean")
 #' ordered_transformed_data <- z_transformed_data[sorted_order, ]
 NULL
 
-#' @rdname neatsort
-setGeneric("neatsort", signature = c("x"),
+#' @rdname getNeatOrder
+setGeneric("getNeatOrder", signature = c("x"),
            function(x, ...)
-               standardGeneric("neatsort"))
+               standardGeneric("getNeatOrder"))
 
 
-# Checks if the input arguments for the neatsort function are valid.
-.check_neatsort_args <- function(x, subset, dimensions, centering_method, sorting_order) {
+# Implementation for taking in a raw matrix.
+#' @rdname getNeatOrder
+#' @export
+setMethod("getNeatOrder", signature = c("matrix"),
+    function(x,
+        subset = NULL,
+        dimensions = c(1, 2),
+        centering_method = c("mean", "median", "none"),
+        decreasing = FALSE,
+        ...){
+              
+            # Check args
+            .check_args(x, subset, dimensions, centering_method, decreasing)
+            
+            # Create subset if required
+            if( !is.null(subset) ){
+                x <- x[subset, , drop = FALSE]
+            }
+            
+            # Take the correct dimensions
+            x <- x[, dimensions, drop = FALSE]
+
+            # Get the theta values and order them
+            theta_values <- .radial_theta(x, centering_method)
+            ordering <- .get_sorted_rownames(theta_values, decreasing)
+            
+            return(ordering)
+        }
+    )
+
+
+# Checks the method arguments.
+.check_args <- function(x, subset, dimensions, centering_method, decreasing) {
     # Check data is a matrix
     if (!is.matrix(x)) {
-        stop("Input data must be a matrix.")
+        stop("Input data must be a matrix.", call. = FALSE)
     }
     
     # Check there is sufficient data
     if (nrow(x) == 0 || ncol(x) == 0) {
-        stop("No data to plot. Matrix must have at least one row and one column.")
+        stop("No data to plot. Matrix must have at least one row and one column.", call. = FALSE)
     }
     
     # Check subset validity
     if (!is.null(subset)) {
         if (is.numeric(subset) && any(subset > nrow(x))) {
-            stop("Subset refers to rows that do not exist in the data.")
+            stop("Subset refers to rows that do not exist in the data.", call. = FALSE)
         } else if (is.character(subset) && any(!subset %in% rownames(x))) {
-            stop("Subset refers to row names that do not exist in the data.")
+            stop("Subset refers to row names that do not exist in the data.", call. = FALSE)
         } else if (!is.numeric(subset) && !is.character(subset)) {
-            stop("Subset must be a vector of row indices or names.")
+            stop("Subset must be a vector of row indices or names.", call. = FALSE)
         }
     }
     
     # Check dimensions are valid
-    if (any(dimensions > ncol(x))) {
-        stop("dimensions refer to columns that do not exist in the data.")
+    if (is.numeric(dimensions)) {
+        if (any(dimensions > ncol(x) | dimensions < 1)) {
+            stop("dimensions refer to columns that do not exist in the data.", call. = FALSE)
+        }
+    } else if (is.character(dimensions)) {
+        if (any(!dimensions %in% colnames(x))) {
+            stop("dimensions refer to column names that do not exist in the data.", call. = FALSE)
+        }
+    } else {
+        stop("dimensions must be a vector of column indices or names.", call. = FALSE)
     }
     
     # Check dimension vector is of length 2
     if (length(dimensions) != 2) {
-        stop("Exactly two dimensions must be specified.")
+        stop("Exactly two dimensions must be specified.", call. = FALSE)
     }
     
     # Check centering_method
     centering_method <- match.arg(centering_method, c("mean", "median", "none"))
     
-    # Check sorting_order
-    sorting_order <- match.arg(sorting_order, c("ascending", "descending"))
+    # Check decreasing
+    if (!is.logical(decreasing) || length(decreasing) != 1) {
+        stop("decreasing must be a single boolean value.", call. = FALSE)
+    }
     
     # Check for unique row names
     if (any(duplicated(rownames(x)))) {
-        stop("Row names of the matrix must be unique.")
+        stop("Row names of the matrix must be unique.", call. = FALSE)
     }
     
     # Check for unique column names
     if (any(duplicated(colnames(x)))) {
-        stop("Column names of the matrix must be unique.")
+        stop("Column names of the matrix must be unique.", call. = FALSE)
     }
-}
-
-
-#' @description Sorts a matrix by radial theta angle.
-#' @param x A matrix containing the ordinated data to be sorted.
-#' @param subset A vector specifying a subset of rows to be used and retained.
-#' @param dimensions A vector of length 2 specifying the columns of the matrix to use for the X and Y coordinates.
-#' @param centering_method A character string specifying the method to center the data.
-#' @param sorting_order A character string specifying the order of sorting.
-#' @return A vector of row names in the sorted order.
-#' @rdname neatsort
-#' @export
-setMethod("neatsort", signature = c("matrix"),
-          function(x,
-                   subset = NULL,
-                   dimensions = c(1, 2),
-                   centering_method = c("mean", "median", "none"),
-                   sorting_order = c("ascending", "descending"),
-                   ...){
-              
-                # Check args
-                .check_neatsort_args(x, subset, dimensions, centering_method, sorting_order)
-              
-                # Create subset if required
-                if( !is.null(subset) ){
-                    x <- .take_subset(x, subset)
-                }
-
-                # Take the correct dimensions
-                x <- .take_dimensions(x, dimensions)
-
-                # Get the theta values and order them
-                theta_values <- .radial_theta(x, centering_method)
-                ordering <- .get_sorted_rownames(theta_values, sorting_order)
-
-                return(ordering)
-          }
-    )
-
-
-# Takes a subset of rows from the data matrix.
-.take_subset <- function(data, subset) {
-    data <- data[subset, , drop = FALSE]
-    return(data)
-}
-
-
-# Takes the specified columns (dimensions) from the data matrix.
-.take_dimensions <- function(data, dimensions) {
-    data <- data[, dimensions, drop = FALSE]
-    return(data)
+    
+    return(NULL)
 }
 
 
@@ -168,7 +160,7 @@ setMethod("neatsort", signature = c("matrix"),
     } else if (centering_method == "none") {
         centered_data <- data
     } else {
-        stop("Unsupported centering method. Choose either 'mean', 'median', 'mode', or 'none'.")
+        stop("Unsupported centering method. Choose either 'mean', 'median', 'mode', or 'none'.", call. = FALSE)
     }
     
     theta <- atan2(centered_data[, 2], centered_data[, 1])
@@ -178,9 +170,10 @@ setMethod("neatsort", signature = c("matrix"),
 }
 
 # Sorts the theta values and returns the ordered row names.
-.get_sorted_rownames <- function(theta_values, sorting_order) {
-    sorted_indices <- order(theta_values, decreasing = (sorting_order == "descending"))
+.get_sorted_rownames <- function(theta_values, decreasing) {
+    sorted_indices <- order(theta_values, decreasing = decreasing)
     rownames <- names(theta_values)[sorted_indices]
     return(rownames)
 }
+
 
