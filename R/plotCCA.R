@@ -24,6 +24,9 @@
 #' 
 #' @param ellipse.linetype Discrete number specifying the style of ellipses.
 #'   (default: \code{ellipse.linetype = 1})
+#'   
+#' @param confidence.level Number between 0 and 1 to adjust confidence level.
+#'   (default: \code{confidence.level = 0.95})
 #'
 #' @param add.vectors TRUE or FALSE, should vectors appear in the plot.
 #'    (default: \code{add.vectors = TRUE})
@@ -179,8 +182,8 @@ setGeneric("plotRDA", signature = c("object"),
 #' @export
 setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
     function(object, dimred,
-             add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1,
-             vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
+             add.ellipse = TRUE, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1, 
+             confidence.level = 0.95, vec.size = 0.5, vec.color = vec.colour, vec.colour = "black", vec.linetype = 1,
              arrow.size = 0.25, label.color = label.colour, label.colour = "black", label.size = 4,
              vec.text = TRUE, repel.labels = TRUE, sep.group = "\U2014", repl.underscore = " ",
              add.significance = TRUE, add.expl.var = TRUE, add.vectors = TRUE, parse.labels = TRUE, ...){
@@ -219,19 +222,22 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         if( !.are_whole_numbers(ellipse.linetype) ){
             stop("'vec.linetype' must be a whole number.", call. = FALSE)
         }
-        if( ellipse.alpha < 0 || ellipse.alpha > 1 ){
+        if ( !(is.numeric(ellipse.alpha) && ellipse.alpha > 0 && ellipse.alpha < 1 ) ) {
             stop("'ellipse.alpha' must be a number between 0 and 1.", call. = FALSE)
         }
-        if ( !is.numeric(ellipse.linewidth) && ellipse.linewidth > 0 ) {
+        if ( !(is.numeric(ellipse.linewidth) && ellipse.linewidth > 0) ) {
             stop("'ellipse.linewidth' must be a positive number.", call. = FALSE)
         }
-        if ( !is.numeric(vec.size) && vec.size > 0 ) {
+        if( !(is.numeric(confidence.level) && confidence.level > 0 && confidence.level < 1) ) {
+          stop("'confidence.level' must be a number between 0 and 1.", call. = FALSE)
+        }
+        if ( !(is.numeric(vec.size) && vec.size > 0) ) {
             stop("'vec.size' must be a positive number.", call. = FALSE)
         }
-        if ( !is.numeric(arrow.size) && arrow.size > 0 ) {
+        if ( !(is.numeric(arrow.size) && arrow.size > 0) ) {
             stop("'arrow.size' must be a positive number.", call. = FALSE)
         }
-        if ( !is.numeric(label.size) && label.size > 0 ) {
+        if ( !(is.numeric(label.size) && label.size > 0) ) {
             stop("'label.size' must be a positive number.", call. = FALSE)
         }
         if ( !.is_non_empty_string(vec.color) ) {
@@ -256,11 +262,11 @@ setMethod("plotRDA", signature = c(object = "SingleCellExperiment"),
         # Create a plot
         plot <- .rda_plotter(
             plot_data, ellipse.alpha = ellipse.alpha, ellipse.linewidth = ellipse.linewidth,
-            ellipse.linetype = ellipse.linetype, vec.size = vec.size, vec.color = vec.color,
-            vec.colour = vec.colour, vec.linetype = vec.linetype, arrow.size = arrow.size,
-            label.color = label.color, label.colour = label.colour, label.size = label.size,
-            vec.text = vec.text, add.ellipse = add.ellipse, repel.labels = repel.labels,
-            parse.labels = parse.labels, ...
+            ellipse.linetype = ellipse.linetype, confidence.level = confidence.level, vec.size = vec.size,
+            vec.color = vec.color, vec.colour = vec.colour, vec.linetype = vec.linetype, 
+            arrow.size = arrow.size, label.color = label.color, label.colour = label.colour,
+            label.size = label.size, vec.text = vec.text, add.ellipse = add.ellipse,
+            repel.labels = repel.labels, parse.labels = parse.labels, ...
         )
         return(plot)
     }
@@ -493,7 +499,7 @@ setMethod("plotRDA", signature = c(object = "matrix"),
 # Plot based on the data
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter <- function(
-        plot_data, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1,
+        plot_data, ellipse.alpha = 0.2, ellipse.linewidth = 0.1, ellipse.linetype = 1, confidence.level = 0.95,
         vec.size = 0.5, vec.color = vec.colour, vec.colour = "black",
         vec.linetype = 1, arrow.size = 0.25, min.segment.length = 5,
         label.color = label.colour, label.colour = "black", label.size = 4,
@@ -516,12 +522,12 @@ setMethod("plotRDA", signature = c(object = "matrix"),
                              aes(x = .data[[xvar]], y = .data[[yvar]],
                                  color = .data[[colour_var]], fill = after_scale(color)),
                              geom = "polygon", alpha = ellipse.alpha,
-                             linewidth = ellipse.linewidth, linetype = ellipse.linetype)
+                             linewidth = ellipse.linewidth, linetype = ellipse.linetype, level = confidence.level)
         } else if ( add.ellipse %in% c("color", "colour") ){
             plot <- plot +
                 stat_ellipse(data = data,
                              aes(x = .data[[xvar]], y = .data[[yvar]], color = .data[[colour_var]]),
-                             geom = "polygon", alpha = 0, linetype = ellipse.linetype)
+                             geom = "polygon", alpha = 0, linetype = ellipse.linetype, level = confidence.level)
         }
         
     }
