@@ -24,6 +24,7 @@ plotRDA(object, ...)
   ellipse.alpha = 0.2,
   ellipse.linewidth = 0.1,
   ellipse.linetype = 1,
+  confidence.level = 0.95,
   vec.size = 0.5,
   vec.color = vec.colour,
   vec.colour = "black",
@@ -71,6 +72,9 @@ indicating whether ellipses should be present, absent, filled or colored.
 
 \item{ellipse.linetype}{Discrete number specifying the style of ellipses.
 (default: \code{ellipse.linetype = 1})}
+
+\item{confidence.level}{Number between 0 and 1 to adjust confidence level.
+(default: \code{confidence.level = 0.95})}
 
 \item{vec.size}{Number specifying the size of vectors.
 (default: \code{vec.size = 0.5})}
