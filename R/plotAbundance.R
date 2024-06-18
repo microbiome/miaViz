@@ -7,7 +7,7 @@
 #'
 #' Subsetting to rows of interested and ordering of those is expected to be done
 #' outside of this functions, e.g. \code{x[1:2,]}. This will plot data of all
-#' cor.var present.
+#' col.var present.
 #'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -24,13 +24,13 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param cor.var a single \code{character} value defining a column from 
+#' @param col.var a single \code{character} value defining a column from 
 #'   \code{colData} to be plotted below the abundance plot.
 #'   Continuous numeric values will be plotted as point, whereas factors and
-#'   character will be plotted as colour-code bar. (default: \code{cor.var =
+#'   character will be plotted as colour-code bar. (default: \code{col.var =
 #'   NULL})
 #'   
-#' @param features Deprecated. Use \code{cor.var} instead.
+#' @param features Deprecated. Use \code{col.var} instead.
 #'   
 #' @param order.row.by How to order abundance value: By name (\dQuote{name}) 
 #' for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
@@ -57,7 +57,7 @@
 #' 
 #' @param one.facet Should the plot be returned in on facet or split into 
 #'   different facet, one facet per different value detect in \code{rank}. If
-#'   \code{cor.var} or \code{order.col.by} is not \code{NULL}, this setting will
+#'   \code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
 #'   be disregarded.
 #'   
 #' @param one_facet Deprecated. Use \code{one.facet} instead.
@@ -72,7 +72,7 @@
 #'
 #' @return 
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 
-#' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `cor.var` are added to 
+#' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `col.var` are added to 
 #' the plot. 
 #'
 #' @name plotAbundance
@@ -89,17 +89,17 @@
 #' 
 #' ## If rank is set to NULL plotAbundance behaves like plotExpression
 #' plotAbundance(se, assay.type="counts", rank = NULL,
-#'            cor.var = head(rownames(se)))
+#'            col.var = head(rownames(se)))
 #'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
 #' plotAbundance(se, assay.type="counts", rank = "Phylum",
 #'            order.col.by = "Bacteroidetes")
 #' 
-#' ## cor.var from colData can be plotted together with abundance plot.
+#' ## col.var from colData can be plotted together with abundance plot.
 #' # Returned object is a list that includes two plot; other visualizes abundance
-#' # other cor.var. 
+#' # other col.var. 
 #' plot <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
-#'                    cor.var = "SampleType")
+#'                    col.var = "SampleType")
 #' \donttest{
 #' # These two plots can be combined with wrap_plots function from patchwork package
 #' library(patchwork)
@@ -109,7 +109,7 @@
 #' ## Same plot as above but showing sample IDs as labels for the x axis on the top plot
 #' 
 #' plot[[1]] <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
-#'                            cor.var = "SampleType", add.legend = FALSE,
+#'                            col.var = "SampleType", add.legend = FALSE,
 #'                            add.x.text = TRUE)[[1]] +
 #'                            theme(axis.text.x = element_text(angle = 90)) 
 #' \donttest{
@@ -157,7 +157,7 @@ setGeneric("plotAbundance", signature = c("x"),
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
             rank = taxonomyRanks(x)[1],
-            cor.var = features,
+            col.var = features,
             features = NULL,
             order.row.by = order_rank_by,
             order_rank_by = c("name","abund","revabund"),
@@ -180,7 +180,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         .check_assay_present(assay.type, x)
         # if rank is set to NULL, default to plotExpression 
         if(is.null(rank)){
-            plot <- plotExpression(x, cor.var = cor.var, 
+            plot <- plotExpression(x, col.var = col.var, 
                                 exprs_values = assay.type,
                                 one.facet = one.facet,
                                 ncol = ncol, scales = scales, ...)
@@ -204,8 +204,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         order.row.by <- match.arg(order.row.by, c("name","abund","revabund"))
         .check_abund_plot_args(one.facet = one.facet,
                             ncol = ncol)
-        if( !is.null(cor.var) ){
-            cor.var <- match.arg(cor.var, colnames(colData(x)))
+        if( !is.null(col.var) ){
+            col.var <- match.arg(col.var, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
         abund_data <- .get_abundance_data(x, rank, assay.type, order.row.by,
@@ -214,8 +214,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                                                 unique(abund_data$colour_by),
                                                 x)
         features_data <- NULL
-        if(!is.null(cor.var) || !is.null(order.col.by)){
-            features_data <- .get_features_data(cor.var, order.col.by, x)
+        if(!is.null(col.var) || !is.null(order.col.by)){
+            features_data <- .get_features_data(col.var, order.col.by, x)
         }
         if(!is.null(order.col.by)){
             order_out <- .order_abund_feature_data(abund_data, features_data,
@@ -244,12 +244,12 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         }
         # Checks if the list is a ggplot object or regular list of ggplot objects
         if( !is.ggplot(plot_out) ){
-            # If cor.var is specified, then only abundance and cor.var plots are 
+            # If col.var is specified, then only abundance and col.var plots are 
             # returned as a list. If it is not, then only abundance plot is returned.
-            if( !is.null(cor.var) ){
-                plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[cor.var]])
+            if( !is.null(col.var) ){
+                plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[col.var]])
                 # Assigns the names back
-                names(plot_out) <- c("abundance", cor.var)
+                names(plot_out) <- c("abundance", col.var)
             } else{
                 plot_out <- plot_out[["abundance"]]
             }
@@ -353,9 +353,9 @@ MELT_VALUES <- "Value"
     tmp
 }
 
-.get_features_data <- function(cor.var, order.col.by, x){
-    cor.var <- unique(c(order.col.by,cor.var))
-    features_data <- lapply(cor.var,
+.get_features_data <- function(col.var, order.col.by, x){
+    col.var <- unique(c(order.col.by,col.var))
+    features_data <- lapply(col.var,
                             .get_feature_data,
                             x = x)
     non_empty <- !vapply(features_data, is.null, logical(1))
@@ -403,7 +403,7 @@ MELT_VALUES <- "Value"
         abund_data <- abund_data[order(abund_data$colour_by, abund_data$X),]
         if(!is.null(features_data)){
             o <- order(factor(rownames(features_data), lvl))
-            # If cor.var and order.col.by are the same, there is only one column.
+            # If col.var and order.col.by are the same, there is only one column.
             # One column is converted to vector which is why it is converted back
             # to data frame which is expected in next steps.
             if(ncol(features_data) == 1) {

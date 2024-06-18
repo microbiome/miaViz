@@ -10,7 +10,7 @@ plotAbundance(x, ...)
 \S4method{plotAbundance}{SummarizedExperiment}(
   x,
   rank = taxonomyRanks(x)[1],
-  cor.var = features,
+  col.var = features,
   features = NULL,
   order.row.by = order_rank_by,
   order_rank_by = c("name", "abund", "revabund"),
@@ -40,13 +40,13 @@ object.}
 \item{rank}{a single \code{character} value defining the taxonomic rank to
 use. Must be a value of \code{taxonomyRanks(x)}.}
 
-\item{cor.var}{a single \code{character} value defining a column from
+\item{col.var}{a single \code{character} value defining a column from
 \code{colData} to be plotted below the abundance plot.
 Continuous numeric values will be plotted as point, whereas factors and
-character will be plotted as colour-code bar. (default: \code{cor.var =
+character will be plotted as colour-code bar. (default: \code{col.var =
   NULL})}
 
-\item{features}{Deprecated. Use \code{cor.var} instead.}
+\item{features}{Deprecated. Use \code{col.var} instead.}
 
 \item{order.row.by}{How to order abundance value: By name (\dQuote{name})
 for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
@@ -73,7 +73,7 @@ be calculated? (default: \code{use.relative = TRUE})}
 
 \item{one.facet}{Should the plot be returned in on facet or split into
 different facet, one facet per different value detect in \code{rank}. If
-\code{cor.var} or \code{order.col.by} is not \code{NULL}, this setting will
+\code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
 be disregarded.}
 
 \item{one_facet}{Deprecated. Use \code{one.facet} instead.}
@@ -93,7 +93,7 @@ will be disabled.)}
 }
 \value{
 a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two
-\code{\link[ggplot2:ggplot]{ggplot}} objects, if \code{cor.var} are added to
+\code{\link[ggplot2:ggplot]{ggplot}} objects, if \code{col.var} are added to
 the plot.
 }
 \description{
@@ -105,7 +105,7 @@ If only \sQuote{counts} is present, the relative abundance is computed.
 \details{
 Subsetting to rows of interested and ordering of those is expected to be done
 outside of this functions, e.g. \code{x[1:2,]}. This will plot data of all
-cor.var present.
+col.var present.
 }
 \examples{
 data(GlobalPatterns, package="mia")
@@ -119,17 +119,17 @@ plotAbundance(se, assay.type="counts", rank = "Phylum", add.legend = FALSE)
 
 ## If rank is set to NULL plotAbundance behaves like plotExpression
 plotAbundance(se, assay.type="counts", rank = NULL,
-           cor.var = head(rownames(se)))
+           col.var = head(rownames(se)))
   
 ## A feature from colData or taxon from chosen rank can be used for ordering samples.
 plotAbundance(se, assay.type="counts", rank = "Phylum",
            order.col.by = "Bacteroidetes")
 
-## cor.var from colData can be plotted together with abundance plot.
+## col.var from colData can be plotted together with abundance plot.
 # Returned object is a list that includes two plot; other visualizes abundance
-# other cor.var. 
+# other col.var. 
 plot <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
-                   cor.var = "SampleType")
+                   col.var = "SampleType")
 \donttest{
 # These two plots can be combined with wrap_plots function from patchwork package
 library(patchwork)
@@ -139,7 +139,7 @@ wrap_plots(plot, ncol = 1)
 ## Same plot as above but showing sample IDs as labels for the x axis on the top plot
 
 plot[[1]] <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
-                           cor.var = "SampleType", add.legend = FALSE,
+                           col.var = "SampleType", add.legend = FALSE,
                            add.x.text = TRUE)[[1]] +
                            theme(axis.text.x = element_text(angle = 90)) 
 \donttest{
