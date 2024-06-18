@@ -9,28 +9,25 @@ getNeatOrder(x, ...)
 
 \S4method{getNeatOrder}{matrix}(
   x,
-  subset = NULL,
   dimensions = c(1, 2),
-  centering_method = c("mean", "median", "none"),
+  centering.method = c("mean", "median", "none"),
   decreasing = FALSE,
   ...
 )
 }
 \arguments{
-\item{x}{A matrix containing the ordinated data to be sorted. Columns should represent the principal components (PCs) and rows should represent the entities being analyzed (e.g., features or samples).}
+\item{x}{A matrix containing the ordinated data to be sorted. Columns should represent the principal components (PCs) and rows should represent the entities being analyzed (e.g. features or samples).}
 
 \item{...}{Additional arguments passed to other methods.}
 
-\item{subset}{A vector specifying a subset of rows to be used and retained. If NULL, all rows are used.}
+\item{dimensions}{A \code{character} or \code{integer} vector of length 2 specifying the columns of the matrix to use for the X and Y coordinates.}
 
-\item{dimensions}{A vector of length 2 specifying the columns of the matrix to use for the X and Y coordinates.}
+\item{centering.method}{A single \code{character} value specifying the method to center the data. Options are \code{mean}, \code{median}, or \code{none} if your data is already centered. (default: method = \code{mean})}
 
-\item{centering_method}{A character string specifying the method to center the data. Options are "mean", "median", or "none" if your data is already centred.}
-
-\item{decreasing}{A boolean that when true sorts the rows in a descending order by radial theta angle. Default is False.}
+\item{decreasing}{A \code{boolean} that when \code{TRUE} sorts the rows in a descending order by radial theta angle. (default: descending = \code{FALSE})}
 }
 \value{
-A vector of row names in the sorted order.
+A \code{character} vector of row names in the sorted order.
 }
 \description{
 \code{getNeatOrder} sorts already ordinated data by the radial theta angle.
@@ -39,7 +36,7 @@ position in a 2D space, typically after an ordination technique such as PCA or N
 has been applied.
 
 The function takes in a matrix of ordinated data, optionally
-centers the data using specified methods (mean, median, or none), and then calculates
+centers the data using specified methods (\code{mean}, \code{median}, or \code{none}), and then calculates
 the angle (theta) for each point relative to the centroid. The data points are then
 sorted based on these theta values in either ascending or descending order.
 
@@ -50,26 +47,53 @@ hierarchical clustering, which may distort these relationships. This approach
 allows for a more faithful representation of the data's intrinsic structure as captured
 by the ordination process.
 }
-\examples{
-# Load required libraries
-library(mia)
+\details{
+It's important to note that the sechm package does actually have the functionality for plotting a heatmap using this radial theta angle ordering, though only by using an MDS ordination.
 
-# Load the dataset
+This functionality can be found at:
+
+\url{https://bioconductor.org/packages/3.18/bioc/vignettes/sechm/inst/doc/sechm.html#row-ordering}.
+
+That being said, the \code{getNeatOrder} function is more modular and separate to the plotting, and
+can be applied to any kind of ordinated data which can be valuable depending on the use case.
+}
+\examples{
+## Load the required libraries and dataset
+library(mia)
+library(scater)
+library(sechm)
 data(peerj13075)
 
-# Agglomerate by Order and transform the data
-tse_order <- agglomerateByRank(peerj13075, rank = "order", onRankOnly = TRUE)
-tse_order <- transformAssay(tse_order, assay.type = "counts", method="relabundance", MARGIN = "samples", name="relabundance")
-tse_order <- transformAssay(tse_order, assay.type="relabundance", method="z", MARGIN = "features", name="z")
-z_transformed_data <- assay(tse_order, "z")
+## Group data by taxonomic order
+tse <- agglomerateByRank(peerj13075, rank = "order", onRankOnly = TRUE)
 
-# Get the top taxa and perform PCA
-top_taxa <- getTopFeatures(tse_order, top = 10, assay.type="z")
-top_feature_data <- z_transformed_data[top_taxa, ]
-pca_results <- prcomp(top_feature_data, scale = TRUE)
-scores_pca <- pca_results$x[, 1:2]
+## Transform the samples into relative abundances
+tse <- transformAssay(tse, assay.type = "counts", method="relabundance", MARGIN = "samples", name="relabundance")
 
-# Sort by radial theta and subset the transformed data
-sorted_order <- getNeatOrder(scores_pca, dimensions = c(1, 2), centering_method = "mean")
-ordered_transformed_data <- z_transformed_data[sorted_order, ]
+## Transform the features (taxa) into zero mean, unit variance (z transformation)
+tse <- transformAssay(tse, assay.type="relabundance", method="z", MARGIN = "features", name="z")
+
+## Perform PCA using calculatePCA
+pca_result <- calculatePCA(tse, ncomponents = 10, assay.type = "z")
+
+## Add PCA results to the TreeSE object
+reducedDim(tse, "PCA") <- pca_result
+
+## Sort by radial theta and sort the original assay data
+sorted_order <- getNeatOrder(reducedDim(tse, "PCA"), dimensions = c(1, 2), centering.method = "mean")
+tse <- tse[, sorted_order]
+
+## Create the heatmap with sechm whilst retaining this radial theta ordering
+features <- rownames(assay(tse, "z"))
+sechm_plot <- sechm(tse, assayName = "z", features=features, do.scale=FALSE, cluster_rows=FALSE, 
+                    sortRowsOn = NULL)
+}
+\references{
+The below paper outlines the NeatMap method in more detail:
+
+Rajaram, S., Oono, Y. NeatMap - non-clustering heat map alternatives in R. BMC Bioinformatics 11, 45 (2010). https://doi.org/10.1186/1471-2105-11-45.
+
+It can be found at:
+
+\url{https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-45}.
 }
