@@ -64,8 +64,8 @@
 #'   \item{point_shape}{ a positive integer value selecting the shape of point in
 #'   \code{jitter} and \code{point} plot. (default: \code{point_shape = 21}) }
 #'   
-#'   \item{point.sizze}{ a positive numeric value selecting the size of point in
-#'   \code{jitter} and \code{point} plot. (default: \code{point.sizze = 2}) }
+#'   \item{point.size}{ a positive numeric value selecting the size of point in
+#'   \code{jitter} and \code{point} plot. (default: \code{point.size = 2}) }
 #'   
 #'   \item{add.legend}{ a boolean value selecting if legend is added. 
 #'   (default: \code{add.legend = TRUE}) }
@@ -125,7 +125,7 @@
 #' # In addition to colour, groups can be visualized by size and shape in point plots,
 #' # and adjusted for point size
 #' plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
-#'                      shape.by = "sex", size.by = "time", point.sizze=1)
+#'                      shape.by = "sex", size.by = "time", point.size=1)
 #' 
 #' # Ordering via order.descending
 #' plotAbundanceDensity(tse, assay.type = "relabundance", 
@@ -286,7 +286,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                              shape.by = NULL,
                              size.by = NULL,
                              point_shape = 21,
-                             point.sizze = 2,
+                             point.size = 2,
                              point.alpha = 0.6,
                              point_colour = "grey70",
                              flipped = FALSE,
@@ -323,7 +323,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                                       size.by = size.by,
                                       alpha = point.alpha,
                                       shape = point_shape,
-                                      size = point.sizze,
+                                      size = point.size,
                                       colour = point_colour)
         point_args$args$mapping$y <- sym("Y")
         if (layout == "point"){

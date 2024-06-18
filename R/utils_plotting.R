@@ -14,7 +14,7 @@
 #'     dynamic edge widths in. Defaults to \code{c(0.5,3)}.}
 #'   \item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
 #'     transparency of the tips. Defaults to \code{1}.}
-#'   \item{\code{point.sizze}:}{Numeric scalar, specifying the 
+#'   \item{\code{point.size}:}{Numeric scalar, specifying the 
 #'     default size of tips Defaults to \code{2.}.}
 #'   \item{\code{point_size_range}:}{Two numeric values, the range for plotting
 #'     dynamic tip sizes in. Defaults to \code{c(1,4)}.}
@@ -35,7 +35,7 @@
 #'     dynamic edge widths in. Defaults to \code{c(0.5,3)}.}
 #'   \item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
 #'     transparency of the tips. Defaults to \code{1}.}
-#'   \item{\code{point.sizze}:}{Numeric scalar, specifying the 
+#'   \item{\code{point.size}:}{Numeric scalar, specifying the 
 #'     default size of tips Defaults to \code{2.}.}
 #'   \item{\code{point_size_range}:}{Two numeric values, the range for plotting
 #'     dynamic tip sizes in. Defaults to \code{c(1,4)}.}
@@ -56,7 +56,7 @@
 #'     transparency of the bars. Defaults to \code{1}.}
 #'   \item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
 #'     transparency of the points. Defaults to \code{1}.}
-#'   \item{\code{point.sizze}:}{Numeric scalar, specifying the 
+#'   \item{\code{point.size}:}{Numeric scalar, specifying the 
 #'     default size of points. Defaults to \code{2.}.}
 #' }
 #' 
@@ -69,7 +69,7 @@
 #'     Defaults to \code{21}.}
 #'   \item{\code{point_colour}:}{Character scalar, specifying the 
 #'     default colour of points. Defaults to \code{2.}.}
-#'   \item{\code{point.sizze}:}{Numeric scalar, specifying the 
+#'   \item{\code{point.size}:}{Numeric scalar, specifying the 
 #'     default size of points. Defaults to \code{2.}.}
 #'   \item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
 #'     transparency of the points. Defaults to \code{1}.}
@@ -90,7 +90,7 @@
 #'     Defaults to \code{TRUE}.}
 #'   \item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
 #'     transparency of the tips. Defaults to \code{1}.}
-#'   \item{\code{point.sizze}:}{Numeric scalar, specifying the 
+#'   \item{\code{point.size}:}{Numeric scalar, specifying the 
 #'     default size of tips Defaults to \code{2.}.}
 #'   \item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the 
 #'     transparency of the tree edges. Defaults to \code{1}.}

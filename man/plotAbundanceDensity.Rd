@@ -44,8 +44,8 @@ colour in \code{jitter} and \code{point} plot. (default: \code{point.alpha = 0.6
 \item{point_shape}{ a positive integer value selecting the shape of point in
 \code{jitter} and \code{point} plot. (default: \code{point_shape = 21}) }
 
-\item{point.sizze}{ a positive numeric value selecting the size of point in
-\code{jitter} and \code{point} plot. (default: \code{point.sizze = 2}) }
+\item{point.size}{ a positive numeric value selecting the size of point in
+\code{jitter} and \code{point} plot. (default: \code{point.size = 2}) }
 
 \item{add.legend}{ a boolean value selecting if legend is added.
 (default: \code{add.legend = TRUE}) }
@@ -147,7 +147,7 @@ plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
 # In addition to colour, groups can be visualized by size and shape in point plots,
 # and adjusted for point size
 plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
-                     shape.by = "sex", size.by = "time", point.sizze=1)
+                     shape.by = "sex", size.by = "time", point.size=1)
 
 # Ordering via order.descending
 plotAbundanceDensity(tse, assay.type = "relabundance", 

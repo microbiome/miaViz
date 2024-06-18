@@ -32,7 +32,7 @@
 #'   on compositional (relative) abundances? Passed onto
 #'   \code{\link[mia:getPrevalence]{getPrevalence}}. (default: \code{TRUE})
 #'   
-#' @param colur.by Specification of a feature to colour points by, see the 
+#' @param colour.by Specification of a feature to colour points by, see the 
 #'   \code{by} argument in 
 #'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
 #'   possible values. Only used with \code{layout = "point"}.
@@ -122,13 +122,13 @@
 #' # point layout for plotFeaturePrevalence can be used to visualize by additional
 #' # information
 #' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-#'                        colur.by = "Phylum") +
+#'                        colour.by = "Phylum") +
 #'     scale_x_log10()
 #' 
 #' # When using function plotPrevalentAbundace, it is possible to create facets
 #' # with 'facet.by'.
 #' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-#'                        colur.by = "Phylum", facet.by = "Kingdom") +
+#'                        colour.by = "Phylum", facet.by = "Kingdom") +
 #'     scale_x_log10()
 NULL
 
@@ -173,12 +173,12 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
         plot_data <- .get_prevalence_plot_data(x, assay.type, detections,
                                                prevalences, as.relative,
                                                BPPARAM)
-        plot_data$colur.by <- plot_data$colur.by * 100
+        plot_data$colour.by <- plot_data$colour.by * 100
         .prevalence_plotter(plot_data, 
                             layout = "line",
                             xlab = ifelse(as.relative,"Abundance [%]","Detection"),
                             ylab = "N",
-                            colur.by = "Prevalence [%]",
+                            colour.by = "Prevalence [%]",
                             size.by = NULL,
                             shape.by = NULL,
                             ...)
@@ -215,7 +215,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
                              MoreArgs = list(mat = mat),
                              BPPARAM = BPPARAM,
                              SIMPLIFY = FALSE))
-    colnames(ans) <- c("X","colur.by","Y")
+    colnames(ans) <- c("X","colour.by","Y")
     ans
 }
 
@@ -234,7 +234,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
              rank = taxonomyRanks(x)[1L],
              assay.type = assay_name, assay_name = "counts",
              as.relative = TRUE,
-             colur.by = NULL,
+             colour.by = NULL,
              size.by = size_by,
              size_by = NULL,
              shape.by = shape_by,
@@ -263,13 +263,13 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                                                      label = label)
         vis_out <- .incorporate_prevalence_vis(plot_data,
                                                se = x,
-                                               colur.by = colur.by,
+                                               colour.by = colour.by,
                                                size.by = size.by,
                                                shape.by = shape.by,
                                                label = label,
                                                facet.by = facet.by)
         plot_data <- vis_out$df
-        colur.by <- vis_out$colur.by
+        colour.by <- vis_out$colour.by
         size.by <- vis_out$size.by
         shape.by <- vis_out$shape.by
         facet.by <- vis_out$facet.by
@@ -280,7 +280,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                             layout = "point",
                             xlab = xlab,
                             ylab = ylab,
-                            colur.by = colur.by,
+                            colour.by = colour.by,
                             size.by = size.by,
                             shape.by = shape.by,
                             ...)
@@ -316,12 +316,12 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @importFrom scater retrieveFeatureInfo
 .incorporate_prevalence_vis <- function(plot_data,
                                         se = se,
-                                        colur.by = NULL,
+                                        colour.by = NULL,
                                         size.by = NULL,
                                         shape.by = NULL,
                                         label = NULL,
                                         facet.by = NULL){
-    variables <- c(colur.by = colur.by,
+    variables <- c(colour.by = colour.by,
                    size.by = size.by,
                    shape.by = shape.by,
                    facet.by = facet.by)
@@ -345,7 +345,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         }
     }
     return(list(df = plot_data,
-                colur.by = colur.by,
+                colour.by = colour.by,
                 size.by = size.by,
                 shape.by = shape.by,
                 facet.by = facet.by))
@@ -407,15 +407,15 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                                                  as.relative, 
                                                  min.prevalence,
                                                  BPPARAM)
-        plot_data$colur.by <- plot_data$colur.by * 100
+        plot_data$colour.by <- plot_data$colour.by * 100
         xlab <- ifelse(as.relative,"Abundance [%]","Detection")
         ylab <- ifelse(is.null(rank), "Features", rank)
-        colur.by <- "Prevalence [%]"
+        colour.by <- "Prevalence [%]"
         .prevalence_plotter(plot_data, 
                             layout = "heatmap",
                             xlab = xlab,
                             ylab = ylab,
-                            colur.by = colur.by,
+                            colour.by = colour.by,
                             size.by = NULL,
                             shape.by = NULL,
                             ...)
@@ -464,7 +464,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
         pivot_longer(!ID, 
                      names_to = "detection",
                      values_to = "prevalence")
-    colnames(ans) <- c("Y","X","colur.by")
+    colnames(ans) <- c("Y","X","colour.by")
     ans$X <- round(as.numeric(ans$X),4) * 100
     if(!.is_continuous(ans$X)){
         ans$X <- factor(ans$X,
@@ -481,63 +481,63 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                                 layout = c("line","point","heatmap"),
                                 xlab = NULL,
                                 ylab = NULL,
-                                colur.by = NULL,
+                                colour.by = NULL,
                                 size.by = NULL,
                                 shape.by = NULL,
                                 flipped = FALSE,
                                 add.legend = TRUE,
                                 point.alpha = 1,
-                                point.sizze = 2,
+                                point.size = 2,
                                 line_alpha = 1,
                                 line_type = NULL,
                                 line_size = 1){
     plot_out <- ggplot(plot_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)
     if(layout == "line"){
-        point_args <- .get_point_args(colur.by = colur.by, shape.by = NULL,
+        point_args <- .get_point_args(colour.by = colour.by, shape.by = NULL,
                                       size.by = NULL,
                                       alpha = point.alpha,
-                                      size = point.sizze)
-        line_args <- .get_line_args(colur.by = colur.by, linetype_by = NULL,
+                                      size = point.size)
+        line_args <- .get_line_args(colour.by = colour.by, linetype_by = NULL,
                                     size.by = NULL,
                                     alpha = line_alpha,
                                     linetype = line_type,
                                     linewidth = line_size)
-        point_args$args$mapping$group <- sym("colur.by")
-        line_args$args$mapping$group <- sym("colur.by")
+        point_args$args$mapping$group <- sym("colour.by")
+        line_args$args$mapping$group <- sym("colour.by")
         plot_out <- plot_out +
             do.call(geom_point, point_args$args) +
             do.call(geom_line, line_args$args)
         # resolve the colours
         plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colur.by,
-                                          colur.by,
+                                          plot_data$colour.by,
+                                          colour.by,
                                           fill = TRUE)
         plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colur.by,
-                                          colur.by,
+                                          plot_data$colour.by,
+                                          colour.by,
                                           fill = FALSE)
     } else if(layout == "point"){
-        point_args <- .get_point_args(colur.by = colur.by, shape.by = shape.by,
+        point_args <- .get_point_args(colour.by = colour.by, shape.by = shape.by,
                                       size.by = size.by,
                                       alpha = point.alpha,
-                                      size = point.sizze)
+                                      size = point.size)
         plot_out <- plot_out +
             do.call(geom_point, point_args$args)
         # resolve the colours
         plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colur.by,
-                                          colur.by,
+                                          plot_data$colour.by,
+                                          colour.by,
                                           fill = TRUE,
                                           na.translate = FALSE)
         # add additional guides
         plot_out <- .add_extra_guide(plot_out, shape.by, size.by)
     } else if(layout == "heatmap"){
-        raster_args <- .get_bar_args(colur.by = colur.by, alpha = 1,
+        raster_args <- .get_bar_args(colour.by = colour.by, alpha = 1,
                                      add_border = FALSE)
         plot_out <- plot_out +
             do.call(geom_raster, raster_args$args) +
-            scale_fill_distiller(palette = "RdYlBu", name = colur.by) +
+            scale_fill_distiller(palette = "RdYlBu", name = colour.by) +
             scale_y_discrete(expand = c(0,0))
         if(is.factor(plot_data$X)){
             plot_out <- plot_out + 

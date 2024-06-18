@@ -1121,7 +1121,7 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
                           line_width = NULL,
                           line_width_range = c(0.5,3),
                           point.alpha = 1,
-                          point.sizze = 2,
+                          point.size = 2,
                           point_size_range = c(1,4),
                           label_font_size = 3,
                           highlight_font_size = 3){
@@ -1154,7 +1154,7 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
                                        shape.by,
                                        size.by,
                                        point.alpha,
-                                       point.sizze,
+                                       point.size,
                                        point_size_range)
     # add tip and node labels
     plot_out <- .plot_tree_node_labels(plot_out,
@@ -1401,13 +1401,13 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
                                    shape.by,
                                    size.by,
                                    point.alpha,
-                                   point.sizze,
+                                   point.size,
                                    point_size_range){
     point_out <- .get_point_args(colour.by,
                                  shape.by,
                                  size.by,
                                  alpha = point.alpha,
-                                 size = point.sizze)
+                                 size = point.size)
     tip_point_FUN <- geom_tippoint
     node_point_FUN <- geom_nodepoint
     if(show_tips){

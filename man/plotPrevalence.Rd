@@ -33,7 +33,7 @@ plotPrevalentAbundance(x, ...)
   assay.type = assay_name,
   assay_name = "counts",
   as.relative = TRUE,
-  colur.by = NULL,
+  colour.by = NULL,
   size.by = size_by,
   size_by = NULL,
   shape.by = shape_by,
@@ -103,7 +103,7 @@ on compositional (relative) abundances? Passed onto
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the UniFrac calculation should be parallelized.}
 
-\item{colur.by}{Specification of a feature to colour points by, see the
+\item{colour.by}{Specification of a feature to colour points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
@@ -181,13 +181,13 @@ plotFeaturePrevalence(GlobalPatterns, rank = "Phylum",
 # point layout for plotFeaturePrevalence can be used to visualize by additional
 # information
 plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-                       colur.by = "Phylum") +
+                       colour.by = "Phylum") +
     scale_x_log10()
 
 # When using function plotPrevalentAbundace, it is possible to create facets
 # with 'facet.by'.
 plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-                       colur.by = "Phylum", facet.by = "Kingdom") +
+                       colour.by = "Phylum", facet.by = "Kingdom") +
     scale_x_log10()
 }
 \seealso{

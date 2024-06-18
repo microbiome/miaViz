@@ -589,14 +589,14 @@ setMethod("plotRowGraph",
                            line_width = NULL,
                            line_width_range = c(0.5,3),
                            point.alpha = 1,
-                           point.sizze = 2,
+                           point.size = 2,
                            point_size_range = c(1,4)){
     # assemble arg list
     point_out <- .get_point_args(colour_by,
                                  shape.by,
                                  size.by,
                                  alpha = point.alpha,
-                                 size = point.sizze)
+                                 size = point.size)
     edge_out <- .get_graph_edge_args(edge.colour.by,
                                      edge.width.by,
                                      alpha = line_alpha,

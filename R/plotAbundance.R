@@ -436,7 +436,7 @@ MELT_VALUES <- "Value"
                         add_border = NULL,
                         bar_alpha = 0.65,
                         point.alpha = 1,
-                        point.sizze = 2){
+                        point.size = 2){
     # start plotting
     plot_out <- ggplot(object, aes(x=.data[["X"]], y=.data[["Y"]])) +
         xlab(xlab) +
@@ -456,7 +456,7 @@ MELT_VALUES <- "Value"
                                     shape.by = NULL,
                                     size.by = NULL,
                                     alpha = point.alpha,
-                                    size = point.sizze)
+                                    size = point.size)
         abund_out$border <- TRUE
         plot_out <- plot_out +
             do.call(geom_point, abund_out$args)
@@ -493,7 +493,7 @@ MELT_VALUES <- "Value"
                             add.legend,
                             add.x.text,
                             point.alpha,
-                            point.sizze){
+                            point.size){
     if(is.factor(feature_data$Y)){
         feature_data$colour_by <- feature_data$Y
         feature_data$Y <- ""
@@ -518,7 +518,7 @@ MELT_VALUES <- "Value"
                                     shape.by = NULL,
                                     size.by = NULL,
                                     alpha = point.alpha,
-                                    size = point.sizze)
+                                    size = point.size)
         feature_plot_out <- feature_plot_out +
             do.call(geom_point, feature_out$args)
         legend_pos <- "right"
@@ -539,7 +539,7 @@ MELT_VALUES <- "Value"
                             add.legend = TRUE,
                             add.x.text = FALSE,
                             point.alpha = 1,
-                            point.sizze = 2,
+                            point.size = 2,
                             ...){
     names <- colnames(features_data)
     features_data <- lapply(names, 
@@ -558,7 +558,7 @@ MELT_VALUES <- "Value"
                                         add.legend = add.legend,
                                         add.x.text = add.x.text,
                                         point.alpha = point.alpha,
-                                        point.sizze = point.sizze),
+                                        point.size = point.size),
                         SIMPLIFY = FALSE)
     names(plots_out) <-  names(features_data)
     if(!is.null(order.col.by)){
