@@ -117,7 +117,7 @@ possible values. Only used with \code{layout = "point"}.}
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
 
-\item{size_by}{Deprecated. Use \cod{size.by} instead.}
+\item{size_by}{Deprecated. Use \code{size.by} instead.}
 
 \item{shape.by}{Specification of a feature to shape points by, see the
 \code{by} argument in

@@ -51,7 +51,7 @@
 #'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
 #'   possible values. Only used with \code{layout = "point"}.
 #'   
-#' @param size_by Deprecated. Use \cod{size.by} instead.
+#' @param size_by Deprecated. Use \code{size.by} instead.
 #'   
 #' @param facet.by Taxonomic rank to facet the plot by. 
 #' Value must be of \code{taxonomyRanks(x)}
