@@ -58,7 +58,7 @@ plotExpression(GlobalPatterns,
 ```
 
 On the other hand, plotAbundance can be used to plot abundance by  `rank`. A bar plot is returned showing the relative abundance within each sample for a given `rank`. At the same
-time the `features` argument can be set to `NULL` (default).
+time the `features` argument can be set to `NULL` (default). If `rank`is set to null then the bars will be colored by each individual taxon.
 
 ```{r}
 GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
