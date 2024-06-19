@@ -220,7 +220,7 @@ obtain expression values from, for use in point aesthetics - see the
 \item{other.fields}{Additional fields to include in the node information
 without plotting them.}
 
-\item{other_fields}{Deprecated. Use \code|{other.fields} instead.}
+\item{other_fields}{Deprecated. Use \code{other.fields} instead.}
 }
 \value{
 a \code{\link{ggtree}} plot

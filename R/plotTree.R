@@ -120,7 +120,7 @@
 #' @param other.fields Additional fields to include in the node information
 #'   without plotting them.
 #'   
-#' @param other_fields Deprecated. Use \code|{other.fields} instead.
+#' @param other_fields Deprecated. Use \code{other.fields} instead.
 #'   
 #' @param ... additional arguments for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
