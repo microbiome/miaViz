@@ -180,7 +180,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         .check_assay_present(assay.type, x)
         # if rank is set to NULL, default to plotExpression 
         if(is.null(rank)){
-            plot <- plotExpression(x, col.var = col.var, 
+            plot <- plotExpression(x, col.var = features, features,
                                 exprs_values = assay.type,
                                 one.facet = one.facet,
                                 ncol = ncol, scales = scales, ...)
