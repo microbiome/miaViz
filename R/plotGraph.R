@@ -185,7 +185,8 @@ setGeneric("plotColGraph", signature = c("x","y"),
 setGeneric("plotRowGraph", signature = c("x","y"),
            function(x, y, ...) standardGeneric("plotRowGraph"))
 
-.check_graph_plot_switches <- function(show.label, add_legend){
+.check_graph_plot_switches <- function(show.label = show_label, show_label, 
+    add.legend = add_legend, add_legend){
     if(!.is_a_bool(show.label)){
         if( (!is.logical(show.label) && !is.character(show.label) && 
             !is.numeric(show.label)) ||
@@ -201,7 +202,7 @@ setGeneric("plotRowGraph", signature = c("x","y"),
     }
 }
 
-.norm_layout_edge_type <- function(layout, edge.type){
+.norm_layout_edge_type <- function(layout, edge.type = edge_type, edge_type){
     edge.type <- match.arg(edge.type[1L], c("fan","link","arc","parallel"))
     return(list(layout = layout,
                 edge.type = edge.type))
@@ -227,7 +228,8 @@ setMethod("plotColGraph",
              shape_by = NULL,
              size.by = size_by,
              size_by = NULL,
-             assay.type = "counts",
+             assay.type = by_exprs_values,
+             by_exprs_values = "counts",
              other.fields = other_fields,
              other_fields = list(),
              ...){
@@ -281,7 +283,8 @@ setMethod("plotRowGraph",
              shape.by = shape_by,
              shape_by = NULL,
              size.by = NULL,
-             assay.type = "counts",
+             assay.type = by_exprs_values,
+             by_exprs_values = "counts",
              other.fields = other_fields,
              other_fields = list(),
              ...){
@@ -317,16 +320,25 @@ setMethod("plotRowGraph",
 )
 
 .plot_row_column_graph <- function(x, y,
-                                   show.label = FALSE,
+                                   show.label = show_label,
+                                   show_label = FALSE,
+                                   add.legend = add_legend,
                                    add_legend = TRUE,
                                    layout = "kk",
-                                   edge.type = c("fan","link","arc","parallel"),
-                                   edge.colour.by = NULL,
-                                   edge.width.by = NULL,
+                                   edge.type = edge_type,
+                                   edge_type = c("fan","link","arc","parallel"),
+                                   edge.colour.by = edge_colour_by,
+                                   edge_colour_by = NULL,
+                                   edge.width.by = edge_width_by,
+                                   edge_width_by = NULL,
+                                   colour.by = colour_by,
                                    colour_by = NULL,
-                                   shape.by = NULL,
-                                   size.by = NULL,
-                                   assay.type = "counts",
+                                   shape.by = shape_by,
+                                   shape_by = NULL,
+                                   size.by = size_by,
+                                   size_by = NULL,
+                                   assay.type = by_exprs_values,
+                                   by_exprs_values = "counts",
                                    other.fields = other_fields,
                                    other_fields = list(),
                                    type = c("row","column"),
@@ -382,7 +394,7 @@ setMethod("plotRowGraph",
 
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
-.add_graph_node_labels <- function(graph_data, show.label){
+.add_graph_node_labels <- function(graph_data, show.label = show_label, show_label){
     if(!("label" %in% .colnames_tbl_graph(graph_data, "nodes")) &&
        ("name" %in% .colnames_tbl_graph(graph_data, "nodes"))){
         graph_data <- graph_data %>%
@@ -470,13 +482,20 @@ setMethod("plotRowGraph",
 #' @importFrom tidygraph activate as_tibble
 .incorporate_graph_vis <- function(graph_data,
                                    se,
-                                   edge.colour.by,
-                                   edge.width.by,
+                                   edge.colour.by = edge_colour_by,
+                                   edge_colour_by,
+                                   edge.width.by = edge_width_by,
+                                   edge_width_by,
+                                   colour.by = colour_by,
                                    colour_by,
-                                   shape.by,
-                                   size.by,
-                                   assay.type = "counts",
-                                   other.fields = list(),
+                                   shape.by = shape_by,
+                                   shape_by,
+                                   size.by = size_by,
+                                   size_by,
+                                   assay.type = by_exprs_values,
+                                   by_exprs_values = "counts",
+                                   other.fields = other_fields,
+                                   other_fields = list(),
                                    type = c("row","column")){
     type <- match.arg(type)
     type_FUN <- switch(type,
@@ -576,20 +595,34 @@ setMethod("plotRowGraph",
 
 .graph_plotter <- function(object,
                            layout = "kk",
-                           edge.type = "fan",
+                           edge.type = edge_type,
+                           edge_type = "fan",
                            algorithm = NULL,
+                           add.legend = add_legend,
                            add_legend = TRUE,
-                           show.label = FALSE,
-                           edge.colour.by = NULL,
-                           edge.width.by = NULL,
+                           show.label = show_label,
+                           show_label = FALSE,
+                           edge.colour.by = edge_colour_by,
+                           edge_colour_by = NULL,
+                           edge.width.by = edge_width_by,
+                           edge_width_by = NULL,
+                           colour.by = colour_by,
                            colour_by = NULL,
-                           shape.by = NULL,
-                           size.by = NULL,
+                           shape.by = shape_by,
+                           shape_by = NULL,
+                           size.by = size_by,
+                           size_by = NULL,
+                           line.alpha = line_alpha,
                            line_alpha = 1,
+                           line.width = line_width,
                            line_width = NULL,
+                           line.width.range = line_width_range,
                            line_width_range = c(0.5,3),
-                           point.alpha = 1,
-                           point.size = 2,
+                           point.alpha = point_alpha,
+                           point_alpha = 1,
+                           point.size = point_size,
+                           point_size = 2,
+                           point.size.range = point_size_range,
                            point_size_range = c(1,4)){
     # assemble arg list
     point_out <- .get_point_args(colour_by,
@@ -669,7 +702,7 @@ setMethod("plotRowGraph",
 }
 
 #' @importFrom tidyr drop_na
-.add_graph_labels <- function(plot_out, show.label){
+.add_graph_labels <- function(plot_out, show.label = show_label, show_label){
     label <- NULL # disable note: no global binding for variable
     if(show.label){
         label_data <- plot_out$data %>% drop_na(label)

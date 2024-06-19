@@ -211,7 +211,8 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     return(assay)
 }
 
-.incorporate_series_vis <- function(object, x, colour.by, linetype_by, size.by){
+.incorporate_series_vis <- function(object, x, colour.by = colour_by, colour_by, 
+    linetype_by, size.by = size_by, size_by){
     
     # This variable is set by defaults
     series_data <- retrieveCellInfo(object, x, search = "colData")
@@ -296,14 +297,23 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 .series_plotter <- function(plot_data,
                             xlab = NULL,
                             ylab = NULL,
-                            colour.by = NULL,
+                            colour.by = colour_by,
+                            colour_by = NULL,
+                            linetype.by = linetype_by,
                             linetype_by = NULL,
-                            size.by = NULL,
-                            add.legend = TRUE,
+                            size.by = size_by,
+                            size_by = NULL,
+                            add.legend = add_legend,
+                            add_legend = TRUE,
+                            line.alpha = line_alpha,
                             line_alpha = 1,
+                            line.type = line_type,
                             line_type = NULL,
+                            line.width = line_width,
                             line_width = 1,
+                            line.width.range = line_width_range,
                             line_width_range = c(0.5,3),
+                            ribbon.alpha = ribbon_alpha,
                             ribbon_alpha = 0.3){
     # fall back for feature grouping
     if(is.null(colour.by)){
@@ -361,7 +371,8 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     plot_out
 }
 
-.add_extra_line_guide <- function(plot_out, linetype_by, size.by) {
+.add_extra_line_guide <- function(plot.out = plot_out, plot_out, 
+    linetype.by = linetype_by, linetype_by, size.by = size_by, size_by) {
     guide_args <- list()
     if (!is.null(linetype_by)) {
         guide_args$linetype <- guide_legend(title = linetype_by)

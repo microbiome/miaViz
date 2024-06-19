@@ -137,7 +137,10 @@ NULL
 # Adjusted function originally developed for scater package by Aaron Lun
 #' @importFrom viridis scale_fill_viridis scale_colour_viridis
 #' @importFrom ggplot2 scale_fill_manual scale_colour_manual
-.resolve_plot_colours <- function(plot_out, colour.by, colour_by_name,
+.resolve_plot_colours <- function(plot.out = plot_out, plot_out, colour.by = colout_by, 
+                                  colour_by,
+                                  colour.by.name = colour_by_name,
+                                  colour_by_name,
                                   fill = FALSE,
                                   type = c("normal","edges"),
                                   na.translate = TRUE,
@@ -206,7 +209,8 @@ NULL
 
 .add_extra_guide <- scater:::.add_extra_guide
 
-.add_extra_guide_graph <- function(plot_out, edge.width.by){
+.add_extra_guide_graph <- function(plot.out = plot_out, plot_out, 
+    edge.width.by = edge_width_by, edge_width_by){
     guide_args <- list()
     if (!is.null(edge.width.by)) {
         guide_args$edge_width <- guide_legend(title = edge.width.by)
@@ -217,7 +221,9 @@ NULL
 }
 
 #' @importFrom ggnewscale new_scale
-.add_extra_guide_tree <- function(plot_out, edge_size_by, line_width_range){
+.add_extra_guide_tree <- function(lot.out = plot_out, plot_out, 
+    edge.size.by = edge_size_by, edge_size_by,
+    line.width.range = line_width_range, line_width_range){
     if (!is.null(edge_size_by)) {
         if(is.numeric(plot_out$data$edge_size_by)){
             SIZEFUN <- scale_size_continuous
@@ -231,27 +237,33 @@ NULL
     plot_out
 }
 
-.na_replace_from_plot_data <- function(object,
+.na_replace_from_plot_data <- function(x,
+                                       edge.size.by = edge_size_by,
                                        edge_size_by = NULL,
-                                       shape.by = NULL,
-                                       size.by = NULL,
+                                       shape.by = shape_by,
+                                       shape_by = NULL,
+                                       size.by = size_by,
+                                       size_by = NULL,
+                                       default.shape = default_shape,
                                        default_shape = 21,
+                                       default.size = default_size,
                                        default_size = 0,
+                                       default.edge.size = default_edge_size,
                                        default_edge_size = 0){
     if(!is.null(shape.by)){
-        object$shape.by[is.na(object$shape.by)] <- default_shape
+        x$shape.by[is.na(x$shape.by)] <- default_shape
     }
     if(!is.null(size.by)){
-        object$size.by[is.na(object$size.by)] <- default_size
+        x$size.by[is.na(x$size.by)] <- default_size
     }
     if(!is.null(edge_size_by)){
-        object$edge_size_by[is.na(object$edge_size_by)] <- default_edge_size
+        x$edge_size_by[is.na(x$edge_size_by)] <- default_edge_size
     }
-    object
+    retun(x)
 }
 
-.get_bar_args <- function (colour.by, alpha = 0.65, add_border = NULL,
-                           n = 0) 
+.get_bar_args <- function (colour.by = colour_by, colour_by, alpha = 0.65, 
+    add.border = add_border, add_border = NULL, n = 0) 
 {
     fill_colour <- TRUE
     border <- FALSE
@@ -278,7 +290,9 @@ NULL
 
 
 # Adjusted function originally developed for scater package by Aaron Lun
-.get_point_args <- function(colour.by, shape.by, size.by,
+.get_point_args <- function(colour.by = colour_by, colour_by, 
+                            shape.by = shape_by, shape_by, 
+                            size.by = size_by, size_by,
                             alpha = 0.65,
                             size = NULL,
                             shape = 21,
@@ -316,7 +330,9 @@ NULL
     return(list(args = geom_args, fill = fill_colour))
 }
 
-.get_line_args <- function(colour.by, linetype_by, size.by,
+.get_line_args <- function(colour.by = colour_by, colour_by,
+                           linetype.by = linetype_by, linetype_by,
+                           size.by = size_by, size_by,
                            alpha = 0.65,
                            linetype = 1,
                            linewidth = NULL,
@@ -347,7 +363,7 @@ NULL
     return(list(args = geom_args))
 }
 
-.get_ribbon_args <- function(colour.by,
+.get_ribbon_args <- function(colour.by = colour_by, colour_by,
                              alpha = 0.3) 
 {
     aes_args <- aes(ymin = .data[["Y"]] - .data[["sd"]], ymax = .data[["Y"]] + .data[["sd"]])
@@ -362,8 +378,9 @@ NULL
     return(list(args = geom_args))
 }
 
-.get_edge_args <- function(edge.colour.by, edge_size_by, alpha = 1, size = NULL,
-                           layout = NULL){
+.get_edge_args <- function(edge.colour.by = edge_colour_by, edge_colour_by, 
+    edge.size.by = edge_size_by, edge_size_by, alpha = 1, size = NULL,
+    layout = NULL){
     aes_args <- list()
     if (!is.null(edge.colour.by)) {
         aes_args$colour <- "edge.colour.by"
@@ -387,8 +404,9 @@ NULL
     return(list(args = geom_args))
 }
 
-.get_graph_edge_args <- function(edge.colour.by, edge.width.by, alpha = 1,
-                                 size = NULL, edge_type){
+.get_graph_edge_args <- function(edge.colour.by = edge_colour_by, edge_colour_by,
+    edge.width.by = edge_width_by, edge_width_by, alpha = 1,
+    size = NULL, edge.type = edge_type, edge_type){
     edge_args <- .get_edge_args(edge.colour.by, edge.width.by, alpha, size)
     if (!is.null(edge.width.by)) {
         edge_args$args$mapping$edge_width <- sym("edge.width.by")
@@ -400,7 +418,7 @@ NULL
     edge_args
 }
 
-.get_rect_args <- function(colour.by, alpha = 1, colour = "black"){
+.get_rect_args <- function(colour.by = colour_by, colour_by, alpha = 1, colour = "black"){
     aes_args <- list()
     if (!is.null(colour.by)) {
         aes_args$fill <- "colour.by"
@@ -411,7 +429,7 @@ NULL
     return(list(args = geom_args))
 }
 
-.get_density_args <- function(colour.by, alpha = 0.65, colour = "black") {
+.get_density_args <- function(colour.by = colour_by, colour_by, alpha = 0.65, colour = "black") {
     fill_colour <- TRUE
     aes_args <- list()
     if (!is.null(colour.by)) {
@@ -430,8 +448,9 @@ NULL
 }
 
 #' @importFrom ggplot2 coord_flip element_blank element_text
-.flip_plot <- function(plot_out, flipped = FALSE, add.x.text = FALSE,
-                       angle_x_text = TRUE){
+.flip_plot <- function(plot.out = plot_out, plot_out, flipped = FALSE, 
+    add.x.text = add_x_text, add_x_text = FALSE,
+    angle.x.text = angle_x_text, angle_x_text = TRUE){
     if (flipped) {
         plot_out <- plot_out + 
             coord_flip()
@@ -454,7 +473,8 @@ NULL
 }
 
 #' @importFrom ggplot2 theme
-.add_legend <- function(plot_out, add.legend, position = c("right","bottom")){
+.add_legend <- function(plot.out = plot_out, plot_out, 
+    add.legend = add_legend, add_legend, position = c("right","bottom")){
     position <- match.arg(position)
     if(!add.legend){
         plot_out <- plot_out +

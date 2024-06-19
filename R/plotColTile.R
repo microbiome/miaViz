@@ -145,7 +145,8 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
 }
 
 .tile_plotter <- function(data,
-                          add.legend = TRUE,
+                          add.legend = add_legend,
+                          add_legend = TRUE,
                           xlab,
                           ylab,
                           rect_alpha = 1,

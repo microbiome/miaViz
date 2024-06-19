@@ -35,9 +35,9 @@ combineTreeData(x, other.fields = other_fields, other_fields = list())
 
 \S4method{rowTreeData}{TreeSummarizedExperiment}(x, tree.name = tree_name, tree_name = "phylo") <- value
 
-\S4method{combineTreeData}{phylo}(x, other.fields = list())
+\S4method{combineTreeData}{phylo}(x, other.fields = other_fields, other_fields = list())
 
-\S4method{combineTreeData}{treedata}(x, other.fields = list())
+\S4method{combineTreeData}{treedata}(x, other.fields = other_fields, other_fields = list())
 }
 \arguments{
 \item{x}{a

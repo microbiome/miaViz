@@ -32,8 +32,10 @@ plotPrevalentAbundance(x, ...)
   rank = taxonomyRanks(x)[1L],
   assay.type = assay_name,
   assay_name = "counts",
-  as.relative = TRUE,
-  colour.by = NULL,
+  as.relative = as_relative,
+  as_relative = TRUE,
+  colour.by = colour_by,
+  colour_by = NULL,
   size.by = size_by,
   size_by = NULL,
   shape.by = shape_by,
@@ -108,6 +110,8 @@ object specifying whether the UniFrac calculation should be parallelized.}
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
 
+\item{colour_by}{Deprecated. Use \code{colour.by} instead.}
+
 \item{size.by}{Specification of a feature to size points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
@@ -141,8 +145,6 @@ plotting. The threshold is applied per row and column.
 (default: \code{min.prevalence = 0})}
 
 \item{min_prevalence}{Deprecated. Use \code{min.prevalence} instead.}
-
-\item{colour_by}{Deprecated. Use \code{colour.by} instead.}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one

@@ -368,14 +368,22 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 )
 
 .check_tree_plot_switches <- function(layout,
-                                      relabel.tree,
-                                      remove.levels,
-                                      order.tree,
-                                      show.label, 
-                                      show.highlights,
-                                      show.highlight.label,
-                                      abbr.label,
-                                      add.legend){
+                                      relabel.tree = relabel_tree,
+                                      relabel_tree,
+                                      remove.levels = remove_levels,
+                                      remove_levels,
+                                      order.tree = order_tree,
+                                      order_tree,
+                                      show.label = show_label, 
+                                      show_label,
+                                      show.highlights = show_highlights,
+                                      show_highlights,
+                                      show.highlight.label = show_highlight_label,
+                                      show_highlight_label,
+                                      abbr.label = abbr_label,
+                                      abbr_label,
+                                      add.legend = add_legend,
+                                      add_legend){
     if(!.is_a_string(layout)){
         stop("'layout' must be a single character value.", call. = FALSE)
     }
@@ -434,27 +442,47 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 .plot_row_column_tree <- function(x,
-                                  tree.name = "phylo",
-                                  relabel.tree = FALSE,
-                                  order.tree = FALSE,
-                                  remove.levels = FALSE,
-                                  show.label = FALSE,
-                                  show.highlights = FALSE,
-                                  show.highlight.label = FALSE,
-                                  abbr.label = FALSE,
-                                  add.legend = TRUE,
+                                  tree.name = tree_name,
+                                  tree_name = "phylo",
+                                  relabel.tree = relabel_tree,
+                                  relabel_tree = FALSE,
+                                  order.tree = order_tree,
+                                  order_tree = FALSE,
+                                  remove.levels = remove_levels,
+                                  remove_levels = FALSE,
+                                  show.label = show_label,
+                                  show_label = FALSE,
+                                  show.highlights = show_highlights,
+                                  show_highlights = FALSE,
+                                  show.highlight.label = show_highlight_label,
+                                  show_highlight_label = FALSE,
+                                  abbr.label = abbr_label,
+                                  abbr_label = FALSE,
+                                  add.legend = add_legend,
+                                  add_legend = TRUE,
                                   layout = "circular",
-                                  edge.colour.by = NULL,
-                                  edge.size.by = NULL,
-                                  tip.colour.by = NULL,
-                                  tip.shape.by = NULL,
-                                  tip.size.by = NULL,
-                                  node.colour.by = NULL,
-                                  node.shape.by = NULL,
-                                  node.size.by = NULL,
-                                  colour.highlights.by = NULL,
-                                  assay.type = "counts",
-                                  other.fields = list(),
+                                  edge.colour.by = edge_colour_by,
+                                  edge_colour_by = NULL,
+                                  edge.size.by = edge_size_by,
+                                  edge_size_by = NULL,
+                                  tip.colour.by = tip_colour_by,
+                                  tip_colour_by = NULL,
+                                  tip.shape.by = tip_shape_by,
+                                  tip_shape_by = NULL,
+                                  tip.size.by = tip_size_by,
+                                  tip_size_by = NULL,
+                                  node.colour.by = node_colour_by,
+                                  node_colour_by = NULL,
+                                  node.shape.by = node_shape_by,
+                                  node_shape_by = NULL,
+                                  node.size.by = node_size_by,
+                                  node_size_by = NULL,
+                                  colour.highlights.by = colour_highlights_by,
+                                  colour_highlights_by = NULL,
+                                  assay.type = by_exprs_values,
+                                  by_exprs_values = "counts",
+                                  other.fields = other_fields,
+                                  other_fields = list(),
                                   type = c("row","column"),
                                   ...){
     type <- match.arg(type)
@@ -555,7 +583,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom tidytree as_tibble 
 .get_object_and_trimmed_tree <- function(
         x,
-        tree.name = "phylo",
+        tree.name = tree_name,
+        tree_name = "phylo",
         type = c("row","column"),
         relabel = FALSE,
         order = FALSE){
@@ -691,9 +720,12 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
-.add_tree_node_labels <- function(tree_data,
-                                  show.label,
-                                  remove.levels = FALSE){
+.add_tree_node_labels <- function(tree.data = tree_data,
+                                  tree_data,
+                                  show.label = show_label,
+                                  show_label,
+                                  remove.levels = remove_levels,
+                                  remove_levels = FALSE){
     if("label" %in% colnames(tree_data)){
         tree_data <- tree_data %>%
             mutate(node_label = .data$label)
@@ -759,7 +791,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
-.add_tree_highlights <- function(tree_data, show.highlights){
+.add_tree_highlights <- function(tree.data = tree_data, 
+    tree_data, show.highlights = show_highlights, show_highlights){
     tree_data$highlight <- FALSE
     
     if(!is.logical(show.highlights) || length(show.highlights) > 1L) {
@@ -801,9 +834,12 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
-.add_tree_highlight_labels <- function(tree_data,
-                                       show.highlight.label,
-                                       remove.levels = FALSE){
+.add_tree_highlight_labels <- function(tree.data = tree_data,
+                                       tree_data,
+                                       show.highlight.label = show_highlight_label,
+                                       show_highlight_label,
+                                       remove.levels = remove_levels,
+                                       remove_levels = FALSE){
     if(!any(tree_data$highlight)){
         show.highlight.label <- FALSE
         tree_data$highlight_label <- FALSE
@@ -911,17 +947,28 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
 #' @importFrom tibble rownames_to_column
 .incorporate_tree_vis <- function(tree_data,
                                   se,
-                                  edge.colour.by,
-                                  edge.size.by,
-                                  tip.colour.by,
-                                  tip.shape.by,
-                                  tip.size.by,
-                                  node.colour.by,
-                                  node.shape.by,
-                                  node.size.by,
-                                  colour.highlights.by,
-                                  assay.type = "counts",
-                                  other.fields = other.fields,
+                                  edge.colour.by = edge_colour_by,
+                                  edge_colour_by,
+                                  edge.size.by = edge_size_by,
+                                  edge_size_by,
+                                  tip.colour.by = tip_colour_by,
+                                  tip_colour_by,
+                                  tip.shape.by = tip_shape_by,
+                                  tip_shape_by,
+                                  tip.size.by = tip_size_by,
+                                  tip_size_by,
+                                  node.colour.by = node_colour_by,
+                                  node_colour_by,
+                                  node.shape.by = node_shape_by,
+                                  node_shape_by,
+                                  node.size.by = node_size_by,
+                                  node_size_by,
+                                  colour.highlights.by = colour_highlights_by,
+                                  colour_highlights_by,
+                                  assay.type = by_exprs_values,
+                                  by_exprs_values = "counts",
+                                  other.fields = other_fields,
+                                  other_fields = other_fields,
                                   type = c("row","column")){
     type <- match.arg(type)
     type_FUN <- switch(type,
@@ -1068,12 +1115,17 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
 # 
 # also there is some data wrangling needed
 #' @importFrom tidytree as.treedata
-.create_treedata_for_plotting <- function(tree_data,
+.create_treedata_for_plotting <- function(tree.data = tree_data,
+                                          tree_data,
                                           tree,
-                                          edge.colour.by,
-                                          edge.size.by,
-                                          shape.by,
-                                          size.by){
+                                          edge.colour.by = edge_colour_by,
+                                          edge_colour_by,
+                                          edge.size.by= edge_size_by,
+                                          edge_size_by,
+                                          shape.by = shape_by,
+                                          shape_by,
+                                          size.by = size_by,
+                                          size_by){
     # cleanup
     if (!is.null(edge.colour.by) && 
         anyNA(tree_data$edge.colour.by) &&
@@ -1103,27 +1155,49 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
 #'   theme_tree
 .tree_plotter <- function(x,
                           layout = "circular",
-                          add.legend = TRUE,
-                          show.label = FALSE,
-                          show.highlights = FALSE,
-                          show.highlight.label = FALSE,
-                          abbr.label = FALSE,
+                          add.legend = add_legend,
+                          add_legend = TRUE,
+                          show.label = show_label,
+                          show_label = FALSE,
+                          show.highlights = show_highlights,
+                          show_highlights = FALSE,
+                          show.highlight.label = show_highlight_label,
+                          show_highlight_label = FALSE,
+                          abbr.label = abbr_label,
+                          abbr_label = FALSE,
+                          show.tips = show_tips,
                           show_tips = FALSE,
+                          show.nodes = show_nodes,
                           show_nodes = FALSE,
-                          edge.colour.by = NULL,
-                          edge.size.by = NULL,
-                          colour.by = NULL,
-                          shape.by = NULL,
-                          size.by = NULL,
-                          colour.highlights.by = NULL,
-                          order.tree = FALSE,
+                          edge.colour.by = edge_colour_by,
+                          edge_colour_by = NULL,
+                          edge.size.by = edge_size_by,
+                          edge_size_by = NULL,
+                          colour.by = colour_by,
+                          colour_by = NULL,
+                          shape.by = shape_by,
+                          shape_by = NULL,
+                          size.by = size_by,
+                          size_by = NULL,
+                          colour.highlights.by = colour_highlights_by,
+                          colour_highlights_by = NULL,
+                          order.tree = order_tree,
+                          order_tree = FALSE,
+                          line.alpha = line_alpha,
                           line_alpha = 1,
+                          line.width = line_width,
                           line_width = NULL,
+                          line.width.range = line_width_range,
                           line_width_range = c(0.5,3),
-                          point.alpha = 1,
-                          point.size = 2,
+                          point.alpha = point_alpha,
+                          point_alpha,
+                          point.size = point_size,
+                          point_size = 2,
+                          point.size.range = point_size_range,
                           point_size_range = c(1,4),
+                          label.font.size = label_font_size,
                           label_font_size = 3,
+                          highlight.font.size = highlight_font_size,
                           highlight_font_size = 3){
     # start plotting
     plot_out <- ggtree(x,
@@ -1207,8 +1281,8 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
     plot_out
 }
 
-.get_hightlight_args <- function(nodes,
-                                 colour.highlights.by = NULL){
+.get_hightlight_args <- function(nodes, colour.highlights.by = colour_highlights_by, 
+    colour_highlights_by = NULL){
     aes_args <- list()
     aes_args$subset <- paste0("node %in% c(",paste(nodes, collapse = ","),")")
     aes_args$extendto <- ~highlight_extendto
@@ -1303,12 +1377,18 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
 #' @importFrom ggtree geom_highlight geom_cladelab
 #' @importFrom ggnewscale new_scale_fill new_scale_colour
 #' @importFrom tidytree rootnode
-.plot_tree_plot_highlights <- function(plot_out,
+.plot_tree_plot_highlights <- function(plot.out = plot_out,
+                                       plot_out,
                                        layout,
-                                       show.highlights,
-                                       show.highlight.label,
-                                       abbr.label,
-                                       colour.highlights.by,
+                                       show.highlights = show_highlights,
+                                       show_highlights,
+                                       show.highlight.label = show_highlight_label,
+                                       show_highlight_label,
+                                       abbr.label = abbr_label,
+                                       abbr_label,
+                                       colour.highlights.by = colour_highlights_by,
+                                       colour_highlights_by,
+                                       highlight.fone.size = highlight_font_size,
                                        highlight_font_size){
     plot_out$data <- .calc_highlight_extendto(plot_out$data, layout)
     plot_out$data <- .calc_highlight_label_text_offset(plot_out$data, layout)
@@ -1365,11 +1445,17 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
     plot_out
 }
 
-.plot_tree_edges <- function(plot_out,
-                             edge.colour.by,
-                             edge.size.by,
+.plot_tree_edges <- function(plot.out = plot_out,
+                             plot_out,
+                             edge.colour.by = edge_colour_by,
+                             edge_colour_by,
+                             edge.size.by = edge_size_by,
+                             edge_size_by,
+                             line.alpha = line_alpha,
                              line_alpha,
+                             line.width = line_width,
                              line_width,
+                             line.width.range = line_width_range,
                              line_width_range,
                              layout){
     # assemble arg list
@@ -1394,14 +1480,23 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
     plot_out
 }
 
-.plot_tree_node_points <- function(plot_out,
+.plot_tree_node_points <- function(plot.out = plot_out,
+                                   plot_out,
+                                   show.tips = show_tips,
                                    show_tips,
+                                   show.nodes = show_nodes,
                                    show_nodes,
-                                   colour.by,
-                                   shape.by,
-                                   size.by,
-                                   point.alpha,
-                                   point.size,
+                                   colour.by = colour_by,
+                                   colour_by,
+                                   shape.by = shape_by,
+                                   shape_by,
+                                   size.by = size_by,
+                                   size_by,
+                                   point.alpha = point_alpha,
+                                   point_alpha,
+                                   point.size = point_size,
+                                   point_size,
+                                   point.size.range = point_size_range,
                                    point_size_range){
     point_out <- .get_point_args(colour.by,
                                  shape.by,
@@ -1439,9 +1534,13 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
 }
 
 #' @importFrom ggtree geom_tiplab geom_nodelab
-.plot_tree_node_labels <- function(plot_out,
-                                   show.label,
-                                   abbr.label,
+.plot_tree_node_labels <- function(plot.out = plot_out,
+                                   plot_out,
+                                   show.label = show_label,
+                                   show_label,
+                                   abbr.label = abbr_label,
+                                   abbr_label,
+                                   label.font.size = label_font_size,
                                    label_font_size = 3){
     if(show.label){
         data <- plot_out$data

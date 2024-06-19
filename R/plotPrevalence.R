@@ -198,8 +198,8 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom BiocParallel bpmapply bpisup bpstart bpstop SerialParam
 #' @importFrom SummarizedExperiment assay
 .get_prevalence_plot_data <- function(x, assay.type, detections, prevalences,
-                                      as.relative = TRUE, 
-                                      BPPARAM = BiocParallel::SerialParam()){
+    as.relative = as_relative, as_relative = TRUE,
+    BPPARAM = BiocParallel::SerialParam()){
     mat <- assay(x, assay.type, withDimnames = TRUE)
     if(as.relative){
         mat <- mia:::.calc_rel_abund(mat)
@@ -233,8 +233,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x,
              rank = taxonomyRanks(x)[1L],
              assay.type = assay_name, assay_name = "counts",
-             as.relative = TRUE,
-             colour.by = NULL,
+             as.relative = as_relative, as_relative = TRUE,
+             colour.by = colour_by, colour_by = NULL,
              size.by = size_by,
              size_by = NULL,
              shape.by = shape_by,
@@ -298,8 +298,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom DelayedArray rowMeans
 #' @importFrom SummarizedExperiment assay
-.get_prevalence_plot_point_data <- function(x, assay.type, as.relative = TRUE,
-                                            label = NULL){
+.get_prevalence_plot_point_data <- function(x, assay.type, as.relative = as_relative, 
+    as_relative = TRUE, label = NULL){
     mat <- assay(x, assay.type, withDimnames = TRUE)
     if(as.relative){
         mat <- mia:::.calc_rel_abund(mat)
@@ -314,13 +314,14 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 }
 
 #' @importFrom scater retrieveFeatureInfo
-.incorporate_prevalence_vis <- function(plot_data,
+.incorporate_prevalence_vis <- function(plot.data = plot_data,
+                                        plot_data,
                                         se = se,
-                                        colour.by = NULL,
-                                        size.by = NULL,
-                                        shape.by = NULL,
+                                        colour.by = colour_by, colour_by = NULL,
+                                        size.by = size_by, size_by = NULL,
+                                        shape.by = shape_by, shape_by = NULL,
                                         label = NULL,
-                                        facet.by = NULL){
+                                        facet.by = facet_by, facet_by = NULL){
     variables <- c(colour.by = colour.by,
                    size.by = size.by,
                    shape.by = shape.by,
@@ -434,8 +435,8 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom tidyr pivot_longer
 #' @importFrom DelayedArray rowSums
 .get_prevalence_plot_matrix <- function(x, assay.type, detections, 
-                                        as.relative = TRUE, 
-                                        min.prevalence,
+                                        as.relative = as_relative, as_relative = TRUE,
+                                        min.prevalence = min_prevalence, min_prevalence,
                                         BPPARAM = BiocParallel::SerialParam()){
     mat <- assay(x, assay.type, withDimnames = TRUE)
     if(as.relative){

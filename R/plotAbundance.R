@@ -267,8 +267,8 @@ MELT_VALUES <- "Value"
 #' @importFrom tidyr pivot_longer nest unnest
 #' @importFrom tibble rownames_to_column
 #' @importFrom purrr map
-.get_abundance_data <- function(x, rank, assay.type, order.row.by = "name",
-                                use.relative = TRUE){
+.get_abundance_data <- function(x, rank, assay.type, order.row.by = order_rank_by,
+    order_rank_by = "name", use.relative = use_relative, use_relative = TRUE){
     data <- assay(x, assay.type, withDimnames = TRUE)
     if(use.relative){
         data <- mia:::.calc_rel_abund(data)
@@ -322,7 +322,8 @@ MELT_VALUES <- "Value"
     data
 }
 
-.norm_order_sample_by <- function(order.col.by, factors, x){
+.norm_order_sample_by <- function(order.col.by = order_sample_by, 
+    order_sample_by, factors, x){
     if(is.null(order.col.by)){
         return(order.col.by)
     }
@@ -353,7 +354,8 @@ MELT_VALUES <- "Value"
     tmp
 }
 
-.get_features_data <- function(col.var, order.col.by, x){
+.get_features_data <- function(col.var = features, features, 
+    order.col.by = order_sample_by, order_sample_by, x){
     col.var <- unique(c(order.col.by,col.var))
     features_data <- lapply(col.var,
                             .get_feature_data,
@@ -377,7 +379,7 @@ MELT_VALUES <- "Value"
 
 #' @importFrom dplyr pull
 .order_abund_feature_data <- function(abund_data, features_data,
-                                    order.col.by, decreasing = TRUE){
+    order.col.by = order_sample_by, order_sample_by, decreasing = TRUE){
     if(!is.null(order.col.by)){
         lvl <- levels(abund_data$X)
         if(is.null(features_data) || 
@@ -533,13 +535,18 @@ MELT_VALUES <- "Value"
 }
 
 .features_plotter <- function(features_data,
-                            order.col.by = NULL,
+                            order.col.by = order_sample_by,
+                            order_sample_by = NULL,
                             xlab = NULL,
                             flipped = FALSE,
-                            add.legend = TRUE,
-                            add.x.text = FALSE,
-                            point.alpha = 1,
+                            add.legend = add_legend,
+                            add_legend = TRUE,
+                            add.x.text = add_x_text,
+                            add_x_text = FALSE,
+                            point.alpha = point_alpha,
+                            point_alpha = point.size,
                             point.size = 2,
+
                             ...){
     names <- colnames(features_data)
     features_data <- lapply(names, 

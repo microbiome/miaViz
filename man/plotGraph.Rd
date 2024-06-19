@@ -31,7 +31,8 @@ plotRowGraph(x, y, ...)
   shape_by = NULL,
   size.by = size_by,
   size_by = NULL,
-  assay.type = "counts",
+  assay.type = by_exprs_values,
+  by_exprs_values = "counts",
   other.fields = other_fields,
   other_fields = list(),
   ...
@@ -55,7 +56,8 @@ plotRowGraph(x, y, ...)
   shape.by = shape_by,
   shape_by = NULL,
   size.by = NULL,
-  assay.type = "counts",
+  assay.type = by_exprs_values,
+  by_exprs_values = "counts",
   other.fields = other_fields,
   other_fields = list(),
   ...

@@ -168,7 +168,7 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom tibble rownames_to_column
 #' @importFrom dplyr select relocate
-.norm_other_fields <- function(other.fields){
+.norm_other_fields <- function(other.fields = other_fields, other_fields){
     if(is.null(other.fields) || length(other.fields) == 0L){
         return(NULL)
     }
@@ -207,7 +207,8 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
     other.fields
 }
 
-.norm_id_col_of_other_fields <- function(other.fields, tree_data){
+.norm_id_col_of_other_fields <- function(other.fields = other_fields, 
+    other_fields, tree.data = tree_data, tree_data){
     if(is.null(other.fields)){
         return(other.fields)
     }
@@ -238,7 +239,8 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
     other.fields
 }
 
-.combine_tree_data_and_other_fields <- function(tree_data, other.fields){
+.combine_tree_data_and_other_fields <- function(tree.data = tree_data,
+    tree_data, other.fields = other_fields, other_fields){
     if(!is.null(other.fields)){
         by_col_name <- colnames(other.fields)[1L]
         tree_data <- tree_data %>%
@@ -248,7 +250,8 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 #' @importFrom tidytree as.treedata
-.combine_tree_and_other_fields <- function(tree, other.fields = list()){
+.combine_tree_and_other_fields <- function(tree, other.fields = other_fields,
+    other_fields = list()){
     tree_data <- .get_tree_data(tree)
     other.fields <- .norm_other_fields(other.fields)
     if(is.null(other.fields)){
@@ -263,7 +266,8 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname treeData
 #' @export
 setMethod("combineTreeData", signature = c(x = "phylo"),
-    function(x, other.fields = list()){
+    function(x, other.fields = other_fields,
+    other_fields = list()){
         .combine_tree_and_other_fields(x, other.fields)
     }
 )
@@ -271,7 +275,8 @@ setMethod("combineTreeData", signature = c(x = "phylo"),
 #' @rdname treeData
 #' @export
 setMethod("combineTreeData", signature = c(x = "treedata"),
-    function(x, other.fields = list()){
+    function(x, other.fields = other_fields,
+    other_fields = list()){
         .combine_tree_and_other_fields(x, other.fields)
     }
 )
