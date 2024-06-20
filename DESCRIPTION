@@ -51,8 +51,7 @@ Imports:
     ape,
     DirichletMultinomial,
     ggrepel,
-    SingleCellExperiment,
-    magick
+    SingleCellExperiment
 Suggests:
     knitr,
     rmarkdown,
