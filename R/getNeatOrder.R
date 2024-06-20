@@ -8,7 +8,7 @@
 #' The function takes in a matrix of ordinated data, optionally 
 #' centers the data using specified methods (\code{mean}, \code{median}, or \code{none}), and then calculates 
 #' the angle (theta) for each point relative to the centroid. The data points are then 
-#' sorted based on these theta values in either ascending or descending order. 
+#' sorted based on these theta values in ascending order. 
 #' 
 #' One significant application of this sorting method is in plotting heatmaps. 
 #' By using radial theta sorting, the relationships between data points can be preserved 
@@ -17,15 +17,13 @@
 #' allows for a more faithful representation of the data's intrinsic structure as captured 
 #' by the ordination process.
 #' 
-#' @param x A matrix containing the ordinated data to be sorted. Columns should represent the principal components (PCs) and rows should represent the entities being analyzed (e.g. features or samples).
-#' @param dimensions A \code{character} or \code{integer} vector of length 2 specifying the columns of the matrix to use for the X and Y coordinates.
-#' @param centering.method A single \code{character} value specifying the method to center the data. Options are \code{mean}, \code{median}, or \code{none} if your data is already centered. (default: method = \code{mean})
-#' @param decreasing A \code{boolean} that when \code{TRUE} sorts the rows in a descending order by radial theta angle. (default: descending = \code{FALSE})
+#' @param x A matrix containing the ordinated data to be sorted. Columns should represent the principal components (PCs) and rows should represent the entities being analyzed (e.g. features or samples). There should be 2 columns only representing 2 PCs.
+#' @param centering A single \code{character} value specifying the method to center the data. Options are \code{mean}, \code{median}, or \code{none} if your data is already centered. (default: method = \code{mean})
 #' @param ... Additional arguments passed to other methods.
 #' @return A \code{character} vector of row names in the sorted order.
 #' 
 #' @details 
-#' It's important to note that the sechm package does actually have the functionality for plotting a heatmap using this radial theta angle ordering, though only by using an MDS ordination. 
+#' It's important to note that the \pkg{sechm} package does actually have the functionality for plotting a heatmap using this radial theta angle ordering, though only by using an MDS ordination. 
 #' 
 #' This functionality can be found at:
 #' 
@@ -34,14 +32,9 @@
 #' That being said, the \code{getNeatOrder} function is more modular and separate to the plotting, and 
 #' can be applied to any kind of ordinated data which can be valuable depending on the use case.
 #' 
-#' @references
 #' The below paper outlines the NeatMap method in more detail:
 #' 
-#' Rajaram, S., Oono, Y. NeatMap - non-clustering heat map alternatives in R. BMC Bioinformatics 11, 45 (2010). https://doi.org/10.1186/1471-2105-11-45.
-#' 
-#' It can be found at:
-#' 
-#'  \url{https://bmcbioinformatics.biomedcentral.com/articles/10.1186/1471-2105-11-45}.
+#' "Rajaram & Oono (2010)" - https://doi.org/10.1186/1471-2105-11-45.
 #' 
 #' @name getNeatOrder
 #' 
@@ -49,32 +42,45 @@
 #' ## Load the required libraries and dataset
 #' library(mia)
 #' library(scater)
-#' library(sechm)
+#' library(ComplexHeatmap)
+#' library(circlize)
 #' data(peerj13075)
 #' 
 #' ## Group data by taxonomic order
 #' tse <- agglomerateByRank(peerj13075, rank = "order", onRankOnly = TRUE)
 #' 
-#' ## Transform the samples into relative abundances
-#' tse <- transformAssay(tse, assay.type = "counts", method="relabundance", MARGIN = "samples", name="relabundance")
+#' ## Add a pseudocount to the counts data
+#' assay(tse, "counts") <- assay(tse, "counts") + 1
+#' 
+#' ## Transform the samples into relative abundances using CLR
+#' tse <- transformAssay(tse, assay.type = "counts", method="clr", MARGIN = "samples", name="clr")
 #' 
 #' ## Transform the features (taxa) into zero mean, unit variance (z transformation)
-#' tse <- transformAssay(tse, assay.type="relabundance", method="z", MARGIN = "features", name="z")
+#' tse <- transformAssay(tse, assay.type="clr", method="z", MARGIN = "features", name="z")
 #' 
 #' ## Perform PCA using calculatePCA
-#' pca_result <- calculatePCA(tse, ncomponents = 10, assay.type = "z")
-#' 
-#' ## Add PCA results to the TreeSE object
-#' reducedDim(tse, "PCA") <- pca_result
+#' reducedDim(tse, "PCA") <- calculatePCA(tse, ncomponents = 10, assay.type = "z")
 #' 
 #' ## Sort by radial theta and sort the original assay data
-#' sorted_order <- getNeatOrder(reducedDim(tse, "PCA"), dimensions = c(1, 2), centering.method = "mean")
+#' sorted_order <- getNeatOrder(reducedDim(tse, "PCA")[, c(1,2)], centering = "mean")
 #' tse <- tse[, sorted_order]
 #' 
-#' ## Create the heatmap with sechm whilst retaining this radial theta ordering
-#' features <- rownames(assay(tse, "z"))
-#' sechm_plot <- sechm(tse, assayName = "z", features=features, do.scale=FALSE, cluster_rows=FALSE, 
-#'                     sortRowsOn = NULL)
+#' ## Define the color function and cap the colors at [-5, 5]
+#' col_fun <- colorRamp2(c(-5, 0, 5), c("blue", "white", "red"))
+#' 
+#' ## Create the heatmap
+#' heatmap <- Heatmap(assay(tse, "z"),
+#'               name = "NeatMap",
+#'               col = col_fun,
+#'               cluster_rows = FALSE,  # Do not cluster rows
+#'               cluster_columns = FALSE,  # Do not cluster columns
+#'               show_row_dend = FALSE,
+#'               show_column_dend = FALSE,
+#'               row_names_gp = gpar(fontsize = 4), 
+#'               column_names_gp = gpar(fontsize = 6), 
+#'               heatmap_width = unit(20, "cm"),  
+#'               heatmap_height = unit(15, "cm")  
+#' )
 NULL
 
 #' @rdname getNeatOrder
@@ -88,20 +94,15 @@ setGeneric("getNeatOrder", signature = c("x"),
 #' @export
 setMethod("getNeatOrder", signature = c("matrix"),
     function(x,
-        dimensions = c(1, 2),
-        centering.method = c("mean", "median", "none"),
-        decreasing = FALSE,
+        centering = "mean",
         ...){
               
             # Check args
-            .check_args(x, subset, dimensions, centering.method, decreasing)
-            
-            # Take the correct dimensions
-            x <- x[, dimensions, drop = FALSE]
+            .check_args(x, centering)
 
             # Get the theta values and order them
-            theta_values <- .radial_theta(x, centering.method)
-            ordering <- .get_sorted_rownames(theta_values, decreasing)
+            theta_values <- .radial_theta(x, centering)
+            ordering <- .get_sorted_rownames(theta_values)
             
             return(ordering)
         }
@@ -109,7 +110,7 @@ setMethod("getNeatOrder", signature = c("matrix"),
 
 
 # Checks the method arguments.
-.check_args <- function(x, subset, dimensions, centering.method, decreasing) {
+.check_args <- function(x, centering) {
     # Check data is a matrix
     if (!is.matrix(x)) {
         stop("Input data must be a matrix.", call. = FALSE)
@@ -120,31 +121,13 @@ setMethod("getNeatOrder", signature = c("matrix"),
         stop("No data to plot. Matrix must have at least one row and one column.", call. = FALSE)
     }
     
-    # Check dimensions are valid
-    if (is.numeric(dimensions)) {
-        if (any(dimensions > ncol(x) | dimensions < 1)) {
-            stop("dimensions refer to columns that do not exist in the data.", call. = FALSE)
-        }
-    } else if (is.character(dimensions)) {
-        if (any(!dimensions %in% colnames(x))) {
-            stop("dimensions refer to column names that do not exist in the data.", call. = FALSE)
-        }
-    } else {
-        stop("dimensions must be a vector of column indices or names.", call. = FALSE)
+    # Check there is sufficient data
+    if (ncol(x) != 2) {
+        stop("Matrix must have only 2 columns.", call. = FALSE)
     }
     
-    # Check dimension vector is of length 2
-    if (length(dimensions) != 2) {
-        stop("Exactly two dimensions must be specified.", call. = FALSE)
-    }
-    
-    # Check centering.method
-    centering.method <- match.arg(centering.method, c("mean", "median", "none"))
-    
-    # Check decreasing
-    if (!is.logical(decreasing) || length(decreasing) != 1) {
-        stop("decreasing must be a single boolean value.", call. = FALSE)
-    }
+    # Check centering argument
+    centering <- match.arg(centering, c("mean", "median", "none"))
     
     # Check for unique row names
     if (any(duplicated(rownames(x)))) {
@@ -161,15 +144,15 @@ setMethod("getNeatOrder", signature = c("matrix"),
 
 
 # Computes the radial theta values for each row in the data matrix.
-.radial_theta <- function(data, centering.method) {
-    # Choose the correct centering function based on the centering.method
-    center_fun <- switch(centering.method, "median" = median, "mean" = mean)
+.radial_theta <- function(data, centering) {
+    # Choose the correct centering function based on the method
+    center_fun <- switch(centering, "median" = median, "mean" = mean)
     
-    # Apply the centering if there's a centering.method present
+    # Apply the centering if there's a method present
     if (!is.null(center_fun)) {
         center_vals <- apply(data, 2, center_fun)
         centered_data <- scale(data, center = center_vals, scale = FALSE)
-    } else if (centering.method == "none") {
+    } else if (centering == "none") {
         centered_data <- data
     }
     
@@ -183,8 +166,8 @@ setMethod("getNeatOrder", signature = c("matrix"),
 
 
 # Sorts the theta values and returns the ordered row names.
-.get_sorted_rownames <- function(theta_values, decreasing) {
-    sorted_indices <- order(theta_values, decreasing = decreasing)
+.get_sorted_rownames <- function(theta_values) {
+    sorted_indices <- order(theta_values)
     rownames <- names(theta_values)[sorted_indices]
     return(rownames)
 }
