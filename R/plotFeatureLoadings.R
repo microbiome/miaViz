@@ -211,18 +211,6 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
 # 
 # 
 # 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
-# 
 # library(mia)
 # library(topicmodels)
 # 
