@@ -72,10 +72,10 @@ tse <- transformAssay(tse, assay.type = "counts", method="clr", MARGIN = "sample
 tse <- transformAssay(tse, assay.type="clr", method="z", MARGIN = "features", name="z")
 
 ## Perform PCA using calculatePCA
-reducedDim(tse, "PCA") <- calculatePCA(tse, ncomponents = 10, assay.type = "z")
+res <- calculatePCA(tse, assay.type = "z")
 
 ## Sort by radial theta and sort the original assay data
-sorted_order <- getNeatOrder(reducedDim(tse, "PCA")[, c(1,2)], centering = "mean")
+sorted_order <- getNeatOrder(res[, c(1,2)], centering = "mean")
 tse <- tse[, sorted_order]
 
 ## Define the color function and cap the colors at [-5, 5]
