@@ -1377,8 +1377,7 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
 #' @importFrom ggtree geom_highlight geom_cladelab
 #' @importFrom ggnewscale new_scale_fill new_scale_colour
 #' @importFrom tidytree rootnode
-.plot_tree_plot_highlights <- function(plot.out = plot_out,
-                                       plot_out,
+.plot_tree_plot_highlights <- function(plot_out,
                                        layout,
                                        show.highlights = show_highlights,
                                        show_highlights,
@@ -1445,8 +1444,7 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
     plot_out
 }
 
-.plot_tree_edges <- function(plot.out = plot_out,
-                             plot_out,
+.plot_tree_edges <- function(plot_out,
                              edge.colour.by = edge_colour_by,
                              edge_colour_by,
                              edge.size.by = edge_size_by,
@@ -1480,8 +1478,7 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
     plot_out
 }
 
-.plot_tree_node_points <- function(plot.out = plot_out,
-                                   plot_out,
+.plot_tree_node_points <- function(plot_out,
                                    show.tips = show_tips,
                                    show_tips,
                                    show.nodes = show_nodes,
@@ -1534,8 +1531,7 @@ NODE_VARIABLES <- c("node.colour.by", "node.shape.by", "node.size.by")
 }
 
 #' @importFrom ggtree geom_tiplab geom_nodelab
-.plot_tree_node_labels <- function(plot.out = plot_out,
-                                   plot_out,
+.plot_tree_node_labels <- function(plot_out,
                                    show.label = show_label,
                                    show_label,
                                    abbr.label = abbr_label,

@@ -371,7 +371,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     plot_out
 }
 
-.add_extra_line_guide <- function(plot.out = plot_out, plot_out, 
+.add_extra_line_guide <- function(plot_out, 
     linetype.by = linetype_by, linetype_by, size.by = size_by, size_by) {
     guide_args <- list()
     if (!is.null(linetype_by)) {

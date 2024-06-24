@@ -137,14 +137,14 @@ NULL
 # Adjusted function originally developed for scater package by Aaron Lun
 #' @importFrom viridis scale_fill_viridis scale_colour_viridis
 #' @importFrom ggplot2 scale_fill_manual scale_colour_manual
-.resolve_plot_colours <- function(plot_out, colour.by = colout_by, colour_by, colour_by_name,
+.resolve_plot_colours <- function(plot_out, colour_by, colour_by_name,
                                   fill = FALSE,
                                   type = c("normal","edges"),
                                   na.translate = TRUE,
                                   na.value = NA,
                                   ...) 
 {
-    if (is.null(colour.by)) {
+    if (is.null(colour_by)) {
         return(plot_out)
     }
     type <- match.arg(type)
@@ -171,14 +171,14 @@ NULL
     } else {
         stop("Unrecognized colour type")
     }
-    if (is.numeric(colour.by)) {
+    if (is.numeric(colour_by)) {
         plot_out <- plot_out + VIRIDFUN(name = colour_by_name, option = option,
                                         na.value = na.value,
                                         ...
                                         )
     }
     else {
-        nlevs_colour_by <- nlevels(as.factor(colour.by))
+        nlevs_colour_by <- nlevels(as.factor(colour_by))
         if (nlevs_colour_by <= 10) {
             plot_out <- plot_out + SCALEFUN(values = .get_palette("tableau10medium"), 
                                             name = colour_by_name,
@@ -206,7 +206,7 @@ NULL
 
 .add_extra_guide <- scater:::.add_extra_guide
 
-.add_extra_guide_graph <- function(plot.out = plot_out, plot_out, 
+.add_extra_guide_graph <- function(plot_out, 
     edge.width.by = edge_width_by, edge_width_by){
     guide_args <- list()
     if (!is.null(edge.width.by)) {
@@ -218,7 +218,7 @@ NULL
 }
 
 #' @importFrom ggnewscale new_scale
-.add_extra_guide_tree <- function(lot.out = plot_out, plot_out, 
+.add_extra_guide_tree <- function(plot_out, 
     edge.size.by = edge_size_by, edge_size_by,
     line.width.range = line_width_range, line_width_range){
     if (!is.null(edge_size_by)) {
@@ -445,7 +445,7 @@ NULL
 }
 
 #' @importFrom ggplot2 coord_flip element_blank element_text
-.flip_plot <- function(plot.out = plot_out, plot_out, flipped = FALSE, 
+.flip_plot <- function(plot_out, flipped = FALSE, 
     add.x.text = add_x_text, add_x_text = FALSE,
     angle.x.text = angle_x_text, angle_x_text = TRUE){
     if (flipped) {
