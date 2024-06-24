@@ -137,10 +137,7 @@ NULL
 # Adjusted function originally developed for scater package by Aaron Lun
 #' @importFrom viridis scale_fill_viridis scale_colour_viridis
 #' @importFrom ggplot2 scale_fill_manual scale_colour_manual
-.resolve_plot_colours <- function(plot.out = plot_out, plot_out, colour.by = colout_by, 
-                                  colour_by,
-                                  colour.by.name = colour_by_name,
-                                  colour_by_name,
+.resolve_plot_colours <- function(plot_out, colour.by = colout_by, colour_by, colour_by_name,
                                   fill = FALSE,
                                   type = c("normal","edges"),
                                   na.translate = TRUE,
@@ -473,8 +470,8 @@ NULL
 }
 
 #' @importFrom ggplot2 theme
-.add_legend <- function(plot.out = plot_out, plot_out, 
-    add.legend = add_legend, add_legend, position = c("right","bottom")){
+.add_legend <- function(plot_out, 
+    add.legend, add_legend, position = c("right","bottom")){
     position <- match.arg(position)
     if(!add.legend){
         plot_out <- plot_out +
