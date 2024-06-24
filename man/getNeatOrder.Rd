@@ -68,7 +68,7 @@ assay(tse, "counts") <- assay(tse, "counts") + 1
 ## Transform the samples into relative abundances using CLR
 tse <- transformAssay(tse, assay.type = "counts", method="clr", MARGIN = "samples", name="clr")
 
-## Transform the features (taxa) into zero mean, unit variance (z transformation)
+## Transform the features (taxa) into zero mean, unit variance (standardize transformation)
 tse <- transformAssay(tse, assay.type="clr", method="standardize", MARGIN = "features", name="standardized")
 
 ## Perform PCA using calculatePCA
