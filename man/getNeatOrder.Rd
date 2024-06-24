@@ -69,10 +69,10 @@ assay(tse, "counts") <- assay(tse, "counts") + 1
 tse <- transformAssay(tse, assay.type = "counts", method="clr", MARGIN = "samples", name="clr")
 
 ## Transform the features (taxa) into zero mean, unit variance (z transformation)
-tse <- transformAssay(tse, assay.type="clr", method="z", MARGIN = "features", name="z")
+tse <- transformAssay(tse, assay.type="clr", method="standardize", MARGIN = "features", name="standardized")
 
 ## Perform PCA using calculatePCA
-res <- calculatePCA(tse, assay.type = "z")
+res <- calculatePCA(tse, assay.type = "standardized", ncomponents = 10)
 
 ## Sort by radial theta and sort the original assay data
 sorted_order <- getNeatOrder(res[, c(1,2)], centering = "mean")
@@ -82,7 +82,7 @@ tse <- tse[, sorted_order]
 col_fun <- colorRamp2(c(-5, 0, 5), c("blue", "white", "red"))
 
 ## Create the heatmap
-heatmap <- Heatmap(assay(tse, "z"),
+heatmap <- Heatmap(assay(tse, "standardized"),
               name = "NeatMap",
               col = col_fun,
               cluster_rows = FALSE,  # Do not cluster rows
