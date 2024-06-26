@@ -146,7 +146,7 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
-            rank = NULL,
+            rank = taxonomyRanks(x)[1],
             features = NULL,
             order_rank_by = c("name","abund","revabund"),
             order_sample_by = NULL,
@@ -187,7 +187,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         if(is.null(rank)){
            rank <- "Feature"
            rowData(x)[[ rank ]] <- rownames(x)
-           order_sample_by <- NULL
         }
         abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
                                         use_relative)
