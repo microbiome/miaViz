@@ -164,8 +164,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         }
         .check_assay_present(assay.type, x)
         ############################# INPUT CHECK #############################
-        if(!.is_non_empty_string(rank) & !is.null(rank)){
-            stop("'rank' must be an non empty single character value.",
+        if(!.is_non_empty_string(rank) && !is.null(rank)){
+            stop("'rank' must be an non empty single character value or NULL.",
                 call. = FALSE)
         }
         if(!.is_a_bool(use_relative)){
@@ -180,7 +180,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
                             ncol = ncol)
-        if( !is.null(features)){
+        if( !is.null(features) ){
             features <- match.arg(features, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
