@@ -78,9 +78,6 @@
 #' ## Using "Phylum" as rank
 #' plotAbundance(se, assay.type="counts", rank = "Phylum", add_legend = FALSE)
 #' 
-#' ## If rank is set to NULL plotAbundance behaves like plotExpression
-#' plotAbundance(se, assay.type="counts", rank = NULL,
-#'            features = head(rownames(se)))
 #'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
 #' plotAbundance(se, assay.type="counts", rank = "Phylum",
@@ -188,6 +185,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
            rank <- "Feature"
            rowData(x)[[ rank ]] <- rownames(x)
         }
+        # If more than 500 features, revert to first taxonomic rank
+        if(is.null(rank) && nrow(assay(x,assay.type=assay_name))>500){
+            rank = taxonomyRanks(x)[1]
+        }
+        
         abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
                                         use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
