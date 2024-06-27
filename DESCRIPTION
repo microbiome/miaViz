@@ -60,7 +60,9 @@ Suggests:
     patchwork,
     vegan,
     microbiomeDataSets,
-    bluster
+    bluster,
+    ComplexHeatmap,
+    circlize
 Remotes:
     github::microbiome/miaTime
 Roxygen: list(markdown = TRUE)
