@@ -185,16 +185,16 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
            rank <- "Feature"
            rowData(x)[[ rank ]] <- rownames(x)
         }
-        # If more than 500 features, revert to first taxonomic rank
-        if(is.null(rank) && nrow(assay(x,assay.type=assay_name))>500){
-            rank = taxonomyRanks(x)[1]
-        }
         
         abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
                                         use_relative)
         order_sample_by <- .norm_order_sample_by(order_sample_by,
                                                 unique(abund_data$colour_by),
                                                 x)
+        if(is.null(rank) && nrow(assay(x,assay.type=assay_name))>100){
+            stop("The data contains more than 100 rows. 
+                 The abundance plot cannot be created.", call. = FALSE)
+        }
         features_data <- NULL
         if(!is.null(features) || !is.null(order_sample_by)){
             features_data <- .get_features_data(features, order_sample_by, x)
