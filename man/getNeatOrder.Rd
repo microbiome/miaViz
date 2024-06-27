@@ -14,7 +14,7 @@ getNeatOrder(x, ...)
 
 \item{...}{Additional arguments passed to other methods.}
 
-\item{centering}{A single \code{character} value specifying the method to center the data. Options are \code{mean}, \code{median}, or \code{none} if your data is already centered. (default: method = \code{mean})}
+\item{centering}{A single \code{character} value specifying the method to center the data. Options are \code{mean}, \code{median}, or \code{none} if your data is already centered. (default: method = \code{"mean"})}
 }
 \value{
 A \code{character} vector of row names in the sorted order.
@@ -38,18 +38,14 @@ allows for a more faithful representation of the data's intrinsic structure as c
 by the ordination process.
 }
 \details{
-It's important to note that the \pkg{sechm} package does actually have the functionality for plotting a heatmap using this radial theta angle ordering, though only by using an MDS ordination.
-
-This functionality can be found at:
-
-\url{https://bioconductor.org/packages/3.18/bioc/vignettes/sechm/inst/doc/sechm.html#row-ordering}.
+It's important to note that the \href{https://bioconductor.org/packages/3.18/bioc/vignettes/sechm/inst/doc/sechm.html#row-ordering}{\pkg{sechm}} package does actually have the functionality
+for plotting a heatmap using this radial theta angle ordering, though only by using an
+MDS ordination.
 
 That being said, the \code{getNeatOrder} function is more modular and separate to the plotting, and
 can be applied to any kind of ordinated data which can be valuable depending on the use case.
 
-The below paper outlines the NeatMap method in more detail:
-
-"Rajaram & Oono (2010)" - https://doi.org/10.1186/1471-2105-11-45.
+\href{https://doi.org/10.1186/1471-2105-11-45}{Rajaram & Oono (2010) NeatMap - non-clustering heat map alternatives in R} outlines this in more detail.
 }
 \examples{
 ## Load the required libraries and dataset
@@ -62,11 +58,8 @@ data(peerj13075)
 ## Group data by taxonomic order
 tse <- agglomerateByRank(peerj13075, rank = "order", onRankOnly = TRUE)
 
-## Add a pseudocount to the counts data
-assay(tse, "counts") <- assay(tse, "counts") + 1
-
 ## Transform the samples into relative abundances using CLR
-tse <- transformAssay(tse, assay.type = "counts", method="clr", MARGIN = "samples", name="clr")
+tse <- transformAssay(tse, assay.type = "counts", method="clr", MARGIN = "samples", name="clr", pseudocount = TRUE)
 
 ## Transform the features (taxa) into zero mean, unit variance (standardize transformation)
 tse <- transformAssay(tse, assay.type="clr", method="standardize", MARGIN = "features", name="standardized")

@@ -1,6 +1,3 @@
-testthat::set_max_fails(Inf)
-
-
 context("neatsort")
 neatsort_matrix <- matrix(c(10, 8,  2, 8,  3, 
                             4, 4,  4, 6,  5, 
