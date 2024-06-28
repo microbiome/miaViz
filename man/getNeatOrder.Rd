@@ -5,76 +5,88 @@
 \alias{getNeatOrder,matrix-method}
 \title{Sorting by radial theta angle}
 \usage{
-getNeatOrder(x, ...)
+getNeatOrder(x, centering = "mean", ...)
 
 \S4method{getNeatOrder}{matrix}(x, centering = "mean", ...)
 }
 \arguments{
-\item{x}{A matrix containing the ordinated data to be sorted. Columns should represent the principal components (PCs) and rows should represent the entities being analyzed (e.g. features or samples). There should be 2 columns only representing 2 PCs.}
+\item{x}{A matrix containing the ordinated data to be sorted. Columns should
+represent the principal components (PCs) and rows should represent the
+entities being analyzed (e.g. features or samples). There should be 2 columns
+only representing 2 PCs.}
+
+\item{centering}{A single \code{character} value specifying the method to
+center the data. Options are \code{mean}, \code{median}, or \code{none} if
+your data is already centered. (default: method = \code{"mean"})}
 
 \item{...}{Additional arguments passed to other methods.}
-
-\item{centering}{A single \code{character} value specifying the method to center the data. Options are \code{mean}, \code{median}, or \code{none} if your data is already centered. (default: method = \code{"mean"})}
 }
 \value{
 A \code{character} vector of row names in the sorted order.
 }
 \description{
-\code{getNeatOrder} sorts already ordinated data by the radial theta angle.
-This method is useful for organizing data points based on their angular
-position in a 2D space, typically after an ordination technique such as PCA or NMDS
-has been applied.
+\code{getNeatOrder} sorts already ordinated data by the radial
+theta angle. This method is useful for organizing data points based on their
+angular position in a 2D space, typically after an ordination technique such
+as PCA or NMDS has been applied.
 
 The function takes in a matrix of ordinated data, optionally
-centers the data using specified methods (\code{mean}, \code{median}, or \code{none}), and then calculates
-the angle (theta) for each point relative to the centroid. The data points are then
-sorted based on these theta values in ascending order.
+centers the data using specified methods (\code{mean}, \code{median}, or
+\code{none}), and then calculates
+the angle (theta) for each point relative to the centroid. The data points
+are then sorted based on these theta values in ascending order.
 
 One significant application of this sorting method is in plotting heatmaps.
-By using radial theta sorting, the relationships between data points can be preserved
-according to the ordination method's spatial configuration, rather than relying on
-hierarchical clustering, which may distort these relationships. This approach
-allows for a more faithful representation of the data's intrinsic structure as captured
-by the ordination process.
+By using radial theta sorting, the relationships between data points can be
+preserved according to the ordination method's spatial configuration, rather
+than relying on hierarchical clustering, which may distort these
+relationships. This approach allows for a more faithful representation of the
+data's intrinsic structure as captured by the ordination process.
 }
 \details{
-It's important to note that the \href{https://bioconductor.org/packages/3.18/bioc/vignettes/sechm/inst/doc/sechm.html#row-ordering}{\pkg{sechm}} package does actually have the functionality
-for plotting a heatmap using this radial theta angle ordering, though only by using an
-MDS ordination.
+It's important to note that the
+\href{https://bioconductor.org/packages/3.18/bioc/vignettes/sechm/inst/doc/sechm.html#row-ordering}{\pkg{sechm}}
+package does actually have the functionality for plotting a heatmap using
+this radial theta angle ordering, though only by using an  MDS ordination.
 
-That being said, the \code{getNeatOrder} function is more modular and separate to the plotting, and
-can be applied to any kind of ordinated data which can be valuable depending on the use case.
+That being said, the \code{getNeatOrder} function is more modular and
+separate to the plotting, and can be applied to any kind of ordinated data
+which can be valuable depending on the use case.
 
 \href{https://doi.org/10.1186/1471-2105-11-45}{Rajaram & Oono (2010) NeatMap - non-clustering heat map alternatives in R} outlines this in more detail.
 }
 \examples{
-## Load the required libraries and dataset
+# Load the required libraries and dataset
 library(mia)
 library(scater)
 library(ComplexHeatmap)
 library(circlize)
 data(peerj13075)
 
-## Group data by taxonomic order
+# Group data by taxonomic order
 tse <- agglomerateByRank(peerj13075, rank = "order", onRankOnly = TRUE)
 
-## Transform the samples into relative abundances using CLR
-tse <- transformAssay(tse, assay.type = "counts", method="clr", MARGIN = "samples", name="clr", pseudocount = TRUE)
+# Transform the samples into relative abundances using CLR
+tse <- transformAssay(
+    tse, assay.type = "counts", method="clr", MARGIN = "samples",
+    name="clr", pseudocount = TRUE)
 
-## Transform the features (taxa) into zero mean, unit variance (standardize transformation)
-tse <- transformAssay(tse, assay.type="clr", method="standardize", MARGIN = "features", name="standardized")
+# Transform the features (taxa) into zero mean, unit variance
+# (standardize transformation)
+tse <- transformAssay(
+    tse, assay.type="clr", method="standardize", MARGIN = "features")
 
-## Perform PCA using calculatePCA
-res <- calculatePCA(tse, assay.type = "standardized", ncomponents = 10)
+# Perform PCA using calculatePCA
+res <- calculatePCA(tse, assay.type = "standardize", ncomponents = 10)
 
-## Sort by radial theta and sort the original assay data
+# Sort by radial theta and sort the original assay data
 sorted_order <- getNeatOrder(res[, c(1,2)], centering = "mean")
 tse <- tse[, sorted_order]
 
-## Define the color function and cap the colors at [-5, 5]
+# Define the color function and cap the colors at [-5, 5]
 col_fun <- colorRamp2(c(-5, 0, 5), c("blue", "white", "red"))
 
-## Create the heatmap
+# Create the heatmap
 heatmap <- Heatmap(assay(tse, "standardized"),
               name = "NeatMap",
               col = col_fun,
