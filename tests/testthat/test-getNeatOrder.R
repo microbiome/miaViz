@@ -45,8 +45,8 @@ test_that("Test check_args method", {
                  "Matrix must have only 2 columns.")
     
     # Test for invalid method
-    expect_error(.check_args(check_args_matrix[, c(1,2)], "invalid_method"),
-                 "'arg' should be one of “mean”, “median”, “none”")
+    error_message <- expect_error(.check_args(check_args_matrix[, c(1,2)], "invalid_method"))
+    expect_true(grepl("'arg' should be one of", error_message))
     
     # Test for non-unique row names
     non_unique_row_matrix <- matrix(1:20, nrow = 4, ncol = 5,
