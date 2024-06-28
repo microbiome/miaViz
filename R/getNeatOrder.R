@@ -25,7 +25,7 @@
 #' 
 #' @param centering A single \code{character} value specifying the method to
 #' center the data. Options are \code{mean}, \code{median}, or \code{none} if
-#' your data is already centered. (default: method = \code{"mean"})
+#' your data is already centered. (default: \code{"mean"})
 #' 
 #' @param ... Additional arguments passed to other methods.
 #'
@@ -89,6 +89,7 @@
 #'               heatmap_width = unit(20, "cm"),  
 #'               heatmap_height = unit(15, "cm")  
 #' )
+#' 
 NULL
 
 #' @rdname getNeatOrder

@@ -17,7 +17,7 @@ only representing 2 PCs.}
 
 \item{centering}{A single \code{character} value specifying the method to
 center the data. Options are \code{mean}, \code{median}, or \code{none} if
-your data is already centered. (default: method = \code{"mean"})}
+your data is already centered. (default: \code{"mean"})}
 
 \item{...}{Additional arguments passed to other methods.}
 }
@@ -99,4 +99,5 @@ heatmap <- Heatmap(assay(tse, "standardize"),
               heatmap_width = unit(20, "cm"),  
               heatmap_height = unit(15, "cm")  
 )
+
 }
