@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.2</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.3</span>
       </span>
     </div>
 
@@ -176,6 +176,7 @@ abundances where peaks represent most common abundances.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plots the abundances of 25 most abundant taxa. Jitter plot is the default option.</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'getTopFeatures' is deprecated. Use 'getTop' instead.</span>
 <span class="r-plt img"><img src="plotAbundanceDensity-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Counts relative abundances</span></span></span>
@@ -186,6 +187,7 @@ abundances where peaks represent most common abundances.</p>
 <span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"jitter"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, </span></span>
 <span class="r-in"><span>                     n <span class="op">=</span> <span class="fl">10</span>, colour_by <span class="op">=</span> <span class="st">"nationality"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span> </span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'getTopFeatures' is deprecated. Use 'getTop' instead.</span>
 <span class="r-plt img"><img src="plotAbundanceDensity-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="co"># Plots the relative abundance of 10 most abundant taxa as a density plot.</span></span></span>
@@ -193,12 +195,14 @@ abundances where peaks represent most common abundances.</p>
 <span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"density"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>                     n <span class="op">=</span> <span class="fl">10</span> <span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu">scale_x_log10</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'getTopFeatures' is deprecated. Use 'getTop' instead.</span>
 <span class="r-plt img"><img src="plotAbundanceDensity-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="co"># Plots the relative abundance of 10 most abundant taxa as a point plot.</span></span></span>
 <span class="r-in"><span><span class="co"># Point shape is changed from default (21) to 41.</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"point"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, n <span class="op">=</span> <span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                     point_shape <span class="op">=</span> <span class="fl">41</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'getTopFeatures' is deprecated. Use 'getTop' instead.</span>
 <span class="r-plt img"><img src="plotAbundanceDensity-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>                     </span></span>
 <span class="r-in"><span><span class="co"># Plots the relative abundance of 10 most abundant taxa as a point plot.</span></span></span>
@@ -206,6 +210,7 @@ abundances where peaks represent most common abundances.</p>
 <span class="r-in"><span><span class="co"># and adjusted for point size</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, layout <span class="op">=</span> <span class="st">"point"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, n <span class="op">=</span> <span class="fl">10</span>,</span></span>
 <span class="r-in"><span>                     shape_by <span class="op">=</span> <span class="st">"sex"</span>, size_by <span class="op">=</span> <span class="st">"time"</span>, point_size<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'getTopFeatures' is deprecated. Use 'getTop' instead.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 370 rows containing missing values or values outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_point()`).</span>
 <span class="r-plt img"><img src="plotAbundanceDensity-5.png" alt="" width="3000" height="2100"></span>
@@ -213,12 +218,14 @@ abundances where peaks represent most common abundances.</p>
 <span class="r-in"><span><span class="co"># Ordering via order_descending</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, </span></span>
 <span class="r-in"><span>                     order_descending <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'getTopFeatures' is deprecated. Use 'getTop' instead.</span>
 <span class="r-plt img"><img src="plotAbundanceDensity-6.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># for custom ordering set order_descending = NA and order the input object</span></span></span>
 <span class="r-in"><span><span class="co"># to your wishes</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>                     order_descending <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'getTopFeatures' is deprecated. Use 'getTop' instead.</span>
 <span class="r-plt img"><img src="plotAbundanceDensity-7.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
