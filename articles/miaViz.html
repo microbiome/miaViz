@@ -125,10 +125,8 @@ can be set to <code>NULL</code> (default).</p>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-5-1.png" width="3000"></p>
 <p>With subsetting to selected features the plot can be fine tuned.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">prev_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/deprecate.html" class="external-link">getPrevalentTaxa</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>                                detection <span class="op">=</span> <span class="fl">0.01</span>, onRankOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in getPrevalentTaxa(GlobalPatterns, rank = "Phylum", detection = 0.01,</span></span>
-<span><span class="co">#&gt; : 'getPrevalentTaxa' is deprecated.</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">prev_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/getPrevalence.html" class="external-link">getPrevalent</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>                                detection <span class="op">=</span> <span class="fl">0.01</span>, onRankOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">prev_phylum</span><span class="op">]</span>,</span>
 <span>              rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
@@ -202,12 +200,10 @@ as judged by mean abundance on the genus level.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;-</span> </span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">/</span> <span class="fl">100</span></span>
-<span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/deprecate.html" class="external-link">getTopFeatures</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,</span>
+<span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,</span>
 <span>                       method<span class="op">=</span><span class="st">"mean"</span>,</span>
 <span>                       top<span class="op">=</span><span class="fl">100L</span>,</span>
-<span>                       assay.type<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in getTopFeatures(altExp(GlobalPatterns, "Genus"), method = "mean", :</span></span>
-<span><span class="co">#&gt; 'getTopFeatures' is deprecated. Use 'getTop' instead.</span></span></code></pre></div>
+<span>                       assay.type<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
 <p>Colour, size and shape of tree tips and nodes can be decorated based
 on data present in the <code>SE</code> object or by providing additional
 information via the <code>other_fields</code> argument. Note that
@@ -317,7 +313,7 @@ the graph plot can incorporate data from the
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">SilvermanAGutData</span>, package<span class="op">=</span><span class="st">"miaTime"</span><span class="op">)</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">SilvermanAGutData</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
-<span><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/deprecate.html" class="external-link">getTopFeatures</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>Data from samples collected along time can be visualized using
 <code>plotSeries</code>. The <code>x</code> argument is used to
 reference data from the <code>colData</code> to use as descriptor for
@@ -343,7 +339,7 @@ a range. Data from different assays can be used for plotting via the
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span>,</span>
 <span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/deprecate.html" class="external-link">getTopFeatures</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>           assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
