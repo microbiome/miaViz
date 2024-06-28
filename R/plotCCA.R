@@ -429,9 +429,9 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             vector_data[["vector_label"]] <- vector_label
         } else{
             # If it cannot be found, give warning
-            warning(paste("Significance data was not found. please compute",
-                          "CCA/RDA by using addCCA or getCCA."),
-                    call. = FALSE)
+            warning(
+                paste("Significance data was not found. please compute",
+                    "CCA/RDA by using addCCA or getCCA."), call. = FALSE)
         }
     }
     
