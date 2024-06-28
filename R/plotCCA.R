@@ -136,10 +136,10 @@
 #'  
 #' # Calculate RDA as a separate object
 #' rda_mat <- getRDA(tse,
-#'                         formula = assay ~ ClinicalStatus + Gender + Age,
-#'                         FUN = vegan::vegdist,
-#'                         distance = "bray",
-#'                         na.action = na.exclude)
+#'                   formula = assay ~ ClinicalStatus + Gender + Age,
+#'                   FUN = vegan::vegdist,
+#'                   distance = "bray",
+#'                   na.action = na.exclude)
 #'  
 #' # Create RDA plot from RDA matrix
 #' plotRDA(rda_mat)
@@ -330,9 +330,9 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             expl_var <- summary(rda)$concont$importance[2, ]*100
         } else{
             # If it cannot be found, give warning
-            warning(paste("RDA/CCA object was not found. Please compute",
-                          "RDA/CCA by using addCCA or getCCA."),
-                    call. = FALSE)
+            warning(
+                paste("RDA/CCA object was not found. Please compute",
+                "RDA/CCA by using addCCA or getCCA."), call. = FALSE)
         }
     }
     
@@ -364,9 +364,9 @@ setMethod("plotRDA", signature = c(object = "matrix"),
             vector_data[["group"]] <- rownames(vector_data)
         } else{
             # If it cannot be found, give warning
-            warning(paste("RDA/CCA object was not found. Please compute RDA/CCA",
-                          "by using addCCA or getCCA."),
-                    call. = FALSE)
+            warning(
+                paste("RDA/CCA object was not found. Please compute RDA/CCA",
+                    "by using addCCA or getCCA."), call. = FALSE)
         }
     }
     
