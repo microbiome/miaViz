@@ -97,7 +97,7 @@
 #' @return a \code{\link{ggtree}} plot
 #' 
 #' @seealso
-#' \code{\link[mia:splitByRanks]{splitByRanks}}
+#' \code{\link[mia:agglomerate-methods]{agglomerateByRanks}}
 #'
 #' @name plotTree
 #'
@@ -106,7 +106,7 @@
 #' library(mia)
 #' # preparation of some data
 #' data(GlobalPatterns)
-#' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+#' GlobalPatterns <- agglomerateByRanks(GlobalPatterns)
 #' altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
 #' rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
 #'   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
