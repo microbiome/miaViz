@@ -98,7 +98,7 @@ for supervised ordination of microbiome data.</p>
     <dl><dt>object</dt>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-constructor.html" class="external-link">TreeSummarizedExperiment</a></code>
-or a matrix of weights. The latter is returned as output from <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></code>.</p></dd>
+or a matrix of weights. The latter is returned as output from <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">calculateRDA</a></code>.</p></dd>
 
 
 <dt>...</dt>
@@ -110,7 +110,7 @@ or a matrix of weights. The latter is returned as output from <code><a href="htt
 
 <dt>dimred</dt>
 <dd><p>A string or integer scalar indicating the reduced dimension to
-plot. This is the output of <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">addRDA</a></code> and resides in
+plot. This is the output of <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">runRDA</a></code> and resides in
 <code>reducedDim(tse, dimred)</code>.</p></dd>
 
 
@@ -231,10 +231,10 @@ output of <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="externa
 for supervised ordination of microbiome data. Either a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-constructor.html" class="external-link">TreeSummarizedExperiment</a></code>
 or a matrix object is supported as input. When the input is a
-TreeSummarizedExperiment, this should contain the output of addRDA
+TreeSummarizedExperiment, this should contain the output of runRDA
 in the reducedDim slot and the argument <code>dimred</code> needs to be defined.
 When the input is a matrix, this should be returned as output from
-getRDA. However, the first method is recommended because it provides
+calculateRDA. However, the first method is recommended because it provides
 the option to adjust aesthetics to the colData variables through the
 arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></code>.</p>
     </div>
@@ -247,7 +247,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">enterotype</span></span></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Run RDA and store results into TreeSE</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">addRDA</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">runRDA</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
 <span class="r-in"><span>              formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
 <span class="r-in"><span>              FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span></span>
 <span class="r-in"><span>              distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
@@ -314,7 +314,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-plt img"><img src="plotCCA-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Calculate RDA as a separate object</span></span></span>
-<span class="r-in"><span><span class="va">rda_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
+<span class="r-in"><span><span class="va">rda_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">calculateRDA</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
 <span class="r-in"><span>                        formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
 <span class="r-in"><span>                        FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span></span>
 <span class="r-in"><span>                        distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
