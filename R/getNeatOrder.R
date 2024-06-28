@@ -129,10 +129,6 @@ setMethod("getNeatOrder", signature = c("matrix"),
     }
     # Check centering argument
     centering <- match.arg(centering, c("mean", "median", "none"))
-    # Check for unique row names
-    if (any(duplicated(rownames(x)))) {
-        stop("Row names of the matrix must be unique.", call. = FALSE)
-    }
     return(NULL)
 }
 

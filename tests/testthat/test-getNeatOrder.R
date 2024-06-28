@@ -57,17 +57,6 @@ test_that("Test check_args method", {
     # Test for invalid method
     error_message <- expect_error(.check_args(check_args_matrix[, c(1,2)], "invalid_method"))
     expect_true(grepl("'arg' should be one of", error_message))
-    
-    # Test for non-unique row names
-    non_unique_row_matrix <- matrix(1:20, nrow = 4, ncol = 5,
-                                    dimnames = list(c("Sample1", "Sample2", "Sample1", "Sample4"),
-                                                    c("PC1", "PC2", "PC3", "PC4", "PC5")))
-    expect_error(.check_args(non_unique_row_matrix[, c(1,2)], centering = "mean"),
-                 "Row names of the matrix must be unique.")
-    
-    # Test for non-unique row names in an indice matrix - should pass as row names are indices
-    non_unique_row_matrix_indices <- matrix(1:20, nrow = 4, ncol = 5)
-    expect_error(.check_args(non_unique_row_matrix_indices[, c(1,2)], centering = "mean"), NA)
 })
 
 
