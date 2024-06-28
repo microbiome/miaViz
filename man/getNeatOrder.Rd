@@ -22,7 +22,7 @@ your data is already centered. (default: method = \code{"mean"})}
 \item{...}{Additional arguments passed to other methods.}
 }
 \value{
-A \code{character} vector of row names in the sorted order.
+A \code{character} vector of row indices in the sorted order.
 }
 \description{
 \code{getNeatOrder} sorts already ordinated data by the radial

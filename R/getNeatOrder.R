@@ -29,7 +29,7 @@
 #' 
 #' @param ... Additional arguments passed to other methods.
 #'
-#' @return A \code{character} vector of row names in the sorted order.
+#' @return A \code{character} vector of row indices in the sorted order.
 #' 
 #' @details 
 #' It's important to note that the
@@ -106,7 +106,7 @@ setMethod("getNeatOrder", signature = c("matrix"),
         .check_args(x, centering)
         # Get the theta values and order them
         theta_values <- .radial_theta(x, centering)
-        ordering <- .get_sorted_rownames(theta_values)
+        ordering <- order(theta_values)
         return(ordering)
     }
 )
@@ -133,10 +133,6 @@ setMethod("getNeatOrder", signature = c("matrix"),
     if (any(duplicated(rownames(x)))) {
         stop("Row names of the matrix must be unique.", call. = FALSE)
     }
-    # Check for unique column names
-    if (any(duplicated(colnames(x)))) {
-        stop("Column names of the matrix must be unique.", call. = FALSE)
-    }
     return(NULL)
 }
 
@@ -155,12 +151,4 @@ setMethod("getNeatOrder", signature = c("matrix"),
     # return the theta values
     names(theta) <- rownames(data)
     return(theta)
-}
-
-
-# Sorts the theta values and returns the ordered row names.
-.get_sorted_rownames <- function(theta_values) {
-    sorted_indices <- order(theta_values)
-    rownames <- names(theta_values)[sorted_indices]
-    return(rownames)
 }
