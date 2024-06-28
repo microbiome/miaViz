@@ -167,7 +167,7 @@ library(scater)
 library(mia)
 # preparation of some data
 data(GlobalPatterns)
-altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+GlobalPatterns <- agglomerateByRanks(GlobalPatterns)
 altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
 rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
@@ -209,7 +209,7 @@ plotRowTree(x[rownames(x) \%in\% top_genus,],
 # aggregating data over the taxonomic levels for plotting a taxonomic tree
 # please note that the original tree of GlobalPatterns is dropped by
 # unsplitByRanks
-altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+GlobalPatterns <- agglomerateByRanks(GlobalPatterns)
 top_phyla <- getTopFeatures(altExp(GlobalPatterns,"Phylum"),
                         method="mean",
                         top=10L,
@@ -241,5 +241,5 @@ plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
             node_colour_by = "log_mean")
 }
 \seealso{
-\code{\link[mia:splitByRanks]{splitByRanks}}
+\code{\link[mia:agglomerate-methods]{agglomerateByRanks}}
 }
