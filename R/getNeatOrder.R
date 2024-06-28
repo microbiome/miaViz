@@ -76,7 +76,7 @@
 #' col_fun <- colorRamp2(c(-5, 0, 5), c("blue", "white", "red"))
 #' 
 #' # Create the heatmap
-#' heatmap <- Heatmap(assay(tse, "standardized"),
+#' heatmap <- Heatmap(assay(tse, "standardize"),
 #'               name = "NeatMap",
 #'               col = col_fun,
 #'               cluster_rows = FALSE,  # Do not cluster rows
