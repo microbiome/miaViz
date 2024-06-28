@@ -28,6 +28,7 @@
 #' your data is already centered. (default: method = \code{"mean"})
 #' 
 #' @param ... Additional arguments passed to other methods.
+#'
 #' @return A \code{character} vector of row names in the sorted order.
 #' 
 #' @details 
