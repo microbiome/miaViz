@@ -19,7 +19,7 @@ for supervised ordination of microbiome data."><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.5</span>
       </span>
     </div>
 
@@ -315,10 +315,10 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Calculate RDA as a separate object</span></span></span>
 <span class="r-in"><span><span class="va">rda_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                        formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
-<span class="r-in"><span>                        FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span></span>
-<span class="r-in"><span>                        distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
-<span class="r-in"><span>                        na.action <span class="op">=</span> <span class="va">na.exclude</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                  formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
+<span class="r-in"><span>                  FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span></span>
+<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
+<span class="r-in"><span>                  na.action <span class="op">=</span> <span class="va">na.exclude</span><span class="op">)</span></span></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot from RDA matrix</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">rda_mat</span><span class="op">)</span></span></span>
