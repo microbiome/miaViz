@@ -16,8 +16,8 @@ entities being analyzed (e.g. features or samples). There should be 2 columns
 only representing 2 PCs.}
 
 \item{centering}{A single \code{character} value specifying the method to
-center the data. Options are \code{mean}, \code{median}, or \code{none} if
-your data is already centered. (default: \code{"mean"})}
+center the data. Options are \code{"mean"}, \code{"median"}, or \code{NULL}
+if your data is already centered. (default: \code{"mean"})}
 
 \item{...}{Additional arguments passed to other methods.}
 }
@@ -32,9 +32,9 @@ as PCA or NMDS has been applied.
 
 The function takes in a matrix of ordinated data, optionally
 centers the data using specified methods (\code{mean}, \code{median}, or
-\code{none}), and then calculates
-the angle (theta) for each point relative to the centroid. The data points
-are then sorted based on these theta values in ascending order.
+\code{NULL}), and then calculates the angle (theta) for each point relative
+to the centroid. The data points are then sorted based on these theta values
+in ascending order.
 
 One significant application of this sorting method is in plotting heatmaps.
 By using radial theta sorting, the relationships between data points can be
