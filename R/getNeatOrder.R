@@ -7,9 +7,9 @@
 #' 
 #' The function takes in a matrix of ordinated data, optionally 
 #' centers the data using specified methods (\code{mean}, \code{median}, or
-#' \code{none}), and then calculates 
-#' the angle (theta) for each point relative to the centroid. The data points
-#' are then sorted based on these theta values in ascending order. 
+#' \code{NULL}), and then calculates the angle (theta) for each point relative
+#' to the centroid. The data points are then sorted based on these theta values
+#' in ascending order. 
 #' 
 #' One significant application of this sorting method is in plotting heatmaps. 
 #' By using radial theta sorting, the relationships between data points can be
@@ -24,8 +24,8 @@
 #' only representing 2 PCs.
 #' 
 #' @param centering A single \code{character} value specifying the method to
-#' center the data. Options are \code{mean}, \code{median}, or \code{none} if
-#' your data is already centered. (default: \code{"mean"})
+#' center the data. Options are \code{"mean"}, \code{"median"}, or \code{NULL}
+#' if your data is already centered. (default: \code{"mean"})
 #' 
 #' @param ... Additional arguments passed to other methods.
 #'
@@ -129,16 +129,21 @@ setMethod("getNeatOrder", signature = c("matrix"),
         stop("Matrix must have only 2 columns.", call. = FALSE)
     }
     # Check centering argument
-    centering <- match.arg(centering, c("mean", "median", "none"))
+    if ( !(is.null(centering) || (.is_a_string(centering) &&
+            centering %in% c("mean", "median", NULL))) ){
+        stop(
+            "'centering' must be a single character value or NULL.",
+            call. = FALSE)
+    }
     return(NULL)
 }
 
 # Computes the radial theta values for each row in the data matrix.
 .radial_theta <- function(data, centering) {
-    # Choose the correct centering function based on the method
-    center_fun <- switch(centering, "median" = median, "mean" = mean)
-    # Apply the centering if there's a method present
-    if (!is.null(center_fun)) {
+    # Apply the centering if centering is specified
+    if (!is.null(centering)) {
+        # Choose the correct centering function based on the method
+        center_fun <- switch(centering, "median" = median, "mean" = mean)
         center_vals <- apply(data, 2, center_fun)
         data <- scale(data, center = center_vals, scale = FALSE)
     } 

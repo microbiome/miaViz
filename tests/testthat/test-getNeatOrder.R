@@ -25,7 +25,7 @@ test_that("Test getNeatOrder function", {
     # Test with indice matrix
     result <- getNeatOrder(neatsort_matrix_indices[, c(1,2)], centering = "mean")
     expected <- c(4, 2, 3, 1)
-    expect_equal(result, expected_indices)
+    expect_equal(result, expected)
 })
 
 
@@ -56,7 +56,7 @@ test_that("Test check_args method", {
     
     # Test for invalid method
     error_message <- expect_error(.check_args(check_args_matrix[, c(1,2)], "invalid_method"))
-    expect_true(grepl("'arg' should be one of", error_message))
+    expect_true(grepl("'centering' must be a single character value or NULL.", error_message))
 })
 
 
@@ -93,7 +93,7 @@ test_that("Test radial_theta method", {
     expect_equal(result, expected)
     
     # No centering
-    result <- .radial_theta(radial_theta_matrix, "none")
+    result <- .radial_theta(radial_theta_matrix, NULL)
     centered_data <- radial_theta_matrix
     expected <- atan2(centered_data[, 2], centered_data[, 1])
     names(expected) <- rownames(centered_data)
