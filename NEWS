@@ -29,3 +29,4 @@ Changes in version 1.13.x
 + plot*Tree: bugfix, ununique nodes
 + Added confidence.level parameter to plotCCA
 + add plotNMDS to miaViz (plotNMDS deprecated in mia)
++ Added getNeatOrder function

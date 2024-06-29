@@ -11,7 +11,7 @@ plotNMDS(x, ..., ncomponents = 2)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{...}{additional arguments passed to scater::plotReducedDim()}
+\item{...}{additional arguments passed to scater::plotReducedDim().}
 
 \item{ncomponents}{A numeric scalar indicating the number of dimensions to plot, starting from
 the first dimension. Alternatively, a numeric vector specifying the

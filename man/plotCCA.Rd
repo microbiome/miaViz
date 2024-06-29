@@ -182,10 +182,10 @@ plotRDA(tse, "RDA",
  
 # Calculate RDA as a separate object
 rda_mat <- getRDA(tse,
-                        formula = assay ~ ClinicalStatus + Gender + Age,
-                        FUN = vegan::vegdist,
-                        distance = "bray",
-                        na.action = na.exclude)
+                  formula = assay ~ ClinicalStatus + Gender + Age,
+                  FUN = vegan::vegdist,
+                  distance = "bray",
+                  na.action = na.exclude)
  
 # Create RDA plot from RDA matrix
 plotRDA(rda_mat)
