@@ -90,7 +90,7 @@
 #' \code{rank} argument. 
 #' 
 #' To exclude certain taxa, preprocess \code{x} to your liking, for example 
-#' with subsetting via \code{getPrevalentTaxa} or 
+#' with subsetting via \code{getPrevalent} or 
 #' \code{agglomerateByPrevalence}.
 #' 
 #' @return 

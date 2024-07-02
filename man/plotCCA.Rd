@@ -49,7 +49,7 @@ plotRDA(x, ...)
 \arguments{
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{calculateRDA}}.}
+or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{getRDA}}.}
 
 \item{...}{additional parameters for plotting, inherited from
 \code{\link[scater:plotReducedDim]{plotReducedDim}},
@@ -57,7 +57,7 @@ or a matrix of weights. The latter is returned as output from \code{\link[mia:ru
 \code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.}
 
 \item{dimred}{A string or integer scalar indicating the reduced dimension to
-plot. This is the output of \code{\link[mia:runCCA]{runRDA}} and resides in
+plot. This is the output of \code{\link[mia:runCCA]{addRDA}} and resides in
 \code{reducedDim(tse, dimred)}.}
 
 \item{add.ellipse}{One of \code{c(TRUE, FALSE, "fill", "colour", "color")},
@@ -136,10 +136,10 @@ output of \code{\link[mia:runCCA]{CCA and RDA}} functions, two common methods
 for supervised ordination of microbiome data. Either a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 or a matrix object is supported as input. When the input is a
-TreeSummarizedExperiment, this should contain the output of runRDA
+TreeSummarizedExperiment, this should contain the output of addRDA
 in the reducedDim slot and the argument \code{dimred} needs to be defined.
 When the input is a matrix, this should be returned as output from
-calculateRDA. However, the first method is recommended because it provides
+getRDA. However, the first method is recommended because it provides
 the option to adjust aesthetics to the colData variables through the
 arguments inherited from \code{\link[scater:plotReducedDim]{plotReducedDim}}.
 }
@@ -150,7 +150,7 @@ data("enterotype", package = "mia")
 tse <- enterotype
  
 # Run RDA and store results into TreeSE
-tse <- runRDA(tse,
+tse <- addRDA(tse,
               formula = assay ~ ClinicalStatus + Gender + Age,
               FUN = vegan::vegdist,
               distance = "bray",
@@ -181,11 +181,11 @@ plotRDA(tse, "RDA",
         add.vectors = FALSE)
  
 # Calculate RDA as a separate object
-rda_mat <- calculateRDA(tse,
-                        formula = assay ~ ClinicalStatus + Gender + Age,
-                        FUN = vegan::vegdist,
-                        distance = "bray",
-                        na.action = na.exclude)
+rda_mat <- getRDA(tse,
+                  formula = assay ~ ClinicalStatus + Gender + Age,
+                  FUN = vegan::vegdist,
+                  distance = "bray",
+                  na.action = na.exclude)
  
 # Create RDA plot from RDA matrix
 plotRDA(rda_mat)

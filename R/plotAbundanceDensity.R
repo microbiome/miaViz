@@ -229,7 +229,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
     # Gets the assay
     mat <- assay(x, assay.type, withDimnames = TRUE)
     # Gets the most abundant taxa
-    top_taxa <- getTopFeatures(x, top = n, assay.type = assay.type)
+    top_taxa <- getTop(object, top = n, assay.type = assay.type)
     # Subsets abundance table  by taking taxa of highest abundance
     mat <- mat[top_taxa, , drop=FALSE]
     # enable conversion to data.frame for non-matrix assays, e.g. sparseMatrices

@@ -240,13 +240,13 @@ library(scater)
 library(mia)
 # preparation of some data
 data(GlobalPatterns)
-altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
+GlobalPatterns <- agglomerateByRanks(GlobalPatterns)
 altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
 rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
 rowData(altExp(GlobalPatterns,"Genus"))$detected <-
    rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
-top_genus <- getTopFeatures(altExp(GlobalPatterns,"Genus"),
+top_genus <- getTop(altExp(GlobalPatterns,"Genus"),
                         method="mean",
                         top=100L,
                         assay.type="counts")
@@ -283,7 +283,7 @@ plotRowTree(x[rownames(x) \%in\% top_genus,],
 # please note that the original tree of GlobalPatterns is dropped by
 # unsplitByRanks
 altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
-top_phyla <- getTopFeatures(altExp(GlobalPatterns,"Phylum"),
+top_phyla <- getTop(altExp(GlobalPatterns,"Phylum"),
                         method="mean",
                         top=10L,
                         assay.type="counts")
@@ -314,5 +314,5 @@ plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
             node.colour.by = "log_mean")
 }
 \seealso{
-\code{\link[mia:splitByRanks]{splitByRanks}}
+\code{\link[mia:agglomerate-methods]{agglomerateByRanks}}
 }
