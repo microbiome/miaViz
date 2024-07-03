@@ -6,3 +6,8 @@ docs
 .DS_Store
 /doc/
 /Meta/
+renv/
+renv.lock
+.Rprofile
+.idea
+

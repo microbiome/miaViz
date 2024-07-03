@@ -31,7 +31,7 @@
 #' tse <- peerj13075
 #' 
 #' # Cluster the samples
-#' tse <- cluster(tse, DmmParam(k = 1:4), name = "DMM", full = TRUE)
+#' tse <- addCluster(tse, DmmParam(k = 1:4), name = "DMM", full = TRUE)
 #' 
 #' # Plot the fit
 #' plotDMNFit(tse, name = "DMM", type = "laplace")
@@ -54,8 +54,11 @@ setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
         if (!is.null(metadata(x)[[name]]$dmm)) {
             dmn <- metadata(x)[[name]]$dmm
         } else {
-            .Deprecated(old="getDMN", new="cluster", 
-                    "Now runDMN and calculateDMN are deprecated. Use cluster with DMMParam parameter and full parameter set as true instead.")
+            .Deprecated(old="getDMN", new="addCluster", 
+                paste0(
+                    "Now runDMN and calculateDMN are deprecated. Use ",
+                    "addCluster with DMMParam parameter and full ",
+                    "parameter set as true instead."))
             dmn <- metadata(x)[[name]]
         }
         fit_FUN <- mia:::.get_dmn_fit_FUN(type)
