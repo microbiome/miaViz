@@ -154,6 +154,14 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
   
   
 }
+# library(mia)
+# library(ggtree)
+# library(scater)
+# data("GlobalPatterns", package = "mia")
+# tse <- GlobalPatterns
+# tse <- logNormCounts(tse)
+# tse <- agglomerateByPrevalence(tse, rank="Phylum", prevalence=0.99, update.tree = TRUE)
+# plotFeatureLoadings(tse, method= "PCA")
 # 
 # 
 # 
