@@ -162,29 +162,97 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
 # tse <- logNormCounts(tse)
 # tse <- agglomerateByPrevalence(tse, rank="Phylum", prevalence=0.99, update.tree = TRUE)
 # plotFeatureLoadings(tse, method= "PCA")
+#
+#
+###########################################################
 # 
 # 
+# library(mia)
+# library(ggtree)
+# library(scater)
+# data("GlobalPatterns", package = "mia")
+# tse <- GlobalPatterns
+# tse <- logNormCounts(tse)
+# # Agglomerate to keep only high prevalence features
+# tse <- agglomerateByPrevalence(tse, rank="Phylum", prevalence=0.99, update.tree = TRUE)
+# # Achieve PCA reduction
+# tse <- runPCA(tse, name = "PCA", ncomponents = 2)
+# # Get the feature loadings
+# loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
+# phylo <- rowTree(tse)
+# circ <- ggtree(phylo, layout = "circular")
+# df <- rowData(tse)
+# color <- randomcoloR::distinctColorPalette(
+#   length(
+#     unique(
+#       df$Phylum
+#     )
+#   )
+# )
+# df <- data.frame(Class = df$Phylum)
+# rownames(df) <- phylo$tip.label
+# 
+# df2 <- data.frame(abs(loadings_matrix))
+# rownames(df2) <- phylo$tip.label
+# 
+# # Plot the tree with first inner circle (Classes)
+# p <- gheatmap(
+#   p = circ,
+#   data = df,
+#   offset = -.1,
+#   width = .1,
+#   colnames_angle = 95,
+#   colnames_offset_y = .5,
+#   font.size = 4,
+#   color = "black") +
+#   ggplot2::scale_fill_manual(
+#     values = color,
+#     name = "Class"
+#   )
+# # Plot the feature loadings in different circles
+# for(i in 1:2){
+#   if(i == 1){
+#     p <- p +
+#       ggnewscale::new_scale_fill()
+#   }
+#   df3 <- dplyr::select(
+#     df2, (all_of(i))
+#   )
+# 
+#   p <- gheatmap(
+#     p,
+#     df3,
+#     offset = i*.065,
+#     width = .1,
+#     colnames_angle = 90,
+#     font.size = 4,
+#     high = "darkslateblue",
+#     low = "gray98",
+#     color = "black",
+#     legend_title = expression(beta[k]))
+# }
+# 
+# p
 # 
 # 
-# 
-# 
-# 
-# 
-# 
+###########################################################
 # 
 # 
 # library(NMF)
 # library(mia)
+# library(ggtree)
 # data(GlobalPatterns)
 # tse <- GlobalPatterns
 # tse <- transformAssay(tse, method = "relabundance")
+# # Agglomerate to keep only high prevalence features
 # tse <- agglomerateByPrevalence(tse, rank="Phylum", prevalence=0.99, update.tree = TRUE)
+# # Perform the NMF reduction method
 # x <- t(assay(tse, "counts"))
 # nmf2 <- nmf(x, 2)
 # H <- nmf2@fit@H
 # W <- nmf2@fit@W
+# # Get the feature loadings
 # feature_loadings <- t(H)
-# head(feature_loadings)
 # phylo <- rowTree(tse)
 # circ <- ggtree(phylo, layout = "circular")
 # df <- rowData(tse)
@@ -200,7 +268,7 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
 # 
 # df2 <- data.frame(feature_loadings)
 # rownames(df2) <- phylo$tip.label
-# 
+# # Plot the tree and the first inner circle (Classes)
 # p <- gheatmap(
 #   p = circ,
 #   data = df,
@@ -214,7 +282,7 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
 #     values = color,
 #     name = "Class"
 #   )
-# 
+# # Plot the feature loadings in different circles
 # for(i in 1:2){
 #   if(i == 1){
 #     p <- p +
@@ -237,28 +305,29 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
 # }
 # 
 # p
-# # 
-# #  
-# # 
-# # 
-# # 
-# # 
+# 
+#  
+# 
+############################################################################# 
+# 
+# 
 # library(mia)
 # library(topicmodels)
+# library(ggtree)
 # 
 # data(GlobalPatterns)
 # tse <- GlobalPatterns
 # 
 # tse <- transformAssay(tse, method = "relabundance")
-# 
+# # Agglomerate to keep only high prevalence features
 # tse <- agglomerateByPrevalence(tse, rank = "Class", update.tree = TRUE, prevalence = 0.99)
-# 
+# # Perform LDA reduction method
 # lda_model <- LDA(t(assay(tse, "counts")), k = 2)
 # 
 # df <- as.data.frame(t(assay(tse, "counts")))
 # 
 # posteriors <- topicmodels::posterior(lda_model, df)
-# 
+# # Get the feature loadings
 # feature_loadings <- t(as.data.frame(posteriors$terms))
 # 
 # 
@@ -277,7 +346,7 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
 # 
 # df2 <- data.frame(feature_loadings)
 # rownames(df2) <- phylo$tip.label
-# 
+# # Plot the tree and first inner circles (Classes)
 # p <- gheatmap(
 #   p = circ,
 #   data = df,
@@ -291,7 +360,7 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
 #     values = color,
 #     name = "Class"
 #   )
-# 
+# # Plot the feature loadings in different circles
 # for(i in 1:2){
 #   if(i == 1){
 #     p <- p +
