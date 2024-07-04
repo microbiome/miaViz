@@ -93,64 +93,61 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
   rownames(df) <- phylo$tip.label
   
   if (heatmap) {
-    df2 <- data.frame(loadings_matrix,phylo$tip.label)
-    print(loadings_matrix)
+    df2 <- data.frame(loadings_matrix, phylo$tip.label)
     
-    maxval <- max(abs(df3$X1))
-    limits <- c(-maxval, maxval)
-    breaks <- seq(from = min(limits), to = max(limits), by = 0.000001)
-    colours <- c("white","blue", "darkblue")
+    ggcorrplot(abs(loadings_matrix), 
+           type = "lower", 
+           method="circle", 
+           title="Feature loadings",
+           legend.title = " "
+           ggtheme=theme_bw) + 
+           scale_fill_gradient2(
+             breaks=c(0, 1), 
+             limit=c(0, 1))
+  } else {
+  
+    df2 <- data.frame(abs(loadings_matrix))
+    rownames(df2) <- phylo$tip.label
     
-    
-    ggplot(df2 , aes(x = phylo.tip.label, y = rownames(df2), fill = PC2)) +
-      geom_tile() +
-      theme(text = element_text(size=10),
-            axis.text.x = element_text(angle=45, hjust=1),
-            legend.key.size = unit(1, "cm")) +
-      labs(x = "Features", y = "Taxa")
-  }
-  
-  df2 <- data.frame(abs(loadings_matrix))
-  rownames(df2) <- phylo$tip.label
-  
-  
-  p <- gheatmap(
-    p = circ,
-    data = df,
-    offset = -.1,
-    width = .1,
-    colnames_angle = 95,
-    colnames_offset_y = .5,
-    font.size = 4,
-    color = "black") +
-    ggplot2::scale_fill_manual(
-      values = color,
-      name = "Class"
-    )
-  
-  for(i in 1:2){
-    if(i == 1){
-      p <- p +
-        ggnewscale::new_scale_fill()
-    }
-    df3 <- dplyr::select(
-      df2, (all_of(i))
-    )
     
     p <- gheatmap(
-      p,
-      df3,
-      offset = i*.065,
+      p = circ,
+      data = df,
+      offset = -.1,
       width = .1,
-      colnames_angle = 90,
+      colnames_angle = 95,
+      colnames_offset_y = .5,
       font.size = 4,
-      high = "darkslateblue",
-      low = "gray98",
-      color = "black",
-      legend_title = expression(beta[k]))
+      color = "black") +
+      ggplot2::scale_fill_manual(
+        values = color,
+        name = "Class"
+      )
+    
+    for(i in 1:2){
+      if(i == 1){
+        p <- p +
+          ggnewscale::new_scale_fill()
+      }
+      df3 <- dplyr::select(
+        df2, (all_of(i))
+      )
+      
+      p <- gheatmap(
+        p,
+        df3,
+        offset = i*.065,
+        width = .1,
+        colnames_angle = 90,
+        font.size = 4,
+        high = "darkslateblue",
+        low = "gray98",
+        color = "black",
+        legend_title = expression(beta[k]))
+    }
+    
+    p
   }
-  
-  p
   
   
 }
@@ -237,7 +234,39 @@ setMethod("plotFeatureLoadings", signature = c(object = "TreeSummarizedExperimen
 # 
 ###########################################################
 # 
+# library(mia)
+# library(ggtree)
+# library(scater)
+# library(ggcorrplot)
+# data("GlobalPatterns", package = "mia")
+# tse <- GlobalPatterns
+# tse <- logNormCounts(tse)
+# # Agglomerate to keep only high prevalence features
+# tse <- agglomerateByPrevalence(tse, rank="Phylum", prevalence=0.99, update.tree = TRUE)
+# # Achieve PCA reduction
+# tse <- runPCA(tse, name = "PCA", ncomponents = 2)
+# # Get the feature loadings
+# loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
+# phylo <- rowTree(tse)
+# circ <- ggtree(phylo, layout = "circular")
+# df <- rowData(tse)
+# df <- data.frame(Class = df$Phylum)
+# rownames(df) <- phylo$tip.label
+# df2 <- data.frame(loadings_matrix, phylo$tip.label)
 # 
+# # Plot feature loadings
+# ggcorrplot(abs(loadings_matrix),
+#            type = "lower",
+#            method="circle",
+#            title="Feature loadings",
+#            ggtheme=theme_bw) +
+#   scale_fill_gradient2(breaks=c(0, 1), limit=c(0, 1))
+#
+#
+#
+##############################################
+#
+#
 # library(NMF)
 # library(mia)
 # library(ggtree)
