@@ -2,7 +2,7 @@
 #'
 #' This function plots abundance of the most abundant taxa. 
 #'
-#' @param object a
+#' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #' 
@@ -20,26 +20,34 @@
 #'   will be disabled.)
 #'   
 #' @param n a positive integer specifying the number of the most abundant taxa
-#'   to show. (default: \code{n = min(nrow(object), 25L)})
+#'   to show. (default: \code{n = min(nrow(x), 25L)})
 #'  
-#' @param colour_by a single character value defining a column from
+#' @param colour.by a single character value defining a column from
 #'   \code{colData}, that is used to color plot. Must be a value of
-#'   \code{colData()} function. (default: \code{colour_by = NULL})
+#'   \code{colData()} function. (default: \code{colour.by = NULL})
+#'   
+#' @param colour_by Deprecated. Use \code{colour.by} instead.
 #' 
-#' @param shape_by a single character value defining a column from
+#' @param shape.by a single character value defining a column from
 #'   \code{colData}, that is used to group observations to different point shape
-#'   groups. Must be a value of \code{colData()} function. \code{shape_by} is
-#'   disabled when \code{layout = "density"}. (default: \code{shape_by = NULL})
+#'   groups. Must be a value of \code{colData()} function. \code{shape.by} is
+#'   disabled when \code{layout = "density"}. (default: \code{shape.by = NULL})
+#'   
+#' @param shape_by Deprecated. Use \code{shape.by} instead.
 #' 
-#' @param size_by a single character value defining a column from
+#' @param size.by a single character value defining a column from
 #'   \code{colData}, that is used to group observations to different point size
-#'   groups. Must be a value of \code{colData()} function. \code{size_by} is
-#'   disabled when \code{layout = "density"}. (default: \code{size_by = NULL})
+#'   groups. Must be a value of \code{colData()} function. \code{size.by} is
+#'   disabled when \code{layout = "density"}. (default: \code{size.by = NULL})
+#'   
+#' @param size_by Deprecated. Use \code{size.by} instead.
 #' 
-#' @param order_descending \code{TRUE}, \code{FALSE} or\code{NA}: Should the
+#' @param order.descending \code{TRUE}, \code{FALSE} or\code{NA}: Should the
 #'   results be ordered in a descending order? If \code{NA} is given the order
-#'   as found in \code{object} for the \code{n} most abundant taxa is used.
-#'   (default: \code{order_descending = TRUE})
+#'   as found in \code{x} for the \code{n} most abundant taxa is used.
+#'   (default: \code{order.descending = TRUE})
+#'   
+#' @param order_descending Deprecated. Use \code{order.descending} instead.
 #'   
 #' @param ... additional parameters for plotting. 
 #' \itemize{
@@ -99,7 +107,7 @@
 #' # Plots the relative abundance of 10 most abundant taxa. 
 #' # "nationality" information is used to color the points. X-axis is log-scaled.
 #' plotAbundanceDensity(tse, layout = "jitter", assay.type = "relabundance", 
-#'                      n = 10, colour_by = "nationality") +
+#'                      n = 10, colour.by = "nationality") +
 #'     scale_x_log10() 
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a density plot.
@@ -117,59 +125,63 @@
 #' # In addition to colour, groups can be visualized by size and shape in point plots,
 #' # and adjusted for point size
 #' plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
-#'                      shape_by = "sex", size_by = "time", point_size=1)
+#'                      shape.by = "sex", size.by = "time", point_size=1)
 #' 
-#' # Ordering via order_descending
+#' # Ordering via order.descending
 #' plotAbundanceDensity(tse, assay.type = "relabundance", 
-#'                      order_descending = FALSE)
+#'                      order.descending = FALSE)
 #'
-#' # for custom ordering set order_descending = NA and order the input object
+#' # for custom ordering set order.descending = NA and order the input object
 #' # to your wishes
 #' plotAbundanceDensity(tse, assay.type = "relabundance",
-#'                      order_descending = NA)
+#'                      order.descending = NA)
 #'
 NULL
 
+
 #' @rdname plotAbundanceDensity
 #' @export
-setGeneric("plotAbundanceDensity", signature = c("object"),
-           function(object, ...)
+setGeneric("plotAbundanceDensity", signature = c("x"),
+           function(x, ...)
                standardGeneric("plotAbundanceDensity"))
 
 #' @rdname plotAbundanceDensity
 #' @export
-setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment"),
-          function(object,
+setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
+          function(x,
                    layout = c("jitter", "density", "point"),
                    assay.type = assay_name, assay_name = "counts",
-                   n = min(nrow(object), 25L), 
-                   colour_by = NULL, 
-                   shape_by = NULL, 
-                   size_by = NULL, 
+                   n = min(nrow(x), 25L), colour.by = colour_by, 
+                   colour_by = NULL,
+                   shape.by = shape_by,
+                   shape_by = NULL,
+                   size.by = size_by,
+                   size_by = NULL,
+                   order.descending = order_descending,
                    order_descending = TRUE,
                    ...){
               ############################# Input Check ##############################
               # Check layout
               layout <- match.arg(layout, c("jitter", "density", "point"))
               # Checks assay.type
-              .check_assay_present(assay.type, object)
+              .check_assay_present(assay.type, x)
               # Checks n
               if( !(length(n)==1 && is.numeric(n) && n%%1==0 && n>0) ){
                   stop("'n' must be a positive integer.", call. = FALSE)
               }
-              # Checks colour_by
-              if( !is.null(colour_by) && !.is_a_string(colour_by)){
-                  stop("'colour_by' must be a single character value.",
+              # Checks colour.by
+              if( !is.null(colour.by) && !.is_a_string(colour.by)){
+                  stop("'colour.by' must be a single character value.",
                        call. = FALSE)
               }
-              # Checks shape_by
-              if( !is.null(shape_by) && !.is_a_string(shape_by)){
-                  stop("'shape_by' must be a single character value.",
+              # Checks shape.by
+              if( !is.null(shape.by) && !.is_a_string(shape.by)){
+                  stop("'shape.by' must be a single character value.",
                        call. = FALSE)
               }
-              # Checks size_by
-              if( !is.null(size_by) && !.is_a_string(size_by)){
-                  stop("'size_by' must be a single character value.",
+              # Checks shape.by
+              if( !is.null(shape.by) && !.is_a_string(shape.by)){
+                  stop("'shape.by' must be a single character value.",
                        call. = FALSE)
               }
               # Checks order_descending
@@ -179,26 +191,26 @@ setMethod("plotAbundanceDensity", signature = c(object = "SummarizedExperiment")
               }
               ########################### Input Check end ############################
               # Gets data that will be plotted. Gets a list
-              density_data_list <- .incorporate_density_data(object = object,
+              density_data_list <- .incorporate_density_data(object = x,
                                                              assay.type = assay.type,
                                                              n = n,
-                                                             colour_by = colour_by,
-                                                             shape_by = shape_by,
-                                                             size_by = size_by,
-                                                             order_descending = order_descending)
+                                                             colour_by = colour.by,
+                                                             shape_by = shape.by,
+                                                             size_by = size.by,
+                                                             order_descending = order.descending)
               # Extracts the density data and aesthetic from the list
               density_data <- density_data_list$density_data
-              colour_by <- density_data_list$colour_by
-              shape_by <- density_data_list$shape_by
-              size_by <- density_data_list$size_by
+              colour.by <- density_data_list$colour_by
+              shape.by <- density_data_list$shape_by
+              size.by <- density_data_list$size_by
               
               # Gets the plot from plotter
               plot_out <- .density_plotter(density_data = density_data, 
                                            layout = layout,
                                            xlab = assay.type,
-                                           colour_by = colour_by,
-                                           shape_by = shape_by,
-                                           size_by = size_by,
+                                           colour_by = colour.by,
+                                           shape_by = shape.by,
+                                           size_by = size.by,
                                            ...)
               return(plot_out)
           }
