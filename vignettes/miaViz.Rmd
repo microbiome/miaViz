@@ -32,7 +32,7 @@ several options, such as `plotColData`, `plotExpression` and `plotRowData`.
 To install `miaViz`, install `BiocManager` first, if it is not installed.
 Afterwards use the `install` function from `BiocManager` and load `miaViz`.
 
-```{r}
+```{r install, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("miaViz")
@@ -40,27 +40,25 @@ BiocManager::install("miaViz")
 
 ```{r setup, message=FALSE}
 library(miaViz)
+library(scater)
 data(GlobalPatterns, package = "mia")
 ```
 
 # Abundance plotting
 
-in contrast to other fields of sequencing based fields of research for which
+In contrast to other fields of sequencing based fields of research for which
 expression of genes is usually studied, microbiome research uses the more 
 term ~Abundance~ to described the numeric data measured and analyzed.
 Technically, especially in context of `SummarizedExperiment` objects, there is
-no difference. Therefore `plotExpression` can be used to plot `Abundance` data.
-
-`plotAbundance` can be used as well and as long as `rank` is set `NULL`, it
-behaves as `plotExpression`.
+no difference. Therefore `plotExpression` can be used to plot `Abundance` data of a particular feature.
 
 ```{r}
-plotAbundance(GlobalPatterns, rank = NULL, 
+plotExpression(GlobalPatterns, 
               features = "549322", assay.type = "counts")
 ```
 
-However, if the `rank` is set not `NULL` a bar plot is returned. At the same
-time the `features` argument can be set to `NULL` (default).
+On the other hand, plotAbundance can be used to plot abundance by  `rank`. A bar plot is returned showing the relative abundance within each sample for a given `rank`. At the same
+time the `features` argument can be set to `NULL` (default). 
 
 ```{r}
 GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
@@ -68,6 +66,15 @@ GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
 
 ```{r}
 plotAbundance(GlobalPatterns, rank = "Kingdom", assay.type = "relabundance")
+```
+
+If `rank` is set to null however then the bars will be colored by each
+individual taxon. Please note that if you're doing this make sure to agglomerate
+your data to a certain taxonomic hand before plotting.
+
+```{r}
+GlobalPatterns_king <- agglomerateByRank(GlobalPatterns, "Kingdom")
+plotAbundance(GlobalPatterns_king, assay.type = "relabundance")
 ```
 
 With subsetting to selected features the plot can be fine tuned.
