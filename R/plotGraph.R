@@ -69,7 +69,7 @@
 #' @param ... additional arguments for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #' 
-#' @details:
+#' @details
 #' Internally \code{tidygraph} and \code{ggraph} are used. Therefore, all 
 #' graph types which can be converted by \code{tidygraph::as_tbl_graph} can
 #' be used.

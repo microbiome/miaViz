@@ -42,9 +42,6 @@
 #' @param decreasing TRUE or FALSE: If the \code{order_sample_by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
 #'   increasing fashion? (default: \code{decreasing = FALSE})
-#'   
-#' @param use_relative \code{TRUE} or \code{FALSE}: Should the relative values
-#'   be calculated? (default: \code{use_relative = TRUE})
 #'
 #' @param layout Either \dQuote{bar} or \dQuote{point}. 
 #' 
@@ -58,8 +55,12 @@
 #'   used to define the behavior of the scales of each facet. Both values are 
 #'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
 #' 
-#' @param ... additional parameters for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
+#' @param ... additional parameters for plotting.
+#'   \itemize{
+#'   \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+#'   be calculated? (default: \code{use_relative = FALSE} }
+#' }
+#' See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @return 
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 
@@ -72,31 +73,36 @@
 #' data(GlobalPatterns, package="mia")
 #' tse <- GlobalPatterns
 #' 
+#' # Apply relative transform
+#' tse <- transformAssay(tse, method = "relabundance")
+#' 
 #' ## If rank is set to NULL (default), agglomeration is not done. However, note
 #' ## that there is maximum number of rows that can be plotted. That is why
 #' ## we take sample from the data.
 #' set.seed(26348)
 #' sample <- sample(rownames(tse), 20)
 #' tse_sub <- tse[sample, ]
-#' plotAbundance(tse_sub)
+#' plotAbundance(tse_sub, assay.type = "relabundance")
 #' 
 #' ## Plotting counts using the first taxonomic rank as default
 #' plotAbundance(
-#'     tse, assay.type="counts", rank = "Phylum", use_relative=FALSE) +
+#'     tse, assay.type="counts", rank = "Phylum") +
 #'     labs(y="Counts")
 #' 
-#' ## Using "Phylum" as rank
-#' plotAbundance(tse, assay.type="counts", rank = "Phylum", add_legend = FALSE)
+#' ## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
+#' plotAbundance(
+#'     tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
+#'     use_relative = TRUE)
 #' 
 #'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
-#' plotAbundance(tse, assay.type="counts", rank = "Phylum",
+#' plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
 #'            order_sample_by = "Bacteroidetes")
 #' 
 #' ## Features from colData can be plotted together with abundance plot.
 #' # Returned object is a list that includes two plot; other visualizes abundance
 #' # other features. 
-#' plot <- plotAbundance(tse, assay.type = "counts", rank = "Phylum",
+#' plot <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
 #'                    features = "SampleType")
 #' \donttest{
 #' # These two plots can be combined with wrap_plots function from patchwork package
@@ -106,7 +112,7 @@
 #' 
 #' ## Same plot as above but showing sample IDs as labels for the x axis on the top plot
 #' 
-#' plot[[1]] <- plotAbundance(tse, assay.type = "counts", rank = "Phylum",
+#' plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
 #'                            features = "SampleType", add_legend = FALSE,
 #'                            add_x_text = TRUE)[[1]] +
 #'                            theme(axis.text.x = element_text(angle = 90)) 
@@ -158,7 +164,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             order_rank_by = c("name","abund","revabund"),
             order_sample_by = NULL,
             decreasing = TRUE,
-            use_relative = TRUE,
             layout = c("bar","point"),
             one_facet = TRUE,
             ncol = 2,
@@ -172,10 +177,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         .check_assay_present(assay.type, x)
         if(!.is_non_empty_string(rank) && !is.null(rank)){
             stop("'rank' must be an non empty single character value or NULL.",
-                call. = FALSE)
-        }
-        if(!.is_a_bool(use_relative)){
-            stop("'use_relative' must be TRUE or FALSE.",
                 call. = FALSE)
         }
         if(!is.null(rank)){
@@ -192,8 +193,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         ########################### INPUT CHECK END ###########################
         # Get the abundance data to be plotted. Agglomerate and apply relative
         # transformation if specified.
-        abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
-                                        use_relative, ...)
+        abund_data <- .get_abundance_data(
+            x, rank, assay.type, order_rank_by, ...)
         # If rank was NULL, then the data was not agglomerated. The rank is
         # still used in coloring (passed to colour_by parameter in
         # .abund_plotter), which is why we adjust the value of it to apply
@@ -216,8 +217,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         }
         # Create the main plot
         plot_out <- .abund_plotter(abund_data,
-                                xlab = "Samples",
-                                ylab = "Rel. Abundance",
                                 colour_by = rank,
                                 layout = layout,
                                 ...)
@@ -225,7 +224,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         if(!is.null(features_data)){
             plot_feature_out <- .features_plotter(features_data,
                                                 order_sample_by,
-                                                xlab = "Samples",
                                                 ...)
             plot_out <- c(list(abundance = plot_out), plot_feature_out)
         } else {
@@ -257,7 +255,13 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 
 #' @importFrom dplyr group_by summarize rename
 .get_abundance_data <- function(
-        x, rank, assay.type, order_rank_by = "name", use_relative = TRUE, ...){
+        x, rank, assay.type, order_rank_by = "name", use_relative = FALSE, ...){
+    # Input check
+    if(!.is_a_bool(use_relative)){
+        stop("'use_relative' must be TRUE or FALSE.",
+             call. = FALSE)
+    }
+    #
     # Agglomerate data if user has specified
     if( !is.null(rank) ){
         x <- agglomerateByRank(x, rank = rank, ...)
@@ -277,7 +281,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     # and use relative assay instead of the original assay in plotting.
     if( use_relative ){
         temp_name <- "temporary_relative_abundance"
-        x <- transformAssay(x, assay.type = assay.type, method = "relabundance", name = temp_name)
+        x <- transformAssay(
+            x, assay.type = assay.type, method = "relabundance",
+            name = temp_name)
         assay.type <- temp_name
     }
     # Samples must have names. In theory, TreeSE can include columns without
@@ -423,17 +429,20 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 #' @importFrom ggplot2 ggplot theme_classic geom_point geom_bar coord_flip
 #'   scale_y_continuous
 .abund_plotter <- function(object,
-                        xlab = NULL,
-                        ylab = NULL,
-                        colour_by = NULL,
-                        layout = "bar",
-                        flipped = FALSE,
-                        add_legend = TRUE,
-                        add_x_text = FALSE,
-                        add_border = NULL,
-                        bar_alpha = 0.65,
-                        point_alpha = 1,
-                        point_size = 2){
+        xlab = "Samples",
+        ylab = paste0(ifelse(use_relative, "Rel. ", ""),"Abundance"),
+        colour_by = NULL,
+        layout = "bar",
+        flipped = FALSE,
+        add_legend = TRUE,
+        add_x_text = FALSE,
+        add_border = NULL,
+        bar_alpha = 0.65,
+        point_alpha = 1,
+        point_size = 2,
+        use_relative = FALSE,
+        ...
+        ){
     # start plotting
     plot_out <- ggplot(object, aes(x=.data[["X"]], y=.data[["Y"]])) +
         xlab(xlab) +
@@ -485,7 +494,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 #' @importFrom ggplot2 ggplot aes labs geom_point geom_raster
 .feature_plotter <- function(feature_data,
                             name,
-                            xlab,
+                            xlab = "Samples",
                             flipped,
                             add_legend,
                             add_x_text,

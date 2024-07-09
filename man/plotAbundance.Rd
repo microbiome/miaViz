@@ -14,7 +14,6 @@ plotAbundance(x, ...)
   order_rank_by = c("name", "abund", "revabund"),
   order_sample_by = NULL,
   decreasing = TRUE,
-  use_relative = TRUE,
   layout = c("bar", "point"),
   one_facet = TRUE,
   ncol = 2,
@@ -29,8 +28,12 @@ plotAbundance(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{...}{additional parameters for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
+\item{...}{additional parameters for plotting.
+\itemize{
+\item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+be calculated? (default: \code{use_relative = FALSE} }
+}
+See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{rank}{a single \code{character} value defining the taxonomic rank to
 use. Must be a value of \code{taxonomyRanks(x)}.}
@@ -52,9 +55,6 @@ plot by. (default: \code{order_sample_by = NULL})}
 \item{decreasing}{TRUE or FALSE: If the \code{order_sample_by} is defined and the
 values are numeric, should the values used to order in decreasing or
 increasing fashion? (default: \code{decreasing = FALSE})}
-
-\item{use_relative}{\code{TRUE} or \code{FALSE}: Should the relative values
-be calculated? (default: \code{use_relative = TRUE})}
 
 \item{layout}{Either \dQuote{bar} or \dQuote{point}.}
 
@@ -96,31 +96,36 @@ features present.
 data(GlobalPatterns, package="mia")
 tse <- GlobalPatterns
 
+# Apply relative transform
+tse <- transformAssay(tse, method = "relabundance")
+
 ## If rank is set to NULL (default), agglomeration is not done. However, note
 ## that there is maximum number of rows that can be plotted. That is why
 ## we take sample from the data.
 set.seed(26348)
 sample <- sample(rownames(tse), 20)
 tse_sub <- tse[sample, ]
-plotAbundance(tse_sub)
+plotAbundance(tse_sub, assay.type = "relabundance")
 
 ## Plotting counts using the first taxonomic rank as default
 plotAbundance(
-    tse, assay.type="counts", rank = "Phylum", use_relative=FALSE) +
+    tse, assay.type="counts", rank = "Phylum") +
     labs(y="Counts")
 
-## Using "Phylum" as rank
-plotAbundance(tse, assay.type="counts", rank = "Phylum", add_legend = FALSE)
+## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
+plotAbundance(
+    tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
+    use_relative = TRUE)
 
   
 ## A feature from colData or taxon from chosen rank can be used for ordering samples.
-plotAbundance(tse, assay.type="counts", rank = "Phylum",
+plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
            order_sample_by = "Bacteroidetes")
 
 ## Features from colData can be plotted together with abundance plot.
 # Returned object is a list that includes two plot; other visualizes abundance
 # other features. 
-plot <- plotAbundance(tse, assay.type = "counts", rank = "Phylum",
+plot <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
                    features = "SampleType")
 \donttest{
 # These two plots can be combined with wrap_plots function from patchwork package
@@ -130,7 +135,7 @@ wrap_plots(plot, ncol = 1)
 
 ## Same plot as above but showing sample IDs as labels for the x axis on the top plot
 
-plot[[1]] <- plotAbundance(tse, assay.type = "counts", rank = "Phylum",
+plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
                            features = "SampleType", add_legend = FALSE,
                            add_x_text = TRUE)[[1]] +
                            theme(axis.text.x = element_text(angle = 90)) 
