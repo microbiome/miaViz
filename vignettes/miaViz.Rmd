@@ -68,11 +68,13 @@ GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
 plotAbundance(GlobalPatterns, rank = "Kingdom", assay.type = "relabundance")
 ```
 
-If `rank`is set to null however then the bars will be colored by each individual taxon. Please note that if you're doing this make sure to agglomerate your data to a certain taxonomic hand before plotting.
+If `rank` is set to null however then the bars will be colored by each
+individual taxon. Please note that if you're doing this make sure to agglomerate
+your data to a certain taxonomic hand before plotting.
 
 ```{r}
-GlobalPatterns.agglomerated <- agglomerateByRank(GlobalPatterns, 'Kingdom')
-plotAbundance(GlobalPatterns.agglomerated, rank = NULL, assay.type = "relabundance")
+GlobalPatterns_king <- agglomerateByRank(GlobalPatterns, "Kingdom")
+plotAbundance(GlobalPatterns_king, assay.type = "relabundance")
 ```
 
 With subsetting to selected features the plot can be fine tuned.

@@ -5,9 +5,9 @@
 #' class.
 #'
 #' @name miaViz-package
-#' @docType package
 #' @seealso
 #' \link[mia:mia-package]{mia} class
+"_PACKAGE"
 NULL
 
 #' @import methods

@@ -70,23 +70,33 @@
 #'
 #' @examples
 #' data(GlobalPatterns, package="mia")
-#' se <- GlobalPatterns
+#' tse <- GlobalPatterns
+#' 
+#' ## If rank is set to NULL (default), agglomeration is not done. However, note
+#' ## that there is maximum number of rows that can be plotted. That is why
+#' ## we take sample from the data.
+#' set.seed(26348)
+#' sample <- sample(rownames(tse), 20)
+#' tse_sub <- tse[sample, ]
+#' plotAbundance(tse_sub)
 #' 
 #' ## Plotting counts using the first taxonomic rank as default
-#' plotAbundance(se, assay.type="counts", use_relative=FALSE) + labs(y="Counts")
+#' plotAbundance(
+#'     tse, assay.type="counts", rank = "Phylum", use_relative=FALSE) +
+#'     labs(y="Counts")
 #' 
 #' ## Using "Phylum" as rank
-#' plotAbundance(se, assay.type="counts", rank = "Phylum", add_legend = FALSE)
+#' plotAbundance(tse, assay.type="counts", rank = "Phylum", add_legend = FALSE)
 #' 
 #'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
-#' plotAbundance(se, assay.type="counts", rank = "Phylum",
+#' plotAbundance(tse, assay.type="counts", rank = "Phylum",
 #'            order_sample_by = "Bacteroidetes")
 #' 
 #' ## Features from colData can be plotted together with abundance plot.
 #' # Returned object is a list that includes two plot; other visualizes abundance
 #' # other features. 
-#' plot <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
+#' plot <- plotAbundance(tse, assay.type = "counts", rank = "Phylum",
 #'                    features = "SampleType")
 #' \donttest{
 #' # These two plots can be combined with wrap_plots function from patchwork package
@@ -96,7 +106,7 @@
 #' 
 #' ## Same plot as above but showing sample IDs as labels for the x axis on the top plot
 #' 
-#' plot[[1]] <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
+#' plot[[1]] <- plotAbundance(tse, assay.type = "counts", rank = "Phylum",
 #'                            features = "SampleType", add_legend = FALSE,
 #'                            add_x_text = TRUE)[[1]] +
 #'                            theme(axis.text.x = element_text(angle = 90)) 
@@ -107,17 +117,17 @@
 #' ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
 #' 
 #' # Getting top taxa on a Phylum level
-#' se <- transformAssay(se, method="relabundance")
-#' se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
-#' top_taxa <- getTop(se_phylum,top = 5, assay.type = "relabundance")
+#' se <- transformAssay(tse, method="relabundance")
+#' se_phylum <- agglomerateByRank(tse, rank ="Phylum", onRankOnly=TRUE)
+#' top_taxa <- getTop(tse_phylum,top = 5, assay.type = "relabundance")
 #' 
 #' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
-#' phylum_renamed <- lapply(rowData(se)$Phylum,
+#' phylum_renamed <- lapply(rowData(tse)$Phylum,
 #'                        function(x){if (x %in% top_taxa) {x} else {"Other"}})
 #' rowData(se)$Phylum <- as.character(phylum_renamed)
 #' 
 #' # Compositional barplot
-#' plotAbundance(se, assay.type="relabundance", rank = "Phylum",
+#' plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
 #'            order_rank_by="abund", order_sample_by = "Bacteroidetes")
 NULL
 
@@ -143,7 +153,7 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
-            rank = taxonomyRanks(x)[1],
+            rank = NULL,
             features = NULL,
             order_rank_by = c("name","abund","revabund"),
             order_sample_by = NULL,
@@ -155,12 +165,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             scales = "fixed",
             assay.type = assay_name, assay_name = "counts",
             ...){
-        # input checks
+        ############################# INPUT CHECK #############################
         if(nrow(x) == 0L){
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        ############################# INPUT CHECK #############################
         if(!.is_non_empty_string(rank) && !is.null(rank)){
             stop("'rank' must be an non empty single character value or NULL.",
                 call. = FALSE)
@@ -177,41 +186,42 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one_facet,
                             ncol = ncol)
-        if( !is.null(features)){
+        if( !is.null(features) ){
             features <- match.arg(features, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
-        if(is.null(rank)){
-           rank <- "Feature"
-           rowData(x)[[ rank ]] <- rownames(x)
-        }
-        
+        # Get the abundance data to be plotted. Agglomerate and apply relative
+        # transformation if specified.
         abund_data <- .get_abundance_data(x, rank, assay.type, order_rank_by,
-                                        use_relative)
-        order_sample_by <- .norm_order_sample_by(order_sample_by,
-                                                unique(abund_data$colour_by),
-                                                x)
-        if(is.null(rank) && nrow(assay(x,assay.type=assay_name))>100){
-            stop("The data contains more than 100 rows. 
-                 The abundance plot cannot be created.", call. = FALSE)
-        }
+                                        use_relative, ...)
+        # If rank was NULL, then the data was not agglomerated. The rank is
+        # still used in coloring (passed to colour_by parameter in
+        # .abund_plotter), which is why we adjust the value of it to apply
+        # coloring in (NULL means that coloring is not applied).
+        rank <- ifelse(is.null(rank), "Feature", rank)
+        # Order columns
+        order_sample_by <- .norm_order_sample_by(
+            order_sample_by, unique(abund_data$colour_by), x)
+        # Get additional column metadata to be plotted
         features_data <- NULL
         if(!is.null(features) || !is.null(order_sample_by)){
             features_data <- .get_features_data(features, order_sample_by, x)
         }
+        # Order the whole data to follow user specified ordering
         if(!is.null(order_sample_by)){
-            order_out <- .order_abund_feature_data(abund_data, features_data,
-                                                order_sample_by, decreasing)
+            order_out <- .order_abund_feature_data(
+                abund_data, features_data, order_sample_by, decreasing)
             abund_data <- order_out$abund_data
             features_data <- order_out$features_data
-            rm(order_out)
         }
+        # Create the main plot
         plot_out <- .abund_plotter(abund_data,
                                 xlab = "Samples",
                                 ylab = "Rel. Abundance",
                                 colour_by = rank,
                                 layout = layout,
                                 ...)
+        # Create the column metadata plot and create a list from plots
         if(!is.null(features_data)){
             plot_feature_out <- .features_plotter(features_data,
                                                 order_sample_by,
@@ -219,89 +229,93 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                                                 ...)
             plot_out <- c(list(abundance = plot_out), plot_feature_out)
         } else {
+            # Whether to split the main plot to multiple facets. This is
+            # disabled if user wants to plot also column metadata.
             if (!one_facet) {
                 plot_out <- plot_out + 
                     facet_wrap(~colour_by, ncol = ncol, scales = scales)
             }
         }
-        # Checks if the list is a ggplot object or regular list of ggplot objects
+        # Checks if the list is a ggplot object or regular list of ggplot
+        # objects
         if( !is.ggplot(plot_out) ){
-            # If features is specified, then only abundance and features plots are 
-            # returned as a list. If it is not, then only abundance plot is returned.
+            # If features is specified, then only abundance and features plots
+            # are returned as a list. If it is not, then only abundance plot is
+            # returned.
             if( !is.null(features) ){
-                plot_out <- list(abundance = plot_out[["abundance"]], plot_out[[features]])
+                plot_out <- list(
+                    abundance = plot_out[["abundance"]], plot_out[[features]])
                 # Assigns the names back
                 names(plot_out) <- c("abundance", features)
             } else{
                 plot_out <- plot_out[["abundance"]]
             }
         }
-        plot_out
+        return(plot_out)
     }
 )
 
-
-MELT_NAME <- "Sample"
-MELT_VALUES <- "Value"
-
-#' @importFrom SummarizedExperiment rowData assay
-#' @importFrom dplyr mutate group_by summarize rename
-#' @importFrom tidyr pivot_longer nest unnest
-#' @importFrom tibble rownames_to_column
-#' @importFrom purrr map
-.get_abundance_data <- function(x, rank, assay.type, order_rank_by = "name",
-                                use_relative = TRUE){
-    data <- assay(x, assay.type, withDimnames = TRUE)
-    if(use_relative){
-        data <- mia:::.calc_rel_abund(data)
+#' @importFrom dplyr group_by summarize rename
+.get_abundance_data <- function(
+        x, rank, assay.type, order_rank_by = "name", use_relative = TRUE, ...){
+    # Agglomerate data if user has specified
+    if( !is.null(rank) ){
+        x <- agglomerateByRank(x, rank = rank, ...)
     }
-    if(is.null(colnames(x))){
-        colnames(data) <- paste0("Sample",seq_len(ncol(x)))
+    # At this point, we can check how many rows there are to plot. In practice,
+    # there is a limit how many rows we can plot. If there are too many, it is
+    # impossible to read the plot. Moreover, the plotting takes excessive
+    # amount of time. The good limit might be somewhere around 50, but it
+    # might be better to have higher maximum limit so we do not limit too much.
+    max_num <- 500
+    if( nrow(x) > max_num ){
+        stop("The data contains more than ", max_num, " rows. The abundance ",
+            "plot cannot be created. Consider subsetting/agglomeration. ",
+            "(Check 'rank' parameter)", call. = FALSE)
     }
-    merge_FUN <- function(data){
-        data %>%
-            group_by(!!sym(MELT_NAME)) %>%
-            summarize(!!sym(MELT_VALUES) := sum(!!sym(MELT_VALUES)))
+    # If user wants to calculate relative abundances, apply relative transform
+    # and use relative assay instead of the original assay in plotting.
+    if( use_relative ){
+        x <- transformAssay(x, assay.type = assay.type, method = "relabundance")
+        assay.type <- "relabundance"
     }
-    # enable conversion to data.frame for non-matrix assays, e.g. sparseMatrices
-    if(!is.matrix(data)){
-        data <- as.matrix(data)
+    # Samples must have names. In theory, TreeSE can include columns without
+    # names. If that is the case, add names.
+    if( is.null(colnames(x)) ){
+        colnames(x) <- paste0("Sample", seq_len(ncol(x)))
     }
-    data <- data %>%
-        as.data.frame() %>%
-        mutate(rank = factor(rowData(x)[,rank], unique(rowData(x)[,rank]))) %>%
-        pivot_longer(cols = !rank,
-                    names_to = MELT_NAME,
-                    values_to = MELT_VALUES) %>%
-        mutate(!!sym(MELT_NAME) := factor(!!sym(MELT_NAME), unique(!!sym(MELT_NAME)))) %>%
-        nest(data = !rank) %>%
-        mutate(data = map(data, merge_FUN)) %>%
-        unnest(cols = data)
-    # rename columns
-    data <- data %>%
-        dplyr::rename(colour_by = "rank",
-                    X = MELT_NAME,
-                    Y = MELT_VALUES)
+    # Melt TreeSE
+    data <- meltSE(
+        x, assay.type = assay.type, row.name = "colour_by", col.name = "X")
+    # Add correct column name for abundance values
+    colnames(data)[ colnames(data) == assay.type ] <- "Y"
     # order values
-    if(order_rank_by == "name"){
+    if( order_rank_by == "name" ){
+        # By default, factors follow alphabetical order. Order values, based
+        # on names i.e. alphabetical order.
         lvl <- levels(data$colour_by)
         lvl <- lvl[order(lvl)]
-    } else if(order_rank_by %in% c("abund","revabund")){
+    } else if( order_rank_by %in% c("abund","revabund") ){
+        # Control the order
+        decreasing <- ifelse(order_rank_by == "abund",TRUE,FALSE)
+        # Get values for each feature and sum them up
         o <- data %>% 
             select(!.data$X) %>%
             group_by(.data$colour_by) %>% 
             summarize(sum = sum(.data$Y))
-        decreasing <- ifelse(order_rank_by == "abund",TRUE,FALSE)
-        lvl <- o[order(o$sum, decreasing = decreasing),] %>% 
+        # Order the data based on abundance. By default, feature that has
+        # highest library size comes first.
+        lvl <- o[order(o$sum, decreasing = decreasing), ] %>% 
             pull(.data$colour_by) %>%
             as.character()
     } else {
         stop(".")
     }
+    # Apply the order
     data$colour_by <- factor(data$colour_by, lvl)
     data <- data[order(data$colour_by),]
     
-    data
+    return(data)
 }
 
 .norm_order_sample_by <- function(order_sample_by, factors, x){
