@@ -276,8 +276,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     # If user wants to calculate relative abundances, apply relative transform
     # and use relative assay instead of the original assay in plotting.
     if( use_relative ){
-        x <- transformAssay(x, assay.type = assay.type, method = "relabundance")
-        assay.type <- "relabundance"
+        temp_name <- "temporary_relative_abundance"
+        x <- transformAssay(x, assay.type = assay.type, method = "relabundance", name = temp_name)
+        assay.type <- temp_name
     }
     # Samples must have names. In theory, TreeSE can include columns without
     # names. If that is the case, add names.

@@ -32,7 +32,7 @@ several options, such as `plotColData`, `plotExpression` and `plotRowData`.
 To install `miaViz`, install `BiocManager` first, if it is not installed.
 Afterwards use the `install` function from `BiocManager` and load `miaViz`.
 
-```{r}
+```{r install, eval=FALSE}
 if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("miaViz")
