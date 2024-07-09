@@ -19,7 +19,7 @@ plotAbundanceDensity(x, ...)
   shape_by = NULL,
   size.by = size_by,
   size_by = NULL,
-  order.descending = order_descending,
+  decreasing = order_descending,
   order_descending = TRUE,
   ...
 )
@@ -95,10 +95,10 @@ disabled when \code{layout = "density"}. (default: \code{size.by = NULL})}
 
 \item{size_by}{Deprecated. Use \code{size.by} instead.}
 
-\item{order.descending}{\code{TRUE}, \code{FALSE} or\code{NA}: Should the
-results be ordered in a descending order? If \code{NA} is given the order
+\item{decreasing}{\code{Boolean} indicating whether the results should be ordered
+in a descending order or not. If \code{NA} is given the order
 as found in \code{x} for the \code{n} most abundant taxa is used.
-(default: \code{order.descending = TRUE})}
+(Default: \code{TRUE})}
 
 \item{order_descending}{Deprecated. Use \code{order.descending} instead.}
 }
@@ -149,14 +149,14 @@ plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
 plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
                      shape.by = "sex", size.by = "time", point_size=1)
 
-# Ordering via order.descending
+# Ordering via decreasing
 plotAbundanceDensity(tse, assay.type = "relabundance", 
-                     order.descending = FALSE)
+                     decreasing = FALSE)
 
-# for custom ordering set order.descending = NA and order the input object
+# for custom ordering set decreasing = NA and order the input object
 # to your wishes
 plotAbundanceDensity(tse, assay.type = "relabundance",
-                     order.descending = NA)
+                     decreasing = NA)
 
 }
 \author{

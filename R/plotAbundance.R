@@ -47,11 +47,6 @@
 #' @param decreasing TRUE or FALSE: If the \code{order.col.by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
 #'   increasing fashion? (default: \code{decreasing = FALSE})
-#'   
-#' @param use.relative \code{TRUE} or \code{FALSE}: Should the relative values
-#'   be calculated? (default: \code{use.relative = TRUE})
-#'   
-#' @param use_relative Deprecated. Use \code{use.relative} instead.
 #'
 #' @param layout Either \dQuote{bar} or \dQuote{point}. 
 #' 
@@ -69,6 +64,9 @@
 #' 
 #' @param ... additional parameters for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
+#' \itemize{
+#'  \item \code{use_relative} \code{Boolean} value indicating whether the relative values
+#'   should be calculated or not. (Default: \code{TRUE})}
 #'
 #' @return 
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 
@@ -164,8 +162,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             order.col.by = order_sample_by,
             order_sample_by = NULL,
             decreasing = TRUE,
-            use.relative = use_relative,
-            use_relative = TRUE,
             layout = c("bar","point"),
             one.facet = one_facet,
             one_facet = TRUE,
@@ -194,10 +190,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             stop("'rank' must be an non empty single character value.",
                 call. = FALSE)
         }
-        if(!.is_a_bool(use.relative)){
-            stop("'use.relative' must be TRUE or FALSE.",
-                call. = FALSE)
-        }
         .check_taxonomic_rank(rank, x)
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
@@ -209,7 +201,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         }
         ########################### INPUT CHECK END ###########################
         abund_data <- .get_abundance_data(x, rank, assay.type, order.row.by,
-                                          use.relative)
+                                          ...)
         order.col.by <- .norm_order_sample_by(order.col.by,
                                                 unique(abund_data$colour_by),
                                                 x)
@@ -269,6 +261,10 @@ MELT_VALUES <- "Value"
 #' @importFrom purrr map
 .get_abundance_data <- function(x, rank, assay.type, order_rank_by = "name",
                                 use_relative = TRUE){
+    if(!.is_a_bool(use_relative)){
+        stop("'use_relative' must be TRUE or FALSE.",
+             call. = FALSE)
+    }
     data <- assay(x, assay.type, withDimnames = TRUE)
     if(use_relative){
         data <- mia:::.calc_rel_abund(data)

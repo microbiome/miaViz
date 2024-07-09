@@ -19,7 +19,6 @@ plotPrevalence(x, ...)
   prevalences = seq(0.1, 1, 0.1),
   assay.type = assay_name,
   assay_name = "counts",
-  as.relative = TRUE,
   rank = NULL,
   BPPARAM = BiocParallel::SerialParam(),
   ...
@@ -32,8 +31,6 @@ plotPrevalentAbundance(x, ...)
   rank = taxonomyRanks(x)[1L],
   assay.type = assay_name,
   assay_name = "counts",
-  as.relative = as_relative,
-  as_relative = TRUE,
   colour.by = colour_by,
   colour_by = NULL,
   size.by = size_by,
@@ -55,8 +52,6 @@ plotFeaturePrevalence(x, ...)
   assay_name = "counts",
   detections = NULL,
   ndetections = 20,
-  as.relative = as_relative,
-  as_relative = TRUE,
   min.prevalence = min_prevalence,
   min_prevalence = 0,
   BPPARAM = BiocParallel::SerialParam(),
@@ -71,6 +66,12 @@ plotTaxaPrevalence(x, ...)
 \item{x}{a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
+
+\item{...}{additional parameters for plotting.
+\itemize{
+\item{as_relative} \code{Boolean} indicating whether the detection threshold
+should be applied to compositional (relative) abundances. (Default: \code{FALSE})
+}}
 
 \item{detections}{Detection thresholds for absence/presence. Either an
 absolutes value compared directly to the values of \code{x} or a relative
@@ -87,10 +88,6 @@ use. (default: \code{assay.type = "relabundance"})}
 assay to use for calculation.
 (Please use \code{assay.type} instead. At some point \code{assay_name}
 will be disabled.)}
-
-\item{as.relative}{logical scalar: Should the detection threshold be applied
-on compositional (relative) abundances? Passed onto
-\code{\link[mia:getPrevalence]{getPrevalence}}. (default: \code{TRUE})}
 
 \item{rank, ...}{additional arguments
 \itemize{

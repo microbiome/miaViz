@@ -42,10 +42,10 @@
 #'   
 #' @param size_by Deprecated. Use \code{size.by} instead.
 #' 
-#' @param order.descending \code{TRUE}, \code{FALSE} or\code{NA}: Should the
-#'   results be ordered in a descending order? If \code{NA} is given the order
+#' @param decreasing \code{Boolean} indicating whether the results should be ordered 
+#'   in a descending order or not. If \code{NA} is given the order
 #'   as found in \code{x} for the \code{n} most abundant taxa is used.
-#'   (default: \code{order.descending = TRUE})
+#'   (Default: \code{TRUE})
 #'   
 #' @param order_descending Deprecated. Use \code{order.descending} instead.
 #'   
@@ -127,14 +127,14 @@
 #' plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
 #'                      shape.by = "sex", size.by = "time", point_size=1)
 #' 
-#' # Ordering via order.descending
+#' # Ordering via decreasing
 #' plotAbundanceDensity(tse, assay.type = "relabundance", 
-#'                      order.descending = FALSE)
+#'                      decreasing = FALSE)
 #'
-#' # for custom ordering set order.descending = NA and order the input object
+#' # for custom ordering set decreasing = NA and order the input object
 #' # to your wishes
 #' plotAbundanceDensity(tse, assay.type = "relabundance",
-#'                      order.descending = NA)
+#'                      decreasing = NA)
 #'
 NULL
 
@@ -157,7 +157,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                    shape_by = NULL,
                    size.by = size_by,
                    size_by = NULL,
-                   order.descending = order_descending,
+                   decreasing = order_descending,
                    order_descending = TRUE,
                    ...){
               ############################# Input Check ##############################
@@ -184,9 +184,9 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                   stop("'shape.by' must be a single character value.",
                        call. = FALSE)
               }
-              # Checks order_descending
-              if( !is.na(order_descending) && !.is_a_bool(order_descending)){
-                  stop("'order_descending' must be TRUE, FALSE or NA.",
+              # Checks decreasing
+              if( !is.na(decreasing) && !.is_a_bool(decreasing)){
+                  stop("'decreasing' must be TRUE, FALSE or NA.",
                        call. = FALSE)
               }
               ########################### Input Check end ############################
@@ -197,7 +197,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                                                              colour_by = colour.by,
                                                              shape_by = shape.by,
                                                              size_by = size.by,
-                                                             order_descending = order.descending)
+                                                             order_descending = decreasing)
               # Extracts the density data and aesthetic from the list
               density_data <- density_data_list$density_data
               colour.by <- density_data_list$colour_by

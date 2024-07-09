@@ -17,8 +17,6 @@ plotAbundance(x, ...)
   order.col.by = order_sample_by,
   order_sample_by = NULL,
   decreasing = TRUE,
-  use.relative = use_relative,
-  use_relative = TRUE,
   layout = c("bar", "point"),
   one.facet = one_facet,
   one_facet = TRUE,
@@ -35,7 +33,10 @@ plotAbundance(x, ...)
 object.}
 
 \item{...}{additional parameters for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
+\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
+\itemize{
+\item \code{use_relative} \code{Boolean} value indicating whether the relative values
+should be calculated or not. (Default: \code{TRUE})}}
 
 \item{rank}{a single \code{character} value defining the taxonomic rank to
 use. Must be a value of \code{taxonomyRanks(x)}.}
@@ -63,11 +64,6 @@ plot by. (default: \code{order.col.by = NULL})}
 \item{decreasing}{TRUE or FALSE: If the \code{order.col.by} is defined and the
 values are numeric, should the values used to order in decreasing or
 increasing fashion? (default: \code{decreasing = FALSE})}
-
-\item{use.relative}{\code{TRUE} or \code{FALSE}: Should the relative values
-be calculated? (default: \code{use.relative = TRUE})}
-
-\item{use_relative}{Deprecated. Use \code{use.relative} instead.}
 
 \item{layout}{Either \dQuote{bar} or \dQuote{point}.}
 

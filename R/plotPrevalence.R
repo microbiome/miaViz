@@ -28,10 +28,6 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param as.relative logical scalar: Should the detection threshold be applied
-#'   on compositional (relative) abundances? Passed onto
-#'   \code{\link[mia:getPrevalence]{getPrevalence}}. (default: \code{TRUE})
-#'   
 #' @param colour.by Specification of a feature to colour points by, see the 
 #'   \code{by} argument in 
 #'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
@@ -84,6 +80,12 @@
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the UniFrac calculation should be parallelized.
+#'   
+#' @param ... additional parameters for plotting. 
+#' \itemize{
+#'  \item{as_relative} \code{Boolean} indicating whether the detection threshold 
+#'  should be applied to compositional (relative) abundances. (Default: \code{FALSE})
+#' }
 #' 
 #' @details 
 #' Agglomeration on different taxonomic levels is available through the 
@@ -147,7 +149,6 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
                    detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
                    prevalences = seq(0.1, 1, 0.1),
                    assay.type = assay_name, assay_name = "counts",
-                   as.relative = TRUE,
                    rank = NULL,
                    BPPARAM = BiocParallel::SerialParam(),
                    ...){
@@ -161,22 +162,15 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        if(!.is_a_bool(as.relative)){
-            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if(as.relative && (any(detections < 0) || any(detections > 1))){
-            stop("If 'as.relative' == TRUE, detections' must be numeric ",
-                 "values between 0 and 1.", call. = FALSE)
-        }
         #
         x <- mia:::.agg_for_prevalence(x, rank, ...)
         plot_data <- .get_prevalence_plot_data(x, assay.type, detections,
-                                               prevalences, as.relative,
-                                               BPPARAM)
+                                               prevalences,
+                                               BPPARAM, ...)
         plot_data$colour.by <- plot_data$colour.by * 100
         .prevalence_plotter(plot_data, 
                             layout = "line",
-                            xlab = ifelse(as.relative,"Abundance [%]","Detection"),
+                            xlab,
                             ylab = "N",
                             colour.by = "Prevalence [%]",
                             size.by = NULL,
@@ -200,6 +194,13 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 .get_prevalence_plot_data <- function(x, assay.type, detections, prevalences,
                                       as_relative = TRUE, 
                                       BPPARAM = BiocParallel::SerialParam()){
+    if(!.is_a_bool(as_relative)){
+        stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if(as_relative && (any(detections < 0) || any(detections > 1))){
+        stop("If 'as_relative' == TRUE, detections' must be numeric ",
+             "values between 0 and 1.", call. = FALSE)
+    }
     mat <- assay(x, assay.type, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
@@ -233,7 +234,6 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x,
              rank = taxonomyRanks(x)[1L],
              assay.type = assay_name, assay_name = "counts",
-             as.relative = as_relative, as_relative = TRUE,
              colour.by = colour_by, colour_by = NULL,
              size.by = size_by,
              size_by = NULL,
@@ -245,9 +245,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
              ...){
         # input check
         .check_assay_present(assay.type, x)
-        if(!.is_a_bool(as.relative)){
-            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
-        }
+
         # Check facet.by It is FALSE by default, but user can specify it, but 
         # the value must be in taxonomyRanks.
         if(!(is.null(facet.by) || facet.by %in% taxonomyRanks(x))){
@@ -259,8 +257,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         label <- .norm_label(label, x)
         #
         plot_data <- .get_prevalence_plot_point_data(x, assay.type, 
-                                                     as_relative = as.relative,
-                                                     label = label)
+                                                     label = label, ...)
         vis_out <- .incorporate_prevalence_vis(plot_data,
                                                se = x,
                                                colour_by = colour.by,
@@ -273,12 +270,11 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         size.by <- vis_out$size_by
         shape.by <- vis_out$shape_by
         facet.by <- vis_out$facet_by
-        xlab <- paste0(ifelse(as.relative, "Rel. ", ""),"Abundance")
         ylab <- paste0("Prevalence(", ifelse(is.null(rank), "Features", rank),
                        ") [%]")
         plot <- .prevalence_plotter(plot_data, 
                             layout = "point",
-                            xlab = xlab,
+                            xlab,
                             ylab = ylab,
                             colour_by = colour.by,
                             size_by = size.by,
@@ -300,6 +296,9 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment assay
 .get_prevalence_plot_point_data <- function(x, assay.type, as_relative = TRUE,
                                             label = NULL){
+    if(!.is_a_bool(as_relative)){
+        stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
+    }
     mat <- assay(x, assay.type, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
@@ -368,8 +367,6 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                    assay.type = assay_name, assay_name = "counts",
                    detections = NULL,
                    ndetections = 20,
-                   as.relative = as_relative,
-                   as_relative = TRUE,
                    min.prevalence = min_prevalence,
                    min_prevalence = 0,
                    BPPARAM = BiocParallel::SerialParam(),
@@ -390,13 +387,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
             as.relative <- TRUE
         }
         .check_assay_present(assay.type, x)
-        if(!.is_a_bool(as.relative)){
-            stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
-        }
-        if(as.relative && (any(detections < 0) || any(detections > 1))){
-            stop("If 'as.relative' == TRUE, detections' must be numeric ",
-                 "values between 0 and 1.", call. = FALSE)
-        }
+        
         if(length(min.prevalence) != 1 || !.is_numeric_string(min.prevalence)){
             stop("'min.prevalence' must be single numeric values.",
                  call. = FALSE)
@@ -405,16 +396,14 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
         x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, relabel = TRUE,
                                        ...)
         plot_data <- .get_prevalence_plot_matrix(x, assay.type, detections,
-                                                 as.relative, 
                                                  min.prevalence,
-                                                 BPPARAM)
+                                                 BPPARAM, ...)
         plot_data$colour_by <- plot_data$colour_by * 100
-        xlab <- ifelse(as.relative,"Abundance [%]","Detection")
         ylab <- ifelse(is.null(rank), "Features", rank)
         colour_by <- "Prevalence [%]"
         .prevalence_plotter(plot_data, 
                             layout = "heatmap",
-                            xlab = xlab,
+                            xlab,
                             ylab = ylab,
                             colour_by = colour_by,
                             size_by = NULL,
@@ -438,6 +427,13 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                                         as_relative = TRUE, 
                                         min_prevalence,
                                         BPPARAM = BiocParallel::SerialParam()){
+    if(!.is_a_bool(as_relative)){
+        stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if(as_relative && (any(detections < 0) || any(detections > 1))){
+        stop("If 'as_relative' == TRUE, detections' must be numeric ",
+             "values between 0 and 1.", call. = FALSE)
+    }
     mat <- assay(x, assay.type, withDimnames = TRUE)
     if(as_relative){
         mat <- mia:::.calc_rel_abund(mat)
@@ -480,6 +476,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
 #'   theme_classic
 .prevalence_plotter <- function(plot_data,
                                 layout = c("line","point","heatmap"),
+                                as_relative = TRUE,
                                 xlab = NULL,
                                 ylab = NULL,
                                 colour_by = NULL,
@@ -492,6 +489,7 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                                 line_alpha = 1,
                                 line_type = NULL,
                                 line_size = 1){
+    xlab <- paste0(ifelse(as_relative, "Rel. ", ""),"Abundance")
     plot_out <- ggplot(plot_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)
     if(layout == "line"){
