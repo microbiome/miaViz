@@ -6,7 +6,7 @@ If only &amp;#8216;counts&amp;#8217; is present, the relative abundance is compu
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -20,7 +20,7 @@ If only &amp;#8216;counts&amp;#8217; is present, the relative abundance is compu
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.6</span>
       </span>
     </div>
 
@@ -35,13 +35,13 @@ If only &amp;#8216;counts&amp;#8217; is present, the relative abundance is compu
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plotting abundance data</h1>
-    
+
     <div class="hidden name"><code>plotAbundance.Rd</code></div>
     </div>
 
@@ -55,15 +55,14 @@ If only ‘counts’ is present, the relative abundance is computed.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">plotAbundance</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/taxonomy-methods.html" class="external-link">taxonomyRanks</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,</span>
+<span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  features <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  order_rank_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"abund"</span>, <span class="st">"revabund"</span><span class="op">)</span>,</span>
 <span>  order_sample_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  decreasing <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  use_relative <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bar"</span>, <span class="st">"point"</span><span class="op">)</span>,</span>
 <span>  one_facet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="fl">2</span>,</span>
@@ -76,23 +75,26 @@ If only ‘counts’ is present, the relative abundance is computed.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x</dt>
+
+
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object.</p></dd>
 
 
-<dt>...</dt>
-<dd><p>additional parameters for plotting. See
-<code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>additional parameters for plotting.</p><ul><li><p>use_relative <code>TRUE</code> or <code>FALSE</code>: Should the relative values
+be calculated? (default: <code>use_relative = FALSE</code></p></li>
+</ul><p>See <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
-<dt>rank</dt>
+<dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
 <dd><p>a single <code>character</code> value defining the taxonomic rank to
 use. Must be a value of <code>taxonomyRanks(x)</code>.</p></dd>
 
 
-<dt>features</dt>
+<dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
 <dd><p>a single <code>character</code> value defining a column from
 <code>colData</code> to be plotted below the abundance plot.
 Continuous numeric values will be plotted as point, whereas factors and
@@ -100,53 +102,48 @@ character will be plotted as colour-code bar. (default: <code>features =
   NULL</code>)</p></dd>
 
 
-<dt>order_rank_by</dt>
+<dt id="arg-order-rank-by">order_rank_by<a class="anchor" aria-label="anchor" href="#arg-order-rank-by"></a></dt>
 <dd><p>How to order abundance value: By name (“name”)
 for sorting the taxonomic labels alphabetically, by abundance (“abund”) to
 sort by abundance values or by a reverse order of abundance values (“revabund”).</p></dd>
 
 
-<dt>order_sample_by</dt>
+<dt id="arg-order-sample-by">order_sample_by<a class="anchor" aria-label="anchor" href="#arg-order-sample-by"></a></dt>
 <dd><p>A single character value from the chosen rank of abundance
 data or from <code>colData</code> to select values to order the abundance
 plot by. (default: <code>order_sample_by = NULL</code>)</p></dd>
 
 
-<dt>decreasing</dt>
+<dt id="arg-decreasing">decreasing<a class="anchor" aria-label="anchor" href="#arg-decreasing"></a></dt>
 <dd><p>TRUE or FALSE: If the <code>order_sample_by</code> is defined and the
 values are numeric, should the values used to order in decreasing or
 increasing fashion? (default: <code>decreasing = FALSE</code>)</p></dd>
 
 
-<dt>use_relative</dt>
-<dd><p><code>TRUE</code> or <code>FALSE</code>: Should the relative values
-be calculated? (default: <code>use_relative = TRUE</code>)</p></dd>
-
-
-<dt>layout</dt>
+<dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
 <dd><p>Either “bar” or “point”.</p></dd>
 
 
-<dt>one_facet</dt>
+<dt id="arg-one-facet">one_facet<a class="anchor" aria-label="anchor" href="#arg-one-facet"></a></dt>
 <dd><p>Should the plot be returned in on facet or split into
 different facet, one facet per different value detect in <code>rank</code>. If
 <code>features</code> or <code>order_sample_by</code> is not <code>NULL</code>, this setting will
 be disregarded.</p></dd>
 
 
-<dt>ncol, scales</dt>
+<dt id="arg-ncol-scales">ncol, scales<a class="anchor" aria-label="anchor" href="#arg-ncol-scales"></a></dt>
 <dd><p>if <code>one_facet = FALSE</code>, <code>ncol</code> defines many
 columns should be for plotting the different facets and <code>scales</code> is
 used to define the behavior of the scales of each facet. Both values are
 passed onto <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></code>.</p></dd>
 
 
-<dt>assay.type</dt>
+<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p>a <code>character</code> value defining which assay data to
 use. (default: <code>assay.type = "relabundance"</code>)</p></dd>
 
 
-<dt>assay_name</dt>
+<dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>a single <code>character</code> value for specifying which
 assay to use for calculation.
 (Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
@@ -155,9 +152,7 @@ will be disabled.)</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>a <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></code> object or list of two
+    <p>a <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></code> object or list of two
 <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></code> objects, if <code>features</code> are added to
 the plot.</p>
     </div>
@@ -171,41 +166,55 @@ features present.</p>
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Plotting counts using the first taxonomic rank as default</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, use_relative<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y<span class="op">=</span><span class="st">"Counts"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Apply relative transform</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## If rank is set to NULL (default), agglomeration is not done. However, note</span></span></span>
+<span class="r-in"><span><span class="co">## that there is maximum number of rows that can be plotted. That is why</span></span></span>
+<span class="r-in"><span><span class="co">## we take sample from the data.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">26348</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span><span class="va">sample</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse_sub</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Using "Phylum" as rank</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Plotting counts using the first taxonomic rank as default</span></span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y<span class="op">=</span><span class="st">"Counts"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## If rank is set to NULL plotAbundance behaves like plotExpression</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="cn">NULL</span>,</span></span>
-<span class="r-in"><span>           features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## Using "Phylum" as rank. Apply relative transformation to "counts" assay.</span></span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>    use_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-3.png" alt="" width="3000" height="2100"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>  </span></span>
-<span class="r-in"><span><span class="co">## A feature from colData or taxon from chosen rank can be used for ordering samples.</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span><span class="co">## A feature from colData or taxon from chosen rank can be used for ordering</span></span></span>
+<span class="r-in"><span><span class="co">## samples.</span></span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>           order_sample_by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Features from colData can be plotted together with abundance plot.</span></span></span>
-<span class="r-in"><span><span class="co"># Returned object is a list that includes two plot; other visualizes abundance</span></span></span>
-<span class="r-in"><span><span class="co"># other features. </span></span></span>
-<span class="r-in"><span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span><span class="co"># Returned object is a list that includes two plot; other visualizes</span></span></span>
+<span class="r-in"><span><span class="co">## abundance other features. </span></span></span>
+<span class="r-in"><span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                   features <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="co"># These two plots can be combined with wrap_plots function from patchwork package</span></span></span>
+<span class="r-in"><span><span class="co"># These two plots can be combined with wrap_plots function from patchwork</span></span></span>
+<span class="r-in"><span><span class="co"># package</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Same plot as above but showing sample IDs as labels for the x axis on the top plot</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">plot</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span><span class="co">## Same plot as above but showing sample IDs as labels for the x axis on the</span></span></span>
+<span class="r-in"><span><span class="co">## top plot</span></span></span>
+<span class="r-in"><span><span class="va">plot</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>                           features <span class="op">=</span> <span class="st">"SampleType"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                           add_x_text <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>                           <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span> </span></span>
@@ -214,20 +223,21 @@ features present.</p>
 <span class="r-plt img"><img src="plotAbundance-6.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"</span></span></span>
+<span class="r-in"><span><span class="co">## Compositional barplot with top 5 taxa and samples sorted by</span></span></span>
+<span class="r-in"><span><span class="co">## "Bacteroidetes"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Getting top taxa on a Phylum level</span></span></span>
-<span class="r-in"><span><span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">se</span>, method<span class="op">=</span><span class="st">"relabundance"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">se_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">se</span>, rank <span class="op">=</span><span class="st">"Phylum"</span>, onRankOnly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">se_phylum</span>,top <span class="op">=</span> <span class="fl">5</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method<span class="op">=</span><span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span><span class="st">"Phylum"</span>, onRankOnly<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse_phylum</span>,top <span class="op">=</span> <span class="fl">5</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"</span></span></span>
-<span class="r-in"><span><span class="va">phylum_renamed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span>,</span></span>
+<span class="r-in"><span><span class="va">phylum_renamed</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span>,</span></span>
 <span class="r-in"><span>                       <span class="kw">function</span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">{</span><span class="kw">if</span> <span class="op">(</span><span class="va">x</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_taxa</span><span class="op">)</span> <span class="op">{</span><span class="va">x</span><span class="op">}</span> <span class="kw">else</span> <span class="op">{</span><span class="st">"Other"</span><span class="op">}</span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">se</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">phylum_renamed</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">phylum_renamed</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compositional barplot</span></span></span>
-<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">se</span>, assay.type<span class="op">=</span><span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>           order_rank_by<span class="op">=</span><span class="st">"abund"</span>, order_sample_by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-7.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
@@ -244,15 +254,15 @@ features present.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

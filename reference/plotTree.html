@@ -6,7 +6,7 @@ additional information."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -20,7 +20,7 @@ additional information."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.6</span>
       </span>
     </div>
 
@@ -35,13 +35,13 @@ additional information."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plotting tree information enriched with information</h1>
-    
+
     <div class="hidden name"><code>plotTree.Rd</code></div>
     </div>
 
@@ -57,7 +57,7 @@ additional information.</p>
 <span></span>
 <span><span class="fu">plotColTree</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">plotColTree</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
@@ -84,7 +84,7 @@ additional information.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for TreeSummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">plotRowTree</span><span class="op">(</span></span>
 <span>  <span class="va">object</span>,</span>
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
@@ -114,40 +114,42 @@ additional information.</p>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>object</dt>
+
+
+<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
 object.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments for plotting. See
 <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
-<dt>tree_name</dt>
+<dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
 <dd><p>a single <code>character</code> value specifying a rowTree/colTree from
 <code>object</code>. (By default: <code>tree_name = "phylo"</code>)</p></dd>
 
 
-<dt>relabel_tree</dt>
+<dt id="arg-relabel-tree">relabel_tree<a class="anchor" aria-label="anchor" href="#arg-relabel-tree"></a></dt>
 <dd><p>logical scalar, Should the tip labels be relabeled using
 the output of <code>getTaxonomyLabels(object, with_rank = TRUE)</code>?
 (default: <code>relabel_tree = FALSE</code>)</p></dd>
 
 
-<dt>order_tree</dt>
+<dt id="arg-order-tree">order_tree<a class="anchor" aria-label="anchor" href="#arg-order-tree"></a></dt>
 <dd><p>logical scalar, Should the tree be ordered based on
 alphabetic order of taxonomic levels?
 (default: <code>order_tree = FALSE</code>)</p></dd>
 
 
-<dt>remove_levels</dt>
+<dt id="arg-remove-levels">remove_levels<a class="anchor" aria-label="anchor" href="#arg-remove-levels"></a></dt>
 <dd><p>logical scalar, Should taxonomic level information
 be removed from labels? (default: <code>relabel_tree = FALSE</code>)</p></dd>
 
 
-<dt>show_label, show_highlights, show_highlight_label, abbr_label</dt>
+<dt id="arg-show-label-show-highlights-show-highlight-label-abbr-label">show_label, show_highlights, show_highlight_label, abbr_label<a class="anchor" aria-label="anchor" href="#arg-show-label-show-highlights-show-highlight-label-abbr-label"></a></dt>
 <dd><p><code>logical</code> (scalar), <code>integer</code> or <code>character</code> vector. If a
 <code>logical</code> scalar is given, should tip labels be plotted or if a
 logical vector is provided, which labels should be shown? If an
@@ -160,89 +162,87 @@ plotted and if no labels are provided no labels will be shown. (default:
 <code>FALSE</code>)</p></dd>
 
 
-<dt>add_legend</dt>
+<dt id="arg-add-legend">add_legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
 <dd><p>logical scalar. Should legends be plotted?
 (default: <code>add_legend = TRUE</code>)</p></dd>
 
 
-<dt>layout</dt>
+<dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
 <dd><p>layout for the plotted tree. See
 <code><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html" class="external-link">ggtree</a></code> for details.</p></dd>
 
 
-<dt>edge_colour_by</dt>
+<dt id="arg-edge-colour-by">edge_colour_by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature
 to colour tree edges by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt>edge_size_by</dt>
+<dt id="arg-edge-size-by">edge_size_by<a class="anchor" aria-label="anchor" href="#arg-edge-size-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature
 to size tree edges by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt>tip_colour_by</dt>
+<dt id="arg-tip-colour-by">tip_colour_by<a class="anchor" aria-label="anchor" href="#arg-tip-colour-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 colour tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt>tip_shape_by</dt>
+<dt id="arg-tip-shape-by">tip_shape_by<a class="anchor" aria-label="anchor" href="#arg-tip-shape-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 shape tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt>tip_size_by</dt>
+<dt id="arg-tip-size-by">tip_size_by<a class="anchor" aria-label="anchor" href="#arg-tip-size-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 size tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt>node_colour_by</dt>
+<dt id="arg-node-colour-by">node_colour_by<a class="anchor" aria-label="anchor" href="#arg-node-colour-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 colour tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
 
 
-<dt>node_shape_by</dt>
+<dt id="arg-node-shape-by">node_shape_by<a class="anchor" aria-label="anchor" href="#arg-node-shape-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 shape tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
 
 
-<dt>node_size_by</dt>
+<dt id="arg-node-size-by">node_size_by<a class="anchor" aria-label="anchor" href="#arg-node-size-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 size tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
 
 
-<dt>colour_highlights_by</dt>
+<dt id="arg-colour-highlights-by">colour_highlights_by<a class="anchor" aria-label="anchor" href="#arg-colour-highlights-by"></a></dt>
 <dd><p>Should the highlights be colour differently?
 If <code>show_highlights = TRUE</code>, <code>colour_highlights</code> will be set to
 <code>TRUE</code> as default. (default: <code>colour_highlights = FALSE</code>)</p></dd>
 
 
-<dt>by_exprs_values</dt>
+<dt id="arg-by-exprs-values">by_exprs_values<a class="anchor" aria-label="anchor" href="#arg-by-exprs-values"></a></dt>
 <dd><p>A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 <code>exprs_values</code> argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.</p></dd>
 
 
-<dt>other_fields</dt>
+<dt id="arg-other-fields">other_fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
 <dd><p>Additional fields to include in the node information
 without plotting them.</p></dd>
 
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>a <code>ggtree</code> plot</p>
+    <p>a <code>ggtree</code> plot</p>
     </div>
     <div id="details">
     <h2>Details</h2>
@@ -354,15 +354,15 @@ as the number of nodes, the vector will be used to relabel the nodes.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

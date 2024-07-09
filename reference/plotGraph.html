@@ -5,7 +5,7 @@ Information on the edges have to provided manually."><!-- mathjax --><script src
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
-    
+
 
     <div class="container template-reference-topic">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -19,7 +19,7 @@ Information on the edges have to provided manually."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.6</span>
       </span>
     </div>
 
@@ -34,13 +34,13 @@ Information on the edges have to provided manually."><!-- mathjax --><script src
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-      
+
 
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plotting igraph objects with information from a <code>SummarizedExperiment</code></h1>
-    
+
     <div class="hidden name"><code>plotGraph.Rd</code></div>
     </div>
 
@@ -55,7 +55,7 @@ Information on the edges have to provided manually.</p>
 <span></span>
 <span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY,SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'ANY,SummarizedExperiment'</span></span>
 <span><span class="fu">plotColGraph</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">y</span>,</span>
@@ -73,10 +73,10 @@ Information on the edges have to provided manually.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment,missing</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment,missing'</span></span>
 <span><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, name <span class="op">=</span> <span class="st">"graph"</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for ANY,SummarizedExperiment</span></span>
+<span><span class="co"># S4 method for class 'ANY,SummarizedExperiment'</span></span>
 <span><span class="fu">plotRowGraph</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">y</span>,</span>
@@ -94,13 +94,15 @@ Information on the edges have to provided manually.</p>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># S4 method for SummarizedExperiment,missing</span></span>
+<span><span class="co"># S4 method for class 'SummarizedExperiment,missing'</span></span>
 <span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">x</span>, <span class="va">y</span>, name <span class="op">=</span> <span class="st">"graph"</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
     <h2>Arguments</h2>
-    <dl><dt>x, y</dt>
+
+
+<dl><dt id="arg-x-y">x, y<a class="anchor" aria-label="anchor" href="#arg-x-y"></a></dt>
 <dd><p>a graph object and a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object or just a
@@ -108,12 +110,12 @@ object or just a
 For the latter object a graph object must be stored in <code>metadata(x)$name</code>.</p></dd>
 
 
-<dt>...</dt>
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional arguments for plotting. See
 <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
-<dt>show_label</dt>
+<dt id="arg-show-label">show_label<a class="anchor" aria-label="anchor" href="#arg-show-label"></a></dt>
 <dd><p><code>logical</code> (scalar), <code>integer</code> or <code>character</code>
 vector. If a <code>logical</code> scalar is given, should tip labels be plotted
 or if a logical vector is provided, which labels should be shown? If an
@@ -126,68 +128,68 @@ labels will be plotted and if no labels are provided no labels will be
 shown. (default: <code>show_label = FALSE</code>)</p></dd>
 
 
-<dt>add_legend</dt>
+<dt id="arg-add-legend">add_legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
 <dd><p>logical scalar. Should legends be plotted?
 (default: <code>add_legend = TRUE</code>)</p></dd>
 
 
-<dt>layout</dt>
+<dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
 <dd><p>layout for the plotted graph. See
 <code><a href="https://ggraph.data-imaginist.com/reference/ggraph.html" class="external-link">ggraph</a></code> for details. (default:
 <code>layout = "kk"</code>)</p></dd>
 
 
-<dt>edge_type</dt>
+<dt id="arg-edge-type">edge_type<a class="anchor" aria-label="anchor" href="#arg-edge-type"></a></dt>
 <dd><p>type of edge plotted on the graph. See
 <code><a href="https://ggraph.data-imaginist.com/reference/geom_edge_fan.html" class="external-link">geom_edge_fan</a></code> for details and other
 available geoms. (default:
 <code>edge_type = "fan"</code>)</p></dd>
 
 
-<dt>edge_colour_by</dt>
+<dt id="arg-edge-colour-by">edge_colour_by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
 <dd><p>Specification of a edge metadata field to use for
 setting colours of the edges.</p></dd>
 
 
-<dt>edge_width_by</dt>
+<dt id="arg-edge-width-by">edge_width_by<a class="anchor" aria-label="anchor" href="#arg-edge-width-by"></a></dt>
 <dd><p>Specification of a edge metadata field to use for
 setting width of the edges.</p></dd>
 
 
-<dt>colour_by</dt>
+<dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 colour graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt>shape_by</dt>
+<dt id="arg-shape-by">shape_by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 shape graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt>size_by</dt>
+<dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 size graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt>by_exprs_values</dt>
+<dt id="arg-by-exprs-values">by_exprs_values<a class="anchor" aria-label="anchor" href="#arg-by-exprs-values"></a></dt>
 <dd><p>A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 <code>exprs_values</code> argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.</p></dd>
 
 
-<dt>other_fields</dt>
+<dt id="arg-other-fields">other_fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
 <dd><p>Additional fields to include in the node information
 without plotting them.</p></dd>
 
 
-<dt>name</dt>
+<dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
 <dd><p>If <code>x</code> is a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 the key for subsetting the <code>metadata(x)</code> to a graph object.</p></dd>
@@ -195,14 +197,11 @@ the key for subsetting the <code>metadata(x)</code> to a graph object.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    
-
-<p>a <code>ggtree</code> plot</p>
+    <p>a <code>ggtree</code> plot</p>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>:
-Internally <code>tidygraph</code> and <code>ggraph</code> are used. Therefore, all
+    <p>Internally <code>tidygraph</code> and <code>ggraph</code> are used. Therefore, all
 graph types which can be converted by <code><a href="https://tidygraph.data-imaginist.com/reference/tbl_graph.html" class="external-link">tidygraph::as_tbl_graph</a></code> can
 be used.</p>
     </div>
@@ -321,15 +320,15 @@ be used.</p>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
       </footer></div>
 
-  
 
 
-  
+
+
 
   </body></html>
 

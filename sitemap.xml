@@ -1,72 +1,26 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>/404.html</loc>
-  </url>
-  <url>
-    <loc>/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>/articles/miaViz.html</loc>
-  </url>
-  <url>
-    <loc>/authors.html</loc>
-  </url>
-  <url>
-    <loc>/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/getNeatOrder.html</loc>
-  </url>
-  <url>
-    <loc>/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mia-datasets.html</loc>
-  </url>
-  <url>
-    <loc>/reference/mia-plot-args.html</loc>
-  </url>
-  <url>
-    <loc>/reference/miaViz-package.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotAbundance.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotAbundanceDensity.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotCCA.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotColTile.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotDMN.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotGraph.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotNMDS.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotPrevalence.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotSeries.html</loc>
-  </url>
-  <url>
-    <loc>/reference/plotTree.html</loc>
-  </url>
-  <url>
-    <loc>/reference/treeData.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>/404.html</loc></url>
+<url><loc>/CONTRIBUTING.html</loc></url>
+<url><loc>/LICENSE-text.html</loc></url>
+<url><loc>/articles/index.html</loc></url>
+<url><loc>/articles/miaViz.html</loc></url>
+<url><loc>/authors.html</loc></url>
+<url><loc>/index.html</loc></url>
+<url><loc>/reference/getNeatOrder.html</loc></url>
+<url><loc>/reference/index.html</loc></url>
+<url><loc>/reference/mia-datasets.html</loc></url>
+<url><loc>/reference/mia-plot-args.html</loc></url>
+<url><loc>/reference/miaViz-package.html</loc></url>
+<url><loc>/reference/plotAbundance.html</loc></url>
+<url><loc>/reference/plotAbundanceDensity.html</loc></url>
+<url><loc>/reference/plotCCA.html</loc></url>
+<url><loc>/reference/plotColTile.html</loc></url>
+<url><loc>/reference/plotDMN.html</loc></url>
+<url><loc>/reference/plotGraph.html</loc></url>
+<url><loc>/reference/plotNMDS.html</loc></url>
+<url><loc>/reference/plotPrevalence.html</loc></url>
+<url><loc>/reference/plotSeries.html</loc></url>
+<url><loc>/reference/plotTree.html</loc></url>
+<url><loc>/reference/treeData.html</loc></url>
 </urlset>
+
