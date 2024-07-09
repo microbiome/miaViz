@@ -118,23 +118,25 @@ plotAbundance(
     use_relative = TRUE)
 
   
-## A feature from colData or taxon from chosen rank can be used for ordering samples.
+## A feature from colData or taxon from chosen rank can be used for ordering
+## samples.
 plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
            order_sample_by = "Bacteroidetes")
 
 ## Features from colData can be plotted together with abundance plot.
-# Returned object is a list that includes two plot; other visualizes abundance
-# other features. 
+# Returned object is a list that includes two plot; other visualizes
+## abundance other features. 
 plot <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
                    features = "SampleType")
 \donttest{
-# These two plots can be combined with wrap_plots function from patchwork package
+# These two plots can be combined with wrap_plots function from patchwork
+# package
 library(patchwork)
 wrap_plots(plot, ncol = 1)
 }
 
-## Same plot as above but showing sample IDs as labels for the x axis on the top plot
-
+## Same plot as above but showing sample IDs as labels for the x axis on the
+## top plot
 plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
                            features = "SampleType", add_legend = FALSE,
                            add_x_text = TRUE)[[1]] +
@@ -143,17 +145,18 @@ plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
 wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
 }
 
-## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
+## Compositional barplot with top 5 taxa and samples sorted by
+## "Bacteroidetes"
 
 # Getting top taxa on a Phylum level
-se <- transformAssay(tse, method="relabundance")
-se_phylum <- agglomerateByRank(tse, rank ="Phylum", onRankOnly=TRUE)
+tse <- transformAssay(tse, method="relabundance")
+tse_phylum <- agglomerateByRank(tse, rank ="Phylum", onRankOnly=TRUE)
 top_taxa <- getTop(tse_phylum,top = 5, assay.type = "relabundance")
 
 # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
 phylum_renamed <- lapply(rowData(tse)$Phylum,
                        function(x){if (x \%in\% top_taxa) {x} else {"Other"}})
-rowData(se)$Phylum <- as.character(phylum_renamed)
+rowData(tse)$Phylum <- as.character(phylum_renamed)
 
 # Compositional barplot
 plotAbundance(tse, assay.type="relabundance", rank = "Phylum",

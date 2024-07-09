@@ -94,11 +94,13 @@ will be disabled.)}
 \item{rank, ...}{additional arguments
 \itemize{
 \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-be calculated? (default: \code{use_relative = FALSE} }
+be calculated? (Default: \code{FALSE}) }
+
 \item{If \code{!is.null(rank)} matching arguments are passed on to
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 }
+
 \item{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call
 \code{help("mia-plot-args")}}

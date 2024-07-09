@@ -13,15 +13,18 @@
 #' @param rank,... additional arguments
 #' \itemize{
 #'   \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-#'   be calculated? (default: \code{use_relative = FALSE} }
+#'   be calculated? (Default: \code{FALSE}) }
+#'   
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
+#'   
 #'   \item{additional arguments for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call
 #'   \code{help("mia-plot-args")}}
 #' }
+#' 
 #'   
 #' @param assay.type a \code{character} value defining which assay data to
 #'   use. (default: \code{assay.type = "relabundance"})
@@ -180,8 +183,8 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 
 # This function returns a number which tells the number of features which exceed
 # the detection and prevalence thresholds.
-.get_prevalence_count <- function(d, p, mat){
-    length(getPrevalent(mat, detection = d, prevalence = p))
+.get_prevalence_count <- function(d, p, mat, ...){
+    length(getPrevalent(mat, detection = d, prevalence = p, ...))
 }
 
 #' @importFrom BiocParallel bpmapply bpisup bpstart bpstop SerialParam
@@ -221,7 +224,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
         .get_prevalence_count,
         ans$detection,
         ans$prevalence,
-        MoreArgs = list(mat = mat),
+        MoreArgs = list(mat = mat, ...),
         BPPARAM = BPPARAM,
         SIMPLIFY = FALSE)
     # Add the values to result table

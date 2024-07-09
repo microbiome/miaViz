@@ -95,23 +95,25 @@
 #'     use_relative = TRUE)
 #' 
 #'   
-#' ## A feature from colData or taxon from chosen rank can be used for ordering samples.
+#' ## A feature from colData or taxon from chosen rank can be used for ordering
+#' ## samples.
 #' plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
 #'            order_sample_by = "Bacteroidetes")
 #' 
 #' ## Features from colData can be plotted together with abundance plot.
-#' # Returned object is a list that includes two plot; other visualizes abundance
-#' # other features. 
+#' # Returned object is a list that includes two plot; other visualizes
+#' ## abundance other features. 
 #' plot <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
 #'                    features = "SampleType")
 #' \donttest{
-#' # These two plots can be combined with wrap_plots function from patchwork package
+#' # These two plots can be combined with wrap_plots function from patchwork
+#' # package
 #' library(patchwork)
 #' wrap_plots(plot, ncol = 1)
 #' }
 #' 
-#' ## Same plot as above but showing sample IDs as labels for the x axis on the top plot
-#' 
+#' ## Same plot as above but showing sample IDs as labels for the x axis on the
+#' ## top plot
 #' plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
 #'                            features = "SampleType", add_legend = FALSE,
 #'                            add_x_text = TRUE)[[1]] +
@@ -120,17 +122,18 @@
 #' wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
 #' }
 #' 
-#' ## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
+#' ## Compositional barplot with top 5 taxa and samples sorted by
+#' ## "Bacteroidetes"
 #' 
 #' # Getting top taxa on a Phylum level
-#' se <- transformAssay(tse, method="relabundance")
-#' se_phylum <- agglomerateByRank(tse, rank ="Phylum", onRankOnly=TRUE)
+#' tse <- transformAssay(tse, method="relabundance")
+#' tse_phylum <- agglomerateByRank(tse, rank ="Phylum", onRankOnly=TRUE)
 #' top_taxa <- getTop(tse_phylum,top = 5, assay.type = "relabundance")
 #' 
 #' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
 #' phylum_renamed <- lapply(rowData(tse)$Phylum,
 #'                        function(x){if (x %in% top_taxa) {x} else {"Other"}})
-#' rowData(se)$Phylum <- as.character(phylum_renamed)
+#' rowData(tse)$Phylum <- as.character(phylum_renamed)
 #' 
 #' # Compositional barplot
 #' plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
@@ -296,7 +299,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         x, assay.type = assay.type, row.name = "colour_by", col.name = "X")
     # Add correct column name for abundance values
     colnames(data)[ colnames(data) == assay.type ] <- "Y"
-    # order values
+    # Reorder so that the order follows the order of sample names. The order is
+    # currently alphabetical.
+    data$X <- factor(data$X, levels = colnames(x))
+    # Order values
     if( order_rank_by == "name" ){
         # By default, factors follow alphabetical order. Order values, based
         # on names i.e. alphabetical order.
@@ -326,9 +332,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 }
 
 .norm_order_sample_by <- function(order_sample_by, factors, x){
+    # If user did not specify the ordering, do nnothing
     if(is.null(order_sample_by)){
         return(order_sample_by)
     }
+    # Chec that the parameter is string
     msg <- paste0("'order_sample_by' must be a single non-empty character value, ",
                 "either present in the abundance data as group variable or ",
                 "in the column data of 'x'. (The abundance data takes ",
@@ -336,89 +344,104 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     if(!.is_non_empty_string(order_sample_by)){
         stop(msg, call. = FALSE)
     }
+    #
+    # If the order variable is not found from the coloring values (samples can
+    # also be order based on abundance of certain taxon), check that the
+    # variable can be found from colData.
     if(!(order_sample_by %in% factors)){
-        tmp <- try({retrieveCellInfo(x, order_sample_by, search = "colData")},
-                silent = TRUE)
-        if(is(tmp,"try-error")){
-            stop(msg, call. = FALSE)
-        } else {
-            order_sample_by <- tmp$name
-        }
+        tmp <- .get_feature_data(x, order_sample_by, msg = msg)
+        order_sample_by <- tmp$name
     }
-    order_sample_by
+    return(order_sample_by)
 }
 
-.get_feature_data <- function(x, by){
+# This funtion retrives data from colData without failing (if the variable
+# is not found)
+.get_feature_data <- function(x, by, msg = NULL){
+    # Get variable without failing
     tmp <- try({retrieveCellInfo(x, by, search = "colData")}, silent = TRUE)
+    # Check if fetching was failed
     if(is(tmp,"try-error")){
-        tmp <- NULL
+        # If msg is not NULL, fail if variable is not found.
+        # Otherwise, give NULL.
+        if( !is.null(msg) ){
+            stop(msg, call. = FALSE)
+        } else{
+            tmp <- NULL
+        }
     }
-    tmp
+   return(tmp)
 }
 
 .get_features_data <- function(features, order_sample_by, x){
+    # Get variable (this functions fetches data for both odering and feature
+    # plotting)
     features <- unique(c(order_sample_by,features))
-    features_data <- lapply(features,
-                            .get_feature_data,
-                            x = x)
+    # Get values
+    features_data <- lapply(
+        features, .get_feature_data, x = x)
+    # Get those values that are found
     non_empty <- !vapply(features_data, is.null, logical(1))
     features_data <- features_data[non_empty]
     if(length(features_data) == 0){
         return(NULL)
     }
+    # Get values and names and create data.frame from them
     values <- lapply(features_data, "[[", "value")
     names <- lapply(features_data, "[[", "name")
     features_data <- data.frame(values)
     colnames(features_data) <- names
+    # Add sample names to rows
     if(!is.null(colnames(x))){
         rownames(features_data) <- colnames(x)
     } else {
         rownames(features_data) <- paste0("Sample",seq_len(ncol(x)))
     }
-    features_data
+    return(features_data)
 }
 
 #' @importFrom dplyr pull
-.order_abund_feature_data <- function(abund_data, features_data,
-                                    order_sample_by, decreasing = TRUE){
+.order_abund_feature_data <- function(
+        abund_data, features_data, order_sample_by, decreasing = TRUE){
+    # If ordering was specified
     if(!is.null(order_sample_by)){
+        # Get levels
         lvl <- levels(abund_data$X)
+        # If user specified taxan to be used to order the data
         if(is.null(features_data) || 
-            !(order_sample_by %in% colnames(features_data))){
-            # presort by rank value
+                !(order_sample_by %in% colnames(features_data))){
+            # Presort by taxon value
             lvl_tmp <- levels(abund_data$colour_by)
-            lvl_tmp <- c(order_sample_by, lvl_tmp[!(lvl_tmp %in% order_sample_by)])
+            lvl_tmp <- c(
+                order_sample_by, lvl_tmp[!(lvl_tmp %in% order_sample_by)])
             abund_data$colour_by <- factor(abund_data$colour_by, lvl_tmp)
-            #
-            data <- abund_data[abund_data$colour_by %in% order_sample_by,] %>%
-                pull("Y")
+            # Get the abundance values from certain taxon
+            data <- abund_data[abund_data$colour_by %in% order_sample_by, ]
+            data <- data[["Y"]]
         } else {
-            data <- features_data[,order_sample_by]
+            # Otherwise get the order from the variable
+            data <- features_data[[order_sample_by]]
         }
+        # If the ordering value is factor, order based on alphabetical order.
+        # Order numeric values in incerasing order.
         if(is.factor(data)){
             o <- order(data, decreasing = !decreasing)
         } else {
             o <- order(data, decreasing = decreasing)
         }
+        # Reset lvls and reorder the data based on 
         lvl <- lvl[o]
-        # reset lvls and reorder
         abund_data$X <- factor(abund_data$X, lvl)
         abund_data <- abund_data[order(abund_data$colour_by, abund_data$X),]
+        # If the data includes also sample metadata to be plotted, reorder
+        # it also.
         if(!is.null(features_data)){
             o <- order(factor(rownames(features_data), lvl))
-            # If features and order_sample_by are the same, there is only one column.
-            # One column is converted to vector which is why it is converted back
-            # to data frame which is expected in next steps.
-            if(ncol(features_data) == 1) {
-                colname <- colnames(features_data)
-                features_data <- as.data.frame(features_data[o,])
-                colnames(features_data) <- colname
-            } else{
-                features_data <- features_data[o,]
-            }
+            features_data <- features_data[o, , drop = FALSE]
         }
     }
-    list(abund_data = abund_data, features_data = features_data)
+    res <- list(abund_data = abund_data, features_data = features_data)
+    return(res)
 }
 
 
@@ -482,13 +505,14 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                                         colour_by,
                                         fill = TRUE)
     }
+    # Adjust theme
     plot_out <- plot_out +
         theme_classic()
-    # add legend
+    # Remove legend if speicified
     plot_out <- .add_legend(plot_out, add_legend)
-    # flip
+    # Flip the plot if specified
     plot_out <- .flip_plot(plot_out, flipped, add_x_text)
-    plot_out
+    return(plot_out)
 }
 
 #' @importFrom ggplot2 ggplot aes labs geom_point geom_raster
@@ -500,42 +524,46 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                             add_x_text,
                             point_alpha,
                             point_size){
+    # If the values are factors, use coloring to plot them. This step is to
+    # ensure that this functions works both with factors and numeric values.
     if(is.factor(feature_data$Y)){
         feature_data$colour_by <- feature_data$Y
         feature_data$Y <- ""
         colour_by <- unique(feature_data$feature_name)
     }
-    feature_plot_out <- ggplot(feature_data, aes(x=.data[["X"]], y=.data[["Y"]])) +
+    # Start plotting
+    feature_plot_out <- ggplot(
+        feature_data, aes(x=.data[["X"]], y=.data[["Y"]])) +
         labs(x = xlab, y = name)
+    # If there is only one value, i.e., the variable to be plotted was factor
     if(length(unique(feature_data$Y)) == 1L){
-        feature_out <- .get_bar_args(colour_by,
-                                    alpha = point_alpha,
-                                    add_border = FALSE)
+        # Create a bar layout
+        feature_out <- .get_bar_args(
+            colour_by, alpha = point_alpha, add_border = FALSE)
         feature_plot_out <- feature_plot_out +
             do.call(geom_raster, feature_out$args) +
             scale_y_discrete(expand = c(0,0))
-        feature_plot_out <- .resolve_plot_colours(feature_plot_out,
-                                                feature_data$colour_by,
-                                                colour_by,
-                                                fill = TRUE)
+        # Adjust the colour scale and legend title
+        feature_plot_out <- .resolve_plot_colours(
+            feature_plot_out, feature_data$colour_by, colour_by, fill = TRUE)
         legend_pos <- "bottom"
     } else {
-        feature_out <- .get_point_args(NULL,
-                                    shape_by = NULL,
-                                    size_by = NULL,
-                                    alpha = point_alpha,
-                                    size = point_size)
+        # If the values are numeric, create a point layout
+        feature_out <- .get_point_args(
+            NULL, shape_by = NULL, size_by = NULL, alpha = point_alpha,
+            size = point_size)
         feature_plot_out <- feature_plot_out +
             do.call(geom_point, feature_out$args)
         legend_pos <- "right"
     }
+    # Adjust theme
     feature_plot_out <- feature_plot_out +
         theme_classic()
-    # add legend
+    # Remove legend if specified, adjust the position
     feature_plot_out <- .add_legend(feature_plot_out, add_legend, legend_pos)
-    # flip
+    # Flip the plot if specified
     feature_plot_out <- .flip_plot(feature_plot_out, flipped, add_x_text)
-    feature_plot_out
+    return(feature_plot_out)
 }
 
 .features_plotter <- function(features_data,
@@ -547,32 +575,42 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                             point_alpha = 1,
                             point_size = 2,
                             ...){
+    # Get the name of sample metadata variables that will be plotted
     names <- colnames(features_data)
-    features_data <- lapply(names, 
-                            function(col){
-                                data.frame(X = factor(rownames(features_data),
-                                                    rownames(features_data)),
-                                                    feature_name = col,
-                                                    Y = features_data[,col])
-                            })
+    # For each variable, create a data.frame that contains sample names,
+    # variable name and values of variable
+    features_data <- lapply(
+        names, function(col){
+            data.frame(
+                X = factor(rownames(features_data), rownames(features_data)),
+                feature_name = col,
+                Y = features_data[[col]])
+        })
     names(features_data) <- names
-    plots_out <- mapply(.feature_plotter,
-                        features_data,
-                        names(features_data),
-                        MoreArgs = list(xlab = xlab,
-                                        flipped = flipped,
-                                        add_legend = add_legend,
-                                        add_x_text = add_x_text,
-                                        point_alpha = point_alpha,
-                                        point_size = point_size),
-                        SIMPLIFY = FALSE)
+    # Loop through variables and create plot for each variable
+    plots_out <- mapply(
+        .feature_plotter,
+        features_data,
+        names(features_data),
+        MoreArgs = list(
+            xlab = xlab,
+            flipped = flipped,
+            add_legend = add_legend,
+            add_x_text = add_x_text,
+            point_alpha = point_alpha,
+            point_size = point_size),
+        SIMPLIFY = FALSE)
     names(plots_out) <-  names(features_data)
+    # If the varoable for order the data was specified, return only the feature
+    # plot with that variable along with the main plot. This means that all
+    # other feature plots are discarded.
     if(!is.null(order_sample_by)){
-        reorder <- c(order_sample_by,
-                    names(plots_out)[!(names(plots_out) %in% order_sample_by)])
+        reorder <- c(
+            order_sample_by,
+            names(plots_out)[!(names(plots_out) %in% order_sample_by)])
         m <- match(reorder,names(plots_out))
         m <- m[!is.na(m)]
         plots_out <- plots_out[m]
     }
-    plots_out
+    return(plots_out)
 }

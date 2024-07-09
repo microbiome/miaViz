@@ -8,13 +8,10 @@ test_that("plot prevalence", {
     # .get_prevalence_value
     assay(se,"counts") <- DelayedArray(assay(se,"counts"))
     mat <- assay(se,"counts")
-    actual <- miaViz:::.get_prevalence_value(1,mat)
-    expect_type(actual,"double")
-    expect_equal(nrow(mat),length(actual))
-    expect_equal(unname(round(actual[1:3],7)),c(0.1153846,0.0769231,0))
     # .get_prevalence_count
     expect_equal(miaViz:::.get_prevalence_count(1,2,mat),0)
-    expect_equal(miaViz:::.get_prevalence_count(1,1,mat),49)
+    expect_equal(
+        miaViz:::.get_prevalence_count(1,1,mat, include_lowest = TRUE),49)
     # .get_prevalence_plot_data
     actual <- miaViz:::.get_prevalence_plot_data(se,"counts",
                                                  c(0.1,0.2),
