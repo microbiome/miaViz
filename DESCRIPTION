@@ -59,7 +59,6 @@ Suggests:
     testthat,
     patchwork,
     vegan,
-    microbiomeDataSets,
     bluster,
     ComplexHeatmap,
     circlize
