@@ -9,7 +9,7 @@ plotAbundance(x, ...)
 
 \S4method{plotAbundance}{SummarizedExperiment}(
   x,
-  rank = taxonomyRanks(x)[1],
+  rank = NULL,
   col.var = features,
   features = NULL,
   order.row.by = order_rank_by,
@@ -32,11 +32,12 @@ plotAbundance(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{...}{additional parameters for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
+\item{...}{additional parameters for plotting.
 \itemize{
-\item \code{use_relative} \code{Boolean} value indicating whether the relative values
-should be calculated or not. (Default: \code{TRUE})}}
+\item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+be calculated? (default: \code{use_relative = FALSE} }
+}
+See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{rank}{a single \code{character} value defining the taxonomic rank to
 use. Must be a value of \code{taxonomyRanks(x)}.}
@@ -105,36 +106,50 @@ col.var present.
 }
 \examples{
 data(GlobalPatterns, package="mia")
-se <- GlobalPatterns
+tse <- GlobalPatterns
+
+# Apply relative transform
+tse <- transformAssay(tse, method = "relabundance")
+
+## If rank is set to NULL (default), agglomeration is not done. However, note
+## that there is maximum number of rows that can be plotted. That is why
+## we take sample from the data.
+set.seed(26348)
+sample <- sample(rownames(tse), 20)
+tse_sub <- tse[sample, ]
+plotAbundance(tse_sub, assay.type = "relabundance")
 
 ## Plotting counts using the first taxonomic rank as default
-plotAbundance(se, assay.type="counts", use_relative=FALSE) + labs(y="Counts")
+plotAbundance(
+    tse, assay.type="counts", rank = "Phylum") +
+    labs(y="Counts")
 
-## Using "Phylum" as rank
-plotAbundance(se, assay.type="counts", rank = "Phylum", add.legend = FALSE)
+## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
+plotAbundance(
+    tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
+    use_relative = TRUE)
 
-## If rank is set to NULL plotAbundance behaves like plotExpression
-plotAbundance(se, assay.type="counts", rank = NULL,
-           col.var = head(rownames(se)))
   
-## A feature from colData or taxon from chosen rank can be used for ordering samples.
-plotAbundance(se, assay.type="counts", rank = "Phylum",
+## A feature from colData or taxon from chosen rank can be used for ordering
+## samples.
+plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
            order.col.by = "Bacteroidetes")
 
 ## col.var from colData can be plotted together with abundance plot.
-# Returned object is a list that includes two plot; other visualizes abundance
-# other col.var. 
-plot <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
+# Returned object is a list that includes two plot; other visualizes
+## abundance other col.var. 
+plot <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
                    col.var = "SampleType")
 \donttest{
-# These two plots can be combined with wrap_plots function from patchwork package
+# These two plots can be combined with wrap_plots function from patchwork
+# package
 library(patchwork)
 wrap_plots(plot, ncol = 1)
 }
 
-## Same plot as above but showing sample IDs as labels for the x axis on the top plot
-
-plot[[1]] <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
+## Same plot as above but showing sample IDs as labels for the x axis on the
+## top plot
+plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
                            col.var = "SampleType", add.legend = FALSE,
                            add.x.text = TRUE)[[1]] +
                            theme(axis.text.x = element_text(angle = 90)) 
@@ -142,19 +157,20 @@ plot[[1]] <- plotAbundance(se, assay.type = "counts", rank = "Phylum",
 wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
 }
 
-## Compositional barplot with top 5 taxa and samples sorted by "Bacteroidetes"
+## Compositional barplot with top 5 taxa and samples sorted by
+## "Bacteroidetes"
 
 # Getting top taxa on a Phylum level
-se <- transformAssay(se, method="relabundance")
-se_phylum <- agglomerateByRank(se, rank ="Phylum", onRankOnly=TRUE)
-top_taxa <- getTop(se_phylum,top = 5, assay.type = "relabundance")
+tse <- transformAssay(tse, method="relabundance")
+tse_phylum <- agglomerateByRank(tse, rank ="Phylum", onRankOnly=TRUE)
+top_taxa <- getTop(tse_phylum,top = 5, assay.type = "relabundance")
 
 # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
-phylum_renamed <- lapply(rowData(se)$Phylum,
+phylum_renamed <- lapply(rowData(tse)$Phylum,
                        function(x){if (x \%in\% top_taxa) {x} else {"Other"}})
-rowData(se)$Phylum <- as.character(phylum_renamed)
+rowData(tse)$Phylum <- as.character(phylum_renamed)
 
 # Compositional barplot
-plotAbundance(se, assay.type="relabundance", rank = "Phylum",
+plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
            order.row.by="abund", order.col.by = "Bacteroidetes")
 }

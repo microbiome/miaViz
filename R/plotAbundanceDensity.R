@@ -96,7 +96,8 @@
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
 #' @examples
-#' tse <- microbiomeDataSets::atlas1006()
+#' data("peerj13075", package = "mia")
+#' tse <- peerj13075
 #' 
 #' # Plots the abundances of 25 most abundant taxa. Jitter plot is the default option.
 #' plotAbundanceDensity(tse, assay.type = "counts")
@@ -106,35 +107,38 @@
 #' 
 #' # Plots the relative abundance of 10 most abundant taxa. 
 #' # "nationality" information is used to color the points. X-axis is log-scaled.
-#' plotAbundanceDensity(tse, layout = "jitter", assay.type = "relabundance", 
-#'                      n = 10, colour.by = "nationality") +
+#' plotAbundanceDensity(
+#'     tse, layout = "jitter", assay.type = "relabundance", n = 10,
+#'     colour.by = "Geographical_location") +
 #'     scale_x_log10() 
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a density plot.
 #' # X-axis is log-scaled
-#' plotAbundanceDensity(tse, layout = "density", assay.type = "relabundance",
-#'                      n = 10 ) +
+#' plotAbundanceDensity(
+#'     tse, layout = "density", assay.type = "relabundance", n = 10 ) +
 #'     scale_x_log10()
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a point plot.
 #' # Point shape is changed from default (21) to 41.
-#' plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
-#'                      point_shape = 41)
+#' plotAbundanceDensity(
+#'     tse, layout = "point", assay.type = "relabundance", n = 10,
+#'     point_shape = 41)
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a point plot.
 #' # In addition to colour, groups can be visualized by size and shape in point plots,
 #' # and adjusted for point size
-#' plotAbundanceDensity(tse, layout = "point", assay.type = "relabundance", n = 10,
-#'                      shape.by = "sex", size.by = "time", point_size=1)
+#' plotAbundanceDensity(
+#'     tse, layout = "point", assay.type = "relabundance", n = 10,
+#'     shape.by = "Geographical_location", size.by = "Age", point_size=1)
 #' 
 #' # Ordering via decreasing
-#' plotAbundanceDensity(tse, assay.type = "relabundance", 
-#'                      decreasing = FALSE)
+#' plotAbundanceDensity(
+#'     tse, assay.type = "relabundance", decreasing = FALSE)
 #'
 #' # for custom ordering set decreasing = NA and order the input object
 #' # to your wishes
-#' plotAbundanceDensity(tse, assay.type = "relabundance",
-#'                      decreasing = NA)
+#' plotAbundanceDensity(
+#'     tse, assay.type = "relabundance", decreasing = NA)
 #'
 NULL
 

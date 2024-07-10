@@ -1,9 +1,9 @@
 #' Plot prevalence information
 #' 
-#' \code{plotPrevalence} and \code{plotFeaturePrevalence} visualize prevalence 
+#' \code{plotPrevalence} and \code{plotRowPrevalence} visualize prevalence 
 #' information.
 #' 
-#' Whereas \code{plotPrevalence} produces a line plot, \code{plotFeaturePrevalence}
+#' Whereas \code{plotPrevalence} produces a line plot, \code{plotRowPrevalence}
 #' returns a heatmap. 
 #' 
 #' @param x a
@@ -12,13 +12,19 @@
 #'   
 #' @param rank,... additional arguments
 #' \itemize{
+#'   \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+#'   be calculated? (Default: \code{FALSE}) }
+#'   
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
+#'   
 #'   \item{additional arguments for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
+#'   \code{\link{mia-plot-args}} for more details i.e. call
+#'   \code{help("mia-plot-args")}}
 #' }
+#' 
 #'   
 #' @param assay.type a \code{character} value defining which assay data to
 #'   use. (default: \code{assay.type = "relabundance"})
@@ -59,21 +65,25 @@
 #'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
 #'   \code{NULL} the rownames might change. (default: \code{label = NULL})
 #'
-#' @param detections Detection thresholds for absence/presence. Either an
+#' @param detection Detection thresholds for absence/presence. Either an
 #'   absolutes value compared directly to the values of \code{x} or a relative
 #'   value between 0 and 1, if \code{as.relative = TRUE}.
+#' 
+#' @param detections Deprecated. Use \code{detection} instead.
 #'   
-#' @param prevalences Prevalence thresholds (in 0 to 1). The
+#' @param prevalence Prevalence thresholds (in 0 to 1). The
 #'   required prevalence is strictly greater by default. To include the
 #'   limit, set \code{include_lowest} to \code{TRUE}.
-#'   
+#' 
+#' @param prevalences Deprecated. Use \code{prevalence} instead.
+#'
 #' @param min.prevalence a single numeric value to apply as a threshold for 
 #'   plotting. The threshold is applied per row and column.
 #'   (default: \code{min.prevalence = 0})
 #'   
 #' @param min_prevalence Deprecated. Use \code{min.prevalence} instead.
 #' 
-#' @param ndetections If \code{detections} is \code{NULL}, a number of breaks 
+#' @param ndetection If \code{detection} is \code{NULL}, a number of breaks 
 #'   are calculated automatically. \code{as.relative} is then also regarded as 
 #'   \code{TRUE}.
 #' 
@@ -97,7 +107,7 @@
 #' 
 #' @return 
 #' A \code{ggplot2} object or \code{plotly} object, if more than one 
-#' \code{prevalences} was defined.
+#' \code{prevalence} was defined.
 #' 
 #' @seealso 
 #' \code{\link[mia:getPrevalence]{getPrevalence}},
@@ -109,28 +119,33 @@
 #' @examples 
 #' data(GlobalPatterns, package = "mia")
 #' 
+#' # Apply relative transformation
+#' GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
+#' 
 #' # plotting N of prevalence exceeding taxa on the Phylum level
 #' plotPrevalence(GlobalPatterns, rank = "Phylum")
 #' plotPrevalence(GlobalPatterns, rank = "Phylum") + scale_x_log10()
 #' 
 #' # plotting prevalence per taxa for different detection thresholds as heatmap
-#' plotFeaturePrevalence(GlobalPatterns, rank = "Phylum")
+#' plotRowPrevalence(GlobalPatterns, rank = "Phylum")
 #' 
 #' # by default a continuous scale is used for different detection levels, 
 #' # but this can be adjusted
-#' plotFeaturePrevalence(GlobalPatterns, rank = "Phylum",
-#'                    detections = c(0, 0.001, 0.01, 0.1, 0.2))
+#' plotRowPrevalence(
+#'     GlobalPatterns, rank = "Phylum", assay.type = "relabundance",
+#'     detection = c(0, 0.001, 0.01, 0.1, 0.2))
 #'                    
-#' # point layout for plotFeaturePrevalence can be used to visualize by additional
+#' # point layout for plotRowPrevalence can be used to visualize by additional
 #' # information
-#' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-#'                        colour.by = "Phylum") +
+#' plotPrevalentAbundance(
+#'     GlobalPatterns, rank = "Family", colour.by = "Phylum") +
 #'     scale_x_log10()
 #' 
 #' # When using function plotPrevalentAbundace, it is possible to create facets
 #' # with 'facet.by'.
-#' plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-#'                        colour.by = "Phylum", facet.by = "Kingdom") +
+#' plotPrevalentAbundance(
+#'     GlobalPatterns, rank = "Family",
+#'     colour.by = "Phylum", facet.by = "Kingdom") +
 #'     scale_x_log10()
 NULL
 
@@ -145,79 +160,95 @@ setGeneric("plotPrevalence", signature = c("x"),
 #' @rdname plotPrevalence
 #' @export
 setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
-                   prevalences = seq(0.1, 1, 0.1),
-                   assay.type = assay_name, assay_name = "counts",
-                   rank = NULL,
-                   BPPARAM = BiocParallel::SerialParam(),
-                   ...){
+    function(
+            x,
+            detection = detections, detections = c(0.01, 0.1, 1, 2, 5, 10, 20),
+            prevalence = prevalences, prevalences = seq(0.1, 1, 0.1),
+            assay.type = assay_name, assay_name = "counts",
+            rank = NULL,
+            BPPARAM = BiocParallel::SerialParam(),
+            ...){
         # input check
-        if(!all(.is_numeric_string(detections))){
-            stop("'detections' must be numeric values.", call. = FALSE)
+        if(!all(.is_numeric_string(detection))){
+            stop("'detection' must be numeric values.", call. = FALSE)
         }
-        if(!all(.is_numeric_string(prevalences)) || any(prevalences < 0) ||
-           any(prevalences > 1)){
-            stop("'prevalences' must be numeric values between 0 and 1.",
+        if(!all(.is_numeric_string(prevalence)) || any(prevalence < 0) ||
+           any(prevalence > 1)){
+            stop("'prevalence' must be numeric values between 0 and 1.",
                  call. = FALSE)
         }
         .check_assay_present(assay.type, x)
         #
-        x <- mia:::.agg_for_prevalence(x, rank, ...)
-        plot_data <- .get_prevalence_plot_data(x, assay.type, detections,
-                                               prevalences,
-                                               BPPARAM, ...)
-        plot_data$colour.by <- plot_data$colour.by * 100
-        .prevalence_plotter(plot_data, 
+        # Agglomerate data if specified
+        if( !is.null(rank) ){
+            x <- agglomerateByRank(x, rank = rank, ...)
+        }
+        # Get data to plot
+        plot_data <- .get_prevalence_plot_data(
+            x, assay.type, detection, prevalence, BPPARAM, ...)
+        plot_data$colour_by <- plot_data$colour_by * 100
+        # Plot the data
+        p <- .prevalence_plotter(plot_data, 
                             layout = "line",
-                            xlab,
                             ylab = "N",
                             colour.by = "Prevalence [%]",
                             size.by = NULL,
                             shape.by = NULL,
                             ...)
+        return(p)
     }
 )
 
-#' @importFrom DelayedArray rowMeans
-#' @importFrom BiocGenerics ncol
-.get_prevalence_value <- function(d, mat){
-    rowSums(mat > d) / ncol(mat)
-}
-
-.get_prevalence_count <- function(d, p, mat){
-    sum(.get_prevalence_value(d, mat) >= p)
+# This function returns a number which tells the number of features which exceed
+# the detection and prevalence thresholds.
+.get_prevalence_count <- function(d, p, mat, ...){
+    length(getPrevalent(mat, detection = d, prevalence = p, ...))
 }
 
 #' @importFrom BiocParallel bpmapply bpisup bpstart bpstop SerialParam
 #' @importFrom SummarizedExperiment assay
-.get_prevalence_plot_data <- function(x, assay.type, detections, prevalences,
-                                      as_relative = TRUE, 
-                                      BPPARAM = BiocParallel::SerialParam()){
+.get_prevalence_plot_data <- function(
+        x, assay.type, detections, prevalences,
+        BPPARAM = BiocParallel::SerialParam(), as_relative = FALSE, ...){
+    # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
     }
     if(as_relative && (any(detections < 0) || any(detections > 1))){
-        stop("If 'as_relative' == TRUE, detections' must be numeric ",
-             "values between 0 and 1.", call. = FALSE)
+        stop("If 'as_relative' == TRUE, detection' must be numeric ",
+            "values between 0 and 1.", call. = FALSE)
     }
-    mat <- assay(x, assay.type, withDimnames = TRUE)
+    #
+    # Apply relative transform if specified
     if(as_relative){
-        mat <- mia:::.calc_rel_abund(mat)
+        temp_name <- "temporary_relative_abundance"
+        x <- transformAssay(
+            x, assay.type = assay.type, method = "relabundance",
+            name = temp_name)
+        assay.type <- temp_name
     }
+    # Get assay
+    mat <- assay(x, assay.type, withDimnames = TRUE)
+    # Get all combinations of different detection/prevalence thresholds
     ans <- expand.grid(detection = detections, prevalence = prevalences)
+    # Start parallelization if specified
     if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
         bpstart(BPPARAM)
         on.exit(bpstop(BPPARAM), add = TRUE)
     }
-    ans$n <- unlist(bpmapply(.get_prevalence_count,
-                             ans$detection,
-                             ans$prevalence,
-                             MoreArgs = list(mat = mat),
-                             BPPARAM = BPPARAM,
-                             SIMPLIFY = FALSE))
+    # For each detection/prevalence threshold, get how many taxa exceed the
+    # limit.
+    temp <- bpmapply(
+        .get_prevalence_count,
+        ans$detection,
+        ans$prevalence,
+        MoreArgs = list(mat = mat, ...),
+        BPPARAM = BPPARAM,
+        SIMPLIFY = FALSE)
+    # Add the values to result table
+    ans[["n"]] <- unlist(temp)
     colnames(ans) <- c("X","colour_by","Y")
-    ans
+    return(ans)
 }
 
 ################################################################################
@@ -232,7 +263,7 @@ setGeneric("plotPrevalentAbundance", signature = c("x"),
 #' @export
 setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(x,
-             rank = taxonomyRanks(x)[1L],
+             rank = NULL,
              assay.type = assay_name, assay_name = "counts",
              colour.by = colour_by, colour_by = NULL,
              size.by = size_by,
@@ -251,140 +282,156 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         if(!(is.null(facet.by) || facet.by %in% taxonomyRanks(x))){
             stop("'facet.by' must be in taxonomyRanks.",  call. = FALSE)
         }
-        
-        x <- mia:::.agg_for_prevalence(
-            x, rank, agg.na.rm = TRUE, relabel = TRUE, ...)
-        label <- .norm_label(label, x)
         #
-        plot_data <- .get_prevalence_plot_point_data(x, assay.type, 
-                                                     label = label, ...)
-        vis_out <- .incorporate_prevalence_vis(plot_data,
-                                               se = x,
-                                               colour_by = colour.by,
-                                               size_by = size.by,
-                                               shape_by = shape.by,
-                                               label = label,
-                                               facet_by = facet.by)
+        # Agglomerate data if specified
+        if( !is.null(rank) ){
+            x <- agglomerateByRank(x, rank = rank, ...)
+        }
+        # Check that labels are correct (or get rownames as labels if NULL)
+        label <- .norm_label(label, x)
+        # Get prevalence data
+        plot_data <- .get_prevalence_plot_point_data(
+            x, assay.type, label = label, ...)
+        # Get data to plot
+        vis_out <- .incorporate_prevalence_vis(
+            plot_data,
+            se = x,
+            colour_by = colour_by,
+            size_by = size_by,
+            shape_by = shape_by,
+            label = label,
+            facet_by = facet_by)
         plot_data <- vis_out$df
         colour.by <- vis_out$colour_by
         size.by <- vis_out$size_by
         shape.by <- vis_out$shape_by
         facet.by <- vis_out$facet_by
-        ylab <- paste0("Prevalence(", ifelse(is.null(rank), "Features", rank),
-                       ") [%]")
+        ylab <- paste0(
+            "Prevalence (", ifelse(is.null(rank), "Features", rank), ") [%]")
+        # Plot the data
         plot <- .prevalence_plotter(plot_data, 
                             layout = "point",
-                            xlab,
                             ylab = ylab,
                             colour_by = colour.by,
                             size_by = size.by,
                             shape_by = shape.by,
                             ...)
-
-        # If facet.by is not NULL, user has specified it. Adds the facets to the plot.
+        # If facet.by is not NULL, user has specified it. Adds the facets to
+        # the plot.
         if(!is.null(facet.by)){
             plot <- plot + 
                 # Create facets
                 facet_wrap(vars(!!sym("facet.by")))
         }
-        
         return(plot)
     }
 )
 
 #' @importFrom DelayedArray rowMeans
 #' @importFrom SummarizedExperiment assay
-.get_prevalence_plot_point_data <- function(x, assay.type, as_relative = TRUE,
-                                            label = NULL){
+.get_prevalence_plot_point_data <- function(
+        x, assay.type, as_relative = TRUE, label = NULL, ...){
+    # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
     }
-    mat <- assay(x, assay.type, withDimnames = TRUE)
+    #
+    # Apply relative transform if specified
     if(as_relative){
-        mat <- mia:::.calc_rel_abund(mat)
+        temp_name <- "temporary_relative_abundance"
+        x <- transformAssay(
+            x, assay.type = assay.type, method = "relabundance",
+            name = temp_name)
+        assay.type <- temp_name
     }
-    ans <- data.frame(X = rowMeans(mat, na.rm = TRUE),
-                      Y = .get_prevalence_value(0, mat) * 100,
-                      label = rownames(mat))
+    # Get assay
+    mat <- assay(x, assay.type, withDimnames = TRUE)
+    # Calculate means and prevalences
+    ans <- data.frame(
+        X = rowMeans(mat, na.rm = TRUE),
+        Y = getPrevalence(mat, detection = 0) * 100,
+        label = rownames(mat))
+    # label denotes, which rownames are displayed. Remove those labels/rownames
+    # that have FALSE i.e. user do not want to display them.
     if(!is.null(label)){
         ans$label[!label] <- NA
     }
-    ans
+    return(ans)
 }
 
 #' @importFrom scater retrieveFeatureInfo
-.incorporate_prevalence_vis <- function(plot_data,
-                                        se = se,
-                                        colour_by = NULL,
-                                        size_by = NULL,
-                                        shape_by = NULL,
-                                        label = NULL,
-                                        facet_by = NULL){
-    variables <- c(colour_by = colour_by,
-                   size_by = size_by,
-                   shape_by = shape_by,
-                   facet_by = facet_by)
+.incorporate_prevalence_vis <- function(
+        plot_data,
+        se = se,
+        colour_by = NULL,
+        size_by = NULL,
+        shape_by = NULL,
+        label = NULL,
+        facet_by = NULL){
+    # Get user specified options for plotting. These include the information
+    # on which variable is used to colour etc the plot.
+    variables <- c(
+        colour_by = colour_by, size_by = size_by, shape_by = shape_by,
+        facet_by = facet_by)
+    # If user specified some options
     if(!is.null(variables)){
+        # Loop through each option
         for(i in seq_along(variables)){
-            # get data
-            feature_info <- retrieveFeatureInfo(se, variables[i],
-                                                search = "rowData")
-            # mirror back variable name, if a partial match was used
+            # Get data from rowData
+            feature_info <- retrieveFeatureInfo(
+                se, variables[i], search = "rowData")
+            # Mirror back variable name, if a partial match was used
             var_name <- names(variables)[i]
-            assign(var_name, 
-                   .get_new_var_name_value(get(var_name),
-                                           feature_info$name))
-            plot_data[,names(feature_info$name)] <- feature_info$value
-            if(!is.null(label)){
-                if(is.factor(feature_info$value) || 
-                   is.character(feature_info$value)){
-                    plot_data[,names(feature_info$name)][!label] <- NA
-                }
+            assign(
+                var_name, .get_new_var_name_value(get(var_name),
+                feature_info$name))
+            # Add data to plot data
+            plot_data[, names(feature_info$name)] <- feature_info$value
+            # label is for determining which labels are shown in the final
+            # plot. Remove those labels that user do not want to show if the
+            # variable has classes/factors/characters that will be plotted
+            # with labels. (Numbers would not be).
+            if(!is.null(label) && (is.factor(feature_info$value) ||
+                    is.character(feature_info$value)) ){
+                plot_data[, names(feature_info$name)][!label] <- NA
             }
         }
     }
-    return(list(df = plot_data,
-                colour_by = colour_by,
-                size_by = size_by,
-                shape_by = shape_by,
-                facet_by = facet_by))
+    # Create a list to be returned
+    res <- list(
+        df = plot_data,
+        colour_by = colour_by,
+        size_by = size_by,
+        shape_by = shape_by,
+        facet_by = facet_by)
+    return(res)
 }
 
 ################################################################################
-# plotFeaturePrevalence
+# plotRowPrevalence
 
 #' @rdname plotPrevalence
 #' @aliases plotTaxaPrevalence
 #' @export
-setGeneric("plotFeaturePrevalence", signature = c("x"),
-           function(x, ...) standardGeneric("plotFeaturePrevalence"))
+setGeneric("plotRowPrevalence", signature = c("x"),
+           function(x, ...) standardGeneric("plotRowPrevalence"))
 
 #' @rdname plotPrevalence
 #' @export
-setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
-          function(x,
-                   rank = taxonomyRanks(x)[1L],
-                   assay.type = assay_name, assay_name = "counts",
-                   detections = NULL,
-                   ndetections = 20,
-                   min.prevalence = min_prevalence,
-                   min_prevalence = 0,
-                   BPPARAM = BiocParallel::SerialParam(),
-                   ...){
+setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
+    function(
+            x,
+            rank = NULL,
+            assay.type = assay_name, assay_name = "counts",
+            detection = detections, detections = c(0.01, 0.1, 1, 2, 5, 10, 20),
+            ndetection = 20,
+            min.prevalence = min_prevalence,
+            min_prevalence = 0,
+            BPPARAM = BiocParallel::SerialParam(),
+            ...){
         # input check
-        if(!is.null(detections)){
-            if(!all(.is_numeric_string(detections))){
-                stop("'detections' must be numeric values.", call. = FALSE)
-            }
-        } else {
-            if(!is.numeric(ndetections) || 
-               ndetections != as.integer(ndetections) ||
-               length(ndetections) != 1L){
-                stop("'ndetections' must be a single integer value.",
-                     call. = FALSE)
-            }
-            detections <- seq(0,1,length.out = ndetections + 1L)
-            as.relative <- TRUE
+        if(!all(.is_numeric_string(detection))){
+            stop("'detection' must be numeric values.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
         
@@ -393,22 +440,25 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                  call. = FALSE)
         }
         #
-        x <- mia:::.agg_for_prevalence(x, rank, na.rm = TRUE, relabel = TRUE,
-                                       ...)
-        plot_data <- .get_prevalence_plot_matrix(x, assay.type, detections,
-                                                 min.prevalence,
-                                                 BPPARAM, ...)
+        # Agglomerate data if specified
+        if( !is.null(rank) ){
+            x <- agglomerateByRank(x, rank = rank, ...)
+        }
+        # Get prevalence data
+        plot_data <- .get_prevalence_plot_matrix(
+            x, assay.type, detection, min.prevalence, BPPARAM, ...)
         plot_data$colour_by <- plot_data$colour_by * 100
         ylab <- ifelse(is.null(rank), "Features", rank)
         colour_by <- "Prevalence [%]"
-        .prevalence_plotter(plot_data, 
+        # Plot the data
+        p <- .prevalence_plotter(plot_data, 
                             layout = "heatmap",
-                            xlab,
                             ylab = ylab,
                             colour_by = colour_by,
                             size_by = NULL,
                             shape_by = NULL,
                             ...)
+        return(p)
     }
 )
 
@@ -423,121 +473,140 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment assay
 #' @importFrom tidyr pivot_longer
 #' @importFrom DelayedArray rowSums
-.get_prevalence_plot_matrix <- function(x, assay.type, detections, 
-                                        as_relative = TRUE, 
-                                        min_prevalence,
-                                        BPPARAM = BiocParallel::SerialParam()){
+.get_prevalence_plot_matrix <- function(
+        x, assay.type, detections, min_prevalence,
+        BPPARAM = BiocParallel::SerialParam(), as_relative = FALSE, ...){
+    # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
     }
     if(as_relative && (any(detections < 0) || any(detections > 1))){
-        stop("If 'as_relative' == TRUE, detections' must be numeric ",
+        stop("If 'as_relative' == TRUE, detection' must be numeric ",
              "values between 0 and 1.", call. = FALSE)
     }
-    mat <- assay(x, assay.type, withDimnames = TRUE)
+    #
+    # Apply relative transform if specified
     if(as_relative){
-        mat <- mia:::.calc_rel_abund(mat)
+        temp_name <- "temporary_relative_abundance"
+        x <- transformAssay(
+            x, assay.type = assay.type, method = "relabundance",
+            name = temp_name)
+        assay.type <- temp_name
     }
-    
+    #
+    # Start parallelling if specified
     if (!(bpisup(BPPARAM) || is(BPPARAM, "MulticoreParam"))) {
         bpstart(BPPARAM)
         on.exit(bpstop(BPPARAM), add = TRUE)
     }
-    ans <- bplapply(detections,
-                    .get_prevalence_value,
-                    mat = mat,
-                    BPPARAM = BPPARAM)
+    # Calculate prevalences of taxa in different detection limits and create a
+    # data.frame from them
+    ans <- bplapply(
+        detections, function(d){
+            getPrevalence(x, assay.type = assay.type, detection = d)
+        }, BPPARAM = BPPARAM)
     ans <- data.frame(ans)
     colnames(ans) <- detections
+    # Remove those taxa and prevalence thresholds that do not exceed the minimum
+    # prevalence threshold.
     f <- ans >= min_prevalence
-    ans <- ans[rowSums(f) != 0,colSums(f) != 0,drop=FALSE]
+    ans <- ans[rowSums(f) != 0, colSums(f) != 0, drop=FALSE]
+    # If there are no data to plot anymro e after subsetting, give error.
     if(any(dim(ans) == 0)){
         stop("No data left after apply threshold 'min_prevalence'.",
              call. = FALSE)
     }
+    # Get the taxa order, the most abundant taxa comes first
     lvls <- rownames(ans)[order(rowSums(ans))]
-    ans$ID <- rownames(mat)[rowSums(f) != 0]
+    # Add rownames to table
+    ans[["ID"]] <- rownames(x)[rowSums(f) != 0]
+    # Convert the table to long format
     ans <- ans %>%
         pivot_longer(!ID, 
                      names_to = "detection",
                      values_to = "prevalence")
     colnames(ans) <- c("Y","X","colour_by")
+    # Round values
     ans$X <- round(as.numeric(ans$X),4) * 100
-    if(!.is_continuous(ans$X)){
-        ans$X <- factor(ans$X,
-                        unique(as.character(sort(as.numeric(ans$X)))))
+    # If the values are discrete, convert them to factors
+    if( !.is_continuous(ans$X) ){
+        ans$X <- factor(
+            ans$X, unique(as.character(sort(as.numeric(ans$X)))))
     }
+    # Convert taxa to factor. The order is based on prevalence of taxa.
     ans$Y <- factor(ans$Y,lvls)
-    ans
+    return(ans)
 }
 
 #' @importFrom ggplot2 ggplot geom_raster geom_point geom_line
 #'   scale_fill_distiller scale_y_discrete scale_x_discrete scale_x_continuous
 #'   theme_classic
 .prevalence_plotter <- function(plot_data,
-                                layout = c("line","point","heatmap"),
-                                as_relative = TRUE,
-                                xlab = NULL,
-                                ylab = NULL,
-                                colour_by = NULL,
-                                size_by = NULL,
-                                shape_by = NULL,
-                                flipped = FALSE,
-                                add_legend = TRUE,
-                                point_alpha = 1,
-                                point_size = 2,
-                                line_alpha = 1,
-                                line_type = NULL,
-                                line_size = 1){
-    xlab <- paste0(ifelse(as_relative, "Rel. ", ""),"Abundance")
+        layout = c("line","point","heatmap"),
+        xlab = paste0(ifelse(as_relative, "Rel. ", ""),"Abundance"),
+        ylab = NULL,
+        colour_by = NULL,
+        size_by = NULL,
+        shape_by = NULL,
+        flipped = FALSE,
+        add_legend = TRUE,
+        point_alpha = 1,
+        point_size = 2,
+        line_alpha = 1,
+        line_type = NULL,
+        line_size = 1,
+        as_relative = FALSE,
+        ...){
+    # Start plotting
     plot_out <- ggplot(plot_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)
+    # Add diffetent layouts
     if(layout == "line"){
-        point_args <- .get_point_args(colour_by = colour_by, shape_by = NULL,
-                                      size_by = NULL,
-                                      alpha = point_alpha,
-                                      size = point_size)
-        line_args <- .get_line_args(colour_by = colour_by, linetype_by = NULL,
-                                    size_by = NULL,
-                                    alpha = line_alpha,
-                                    linetype = line_type,
-                                    linewidth = line_size)
+        # Get point and line options
+        point_args <- .get_point_args(
+            colour_by = colour_by, shape_by = NULL, size_by = NULL,
+            alpha = point_alpha, size = point_size)
+        line_args <- .get_line_args(
+            colour_by = colour_by, linetype_by = NULL, size_by = NULL,
+            alpha = line_alpha, linetype = line_type, linewidth = line_size)
+        # Add grouping. Otherwise, the line does not follow the same value as 
+        # colouring.
         point_args$args$mapping$group <- sym("colour_by")
         line_args$args$mapping$group <- sym("colour_by")
+        # Add point and line layouts
         plot_out <- plot_out +
             do.call(geom_point, point_args$args) +
             do.call(geom_line, line_args$args)
-        # resolve the colours
-        plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colour_by,
-                                          colour_by,
-                                          fill = TRUE)
-        plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colour_by,
-                                          colour_by,
-                                          fill = FALSE)
+        # Adjust the colour scale and legend title
+        plot_out <- .resolve_plot_colours(
+            plot_out, plot_data$colour_by, colour_by, fill = TRUE)
+        plot_out <- .resolve_plot_colours(
+            plot_out, plot_data$colour_by, colour_by, fill = FALSE)
     } else if(layout == "point"){
-        point_args <- .get_point_args(colour_by = colour_by, shape_by = shape_by,
-                                      size_by = size_by,
-                                      alpha = point_alpha,
-                                      size = point_size)
+        # Get point options
+        point_args <- .get_point_args(
+            colour_by = colour_by, shape_by = shape_by, size_by = size_by,
+            alpha = point_alpha, size = point_size)
+        # Add point layout
         plot_out <- plot_out +
             do.call(geom_point, point_args$args)
-        # resolve the colours
-        plot_out <- .resolve_plot_colours(plot_out,
-                                          plot_data$colour_by,
-                                          colour_by,
-                                          fill = TRUE,
-                                          na.translate = FALSE)
-        # add additional guides
+        # Adjust the colour scale and legend title
+        plot_out <- .resolve_plot_colours(
+            plot_out, plot_data$colour_by, colour_by, fill = TRUE,
+            na.translate = FALSE)
+        # Add legend for shape_by and size_by if they were used.
         plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
     } else if(layout == "heatmap"){
-        raster_args <- .get_bar_args(colour_by = colour_by, alpha = 1,
-                                     add_border = FALSE)
+        # Get bar options
+        raster_args <- .get_bar_args(
+            colour_by = colour_by, alpha = 1, add_border = FALSE)
+        # Add bar layout
         plot_out <- plot_out +
             do.call(geom_raster, raster_args$args) +
             scale_fill_distiller(palette = "RdYlBu", name = colour_by) +
             scale_y_discrete(expand = c(0,0))
+        # Add scale. If numeric, add continuous scaling, if discrete, add
+        # discrete scaling.
         if(is.factor(plot_data$X)){
             plot_out <- plot_out + 
                 scale_x_discrete(expand = c(0,0))
@@ -546,32 +615,49 @@ setMethod("plotFeaturePrevalence", signature = c(x = "SummarizedExperiment"),
                 scale_x_continuous(expand = c(0,0), n.breaks = 7L)
         }
     } else {
-        stop("incompatible layout")
+        stop("incompatible layout.", call. = FALSE)
     }
-    # theme
+    # Adjust theme
     plot_out <- plot_out +
         theme_classic()
-    # add legend
+    # Remove legend if specified
     plot_out <- .add_legend(plot_out, add_legend)
-    # flip
-    plot_out <- .flip_plot(plot_out, flipped, add_x_text = TRUE,
-                           angle_x_text = FALSE)
-    plot_out
+    # Flip plot if specified
+    plot_out <- .flip_plot(
+        plot_out, flipped, add_x_text = TRUE, angle_x_text = FALSE)
+    return(plot_out)
 }
 
 #' @rdname plotPrevalence
-#' @aliases plotFeaturePrevalence
+#' @aliases plotRowPrevalence
 #' @export
 setGeneric("plotTaxaPrevalence", signature = c("x"),
            function(x, ...) 
              standardGeneric("plotTaxaPrevalence"))
 
 #' @rdname plotPrevalence
-#' @aliases plotFeaturePrevalence
+#' @aliases plotRowPrevalence
 #' @export
 setMethod("plotTaxaPrevalence", signature = c(x = "ANY"),
           function(x, ...){
-            .Deprecated(old ="plotTaxaPrevalence", new = "plotFeaturePrevalence", msg = "The 'plotTaxaPrevalence' function is deprecated. Use 'plotFeaturePrevalence' instead.")
-            plotFeaturePrevalence(x, ...)
+            .Deprecated(old ="plotTaxaPrevalence", new = "plotRowPrevalence", msg = "The 'plotTaxaPrevalence' function is deprecated. Use 'plotRowPrevalence' instead.")
+            plotRowPrevalence(x, ...)
+          }
+)
+
+#' @rdname plotPrevalence
+#' @aliases plotRowPrevalence
+#' @export
+setGeneric("plotFeaturePrevalence", signature = c("x"),
+           function(x, ...) 
+               standardGeneric("plotFeaturePrevalence"))
+
+#' @rdname plotPrevalence
+#' @aliases plotRowPrevalence
+#' @export
+setMethod("plotFeaturePrevalence", signature = c(x = "ANY"),
+          function(x, ...){
+              .Deprecated(old ="plotFeaturePrevalence", new = "plotRowPrevalence", msg = "The 'plotFeaturePrevalence' function is deprecated. Use 'plotRowPrevalence' instead.")
+              plotRowPrevalence(x, ...)
           }
 )

@@ -5,17 +5,21 @@
 \alias{plotPrevalence,SummarizedExperiment-method}
 \alias{plotPrevalentAbundance}
 \alias{plotPrevalentAbundance,SummarizedExperiment-method}
-\alias{plotFeaturePrevalence}
+\alias{plotRowPrevalence}
 \alias{plotTaxaPrevalence}
-\alias{plotFeaturePrevalence,SummarizedExperiment-method}
+\alias{plotRowPrevalence,SummarizedExperiment-method}
 \alias{plotTaxaPrevalence,ANY-method}
+\alias{plotFeaturePrevalence}
+\alias{plotFeaturePrevalence,ANY-method}
 \title{Plot prevalence information}
 \usage{
 plotPrevalence(x, ...)
 
 \S4method{plotPrevalence}{SummarizedExperiment}(
   x,
-  detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
+  detection = detections,
+  detections = c(0.01, 0.1, 1, 2, 5, 10, 20),
+  prevalence = prevalences,
   prevalences = seq(0.1, 1, 0.1),
   assay.type = assay_name,
   assay_name = "counts",
@@ -28,7 +32,7 @@ plotPrevalentAbundance(x, ...)
 
 \S4method{plotPrevalentAbundance}{SummarizedExperiment}(
   x,
-  rank = taxonomyRanks(x)[1L],
+  rank = NULL,
   assay.type = assay_name,
   assay_name = "counts",
   colour.by = colour_by,
@@ -43,15 +47,16 @@ plotPrevalentAbundance(x, ...)
   ...
 )
 
-plotFeaturePrevalence(x, ...)
+plotRowPrevalence(x, ...)
 
-\S4method{plotFeaturePrevalence}{SummarizedExperiment}(
+\S4method{plotRowPrevalence}{SummarizedExperiment}(
   x,
-  rank = taxonomyRanks(x)[1L],
+  rank = NULL,
   assay.type = assay_name,
   assay_name = "counts",
-  detections = NULL,
-  ndetections = 20,
+  detection = detections,
+  detections = c(0.01, 0.1, 1, 2, 5, 10, 20),
+  ndetection = 20,
   min.prevalence = min_prevalence,
   min_prevalence = 0,
   BPPARAM = BiocParallel::SerialParam(),
@@ -61,6 +66,10 @@ plotFeaturePrevalence(x, ...)
 plotTaxaPrevalence(x, ...)
 
 \S4method{plotTaxaPrevalence}{ANY}(x, ...)
+
+plotFeaturePrevalence(x, ...)
+
+\S4method{plotFeaturePrevalence}{ANY}(x, ...)
 }
 \arguments{
 \item{x}{a
@@ -73,13 +82,17 @@ object.}
 should be applied to compositional (relative) abundances. (Default: \code{FALSE})
 }}
 
-\item{detections}{Detection thresholds for absence/presence. Either an
+\item{detection}{Detection thresholds for absence/presence. Either an
 absolutes value compared directly to the values of \code{x} or a relative
 value between 0 and 1, if \code{as.relative = TRUE}.}
 
-\item{prevalences}{Prevalence thresholds (in 0 to 1). The
+\item{detections}{Deprecated. Use \code{detection} instead.}
+
+\item{prevalence}{Prevalence thresholds (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set \code{include_lowest} to \code{TRUE}.}
+
+\item{prevalences}{Deprecated. Use \code{prevalence} instead.}
 
 \item{assay.type}{a \code{character} value defining which assay data to
 use. (default: \code{assay.type = "relabundance"})}
@@ -91,12 +104,17 @@ will be disabled.)}
 
 \item{rank, ...}{additional arguments
 \itemize{
+\item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+be calculated? (Default: \code{FALSE}) }
+
 \item{If \code{!is.null(rank)} matching arguments are passed on to
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 }
+
 \item{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
+\code{\link{mia-plot-args}} for more details i.e. call
+\code{help("mia-plot-args")}}
 }}
 
 \item{BPPARAM}{A
@@ -134,7 +152,7 @@ Argument can only be used in function plotPrevalentAbundance.}
 
 \item{facet_by}{Deprecated. Use \code{facet.by} instead.}
 
-\item{ndetections}{If \code{detections} is \code{NULL}, a number of breaks
+\item{ndetection}{If \code{detection} is \code{NULL}, a number of breaks
 are calculated automatically. \code{as.relative} is then also regarded as
 \code{TRUE}.}
 
@@ -146,14 +164,14 @@ plotting. The threshold is applied per row and column.
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one
-\code{prevalences} was defined.
+\code{prevalence} was defined.
 }
 \description{
-\code{plotPrevalence} and \code{plotFeaturePrevalence} visualize prevalence
+\code{plotPrevalence} and \code{plotRowPrevalence} visualize prevalence
 information.
 }
 \details{
-Whereas \code{plotPrevalence} produces a line plot, \code{plotFeaturePrevalence}
+Whereas \code{plotPrevalence} produces a line plot, \code{plotRowPrevalence}
 returns a heatmap.
 
 Agglomeration on different taxonomic levels is available through the
@@ -166,28 +184,33 @@ with subsetting via \code{getPrevalent} or
 \examples{
 data(GlobalPatterns, package = "mia")
 
+# Apply relative transformation
+GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
+
 # plotting N of prevalence exceeding taxa on the Phylum level
 plotPrevalence(GlobalPatterns, rank = "Phylum")
 plotPrevalence(GlobalPatterns, rank = "Phylum") + scale_x_log10()
 
 # plotting prevalence per taxa for different detection thresholds as heatmap
-plotFeaturePrevalence(GlobalPatterns, rank = "Phylum")
+plotRowPrevalence(GlobalPatterns, rank = "Phylum")
 
 # by default a continuous scale is used for different detection levels, 
 # but this can be adjusted
-plotFeaturePrevalence(GlobalPatterns, rank = "Phylum",
-                   detections = c(0, 0.001, 0.01, 0.1, 0.2))
+plotRowPrevalence(
+    GlobalPatterns, rank = "Phylum", assay.type = "relabundance",
+    detection = c(0, 0.001, 0.01, 0.1, 0.2))
                    
-# point layout for plotFeaturePrevalence can be used to visualize by additional
+# point layout for plotRowPrevalence can be used to visualize by additional
 # information
-plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-                       colour.by = "Phylum") +
+plotPrevalentAbundance(
+    GlobalPatterns, rank = "Family", colour.by = "Phylum") +
     scale_x_log10()
 
 # When using function plotPrevalentAbundace, it is possible to create facets
 # with 'facet.by'.
-plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-                       colour.by = "Phylum", facet.by = "Kingdom") +
+plotPrevalentAbundance(
+    GlobalPatterns, rank = "Family",
+    colour.by = "Phylum", facet.by = "Kingdom") +
     scale_x_log10()
 }
 \seealso{

@@ -164,7 +164,6 @@ matched from a \code{SummarizedExperiment} object for the nodes only.
 Information on the edges have to provided manually.
 }
 \details{
-:
 Internally \code{tidygraph} and \code{ggraph} are used. Therefore, all
 graph types which can be converted by \code{tidygraph::as_tbl_graph} can
 be used.
