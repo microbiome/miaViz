@@ -462,9 +462,12 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         stop("If 'as_relative' == TRUE, detection' must be numeric ",
              "values between 0 and 1.", call. = FALSE)
     }
-    if(!is.numeric(ndetection) || ndetection != as.integer(ndetection) ||
-            length(ndetection) != 1L){
+    if( !.is_an_integer(ndetection) ){
         stop("'ndetection' must be a single integer value.", call. = FALSE)
+    }
+    if( is.null(detections) && is.null(ndetection) ){
+        stop("Either 'detection' or 'ndetection' must be specified.",
+            call. = FALSE)
     }
     # If detection thesholds were not specified, calculate them based
     # on ndetection. Because the values are set to relative scale, enable
