@@ -52,7 +52,6 @@ plotRowPrevalence(x, ...)
   assay_name = "counts",
   detection = detections,
   detections = c(0.01, 0.1, 1, 2, 5, 10, 20),
-  ndetection = 20,
   min_prevalence = 0,
   BPPARAM = BiocParallel::SerialParam(),
   ...
@@ -96,6 +95,11 @@ will be disabled.)}
 \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
 be calculated? (Default: \code{FALSE}) }
 
+\item{ndetection}{ \code{Integer scalar}. Determines the number of breaks
+calculated detection thresholds when \code{detection=NULL}. When
+\code{TRUE},  \code{as_relative} is then also regarded as \code{TRUE}.
+(Default: \code{20})}
+
 \item{If \code{!is.null(rank)} matching arguments are passed on to
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
@@ -132,10 +136,6 @@ for selecting labels from the rownames of \code{x}. If \code{rank} is not
 \item{facet_by}{Taxonomic rank to facet the plot by.
 Value must be of \code{taxonomyRanks(x)}
 Argument can only be used in function plotPrevalentAbundance.}
-
-\item{ndetection}{If \code{detection} is \code{NULL}, a number of breaks
-are calculated automatically. \code{as_relative} is then also regarded as
-\code{TRUE}.}
 
 \item{min_prevalence}{a single numeric value to apply as a threshold for
 plotting. The threshold is applied per row and column.
