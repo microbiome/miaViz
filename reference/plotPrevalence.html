@@ -91,7 +91,6 @@ information.</p>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  detection <span class="op">=</span> <span class="va">detections</span>,</span>
 <span>  detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span>,</span>
-<span>  ndetection <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  min_prevalence <span class="op">=</span> <span class="fl">0</span>,</span>
 <span>  BPPARAM <span class="op">=</span> <span class="fu">BiocParallel</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/BiocParallel/man/SerialParam-class.html" class="external-link">SerialParam</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -153,6 +152,10 @@ will be disabled.)</p></dd>
 <dt id="arg-rank-">rank, ...<a class="anchor" aria-label="anchor" href="#arg-rank-"></a></dt>
 <dd><p>additional arguments</p><ul><li><p>use_relative <code>TRUE</code> or <code>FALSE</code>: Should the relative values
 be calculated? (Default: <code>FALSE</code>)</p></li>
+<li><p>ndetection <code>Integer scalar</code>. Determines the number of breaks
+calculated detection thresholds when <code>detection=NULL</code>. When
+<code>TRUE</code>,  <code>as_relative</code> is then also regarded as <code>TRUE</code>.
+(Default: <code>20</code>)</p></li>
 <li><p>If <code>!is.null(rank)</code> matching arguments are passed on to
 <code><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></code>. See
 <code><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">?agglomerateByRank</a></code> for more details.</p></li>
@@ -199,12 +202,6 @@ for selecting labels from the rownames of <code>x</code>. If <code>rank</code> i
 <dd><p>Taxonomic rank to facet the plot by.
 Value must be of <code>taxonomyRanks(x)</code>
 Argument can only be used in function plotPrevalentAbundance.</p></dd>
-
-
-<dt id="arg-ndetection">ndetection<a class="anchor" aria-label="anchor" href="#arg-ndetection"></a></dt>
-<dd><p>If <code>detection</code> is <code>NULL</code>, a number of breaks
-are calculated automatically. <code>as_relative</code> is then also regarded as
-<code>TRUE</code>.</p></dd>
 
 
 <dt id="arg-min-prevalence">min_prevalence<a class="anchor" aria-label="anchor" href="#arg-min-prevalence"></a></dt>
