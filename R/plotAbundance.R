@@ -64,8 +64,9 @@
 #' 
 #' @param ... additional parameters for plotting.
 #'   \itemize{
-#'   \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-#'   be calculated? (default: \code{use_relative = FALSE} }
+#'   \item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+#'   be calculated? (default: \code{as.relative = FALSE} }
+#'   \item{use_relative} Deprecated. Use \code{as.relative} instead.
 #' }
 #' See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
@@ -99,7 +100,7 @@
 #' ## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
 #' plotAbundance(
 #'     tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
-#'     use_relative = TRUE)
+#'     as.relative = TRUE)
 #' 
 #'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering
@@ -269,10 +270,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 
 #' @importFrom dplyr group_by summarize rename
 .get_abundance_data <- function(
-        x, rank, assay.type, order_rank_by = "name", use_relative = FALSE, ...){
+        x, rank, assay.type, order_rank_by = "name", as.relative = use_relative,
+        use_relative = FALSE, ...){
     # Input check
-    if(!.is_a_bool(use_relative)){
-        stop("'use_relative' must be TRUE or FALSE.",
+    if(!.is_a_bool(as.relative)){
+        stop("'as.relative' must be TRUE or FALSE.",
              call. = FALSE)
     }
     #
@@ -293,7 +295,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     }
     # If user wants to calculate relative abundances, apply relative transform
     # and use relative assay instead of the original assay in plotting.
-    if( use_relative ){
+    if( as.relative ){
         temp_name <- "temporary_relative_abundance"
         x <- transformAssay(
             x, assay.type = assay.type, method = "relabundance",
@@ -464,7 +466,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 #'   scale_y_continuous
 .abund_plotter <- function(object,
         xlab = "Samples",
-        ylab = paste0(ifelse(use_relative, "Rel. ", ""),"Abundance"),
+        ylab = paste0(ifelse(as.relative, "Rel. ", ""),"Abundance"),
         colour_by = NULL,
         layout = "bar",
         flipped = FALSE,
@@ -474,6 +476,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         bar_alpha = 0.65,
         point_alpha = 1,
         point_size = 2,
+        as.relative = use_relative,
         use_relative = FALSE,
         ...
         ){

@@ -12,7 +12,7 @@
 #'   
 #' @param rank,... additional arguments
 #' \itemize{
-#'   \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+#'   \item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
 #'   be calculated? (Default: \code{FALSE}) }
 #'   
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to

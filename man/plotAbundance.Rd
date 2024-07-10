@@ -34,8 +34,9 @@ object.}
 
 \item{...}{additional parameters for plotting.
 \itemize{
-\item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-be calculated? (default: \code{use_relative = FALSE} }
+\item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+be calculated? (default: \code{as.relative = FALSE} }
+\item{use_relative} Deprecated. Use \code{as.relative} instead.
 }
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
@@ -127,7 +128,7 @@ plotAbundance(
 ## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
 plotAbundance(
     tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
-    use_relative = TRUE)
+    as.relative = TRUE)
 
   
 ## A feature from colData or taxon from chosen rank can be used for ordering
