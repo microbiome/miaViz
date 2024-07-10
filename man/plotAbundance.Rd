@@ -36,7 +36,6 @@ object.}
 \itemize{
 \item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
 be calculated? (default: \code{as.relative = FALSE} }
-\item{use_relative} Deprecated. Use \code{as.relative} instead.
 }
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 

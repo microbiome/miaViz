@@ -20,7 +20,7 @@ plotColTree(x, ...)
   relabel_tree = FALSE,
   order.tree = order_tree,
   order_tree = FALSE,
-  remove.levels = remove_levels,
+  levels.rm = remove_levels,
   remove_levels = FALSE,
   show.label = show_label,
   show_label = FALSE,
@@ -66,7 +66,7 @@ plotColTree(x, ...)
   relabel_tree = FALSE,
   order.tree = order_tree,
   order_tree = FALSE,
-  remove.levels = remove_levels,
+  levels.rm = remove_levels,
   remove_levels = FALSE,
   show.label = show_label,
   show_label = FALSE,
@@ -129,10 +129,10 @@ alphabetic order of taxonomic levels?
 
 \item{order_tree}{Deprecated. Use \code{order.tree} instead.}
 
-\item{remove.levels}{logical scalar, Should taxonomic level information
-be removed from labels? (default: \code{relabel.tree = FALSE})}
+\item{levels.rm}{logical scalar, Should taxonomic level information
+be removed from labels? (default: \code{levels.rm = FALSE})}
 
-\item{remove_levels}{Deprecated. Use \code{remove.levels} instead.}
+\item{remove_levels}{Deprecated. Use \code{levels.rm} instead.}
 
 \item{show.label, show.highlights, show.highlight.label, abbr.label}{\code{logical} (scalar), \code{integer} or \code{character} vector. If a
 \code{logical} scalar is given, should tip labels be plotted or if a

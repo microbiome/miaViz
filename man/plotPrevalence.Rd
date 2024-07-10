@@ -78,7 +78,7 @@ object.}
 
 \item{...}{additional parameters for plotting.
 \itemize{
-\item{as_relative} \code{Boolean} indicating whether the detection threshold
+\item{as.relative} \code{Boolean} indicating whether the detection threshold
 should be applied to compositional (relative) abundances. (Default: \code{FALSE})
 }}
 

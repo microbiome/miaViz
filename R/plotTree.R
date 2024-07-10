@@ -26,10 +26,10 @@
 #'   
 #' @param order_tree Deprecated. Use \code{order.tree} instead.
 #'   
-#' @param remove.levels logical scalar, Should taxonomic level information
-#'   be removed from labels? (default: \code{relabel.tree = FALSE})
+#' @param levels.rm logical scalar, Should taxonomic level information
+#'   be removed from labels? (default: \code{levels.rm = FALSE})
 #'   
-#' @param remove_levels Deprecated. Use \code{remove.levels} instead.
+#' @param remove_levels Deprecated. Use \code{levels.rm} instead.
 #'   
 #' @param show.label,show.highlights,show.highlight.label,abbr.label
 #'   \code{logical} (scalar), \code{integer} or \code{character} vector. If a
@@ -234,7 +234,7 @@ setMethod("plotColTree", signature = c(x = "TreeSummarizedExperiment"),
                    relabel_tree = FALSE,
                    order.tree = order_tree,
                    order_tree = FALSE,
-                   remove.levels = remove_levels,
+                   levels.rm = remove_levels,
                    remove_levels = FALSE,
                    show.label = show_label,
                    show_label = FALSE,
@@ -274,7 +274,7 @@ setMethod("plotColTree", signature = c(x = "TreeSummarizedExperiment"),
                               tree_name = tree.name,
                               relabel_tree = relabel.tree,
                               order_tree = order.tree,
-                              remove_levels = remove.levels,
+                              remove_levels = levels.rm,
                               show_label = show.label,
                               show_highlights = show.highlights,
                               show_highlight_label = show.highlight.label,
@@ -306,7 +306,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                    relabel_tree = FALSE,
                    order.tree = order_tree,
                    order_tree = FALSE,
-                   remove.levels = remove_levels,
+                   levels.rm = remove_levels,
                    remove_levels = FALSE,
                    show.label = show_label,
                    show_label = FALSE,
@@ -346,7 +346,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                               tree_name = tree.name,
                               relabel_tree = relabel.tree,
                               order_tree = order.tree,
-                              remove_levels = remove.levels,
+                              remove_levels = levels.rm,
                               show_label = show.label,
                               show_highlights = show.highlights,
                               show_highlight_label = show.highlight.label,

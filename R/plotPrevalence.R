@@ -93,7 +93,7 @@
 #'   
 #' @param ... additional parameters for plotting. 
 #' \itemize{
-#'  \item{as_relative} \code{Boolean} indicating whether the detection threshold 
+#'  \item{as.relative} \code{Boolean} indicating whether the detection threshold 
 #'  should be applied to compositional (relative) abundances. (Default: \code{FALSE})
 #' }
 #' 
@@ -209,7 +209,8 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment assay
 .get_prevalence_plot_data <- function(
         x, assay.type, detections, prevalences,
-        BPPARAM = BiocParallel::SerialParam(), as_relative = FALSE, ...){
+        BPPARAM = BiocParallel::SerialParam(), as.relative = as_relative,
+        as_relative = FALSE, ...){
     # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
@@ -475,7 +476,8 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray rowSums
 .get_prevalence_plot_matrix <- function(
         x, assay.type, detections, min_prevalence,
-        BPPARAM = BiocParallel::SerialParam(), as_relative = FALSE, ...){
+        BPPARAM = BiocParallel::SerialParam(), as.relative = as_relative,
+        as_relative = FALSE, ...){
     # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
@@ -543,7 +545,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
 #'   theme_classic
 .prevalence_plotter <- function(plot_data,
         layout = c("line","point","heatmap"),
-        xlab = paste0(ifelse(as_relative, "Rel. ", ""),"Abundance"),
+        xlab = paste0(ifelse(as.relative, "Rel. ", ""),"Abundance"),
         ylab = NULL,
         colour_by = NULL,
         size_by = NULL,
@@ -555,6 +557,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         line_alpha = 1,
         line_type = NULL,
         line_size = 1,
+        as.relative = as_relative,
         as_relative = FALSE,
         ...){
     # Start plotting
