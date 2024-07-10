@@ -15,6 +15,11 @@
 #'   \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
 #'   be calculated? (Default: \code{FALSE}) }
 #'   
+#'   \item{ndetection}{ \code{Integer scalar}. Determines the number of breaks
+#'   calculated detection thresholds when \code{detection=NULL}. When
+#'   \code{TRUE},  \code{as_relative} is then also regarded as \code{TRUE}.
+#'   (Default: \code{20})}
+#'   
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
@@ -70,10 +75,6 @@
 #' @param min_prevalence a single numeric value to apply as a threshold for 
 #'   plotting. The threshold is applied per row and column.
 #'   (default: \code{min_prevalence = 0})
-#' 
-#' @param ndetection If \code{detection} is \code{NULL}, a number of breaks 
-#'   are calculated automatically. \code{as_relative} is then also regarded as 
-#'   \code{TRUE}.
 #' 
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -403,7 +404,6 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
             rank = NULL,
             assay.type = assay_name, assay_name = "counts",
             detection = detections, detections = c(0.01, 0.1, 1, 2, 5, 10, 20),
-            ndetection = 20,
             min_prevalence = 0,
             BPPARAM = BiocParallel::SerialParam(),
             ...){
@@ -452,7 +452,8 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray rowSums
 .get_prevalence_plot_matrix <- function(
         x, assay.type, detections, min_prevalence,
-        BPPARAM = BiocParallel::SerialParam(), as_relative = FALSE, ...){
+        BPPARAM = BiocParallel::SerialParam(), as_relative = FALSE,
+        ndetection = 20, ...){
     # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
@@ -460,6 +461,20 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
     if(as_relative && (any(detections < 0) || any(detections > 1))){
         stop("If 'as_relative' == TRUE, detection' must be numeric ",
              "values between 0 and 1.", call. = FALSE)
+    }
+    if( !.is_an_integer(ndetection) ){
+        stop("'ndetection' must be a single integer value.", call. = FALSE)
+    }
+    if( is.null(detections) && is.null(ndetection) ){
+        stop("Either 'detection' or 'ndetection' must be specified.",
+            call. = FALSE)
+    }
+    # If detection thesholds were not specified, calculate them based
+    # on ndetection. Because the values are set to relative scale, enable
+    # relative abundances.
+    if( is.null(detections) ){
+        detections <- seq(0, 1, length.out = ndetection + 1L)
+        as_relative <- TRUE
     }
     #
     # Apply relative transform if specified
