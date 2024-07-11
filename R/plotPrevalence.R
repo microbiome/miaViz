@@ -66,9 +66,11 @@
 #' 
 #' @param facet_by Deprecated. Use \code{facet.by} instead.
 #' 
-#' @param label a \code{logical}, \code{character} or \code{integer} vector
+#' @param show.label a \code{logical}, \code{character} or \code{integer} vector
 #'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
-#'   \code{NULL} the rownames might change. (default: \code{label = NULL})
+#'   \code{NULL} the rownames might change. (default: \code{show.label = NULL})
+#'   
+#' @param label Deprecated. Use \code{show.label} instead.
 #'
 #' @param detection Detection thresholds for absence/presence. Either an
 #'   absolutes value compared directly to the values of \code{x} or a relative
@@ -270,6 +272,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
              size_by = NULL,
              shape.by = shape_by,
              shape_by = NULL,
+             show.label = label,
              label = NULL,
              facet.by = facet_by,
              facet_by = NULL,
@@ -288,10 +291,10 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             x <- agglomerateByRank(x, rank = rank, ...)
         }
         # Check that labels are correct (or get rownames as labels if NULL)
-        label <- .norm_label(label, x)
+        show.label <- .norm_label(show.label, x)
         # Get prevalence data
         plot_data <- .get_prevalence_plot_point_data(
-            x, assay.type, label = label, ...)
+            x, assay.type, label = show.label, ...)
         # Get data to plot
         vis_out <- .incorporate_prevalence_vis(
             plot_data,
@@ -299,7 +302,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             colour_by = colour_by,
             size_by = size_by,
             shape_by = shape_by,
-            label = label,
+            label = show.label,
             facet_by = facet_by)
         plot_data <- vis_out$df
         colour.by <- vis_out$colour_by

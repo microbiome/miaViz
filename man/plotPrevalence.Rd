@@ -41,6 +41,7 @@ plotPrevalentAbundance(x, ...)
   size_by = NULL,
   shape.by = shape_by,
   shape_by = NULL,
+  show.label = label,
   label = NULL,
   facet.by = facet_by,
   facet_by = NULL,
@@ -146,9 +147,11 @@ possible values. Only used with \code{layout = "point"}.}
 
 \item{shape_by}{Deprecated. Use \code{shape.by} instead.}
 
-\item{label}{a \code{logical}, \code{character} or \code{integer} vector
+\item{show.label}{a \code{logical}, \code{character} or \code{integer} vector
 for selecting labels from the rownames of \code{x}. If \code{rank} is not
-\code{NULL} the rownames might change. (default: \code{label = NULL})}
+\code{NULL} the rownames might change. (default: \code{show.label = NULL})}
+
+\item{label}{Deprecated. Use \code{show.label} instead.}
 
 \item{facet.by}{Taxonomic rank to facet the plot by.
 Value must be of \code{taxonomyRanks(x)}
