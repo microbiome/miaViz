@@ -32,9 +32,11 @@
 #'   
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
 #' 
-#' @param linetype_by a single character value defining a taxonomic rank, that
+#' @param linetype.by a single character value defining a taxonomic rank, that
 #'   is used to divide taxa to different line types. Must be a value of
 #'   \code{taxonomicRanks()} function.
+#'   
+#' @param linetype_by Deprecated. Use \code{linetype.by} instead.
 #' 
 #' @param size.by a single character value defining a taxonomic rank, that is
 #'   used to divide taxa to different line size types. Must be a value of
@@ -80,10 +82,10 @@
 #' plotSeries(object[taxa,],
 #'            x = "DAY_ORDER", 
 #'            colour.by = "Family",
-#'            linetype_by = "Phylum",
+#'            linetype.by = "Phylum",
 #'            assay.type = "relabundance")
 #' 
-#' # In addition to 'colour.by' and 'linetype_by', 'size.by' can also be used to group taxa.
+#' # In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used to group taxa.
 #' plotSeries(object,
 #'            x = "DAY_ORDER", 
 #'            y = getTop(object, 5), 
@@ -104,6 +106,7 @@ setGeneric("plotSeries", signature = c("object"),
                     colour_by = NULL,
                     size.by = size_by,
                     size_by = NULL,
+                    linetype.by = linetype_by,
                     linetype_by = NULL,
                     assay.type = assay_name, assay_name = "counts",
                     ...)
@@ -122,6 +125,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
              colour_by = NULL,
              size.by = size_by,
              size_by = NULL,
+             linetype.by = linetype_by,
              linetype_by = NULL,
              assay.type = assay_name, assay_name = "counts",
              ...){
@@ -166,14 +170,14 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         vis_out <- .incorporate_series_vis(object,
                                            x,
                                            colour.by,
-                                           linetype_by,
+                                           linetype.by,
                                            size.by)
         series_data <- vis_out$series_data
         feature_data <- vis_out$feature_data
         x <- vis_out$x
-        colour_by <- vis_out$colour_by
-        linetype_by <- vis_out$linetype_by
-        size_by <- vis_out$size_by
+        colour.by <- vis_out$colour_by
+        linetype.by <- vis_out$linetype_by
+        size.by <- vis_out$size_by
         
         # Melts the data
         plot_data <- .melt_series_data(assay,
@@ -186,9 +190,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         .series_plotter(plot_data, 
                         xlab = xlab,
                         ylab = ylab,
-                        colour_by = colour_by,
-                        linetype_by = linetype_by,
-                        size_by = size_by,
+                        colour_by = colour.by,
+                        linetype_by = linetype.by,
+                        size_by = size.by,
                         ...)
     }
 )

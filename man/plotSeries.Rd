@@ -14,6 +14,7 @@ plotSeries(
   colour_by = NULL,
   size.by = size_by,
   size_by = NULL,
+  linetype.by = linetype_by,
   linetype_by = NULL,
   assay.type = assay_name,
   assay_name = "counts",
@@ -29,6 +30,7 @@ plotSeries(
   colour_by = NULL,
   size.by = size_by,
   size_by = NULL,
+  linetype.by = linetype_by,
   linetype_by = NULL,
   assay.type = assay_name,
   assay_name = "counts",
@@ -63,9 +65,11 @@ used to divide taxa to different line size types. Must be a value of
 
 \item{size_by}{Deprecated. Use \code{size.by} instead.}
 
-\item{linetype_by}{a single character value defining a taxonomic rank, that
+\item{linetype.by}{a single character value defining a taxonomic rank, that
 is used to divide taxa to different line types. Must be a value of
 \code{taxonomicRanks()} function.}
+
+\item{linetype_by}{Deprecated. Use \code{linetype.by} instead.}
 
 \item{assay.type}{a single character value for selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
@@ -113,10 +117,10 @@ taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
 plotSeries(object[taxa,],
            x = "DAY_ORDER", 
            colour.by = "Family",
-           linetype_by = "Phylum",
+           linetype.by = "Phylum",
            assay.type = "relabundance")
 
-# In addition to 'colour.by' and 'linetype_by', 'size.by' can also be used to group taxa.
+# In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used to group taxa.
 plotSeries(object,
            x = "DAY_ORDER", 
            y = getTop(object, 5), 
