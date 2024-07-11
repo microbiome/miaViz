@@ -16,6 +16,7 @@
 .is_numeric_string <- mia:::.is_numeric_string
 .is_function <- mia:::.is_function
 .get_name_in_parent <- mia:::.get_name_in_parent
+.is_an_integer <- mia:::.is_an_integer
 
 
 .norm_label <- function(label, x){
