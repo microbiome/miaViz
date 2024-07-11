@@ -154,11 +154,11 @@ for selecting labels from the rownames of \code{x}. If \code{rank} is not
 Value must be of \code{taxonomyRanks(x)}
 Argument can only be used in function plotPrevalentAbundance.}
 
+\item{facet_by}{Deprecated. Use \code{facet.by} instead.}
+
 \item{min.prevalence}{a single numeric value to apply as a threshold for
 plotting. The threshold is applied per row and column.
-(default: \code{min.prevalence = 0})}
-
-\item{min_prevalence}{Deprecated. Use \code{min.prevalence} instead.}
+(default: \code{min_prevalence = 0})}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one
