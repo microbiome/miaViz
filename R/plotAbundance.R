@@ -236,9 +236,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                                 ...)
         # Create the column metadata plot and create a list from plots
         if(!is.null(features_data)){
-            plot_feature_out <- .features_plotter(features_data,
-                                                  order.col.by,
-                                                ...)
+            plot_feature_out <- .features_plotter(
+                features_data, order.col.by, ...)
             plot_out <- c(list(abundance = plot_out), plot_feature_out)
         } else {
             # Whether to split the main plot to multiple facets. This is
