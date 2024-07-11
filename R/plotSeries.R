@@ -171,9 +171,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         series_data <- vis_out$series_data
         feature_data <- vis_out$feature_data
         x <- vis_out$x
-        colour.by <- vis_out$colour_by
+        colour_by <- vis_out$colour_by
         linetype_by <- vis_out$linetype_by
-        size.by <- vis_out$size_by
+        size_by <- vis_out$size_by
         
         # Melts the data
         plot_data <- .melt_series_data(assay,
@@ -186,9 +186,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         .series_plotter(plot_data, 
                         xlab = xlab,
                         ylab = ylab,
-                        colour_by = colour.by,
+                        colour_by = colour_by,
                         linetype_by = linetype_by,
-                        size_by = size.by,
+                        size_by = size_by,
                         ...)
     }
 )
