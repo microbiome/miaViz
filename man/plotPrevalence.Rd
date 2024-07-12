@@ -90,7 +90,7 @@ value between 0 and 1, if \code{as.relative = TRUE}.}
 
 \item{prevalence}{Prevalence thresholds (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
-limit, set \code{include_lowest} to \code{TRUE}.}
+limit, set \code{include.lowest} to \code{TRUE}.}
 
 \item{prevalences}{Deprecated. Use \code{prevalence} instead.}
 

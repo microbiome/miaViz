@@ -79,7 +79,7 @@ plotColTree(x, ...)
   add.legend = add_legend,
   add_legend = TRUE,
   layout = "circular",
-  edge.colour.by = edge.colour.by,
+  edge.colour.by = edge_colour_by,
   edge_colour_by = NULL,
   edge.size.by = edge_size_by,
   edge_size_by = NULL,
