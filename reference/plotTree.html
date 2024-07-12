@@ -53,60 +53,100 @@ additional information.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">plotColTree</span><span class="op">(</span><span class="va">object</span>, <span class="va">...</span><span class="op">)</span></span>
+<span><span class="fu">plotColTree</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">plotColTree</span><span class="op">(</span></span>
-<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  tree.name <span class="op">=</span> <span class="va">tree_name</span>,</span>
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
+<span>  relabel.tree <span class="op">=</span> <span class="va">relabel_tree</span>,</span>
 <span>  relabel_tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  order.tree <span class="op">=</span> <span class="va">order_tree</span>,</span>
 <span>  order_tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  levels.rm <span class="op">=</span> <span class="va">remove_levels</span>,</span>
 <span>  remove_levels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show.label <span class="op">=</span> <span class="va">show_label</span>,</span>
 <span>  show_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show.highlights <span class="op">=</span> <span class="va">show_highlights</span>,</span>
 <span>  show_highlights <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show.highlight.label <span class="op">=</span> <span class="va">show_highlight_label</span>,</span>
 <span>  show_highlight_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  abbr.label <span class="op">=</span> <span class="va">abbr_label</span>,</span>
 <span>  abbr_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add.legend <span class="op">=</span> <span class="va">add_legend</span>,</span>
 <span>  add_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layout <span class="op">=</span> <span class="st">"circular"</span>,</span>
+<span>  edge.colour.by <span class="op">=</span> <span class="va">edge.colour.by</span>,</span>
 <span>  edge_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  edge.size.by <span class="op">=</span> <span class="va">edge_size_by</span>,</span>
 <span>  edge_size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tip.colour.by <span class="op">=</span> <span class="va">tip_colour_by</span>,</span>
 <span>  tip_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tip.shape.by <span class="op">=</span> <span class="va">tip_shape_by</span>,</span>
 <span>  tip_shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tip.size.by <span class="op">=</span> <span class="va">tip_size_by</span>,</span>
 <span>  tip_size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  node.colour.by <span class="op">=</span> <span class="va">node_colour_by</span>,</span>
 <span>  node_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  node.shape.by <span class="op">=</span> <span class="va">node_shape_by</span>,</span>
 <span>  node_shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  node.size.by <span class="op">=</span> <span class="va">node_size_by</span>,</span>
 <span>  node_size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour.highlights.by <span class="op">=</span> <span class="va">colour_highlights_by</span>,</span>
 <span>  colour_highlights_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">by_exprs_values</span>,</span>
 <span>  by_exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  other.fields <span class="op">=</span> <span class="va">other_fields</span>,</span>
 <span>  other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'TreeSummarizedExperiment'</span></span>
 <span><span class="fu">plotRowTree</span><span class="op">(</span></span>
-<span>  <span class="va">object</span>,</span>
+<span>  <span class="va">x</span>,</span>
+<span>  tree.name <span class="op">=</span> <span class="va">tree_name</span>,</span>
 <span>  tree_name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
+<span>  relabel.tree <span class="op">=</span> <span class="va">relabel_tree</span>,</span>
 <span>  relabel_tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  order.tree <span class="op">=</span> <span class="va">order_tree</span>,</span>
 <span>  order_tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  levels.rm <span class="op">=</span> <span class="va">remove_levels</span>,</span>
 <span>  remove_levels <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show.label <span class="op">=</span> <span class="va">show_label</span>,</span>
 <span>  show_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show.highlights <span class="op">=</span> <span class="va">show_highlights</span>,</span>
 <span>  show_highlights <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  show.highlight.label <span class="op">=</span> <span class="va">show_highlight_label</span>,</span>
 <span>  show_highlight_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  abbr.label <span class="op">=</span> <span class="va">abbr_label</span>,</span>
 <span>  abbr_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add.legend <span class="op">=</span> <span class="va">add_legend</span>,</span>
 <span>  add_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layout <span class="op">=</span> <span class="st">"circular"</span>,</span>
+<span>  edge.colour.by <span class="op">=</span> <span class="va">edge_colour_by</span>,</span>
 <span>  edge_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  edge.size.by <span class="op">=</span> <span class="va">edge_size_by</span>,</span>
 <span>  edge_size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tip.colour.by <span class="op">=</span> <span class="va">tip_colour_by</span>,</span>
 <span>  tip_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tip.shape.by <span class="op">=</span> <span class="va">tip_shape_by</span>,</span>
 <span>  tip_shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  tip.size.by <span class="op">=</span> <span class="va">tip_size_by</span>,</span>
 <span>  tip_size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  node.colour.by <span class="op">=</span> <span class="va">node_colour_by</span>,</span>
 <span>  node_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  node.shape.by <span class="op">=</span> <span class="va">node_shape_by</span>,</span>
 <span>  node_shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  node.size.by <span class="op">=</span> <span class="va">node_size_by</span>,</span>
 <span>  node_size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour.highlights.by <span class="op">=</span> <span class="va">colour_highlights_by</span>,</span>
 <span>  colour_highlights_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">by_exprs_values</span>,</span>
 <span>  by_exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  other.fields <span class="op">=</span> <span class="va">other_fields</span>,</span>
 <span>  other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -116,10 +156,10 @@ additional information.</p>
     <h2>Arguments</h2>
 
 
-<dl><dt id="arg-object">object<a class="anchor" aria-label="anchor" href="#arg-object"></a></dt>
+<dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-class.html" class="external-link">TreeSummarizedExperiment</a></code>
-object.</p></dd>
+x.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -127,29 +167,45 @@ object.</p></dd>
 <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
-<dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
+<dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
 <dd><p>a single <code>character</code> value specifying a rowTree/colTree from
-<code>object</code>. (By default: <code>tree_name = "phylo"</code>)</p></dd>
+<code>x</code>. (By default: <code>tree.name = "phylo"</code>)</p></dd>
+
+
+<dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
+<dd><p>Deprecated. Use <code>tree.name</code> instead.</p></dd>
+
+
+<dt id="arg-relabel-tree">relabel.tree<a class="anchor" aria-label="anchor" href="#arg-relabel-tree"></a></dt>
+<dd><p>logical scalar, Should the tip labels be relabeled using
+the output of <code>getTaxonomyLabels(x, with_rank = TRUE)</code>?
+(default: <code>relabel.tree = FALSE</code>)</p></dd>
 
 
 <dt id="arg-relabel-tree">relabel_tree<a class="anchor" aria-label="anchor" href="#arg-relabel-tree"></a></dt>
-<dd><p>logical scalar, Should the tip labels be relabeled using
-the output of <code>getTaxonomyLabels(object, with_rank = TRUE)</code>?
-(default: <code>relabel_tree = FALSE</code>)</p></dd>
+<dd><p>Deprecated. Use <code>relavel.tree</code> instead.</p></dd>
+
+
+<dt id="arg-order-tree">order.tree<a class="anchor" aria-label="anchor" href="#arg-order-tree"></a></dt>
+<dd><p>logical scalar, Should the tree be ordered based on
+alphabetic order of taxonomic levels?
+(default: <code>order.tree = FALSE</code>)</p></dd>
 
 
 <dt id="arg-order-tree">order_tree<a class="anchor" aria-label="anchor" href="#arg-order-tree"></a></dt>
-<dd><p>logical scalar, Should the tree be ordered based on
-alphabetic order of taxonomic levels?
-(default: <code>order_tree = FALSE</code>)</p></dd>
+<dd><p>Deprecated. Use <code>order.tree</code> instead.</p></dd>
+
+
+<dt id="arg-levels-rm">levels.rm<a class="anchor" aria-label="anchor" href="#arg-levels-rm"></a></dt>
+<dd><p>logical scalar, Should taxonomic level information
+be removed from labels? (default: <code>levels.rm = FALSE</code>)</p></dd>
 
 
 <dt id="arg-remove-levels">remove_levels<a class="anchor" aria-label="anchor" href="#arg-remove-levels"></a></dt>
-<dd><p>logical scalar, Should taxonomic level information
-be removed from labels? (default: <code>relabel_tree = FALSE</code>)</p></dd>
+<dd><p>Deprecated. Use <code>levels.rm</code> instead.</p></dd>
 
 
-<dt id="arg-show-label-show-highlights-show-highlight-label-abbr-label">show_label, show_highlights, show_highlight_label, abbr_label<a class="anchor" aria-label="anchor" href="#arg-show-label-show-highlights-show-highlight-label-abbr-label"></a></dt>
+<dt id="arg-show-label-show-highlights-show-highlight-label-abbr-label">show.label, show.highlights, show.highlight.label, abbr.label<a class="anchor" aria-label="anchor" href="#arg-show-label-show-highlights-show-highlight-label-abbr-label"></a></dt>
 <dd><p><code>logical</code> (scalar), <code>integer</code> or <code>character</code> vector. If a
 <code>logical</code> scalar is given, should tip labels be plotted or if a
 logical vector is provided, which labels should be shown? If an
@@ -162,9 +218,18 @@ plotted and if no labels are provided no labels will be shown. (default:
 <code>FALSE</code>)</p></dd>
 
 
-<dt id="arg-add-legend">add_legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
+<dt id="arg-show-label-show-highlights-show-highlight-label-abbr-label">show_label, show_highlights, show_highlight_label, abbr_label<a class="anchor" aria-label="anchor" href="#arg-show-label-show-highlights-show-highlight-label-abbr-label"></a></dt>
+<dd><p>Deprecated.
+Use <code>show.label, show.highlights, show.highlight.label, abbr_label</code> instead.</p></dd>
+
+
+<dt id="arg-add-legend">add.legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
 <dd><p>logical scalar. Should legends be plotted?
-(default: <code>add_legend = TRUE</code>)</p></dd>
+(default: <code>add.legend = TRUE</code>)</p></dd>
+
+
+<dt id="arg-add-legend">add_legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
+<dd><p>Deprecated. Use <code>add.legend</code> instead.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
@@ -172,72 +237,116 @@ plotted and if no labels are provided no labels will be shown. (default:
 <code><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html" class="external-link">ggtree</a></code> for details.</p></dd>
 
 
-<dt id="arg-edge-colour-by">edge_colour_by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
+<dt id="arg-edge-colour-by">edge.colour.by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature
 to colour tree edges by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt id="arg-edge-size-by">edge_size_by<a class="anchor" aria-label="anchor" href="#arg-edge-size-by"></a></dt>
+<dt id="arg-edge-colour-by">edge_colour_by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
+<dd><p>Deprecated. Use <code>edge.colour.by</code> instead.</p></dd>
+
+
+<dt id="arg-edge-size-by">edge.size.by<a class="anchor" aria-label="anchor" href="#arg-edge-size-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature
 to size tree edges by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt id="arg-tip-colour-by">tip_colour_by<a class="anchor" aria-label="anchor" href="#arg-tip-colour-by"></a></dt>
+<dt id="arg-edge-size-by">edge_size_by<a class="anchor" aria-label="anchor" href="#arg-edge-size-by"></a></dt>
+<dd><p>Deprecated. Use <code>edge.size.by</code> instead.</p></dd>
+
+
+<dt id="arg-tip-colour-by">tip.colour.by<a class="anchor" aria-label="anchor" href="#arg-tip-colour-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 colour tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt id="arg-tip-shape-by">tip_shape_by<a class="anchor" aria-label="anchor" href="#arg-tip-shape-by"></a></dt>
+<dt id="arg-tip-colour-by">tip_colour_by<a class="anchor" aria-label="anchor" href="#arg-tip-colour-by"></a></dt>
+<dd><p>Deprecated. Use <code>tip.colour.by</code> instead.</p></dd>
+
+
+<dt id="arg-tip-shape-by">tip.shape.by<a class="anchor" aria-label="anchor" href="#arg-tip-shape-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 shape tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt id="arg-tip-size-by">tip_size_by<a class="anchor" aria-label="anchor" href="#arg-tip-size-by"></a></dt>
+<dt id="arg-tip-shape-by">tip_shape_by<a class="anchor" aria-label="anchor" href="#arg-tip-shape-by"></a></dt>
+<dd><p>Deprecated. Use <code>tip.shape.by</code> isntead.</p></dd>
+
+
+<dt id="arg-tip-size-by">tip.size.by<a class="anchor" aria-label="anchor" href="#arg-tip-size-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 size tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt id="arg-node-colour-by">node_colour_by<a class="anchor" aria-label="anchor" href="#arg-node-colour-by"></a></dt>
+<dt id="arg-tip-size-by">tip_size_by<a class="anchor" aria-label="anchor" href="#arg-tip-size-by"></a></dt>
+<dd><p>Deprecated. Use <code>tip.size.by</code> instead.</p></dd>
+
+
+<dt id="arg-node-colour-by">node.colour.by<a class="anchor" aria-label="anchor" href="#arg-node-colour-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
-colour tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
+colour tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
+
+
+<dt id="arg-node-colour-by">node_colour_by<a class="anchor" aria-label="anchor" href="#arg-node-colour-by"></a></dt>
+<dd><p>Deprecated. Use <code>node.colour.by</code> instead.</p></dd>
+
+
+<dt id="arg-node-shape-by">node.shape.by<a class="anchor" aria-label="anchor" href="#arg-node-shape-by"></a></dt>
+<dd><p>Specification of a column metadata field or a feature to
+shape tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
 
 
 <dt id="arg-node-shape-by">node_shape_by<a class="anchor" aria-label="anchor" href="#arg-node-shape-by"></a></dt>
+<dd><p>Deprecated. Use <code>node.shape.by</code> instead.</p></dd>
+
+
+<dt id="arg-node-size-by">node.size.by<a class="anchor" aria-label="anchor" href="#arg-node-size-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
-shape tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
+size tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
 
 
 <dt id="arg-node-size-by">node_size_by<a class="anchor" aria-label="anchor" href="#arg-node-size-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
-size tree nodes by. Must be a field from <code>other_fields</code>.</p></dd>
+<dd><p>Deprecated. Use <code>node.size.by</code> instead.</p></dd>
 
 
-<dt id="arg-colour-highlights-by">colour_highlights_by<a class="anchor" aria-label="anchor" href="#arg-colour-highlights-by"></a></dt>
+<dt id="arg-colour-highlights-by">colour.highlights.by<a class="anchor" aria-label="anchor" href="#arg-colour-highlights-by"></a></dt>
 <dd><p>Should the highlights be colour differently?
-If <code>show_highlights = TRUE</code>, <code>colour_highlights</code> will be set to
+If <code>show.highlights = TRUE</code>, <code>colour_highlights</code> will be set to
 <code>TRUE</code> as default. (default: <code>colour_highlights = FALSE</code>)</p></dd>
 
 
-<dt id="arg-by-exprs-values">by_exprs_values<a class="anchor" aria-label="anchor" href="#arg-by-exprs-values"></a></dt>
+<dt id="arg-colour-highlights-by">colour_highlights_by<a class="anchor" aria-label="anchor" href="#arg-colour-highlights-by"></a></dt>
+<dd><p>Deprecated. Use <code>colour.highlights.by</code> isntead.</p></dd>
+
+
+<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p>A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 <code>exprs_values</code> argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.</p></dd>
 
 
-<dt id="arg-other-fields">other_fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
+<dt id="arg-by-exprs-values">by_exprs_values<a class="anchor" aria-label="anchor" href="#arg-by-exprs-values"></a></dt>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+
+
+<dt id="arg-other-fields">other.fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
 <dd><p>Additional fields to include in the node information
 without plotting them.</p></dd>
+
+
+<dt id="arg-other-fields">other_fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
+<dd><p>Deprecated. Use <code>other.fields</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -246,7 +355,7 @@ without plotting them.</p></dd>
     </div>
     <div id="details">
     <h2>Details</h2>
-    <p>If <code>show_label</code> or <code>show_highlight_label</code> have the same length
+    <p>If <code>show.label</code> or <code>show.highlight.label</code> have the same length
 as the number of nodes, the vector will be used to relabel the nodes.</p>
     </div>
     <div id="see-also">
@@ -273,35 +382,35 @@ as the number of nodes, the vector will be used to relabel the nodes.</p>
 <span class="r-in"><span><span class="co">#</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_genus</span>,<span class="op">]</span>,</span></span>
-<span class="r-in"><span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
-<span class="r-in"><span>            tip_size_by <span class="op">=</span> <span class="st">"detected"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
+<span class="r-in"><span>            tip.size.by <span class="op">=</span> <span class="st">"detected"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotTree-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot with tip labels</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_genus</span>,<span class="op">]</span>,</span></span>
-<span class="r-in"><span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
-<span class="r-in"><span>            tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
-<span class="r-in"><span>            show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
+<span class="r-in"><span>            tip.size.by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
+<span class="r-in"><span>            show.label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotTree-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span><span class="co"># plot with selected labels</span></span></span>
 <span class="r-in"><span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Genus:Providencia"</span>, <span class="st">"Genus:Morganella"</span>, <span class="st">"0.961.60"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_genus</span>,<span class="op">]</span>,</span></span>
-<span class="r-in"><span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
-<span class="r-in"><span>            tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
-<span class="r-in"><span>            show_label <span class="op">=</span> <span class="va">labels</span>,</span></span>
+<span class="r-in"><span>            tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
+<span class="r-in"><span>            tip.size.by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
+<span class="r-in"><span>            show.label <span class="op">=</span> <span class="va">labels</span>,</span></span>
 <span class="r-in"><span>            layout<span class="op">=</span><span class="st">"rectangular"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotTree-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot with labeled edges</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_genus</span>,<span class="op">]</span>,</span></span>
-<span class="r-in"><span>            edge_colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            edge.colour.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>            tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotTree-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span><span class="co"># if edges are sized, colours might disappear depending on plotting device</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_genus</span>,<span class="op">]</span>,</span></span>
-<span class="r-in"><span>            edge_colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>            edge_size_by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
-<span class="r-in"><span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            edge.colour.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>            edge.size.by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
+<span class="r-in"><span>            tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotTree-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># aggregating data over the taxonomic levels for plotting a taxonomic tree</span></span></span>
@@ -327,18 +436,18 @@ as the number of nodes, the vector will be used to relabel the nodes.</p>
 <span class="r-in"><span><span class="va">highlights</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Phylum:Firmicutes"</span>,<span class="st">"Phylum:Bacteroidetes"</span>,</span></span>
 <span class="r-in"><span>                <span class="st">"Family:Pseudomonadaceae"</span>,<span class="st">"Order:Bifidobacteriales"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_phyla</span>,<span class="op">]</span>,</span></span>
-<span class="r-in"><span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
-<span class="r-in"><span>            node_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
-<span class="r-in"><span>            show_highlights <span class="op">=</span> <span class="va">highlights</span>,</span></span>
-<span class="r-in"><span>            show_highlight_label <span class="op">=</span> <span class="va">highlights</span>,</span></span>
-<span class="r-in"><span>            colour_highlights_by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
+<span class="r-in"><span>            node.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
+<span class="r-in"><span>            show.highlights <span class="op">=</span> <span class="va">highlights</span>,</span></span>
+<span class="r-in"><span>            show.highlight.label <span class="op">=</span> <span class="va">highlights</span>,</span></span>
+<span class="r-in"><span>            colour.highlights.by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotTree-6.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_phyla</span>,<span class="op">]</span>,</span></span>
-<span class="r-in"><span>            edge_colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>            edge_size_by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
-<span class="r-in"><span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
-<span class="r-in"><span>            node_colour_by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            edge.colour.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>            edge.size.by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
+<span class="r-in"><span>            tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
+<span class="r-in"><span>            node.colour.by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotTree-7.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
     </div>

@@ -59,11 +59,15 @@ If only ‘counts’ is present, the relative abundance is computed.</p>
 <span><span class="fu">plotAbundance</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  col.var <span class="op">=</span> <span class="va">features</span>,</span>
 <span>  features <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order.row.by <span class="op">=</span> <span class="va">order_rank_by</span>,</span>
 <span>  order_rank_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"abund"</span>, <span class="st">"revabund"</span><span class="op">)</span>,</span>
+<span>  order.col.by <span class="op">=</span> <span class="va">order_sample_by</span>,</span>
 <span>  order_sample_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  decreasing <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bar"</span>, <span class="st">"point"</span><span class="op">)</span>,</span>
+<span>  one.facet <span class="op">=</span> <span class="va">one_facet</span>,</span>
 <span>  one_facet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  ncol <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
@@ -84,8 +88,8 @@ object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional parameters for plotting.</p><ul><li><p>use_relative <code>TRUE</code> or <code>FALSE</code>: Should the relative values
-be calculated? (default: <code>use_relative = FALSE</code></p></li>
+<dd><p>additional parameters for plotting.</p><ul><li><p>as.relative <code>TRUE</code> or <code>FALSE</code>: Should the relative values
+be calculated? (default: <code>as.relative = FALSE</code></p></li>
 </ul><p>See <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
@@ -94,28 +98,40 @@ be calculated? (default: <code>use_relative = FALSE</code></p></li>
 use. Must be a value of <code>taxonomyRanks(x)</code>.</p></dd>
 
 
-<dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
+<dt id="arg-col-var">col.var<a class="anchor" aria-label="anchor" href="#arg-col-var"></a></dt>
 <dd><p>a single <code>character</code> value defining a column from
 <code>colData</code> to be plotted below the abundance plot.
 Continuous numeric values will be plotted as point, whereas factors and
-character will be plotted as colour-code bar. (default: <code>features =
+character will be plotted as colour-code bar. (default: <code>col.var =
   NULL</code>)</p></dd>
 
 
-<dt id="arg-order-rank-by">order_rank_by<a class="anchor" aria-label="anchor" href="#arg-order-rank-by"></a></dt>
+<dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
+<dd><p>Deprecated. Use <code>col.var</code> instead.</p></dd>
+
+
+<dt id="arg-order-row-by">order.row.by<a class="anchor" aria-label="anchor" href="#arg-order-row-by"></a></dt>
 <dd><p>How to order abundance value: By name (“name”)
 for sorting the taxonomic labels alphabetically, by abundance (“abund”) to
 sort by abundance values or by a reverse order of abundance values (“revabund”).</p></dd>
 
 
-<dt id="arg-order-sample-by">order_sample_by<a class="anchor" aria-label="anchor" href="#arg-order-sample-by"></a></dt>
+<dt id="arg-order-rank-by">order_rank_by<a class="anchor" aria-label="anchor" href="#arg-order-rank-by"></a></dt>
+<dd><p>Deprecated. Use <code>order.row.by</code> instead.</p></dd>
+
+
+<dt id="arg-order-col-by">order.col.by<a class="anchor" aria-label="anchor" href="#arg-order-col-by"></a></dt>
 <dd><p>A single character value from the chosen rank of abundance
 data or from <code>colData</code> to select values to order the abundance
-plot by. (default: <code>order_sample_by = NULL</code>)</p></dd>
+plot by. (default: <code>order.col.by = NULL</code>)</p></dd>
+
+
+<dt id="arg-order-sample-by">order_sample_by<a class="anchor" aria-label="anchor" href="#arg-order-sample-by"></a></dt>
+<dd><p>Deprecated. Use <code>order.col.by</code> instead.</p></dd>
 
 
 <dt id="arg-decreasing">decreasing<a class="anchor" aria-label="anchor" href="#arg-decreasing"></a></dt>
-<dd><p>TRUE or FALSE: If the <code>order_sample_by</code> is defined and the
+<dd><p>TRUE or FALSE: If the <code>order.col.by</code> is defined and the
 values are numeric, should the values used to order in decreasing or
 increasing fashion? (default: <code>decreasing = FALSE</code>)</p></dd>
 
@@ -124,15 +140,19 @@ increasing fashion? (default: <code>decreasing = FALSE</code>)</p></dd>
 <dd><p>Either “bar” or “point”.</p></dd>
 
 
-<dt id="arg-one-facet">one_facet<a class="anchor" aria-label="anchor" href="#arg-one-facet"></a></dt>
+<dt id="arg-one-facet">one.facet<a class="anchor" aria-label="anchor" href="#arg-one-facet"></a></dt>
 <dd><p>Should the plot be returned in on facet or split into
 different facet, one facet per different value detect in <code>rank</code>. If
-<code>features</code> or <code>order_sample_by</code> is not <code>NULL</code>, this setting will
+<code>col.var</code> or <code>order.col.by</code> is not <code>NULL</code>, this setting will
 be disregarded.</p></dd>
 
 
+<dt id="arg-one-facet">one_facet<a class="anchor" aria-label="anchor" href="#arg-one-facet"></a></dt>
+<dd><p>Deprecated. Use <code>one.facet</code> instead.</p></dd>
+
+
 <dt id="arg-ncol-scales">ncol, scales<a class="anchor" aria-label="anchor" href="#arg-ncol-scales"></a></dt>
-<dd><p>if <code>one_facet = FALSE</code>, <code>ncol</code> defines many
+<dd><p>if <code>one.facet = FALSE</code>, <code>ncol</code> defines many
 columns should be for plotting the different facets and <code>scales</code> is
 used to define the behavior of the scales of each facet. Both values are
 passed onto <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></code>.</p></dd>
@@ -153,14 +173,14 @@ will be disabled.)</p></dd>
     <div id="value">
     <h2>Value</h2>
     <p>a <code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></code> object or list of two
-<code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></code> objects, if <code>features</code> are added to
+<code><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></code> objects, if <code>col.var</code> are added to
 the plot.</p>
     </div>
     <div id="details">
     <h2>Details</h2>
     <p>Subsetting to rows of interested and ordering of those is expected to be done
 outside of this functions, e.g. <code>x[1:2,]</code>. This will plot data of all
-features present.</p>
+col.var present.</p>
     </div>
 
     <div id="ref-examples">
@@ -189,21 +209,21 @@ features present.</p>
 <span class="r-in"><span><span class="co">## Using "Phylum" as rank. Apply relative transformation to "counts" assay.</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>    use_relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co">## A feature from colData or taxon from chosen rank can be used for ordering</span></span></span>
 <span class="r-in"><span><span class="co">## samples.</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>           order_sample_by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>           order.col.by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Features from colData can be plotted together with abundance plot.</span></span></span>
+<span class="r-in"><span><span class="co">## col.var from colData can be plotted together with abundance plot.</span></span></span>
 <span class="r-in"><span><span class="co"># Returned object is a list that includes two plot; other visualizes</span></span></span>
-<span class="r-in"><span><span class="co">## abundance other features. </span></span></span>
+<span class="r-in"><span><span class="co">## abundance other col.var. </span></span></span>
 <span class="r-in"><span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>                   features <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                   col.var <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co"># These two plots can be combined with wrap_plots function from patchwork</span></span></span>
 <span class="r-in"><span><span class="co"># package</span></span></span>
@@ -215,8 +235,8 @@ features present.</p>
 <span class="r-in"><span><span class="co">## Same plot as above but showing sample IDs as labels for the x axis on the</span></span></span>
 <span class="r-in"><span><span class="co">## top plot</span></span></span>
 <span class="r-in"><span><span class="va">plot</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>                           features <span class="op">=</span> <span class="st">"SampleType"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>                           add_x_text <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>                           col.var <span class="op">=</span> <span class="st">"SampleType"</span>, add.legend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                           add.x.text <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>                           <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot</span>, ncol <span class="op">=</span> <span class="fl">1</span>, heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -238,7 +258,7 @@ features present.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compositional barplot</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"relabundance"</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>           order_rank_by<span class="op">=</span><span class="st">"abund"</span>, order_sample_by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>           order.row.by<span class="op">=</span><span class="st">"abund"</span>, order.col.by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-7.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
     </div>

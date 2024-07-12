@@ -52,8 +52,11 @@
 <span>  <span class="va">x</span>,</span>
 <span>  y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour.by <span class="op">=</span> <span class="va">colour_by</span>,</span>
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  size.by <span class="op">=</span> <span class="va">size_by</span>,</span>
 <span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  linetype.by <span class="op">=</span> <span class="va">linetype_by</span>,</span>
 <span>  linetype_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -66,8 +69,11 @@
 <span>  <span class="va">x</span>,</span>
 <span>  y <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  rank <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour.by <span class="op">=</span> <span class="va">colour_by</span>,</span>
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  size.by <span class="op">=</span> <span class="va">size_by</span>,</span>
 <span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  linetype.by <span class="op">=</span> <span class="va">linetype_by</span>,</span>
 <span>  linetype_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
@@ -103,21 +109,33 @@ to agglomerate the data. Must be a value of <code>taxonomicRanks()</code>
 function.</p></dd>
 
 
-<dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
+<dt id="arg-colour-by">colour.by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
 <dd><p>a single character value defining a taxonomic rank, that is used to
 color plot. Must be a value of <code>taxonomicRanks()</code> function.</p></dd>
 
 
-<dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
+<dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
+<dd><p>Deprecated. Use <code>colour.by</code> instead.</p></dd>
+
+
+<dt id="arg-size-by">size.by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
 <dd><p>a single character value defining a taxonomic rank, that is
 used to divide taxa to different line size types. Must be a value of
 <code>taxonomicRanks()</code> function.</p></dd>
 
 
-<dt id="arg-linetype-by">linetype_by<a class="anchor" aria-label="anchor" href="#arg-linetype-by"></a></dt>
+<dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
+<dd><p>Deprecated. Use <code>size.by</code> instead.</p></dd>
+
+
+<dt id="arg-linetype-by">linetype.by<a class="anchor" aria-label="anchor" href="#arg-linetype-by"></a></dt>
 <dd><p>a single character value defining a taxonomic rank, that
 is used to divide taxa to different line types. Must be a value of
 <code>taxonomicRanks()</code> function.</p></dd>
+
+
+<dt id="arg-linetype-by">linetype_by<a class="anchor" aria-label="anchor" href="#arg-linetype-by"></a></dt>
+<dd><p>Deprecated. Use <code>linetype.by</code> instead.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
@@ -165,7 +183,7 @@ y-axis abundances of selected taxa.</p>
 <span class="r-in"><span><span class="fu">plotSeries</span><span class="op">(</span><span class="va">object</span>,</span></span>
 <span class="r-in"><span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span></span>
 <span class="r-in"><span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">object</span>, <span class="fl">2</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>           colour_by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>           colour.by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Counts relative abundances</span></span></span>
 <span class="r-in"><span><span class="va">object</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">object</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
@@ -176,16 +194,16 @@ y-axis abundances of selected taxa.</p>
 <span class="r-in"><span><span class="co"># Plots relative abundances of phylums</span></span></span>
 <span class="r-in"><span><span class="fu">plotSeries</span><span class="op">(</span><span class="va">object</span><span class="op">[</span><span class="va">taxa</span>,<span class="op">]</span>,</span></span>
 <span class="r-in"><span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>, </span></span>
-<span class="r-in"><span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
-<span class="r-in"><span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>           colour.by <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
+<span class="r-in"><span>           linetype.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>           assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.</span></span></span>
+<span class="r-in"><span><span class="co"># In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used to group taxa.</span></span></span>
 <span class="r-in"><span><span class="fu">plotSeries</span><span class="op">(</span><span class="va">object</span>,</span></span>
 <span class="r-in"><span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>, </span></span>
 <span class="r-in"><span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">object</span>, <span class="fl">5</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
-<span class="r-in"><span>           size_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>           colour.by <span class="op">=</span> <span class="st">"Family"</span>,</span></span>
+<span class="r-in"><span>           size.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>           assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 </code></pre></div>

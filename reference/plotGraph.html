@@ -59,16 +59,26 @@ Information on the edges have to provided manually.</p>
 <span><span class="fu">plotColGraph</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">y</span>,</span>
+<span>  show.label <span class="op">=</span> <span class="va">show_label</span>,</span>
 <span>  show_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add.legend <span class="op">=</span> <span class="va">add_legend</span>,</span>
 <span>  add_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layout <span class="op">=</span> <span class="st">"kk"</span>,</span>
+<span>  edge.type <span class="op">=</span> <span class="va">edge_type</span>,</span>
 <span>  edge_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fan"</span>, <span class="st">"link"</span>, <span class="st">"arc"</span>, <span class="st">"parallel"</span><span class="op">)</span>,</span>
+<span>  edge.colour.by <span class="op">=</span> <span class="va">edge_colour_by</span>,</span>
 <span>  edge_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  edge.width.by <span class="op">=</span> <span class="va">edge_width_by</span>,</span>
 <span>  edge_width_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour.by <span class="op">=</span> <span class="va">colour_by</span>,</span>
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shape.by <span class="op">=</span> <span class="va">shape_by</span>,</span>
 <span>  shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  size.by <span class="op">=</span> <span class="va">size_by</span>,</span>
 <span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">by_exprs_values</span>,</span>
 <span>  by_exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  other.fields <span class="op">=</span> <span class="va">other_fields</span>,</span>
 <span>  other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -80,16 +90,25 @@ Information on the edges have to provided manually.</p>
 <span><span class="fu">plotRowGraph</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  <span class="va">y</span>,</span>
+<span>  show.label <span class="op">=</span> <span class="va">show_label</span>,</span>
 <span>  show_label <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  add.legend <span class="op">=</span> <span class="va">add_legend</span>,</span>
 <span>  add_legend <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  layout <span class="op">=</span> <span class="st">"kk"</span>,</span>
+<span>  edge.type <span class="op">=</span> <span class="va">edge_type</span>,</span>
 <span>  edge_type <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"fan"</span>, <span class="st">"link"</span>, <span class="st">"arc"</span>, <span class="st">"parallel"</span><span class="op">)</span>,</span>
+<span>  edge.colour.by <span class="op">=</span> <span class="va">edge_colour_by</span>,</span>
 <span>  edge_colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  edge.width.by <span class="op">=</span> <span class="va">edge_width_by</span>,</span>
 <span>  edge_width_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  colour.by <span class="op">=</span> <span class="va">colour_by</span>,</span>
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  shape.by <span class="op">=</span> <span class="va">shape_by</span>,</span>
 <span>  shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  size_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  size.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  assay.type <span class="op">=</span> <span class="va">by_exprs_values</span>,</span>
 <span>  by_exprs_values <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  other.fields <span class="op">=</span> <span class="va">other_fields</span>,</span>
 <span>  other_fields <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -115,7 +134,7 @@ For the latter object a graph object must be stored in <code>metadata(x)$name</c
 <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
-<dt id="arg-show-label">show_label<a class="anchor" aria-label="anchor" href="#arg-show-label"></a></dt>
+<dt id="arg-show-label">show.label<a class="anchor" aria-label="anchor" href="#arg-show-label"></a></dt>
 <dd><p><code>logical</code> (scalar), <code>integer</code> or <code>character</code>
 vector. If a <code>logical</code> scalar is given, should tip labels be plotted
 or if a logical vector is provided, which labels should be shown? If an
@@ -125,12 +144,20 @@ and number of nodes, whereas the values of a <code>character</code> vector must
 match values of a <code>label</code> or <code>name</code> column in the node data. In
 case of a <code>character</code> vector only values corresponding to actual
 labels will be plotted and if no labels are provided no labels will be
-shown. (default: <code>show_label = FALSE</code>)</p></dd>
+shown. (default: <code>show.label = FALSE</code>)</p></dd>
+
+
+<dt id="arg-show-label">show_label<a class="anchor" aria-label="anchor" href="#arg-show-label"></a></dt>
+<dd><p>Deprecated. Use <code>show.label</code> instead.</p></dd>
+
+
+<dt id="arg-add-legend">add.legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
+<dd><p>logical scalar. Should legends be plotted?
+(default: <code>add.legend = TRUE</code>)</p></dd>
 
 
 <dt id="arg-add-legend">add_legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
-<dd><p>logical scalar. Should legends be plotted?
-(default: <code>add_legend = TRUE</code>)</p></dd>
+<dd><p>Deprecated. Use <code>add.legend</code> instead.</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
@@ -139,54 +166,86 @@ shown. (default: <code>show_label = FALSE</code>)</p></dd>
 <code>layout = "kk"</code>)</p></dd>
 
 
-<dt id="arg-edge-type">edge_type<a class="anchor" aria-label="anchor" href="#arg-edge-type"></a></dt>
+<dt id="arg-edge-type">edge.type<a class="anchor" aria-label="anchor" href="#arg-edge-type"></a></dt>
 <dd><p>type of edge plotted on the graph. See
 <code><a href="https://ggraph.data-imaginist.com/reference/geom_edge_fan.html" class="external-link">geom_edge_fan</a></code> for details and other
 available geoms. (default:
-<code>edge_type = "fan"</code>)</p></dd>
+<code>edge.type = "fan"</code>)</p></dd>
 
 
-<dt id="arg-edge-colour-by">edge_colour_by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
+<dt id="arg-edge-type">edge_type<a class="anchor" aria-label="anchor" href="#arg-edge-type"></a></dt>
+<dd><p>Deprecated. Use <code>edge.type</code> instead.</p></dd>
+
+
+<dt id="arg-edge-colour-by">edge.colour.by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
 <dd><p>Specification of a edge metadata field to use for
 setting colours of the edges.</p></dd>
 
 
-<dt id="arg-edge-width-by">edge_width_by<a class="anchor" aria-label="anchor" href="#arg-edge-width-by"></a></dt>
+<dt id="arg-edge-colour-by">edge_colour_by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
+<dd><p>Deprecated. Use <code>edge.colour.by</code> instead.</p></dd>
+
+
+<dt id="arg-edge-width-by">edge.width.by<a class="anchor" aria-label="anchor" href="#arg-edge-width-by"></a></dt>
 <dd><p>Specification of a edge metadata field to use for
 setting width of the edges.</p></dd>
 
 
-<dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
+<dt id="arg-edge-width-by">edge_width_by<a class="anchor" aria-label="anchor" href="#arg-edge-width-by"></a></dt>
+<dd><p>Deprecated. Use <code>edge.width.by</code> instead.</p></dd>
+
+
+<dt id="arg-colour-by">colour.by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 colour graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt id="arg-shape-by">shape_by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
+<dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
+<dd><p>Deprecated. Use <code>colour.by</code> instead.</p></dd>
+
+
+<dt id="arg-shape-by">shape.by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 shape graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
+<dt id="arg-shape-by">shape_by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
+<dd><p>Deprecated. Use <code>shape.by</code> instead.</p></dd>
+
+
+<dt id="arg-size-by">size.by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
 <dd><p>Specification of a column metadata field or a feature to
 size graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
 
 
-<dt id="arg-by-exprs-values">by_exprs_values<a class="anchor" aria-label="anchor" href="#arg-by-exprs-values"></a></dt>
+<dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
+<dd><p>Deprecated. Use <code>size.by</code> instead.</p></dd>
+
+
+<dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
 <dd><p>A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 <code>exprs_values</code> argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.</p></dd>
 
 
-<dt id="arg-other-fields">other_fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
+<dt id="arg-by-exprs-values">by_exprs_values<a class="anchor" aria-label="anchor" href="#arg-by-exprs-values"></a></dt>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
+
+
+<dt id="arg-other-fields">other.fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
 <dd><p>Additional fields to include in the node information
 without plotting them.</p></dd>
+
+
+<dt id="arg-other-fields">other_fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
+<dd><p>Deprecated. Use <code>other.fields</code> instead.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
@@ -226,10 +285,10 @@ be used.</p>
 <span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
 <span class="r-in"><span><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">col_graph</span>,</span></span>
 <span class="r-in"><span>             <span class="va">genus</span>,</span></span>
-<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
-<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span>             colour.by <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
+<span class="r-in"><span>             edge.colour.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge.width.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             show.label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> This graph was created by an old(er) igraph version.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Call upgrade_graph() on it to use with the current igraph version</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   For now we convert it on the fly...</span>
@@ -238,18 +297,18 @@ be used.</p>
 <span class="r-in"><span><span class="co"># plot the graph stored in the object</span></span></span>
 <span class="r-in"><span><span class="fu">plotColGraph</span><span class="op">(</span><span class="va">genus</span>,</span></span>
 <span class="r-in"><span>             name <span class="op">=</span> <span class="st">"col_graph"</span>,</span></span>
-<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
-<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>             colour.by <span class="op">=</span> <span class="st">"SampleType"</span>,</span></span>
+<span class="r-in"><span>             edge.colour.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge.width.by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>             </span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">row_graph</span>,</span></span>
 <span class="r-in"><span>             <span class="va">genus</span>,</span></span>
-<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span></span>
-<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>             colour.by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span></span>
+<span class="r-in"><span>             edge.colour.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge.width.by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> This graph was created by an old(er) igraph version.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Call upgrade_graph() on it to use with the current igraph version</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   For now we convert it on the fly...</span>
@@ -258,18 +317,18 @@ be used.</p>
 <span class="r-in"><span><span class="co"># plot the graph stored in the object</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">genus</span>,</span></span>
 <span class="r-in"><span>             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span></span>
-<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>             colour.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>             edge.colour.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge.width.by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>                           </span></span>
 <span class="r-in"><span><span class="co"># plot a graph independently</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">row_graph_order</span>,</span></span>
 <span class="r-in"><span>             <span class="va">order</span>,</span></span>
-<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span></span>
-<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>             colour.by <span class="op">=</span> <span class="st">"Kingdom"</span>,</span></span>
+<span class="r-in"><span>             edge.colour.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge.width.by <span class="op">=</span> <span class="st">"weight"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> This graph was created by an old(er) igraph version.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   Call upgrade_graph() on it to use with the current igraph version</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   For now we convert it on the fly...</span>
@@ -278,20 +337,20 @@ be used.</p>
 <span class="r-in"><span><span class="co"># plot the graph stored in the object and include some labels</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span></span>
 <span class="r-in"><span>             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span></span>
-<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
-<span class="r-in"><span>             show_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sulfolobales"</span>,<span class="st">"Spirochaetales"</span>,</span></span>
+<span class="r-in"><span>             colour.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>             edge.colour.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge.width.by <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
+<span class="r-in"><span>             show.label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Sulfolobales"</span>,<span class="st">"Spirochaetales"</span>,</span></span>
 <span class="r-in"><span>                            <span class="st">"Verrucomicrobiales"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-6.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>                            </span></span>
 <span class="r-in"><span><span class="co"># labels can also be included via selecting specific rownames of x/y</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span></span>
 <span class="r-in"><span>             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span></span>
-<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
-<span class="r-in"><span>             show_label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>             colour.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>             edge.colour.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge.width.by <span class="op">=</span> <span class="st">"weight"</span>, </span></span>
+<span class="r-in"><span>             show.label <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span>,<span class="fl">50</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-7.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span>             </span></span>
 <span class="r-in"><span><span class="co"># labels can also be included via a logical vector, which has the same length</span></span></span>
@@ -300,10 +359,10 @@ be used.</p>
 <span class="r-in"><span><span class="va">label_select</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">10</span>,<span class="fl">50</span><span class="op">)</span><span class="op">]</span> <span class="op">&lt;-</span>  <span class="cn">TRUE</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowGraph</span><span class="op">(</span><span class="va">order</span>,</span></span>
 <span class="r-in"><span>             name <span class="op">=</span> <span class="st">"row_graph"</span>,</span></span>
-<span class="r-in"><span>             colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
-<span class="r-in"><span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
-<span class="r-in"><span>             show_label <span class="op">=</span> <span class="va">label_select</span><span class="op">)</span></span></span>
+<span class="r-in"><span>             colour.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
+<span class="r-in"><span>             edge.colour.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             edge.width.by <span class="op">=</span> <span class="st">"weight"</span>,</span></span>
+<span class="r-in"><span>             show.label <span class="op">=</span> <span class="va">label_select</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotGraph-8.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
