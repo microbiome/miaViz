@@ -15,7 +15,7 @@ test_that("tree data", {
     expect_equal(colnames(actual), c("parent","node","branch.length","label"))
     # .norm_other_fields
     expect_error(miaViz:::.norm_other_fields(),
-                 'argument "other_fields" is missing')
+                 'argument "other.fields" is missing')
     expect_error(miaViz:::.norm_other_fields(list(a=c(1,2), b=c(2,3,4))))
     expect_null(miaViz:::.norm_other_fields(NULL))
     expect_null(miaViz:::.norm_other_fields(data.frame()))
@@ -27,7 +27,7 @@ test_that("tree data", {
     expect_equal(actual, miaViz:::.norm_other_fields(other_fields))
     # .norm_id_col_of_other_fields
     expect_error(miaViz:::.norm_id_col_of_other_fields(),
-                 'argument "other_fields" is missing')
+                 'argument "other.fields" is missing')
     expect_error(miaViz:::.norm_id_col_of_other_fields(other_fields))
     expect_warning(miaViz:::.norm_id_col_of_other_fields(other_fields, td),
                    "Not all 'node' values found in tree data")
@@ -38,7 +38,7 @@ test_that("tree data", {
     expect_null(miaViz:::.norm_id_col_of_other_fields(NULL))
     # .combine_tree_data_and_other_fields
     expect_error(miaViz:::.combine_tree_data_and_other_fields(td),
-                 'argument "other_fields" is missing')
+                 'argument "other.fields" is missing')
     expect_equal(td, miaViz:::.combine_tree_data_and_other_fields(td, NULL))
     actual <- miaViz:::.combine_tree_data_and_other_fields(td, other_fields)
     expect_equal(colnames(actual),
@@ -49,12 +49,12 @@ test_that("tree data", {
     expect_equal(combineTreeData(rowTree(x)), tidytree::as.treedata(td))
     expect_equal(combineTreeData(rowTree(x), other_fields),
                  tidytree::as.treedata(actual))
-    # Test situation when tree_name is wrong
-    expect_equal( colTreeData(x, tree_name = "phylo"), NULL )
-    expect_equal( rowTreeData(x, tree_name = "phylo.1"), NULL )
-    expect_error( colTreeData(x, tree_name = 1) )
-    expect_error( rowTreeData(x, tree_name = TRUE) )
-    expect_error( rowTreeData(x, tree_name = c("test", "test2")) )
+    # Test situation when tree.name is wrong
+    expect_equal( colTreeData(x, tree.name = "phylo"), NULL )
+    expect_equal( rowTreeData(x, tree.name = "phylo.1"), NULL )
+    expect_error( colTreeData(x, tree.name = 1) )
+    expect_error( rowTreeData(x, tree.name = TRUE) )
+    expect_error( rowTreeData(x, tree.name = c("test", "test2")) )
     td <- rowTreeData(x)
     rowTreeData(x, "test") <- td
     expect_equal(names(x@rowTree), c("phylo", "test"))

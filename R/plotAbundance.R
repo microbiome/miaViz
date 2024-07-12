@@ -201,8 +201,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         order.row.by <- match.arg(order.row.by, c("name","abund","revabund"))
         .check_abund_plot_args(one_facet = one.facet,
                             ncol = ncol)
-        if( !is.null(features) ){
-            features <- match.arg(features, colnames(colData(x)))
+        if( !is.null(col.var) ){
+            col.var <- match.arg(col.var, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
         # Get the abundance data to be plotted. Agglomerate and apply relative
@@ -219,8 +219,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             order.col.by, unique(abund_data$colour_by), x)
         # Get additional column metadata to be plotted
         features_data <- NULL
-        if(!is.null(features) || !is.null(order_col_by)){
-            features_data <- .get_features_data(features, order_col_by, x)
+        if(!is.null(col.var) || !is.null(order_col_by)){
+            features_data <- .get_features_data(col.var, order_col_by, x)
         }
         # Order the whole data to follow user specified ordering
         if(!is.null(order_sample_by)){
@@ -253,11 +253,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             # If features is specified, then only abundance and features plots
             # are returned as a list. If it is not, then only abundance plot is
             # returned.
-            if( !is.null(features) ){
+            if( !is.null(col.var) ){
                 plot_out <- list(
-                    abundance = plot_out[["abundance"]], plot_out[[features]])
+                    abundance = plot_out[["abundance"]], plot_out[[col.var]])
                 # Assigns the names back
-                names(plot_out) <- c("abundance", features)
+                names(plot_out) <- c("abundance", col.var)
             } else{
                 plot_out <- plot_out[["abundance"]]
             }
@@ -348,7 +348,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         return(order_sample_by)
     }
     # Chec that the parameter is string
-    msg <- paste0("'order_sample_by' must be a single non-empty character value, ",
+    msg <- paste0("'order.col.by' must be a single non-empty character value, ",
                 "either present in the abundance data as group variable or ",
                 "in the column data of 'x'. (The abundance data takes ",
                 "precedence)")

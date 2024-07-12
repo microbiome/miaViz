@@ -319,7 +319,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         add.legend = add_legend,
         add_legend = TRUE,
         layout = "circular",
-        edge.colour.by = edge.colour.by,
+        edge.colour.by = edge_colour_by,
         edge_colour_by = NULL,
         edge.size.by = edge_size_by,
         edge_size_by = NULL,
@@ -342,6 +342,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         other.fields = other_fields,
         other_fields = list(),
         ...){
+        #
         .plot_row_column_tree(x,
             tree_name = tree.name,
             relabel_tree = relabel.tree,
@@ -382,19 +383,19 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         stop("'layout' must be a single character value.", call. = FALSE)
     }
     if(!.is_a_bool(relabel_tree)){
-        stop("'relabel_tree' must be either TRUE or FALSE.", call. = FALSE)
+        stop("'relabel.tree' must be either TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(remove_levels)){
-        stop("'remove_levels' must be either TRUE or FALSE.", call. = FALSE)
+        stop("'level.rm' must be either TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(order_tree)){
-        stop("'order_tree' must be either TRUE or FALSE.", call. = FALSE)
+        stop("'order.tree' must be either TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(show_label)){
         if( (!is.logical(show_label) && !is.character(show_label) &&
              !is.numeric(show_label)) ||
             is.null(show_label)){
-            stop("'show_label' must be either TRUE or FALSE or logical, ",
+            stop("'show.label' must be either TRUE or FALSE or logical, ",
                  "integer or character ",
                  "vector. Character alues should match the label of the tree.",
                  call. = FALSE)
@@ -404,7 +405,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         if( (!is.logical(show_highlights) && !is.character(show_highlights) &&
              !is.numeric(show_highlights)) ||
             is.null(show_highlights)){
-            stop("'show_label' must be either TRUE or FALSE or logical, ",
+            stop("'show.label' must be either TRUE or FALSE or logical, ",
                  "integer or character ",
                  "vector. Character alues should match the label of the tree.",
                  call. = FALSE)
@@ -414,7 +415,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         if( (!is.logical(show_highlight_label) && !is.character(show_highlight_label) &&
              !is.numeric(show_highlight_label)) ||
             is.null(show_highlight_label)){
-            stop("'show_highlight_label' must be either TRUE or FALSE or logical, ",
+            stop("'show.highlight.label' must be either TRUE or FALSE or logical, ",
                  "integer or character ",
                  "vector. Character alues should match the label of the tree.",
                  call. = FALSE)
@@ -424,14 +425,14 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         if( (!is.logical(abbr_label) && !is.character(abbr_label) &&
              !is.numeric(abbr_label)) ||
             is.null(abbr_label)){
-            stop("'abbr_label' must be either TRUE or FALSE or logical, ",
+            stop("'abbr.label' must be either TRUE or FALSE or logical, ",
                  "integer or character ",
                  "vector. Character alues should match the label of the tree.",
                  call. = FALSE)
         }
     }
     if(!.is_a_bool(add_legend)){
-        stop("'add_legend' must be either TRUE or FALSE.", call. = FALSE)
+        stop("'add.legend' must be either TRUE or FALSE.", call. = FALSE)
     }
 }
 
@@ -463,14 +464,14 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     # input check
     # Check tree_name
     if( !.is_a_string(tree_name) ){
-        stop("'tree_name' must be a single character value specifying a colTree.",
+        stop("'tree.name' must be a single character value specifying a colTree.",
              call. = FALSE)
     }
     FUN <- switch(type,
                   row = "rowTree",
                   column = "colTree")
     if(is.null(do.call(FUN,list(x = object, whichTree = tree_name)))){
-        stop(FUN,"(object, tree_name) is empty.", call. = FALSE)
+        stop(FUN,"(object, tree.name) is empty.", call. = FALSE)
     }
     .check_tree_plot_switches(layout = layout,
         relabel_tree = relabel_tree,
@@ -708,7 +709,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                 mutate(node_label = show_label)
             show_label <- TRUE
         } else if(!("node_label" %in% colnames(tree_data))){
-            warning("If 'show_label' is a character with length != ",
+            warning("If 'show.label' is a character with length != ",
                     "number of nodes in the graph or a logical/integer ",
                     "vector, a 'label' ",
                     "column must exist in the tree data.",
@@ -719,7 +720,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                 if(any(show_label != as.integer(show_label)) ||
                    min(show_label) < 1 ||
                    max(show_label) > nrow(tree_data)){
-                    stop("If 'show_label' is numeric, values have to be whole ",
+                    stop("If 'show.label' is numeric, values have to be whole ",
                          "numbers and must be between 1 and the number of nodes ",
                          "in the graph",
                          call. = FALSE)
@@ -732,7 +733,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
             }
             if(is.logical(show_label) &&
                length(show_label) != nrow(tree_data)){
-                stop("If 'show_label' is logical, it must have the length as ",
+                stop("If 'show.label' is logical, it must have the length as ",
                      "nodes are in the graph.",
                      call. = FALSE)
             }
@@ -769,7 +770,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
             if(any(show_highlights != as.integer(show_highlights)) ||
                min(show_highlights) < 1 ||
                max(show_highlights) > nrow(tree_data)){
-                stop("If 'show_highlights' is numeric, values have to be whole ",
+                stop("If 'show.highlights' is numeric, values have to be whole ",
                      "numbers and must be between 1 and the number of nodes ",
                      "in the graph",
                      call. = FALSE)
@@ -782,7 +783,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         }
         if(is.logical(show_highlights) &&
            length(show_highlights) != nrow(tree_data)){
-            stop("If 'show_highlights' is logical, it must have the length as ",
+            stop("If 'show.highlights' is logical, it must have the length as ",
                  "nodes are in the graph.",
                  call. = FALSE)
         }
@@ -825,7 +826,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                 mutate(highlight_label = show_highlight_label)
             show_highlight_label <- TRUE
         } else if(!("highlight_label" %in% colnames(tree_data))){
-            warning("If 'show_highlight_label' is a character with length != ",
+            warning("If 'show.highlight.label' is a character with length != ",
                     "number of nodes in the graph or a logical/integer ",
                     "vector, a 'label' column must exist in the tree data.",
                     call. = FALSE)
@@ -835,7 +836,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                 if(any(show_highlight_label != as.integer(show_highlight_label)) ||
                    min(show_highlight_label) < 1 ||
                    max(show_highlight_label) > nrow(tree_data)){
-                    stop("If 'show_highlight_label' is numeric, values have ",
+                    stop("If 'show.highlight.label' is numeric, values have ",
                          "to be whole numbers and must be between 1 and the ",
                          "number of nodes in the graph",
                          call. = FALSE)
@@ -849,7 +850,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
             }
             if(is.logical(show_highlight_label) &&
                length(show_highlight_label) != nrow(tree_data)){
-                stop("If 'show_highlight_label' is logical, it must have the ",
+                stop("If 'show.highlight.label' is logical, it must have the ",
                      "length as nodes are in the graph.",
                      call. = FALSE)
             }

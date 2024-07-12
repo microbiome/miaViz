@@ -31,13 +31,13 @@ test_that("plot tree", {
     #
     expect_error(miaViz:::.check_tree_plot_switches("A","TRUE", TRUE,TRUE,TRUE,
                                                     TRUE, TRUE,TRUE, TRUE),
-                 "'relabel_tree' must be either TRUE or FALSE")
+                 "'relabel.tree' must be either TRUE or FALSE")
     expect_error(miaViz:::.check_tree_plot_switches("A",TRUE, 2, TRUE,TRUE,
                                                     TRUE, TRUE,TRUE, TRUE),
-                 "'remove_levels' must be either TRUE or FALSE")
+                 "'level.rm' must be either TRUE or FALSE")
     expect_error(miaViz:::.check_tree_plot_switches("A",TRUE, TRUE, 2, TRUE,
                                                     TRUE, TRUE,TRUE, TRUE),
-                 "'order_tree' must be either TRUE or FALSE")
+                 "'order.tree' must be either TRUE or FALSE")
     expect_null(miaViz:::.check_tree_plot_switches("A",TRUE, TRUE, TRUE, 2,
                                                     TRUE, TRUE,TRUE, TRUE))
     #

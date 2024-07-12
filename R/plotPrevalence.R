@@ -80,7 +80,7 @@
 #'   
 #' @param prevalence Prevalence thresholds (in 0 to 1). The
 #'   required prevalence is strictly greater by default. To include the
-#'   limit, set \code{include_lowest} to \code{TRUE}.
+#'   limit, set \code{include.lowest} to \code{TRUE}.
 #' 
 #' @param prevalences Deprecated. Use \code{prevalence} instead.
 #'
@@ -303,7 +303,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             colour_by = colour.by,
             size_by = size.by,
             shape_by = shape.by,
-            label = show_label,
+            label = label,
             facet_by = facet.by)
         plot_data <- vis_out$df
         colour_by <- vis_out$colour_by
