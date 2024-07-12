@@ -301,9 +301,12 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 #' @importFrom scater plotReducedDim retrieveCellInfo
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames
 .incorporate_rda_vis <- function(
-        tse, dimred, ncomponents = 2, colour_by = color_by, color_by = NULL,
+        tse, dimred, ncomponents = 2,
+        colour_by = color_by, color_by = colour.by,
+        colour.by = color.by, color.by = NULL,
         add.significance = TRUE, add.expl.var = TRUE, add.ellipse = TRUE,
-        add.vectors = TRUE, vec.lab = NULL, expl_var = NULL,
+        add.vectors = TRUE, vec.lab = NULL,
+        expl.var = expl_var, expl_var = NULL,
         sep.group = "\U2012", repl.underscore = " ", ...){
 
     # Check dimred
