@@ -264,19 +264,20 @@ setGeneric("plotPrevalentAbundance", signature = c("x"),
 #' @rdname plotPrevalence
 #' @export
 setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
-    function(x,
-             rank = NULL,
-             assay.type = assay_name, assay_name = "counts",
-             colour.by = colour_by, colour_by = NULL,
-             size.by = size_by,
-             size_by = NULL,
-             shape.by = shape_by,
-             shape_by = NULL,
-             show.label = label,
-             label = NULL,
-             facet.by = facet_by,
-             facet_by = NULL,
-             ...){
+    function(
+            x,
+            rank = NULL,
+            assay.type = assay_name, assay_name = "counts",
+            colour.by = colour_by, colour_by = NULL,
+            size.by = size_by,
+            size_by = NULL,
+            shape.by = shape_by,
+            shape_by = NULL,
+            show.label = label,
+            label = NULL,
+            facet.by = facet_by,
+            facet_by = NULL,
+            ...){
         # input check
         .check_assay_present(assay.type, x)
 
