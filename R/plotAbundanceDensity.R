@@ -142,7 +142,6 @@
 #'
 NULL
 
-
 #' @rdname plotAbundanceDensity
 #' @export
 setGeneric("plotAbundanceDensity", signature = c("x"),
