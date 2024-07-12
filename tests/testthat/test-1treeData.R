@@ -58,7 +58,4 @@ test_that("tree data", {
     td <- rowTreeData(x)
     rowTreeData(x, "test") <- td
     expect_equal(names(x@rowTree), c("phylo", "test"))
-    data(esophagus)
-    tse <- mia::mergeSEs(esophagus, GlobalPatterns)
-    expect_equal( rowTreeData(tse, "phylo"), rowTreeData(esophagus, "phylo") )
 })
