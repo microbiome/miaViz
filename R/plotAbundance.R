@@ -80,15 +80,14 @@
 #' data(GlobalPatterns, package="mia")
 #' tse <- GlobalPatterns
 #' 
-#' # Apply relative transform
-#' tse <- transformAssay(tse, method = "relabundance")
-#' 
 #' ## If rank is set to NULL (default), agglomeration is not done. However, note
 #' ## that there is maximum number of rows that can be plotted. That is why
 #' ## we take sample from the data.
 #' set.seed(26348)
 #' sample <- sample(rownames(tse), 20)
 #' tse_sub <- tse[sample, ]
+#' # Apply relative transformation
+#' tse_sub <- transformAssay(tse_sub, method = "relabundance")
 #' plotAbundance(tse_sub, assay.type = "relabundance")
 #' 
 #' ## Plotting counts using the first taxonomic rank as default
@@ -101,6 +100,8 @@
 #'     tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
 #'     as.relative = TRUE)
 #' 
+#' # Apply relative transform
+#' tse <- transformAssay(tse, method = "relabundance")
 #'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering
 #' ## samples.
