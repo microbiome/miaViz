@@ -8,7 +8,7 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   object.
 #'
-#' @param other.fields, value a \code{data.frame} or coercible to one, with at least one type
+#' @param other.fields a \code{data.frame} or coercible to one, with at least one type
 #'   of id information. See details.
 #'   
 #' @param other_fields Deprecated. Use \code{other.fields} instead.
