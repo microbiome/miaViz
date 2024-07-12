@@ -78,6 +78,8 @@
 #'   obtain expression values from, for use in point aesthetics - see the 
 #'   \code{exprs_values} argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
+#' 
+#' @param by_exprs_values Deprecated. Use \code{assay.type} instead.
 #'   
 #' @param other.fields Additional fields to include in the node information
 #'   without plotting them.

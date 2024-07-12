@@ -51,7 +51,7 @@ object.}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
-\item{other.fields}{a \code{data.frame} or coercible to one, with at least one type
+\item{other.fields, value}{a \code{data.frame} or coercible to one, with at least one type
 of id information. See details.}
 
 \item{other_fields}{Deprecated. Use \code{other.fields} instead.}

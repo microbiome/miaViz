@@ -146,6 +146,8 @@ obtain expression values from, for use in point aesthetics - see the
 \code{exprs_values} argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.}
 
+\item{by_exprs_values}{Deprecated. Use \code{assay.type} instead.}
+
 \item{other.fields}{Additional fields to include in the node information
 without plotting them.}
 

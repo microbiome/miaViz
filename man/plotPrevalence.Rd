@@ -76,12 +76,6 @@ plotFeaturePrevalence(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{...}{additional parameters for plotting.
-\itemize{
-\item{as.relative} \code{Boolean} indicating whether the detection threshold
-should be applied to compositional (relative) abundances. (Default: \code{FALSE})
-}}
-
 \item{detection}{Detection thresholds for absence/presence. Either an
 absolutes value compared directly to the values of \code{x} or a relative
 value between 0 and 1, if \code{as.relative = TRUE}.}
@@ -162,6 +156,8 @@ Argument can only be used in function plotPrevalentAbundance.}
 \item{min.prevalence}{a single numeric value to apply as a threshold for
 plotting. The threshold is applied per row and column.
 (default: \code{min_prevalence = 0})}
+
+\item{min_prevalence}{Deprecated. Use \code{min.prevalence} instead.}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one

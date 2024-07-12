@@ -87,16 +87,12 @@
 #' @param min.prevalence a single numeric value to apply as a threshold for 
 #'   plotting. The threshold is applied per row and column.
 #'   (default: \code{min_prevalence = 0})
+#'   
+#' @param min_prevalence Deprecated. Use \code{min.prevalence} instead.
 #' 
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the UniFrac calculation should be parallelized.
-#'   
-#' @param ... additional parameters for plotting. 
-#' \itemize{
-#'  \item{as.relative} \code{Boolean} indicating whether the detection threshold 
-#'  should be applied to compositional (relative) abundances. (Default: \code{FALSE})
-#' }
 #' 
 #' @details 
 #' Agglomeration on different taxonomic levels is available through the 
