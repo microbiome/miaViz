@@ -292,33 +292,33 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             x <- agglomerateByRank(x, rank = rank, ...)
         }
         # Check that labels are correct (or get rownames as labels if NULL)
-        show.label <- .norm_label(show.label, x)
+        show_label <- .norm_label(show.label, x)
         # Get prevalence data
         plot_data <- .get_prevalence_plot_point_data(
-            x, assay.type, label = show.label, ...)
+            x, assay.type, label = show_label, ...)
         # Get data to plot
         vis_out <- .incorporate_prevalence_vis(
             plot_data,
             se = x,
-            colour_by = colour_by,
-            size_by = size_by,
-            shape_by = shape_by,
-            label = show.label,
-            facet_by = facet_by)
+            colour_by = colour.by,
+            size_by = size.by,
+            shape_by = shape.by,
+            label = show_label,
+            facet_by = facet.by)
         plot_data <- vis_out$df
-        colour.by <- vis_out$colour_by
-        size.by <- vis_out$size_by
-        shape.by <- vis_out$shape_by
-        facet.by <- vis_out$facet_by
+        colour_by <- vis_out$colour_by
+        size_by <- vis_out$size_by
+        shape_by <- vis_out$shape_by
+        facet_by <- vis_out$facet_by
         ylab <- paste0(
             "Prevalence (", ifelse(is.null(rank), "Features", rank), ") [%]")
         # Plot the data
         plot <- .prevalence_plotter(plot_data, 
                             layout = "point",
                             ylab = ylab,
-                            colour_by = colour.by,
-                            size_by = size.by,
-                            shape_by = shape.by,
+                            colour_by = colour_by,
+                            size_by = size_by,
+                            shape_by = shape_by,
                             ...)
         # If facet.by is not NULL, user has specified it. Adds the facets to
         # the plot.
