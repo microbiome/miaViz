@@ -325,7 +325,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         if(!is.null(facet.by)){
             plot <- plot + 
                 # Create facets
-                facet_wrap(vars(!!sym("facet.by")))
+                facet_wrap(vars(!!sym("facet_by")))
         }
         return(plot)
     }
