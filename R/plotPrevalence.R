@@ -292,10 +292,10 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             x <- agglomerateByRank(x, rank = rank, ...)
         }
         # Check that labels are correct (or get rownames as labels if NULL)
-        show_label <- .norm_label(show.label, x)
+        label <- .norm_label(show.label, x)
         # Get prevalence data
         plot_data <- .get_prevalence_plot_point_data(
-            x, assay.type, label = show_label, ...)
+            x, assay.type, label = label, ...)
         # Get data to plot
         vis_out <- .incorporate_prevalence_vis(
             plot_data,

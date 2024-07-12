@@ -203,17 +203,17 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                                                              order_descending = decreasing)
               # Extracts the density data and aesthetic from the list
               density_data <- density_data_list$density_data
-              colour.by <- density_data_list$colour_by
-              shape.by <- density_data_list$shape_by
-              size.by <- density_data_list$size_by
+              colour_by <- density_data_list$colour_by
+              shape_by <- density_data_list$shape_by
+              size_by <- density_data_list$size_by
               
               # Gets the plot from plotter
               plot_out <- .density_plotter(density_data = density_data, 
                                            layout = layout,
                                            xlab = assay.type,
-                                           colour_by = colour.by,
-                                           shape_by = shape.by,
-                                           size_by = size.by,
+                                           colour_by = colour_by,
+                                           shape_by = shape_by,
+                                           size_by = size_by,
                                            ...)
               return(plot_out)
           }

@@ -215,17 +215,17 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         # coloring in (NULL means that coloring is not applied).
         rank <- ifelse(is.null(rank), "Feature", rank)
         # Order columns
-        order.col.by <- .norm_order_sample_by(
+        order_col_by <- .norm_order_sample_by(
             order.col.by, unique(abund_data$colour_by), x)
         # Get additional column metadata to be plotted
         features_data <- NULL
-        if(!is.null(features) || !is.null(order.col.by)){
-            features_data <- .get_features_data(features, order.col.by, x)
+        if(!is.null(features) || !is.null(order_col_by)){
+            features_data <- .get_features_data(features, order_col_by, x)
         }
         # Order the whole data to follow user specified ordering
         if(!is.null(order_sample_by)){
             order_out <- .order_abund_feature_data(
-                abund_data, features_data, order.col.by, decreasing)
+                abund_data, features_data, order_col_by, decreasing)
             abund_data <- order_out$abund_data
             features_data <- order_out$features_data
         }
