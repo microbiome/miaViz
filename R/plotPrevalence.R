@@ -12,7 +12,7 @@
 #'   
 #' @param rank,... additional arguments
 #' \itemize{
-#'   \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+#'   \item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
 #'   be calculated? (Default: \code{FALSE}) }
 #'   
 #'   \item{ndetection}{ \code{Integer scalar}. Determines the number of breaks
@@ -39,42 +39,56 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param colour_by Specification of a feature to colour points by, see the 
-#'   \code{by} argument in 
-#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}.
-#' @param shape_by Specification of a feature to shape points by, see the 
-#'   \code{by} argument in 
-#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}.
-#' @param size_by Specification of a feature to size points by, see the 
+#' @param colour.by Specification of a feature to colour points by, see the 
 #'   \code{by} argument in 
 #'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
 #'   possible values. Only used with \code{layout = "point"}.
 #'   
-#' @param facet_by Taxonomic rank to facet the plot by. 
+#' @param colour_by Deprecated. Use \code{colour.by} instead.
+#'   
+#' @param shape.by Specification of a feature to shape points by, see the 
+#'   \code{by} argument in 
+#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}.
+#'
+#' @param shape_by Deprecated. Use \code{shape.by} instead.   
+#'   
+#' @param size.by Specification of a feature to size points by, see the 
+#'   \code{by} argument in 
+#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}.
+#'   
+#' @param size_by Deprecated. Use \code{size.by} instead.
+#'   
+#' @param facet.by Taxonomic rank to facet the plot by. 
 #' Value must be of \code{taxonomyRanks(x)}
 #' Argument can only be used in function plotPrevalentAbundance. 
 #' 
-#' @param label a \code{logical}, \code{character} or \code{integer} vector
+#' @param facet_by Deprecated. Use \code{facet.by} instead.
+#' 
+#' @param show.label a \code{logical}, \code{character} or \code{integer} vector
 #'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
-#'   \code{NULL} the rownames might change. (default: \code{label = NULL})
+#'   \code{NULL} the rownames might change. (default: \code{show.label = NULL})
+#'   
+#' @param label Deprecated. Use \code{show.label} instead.
 #'
 #' @param detection Detection thresholds for absence/presence. Either an
 #'   absolutes value compared directly to the values of \code{x} or a relative
-#'   value between 0 and 1, if \code{as_relative = TRUE}.
+#'   value between 0 and 1, if \code{as.relative = TRUE}.
 #' 
 #' @param detections Deprecated. Use \code{detection} instead.
 #'   
 #' @param prevalence Prevalence thresholds (in 0 to 1). The
 #'   required prevalence is strictly greater by default. To include the
-#'   limit, set \code{include_lowest} to \code{TRUE}.
+#'   limit, set \code{include.lowest} to \code{TRUE}.
 #' 
 #' @param prevalences Deprecated. Use \code{prevalence} instead.
 #'
-#' @param min_prevalence a single numeric value to apply as a threshold for 
+#' @param min.prevalence a single numeric value to apply as a threshold for 
 #'   plotting. The threshold is applied per row and column.
 #'   (default: \code{min_prevalence = 0})
+#'   
+#' @param min_prevalence Deprecated. Use \code{min.prevalence} instead.
 #' 
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
@@ -121,14 +135,14 @@
 #' # point layout for plotRowPrevalence can be used to visualize by additional
 #' # information
 #' plotPrevalentAbundance(
-#'     GlobalPatterns, rank = "Family", colour_by = "Phylum") +
+#'     GlobalPatterns, rank = "Family", colour.by = "Phylum") +
 #'     scale_x_log10()
 #' 
 #' # When using function plotPrevalentAbundace, it is possible to create facets
-#' # with 'facet_by'.
+#' # with 'facet.by'.
 #' plotPrevalentAbundance(
 #'     GlobalPatterns, rank = "Family",
-#'     colour_by = "Phylum", facet_by = "Kingdom") +
+#'     colour.by = "Phylum", facet.by = "Kingdom") +
 #'     scale_x_log10()
 NULL
 
@@ -174,9 +188,9 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
         p <- .prevalence_plotter(plot_data, 
                             layout = "line",
                             ylab = "N",
-                            colour_by = "Prevalence [%]",
-                            size_by = NULL,
-                            shape_by = NULL,
+                            colour.by = "Prevalence [%]",
+                            size.by = NULL,
+                            shape.by = NULL,
                             ...)
         return(p)
     }
@@ -192,7 +206,8 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom SummarizedExperiment assay
 .get_prevalence_plot_data <- function(
         x, assay.type, detections, prevalences,
-        BPPARAM = BiocParallel::SerialParam(), as_relative = FALSE, ...){
+        BPPARAM = BiocParallel::SerialParam(), as.relative = as_relative,
+        as_relative = FALSE, ...){
     # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
@@ -249,18 +264,23 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             x,
             rank = NULL,
             assay.type = assay_name, assay_name = "counts",
-            colour_by = NULL,
+            colour.by = colour_by, colour_by = NULL,
+            size.by = size_by,
             size_by = NULL,
+            shape.by = shape_by,
             shape_by = NULL,
+            show.label = label,
             label = NULL,
+            facet.by = facet_by,
             facet_by = NULL,
             ...){
         # input check
         .check_assay_present(assay.type, x)
-        # Check facet_by. It is FALSE by default, but user can specify it, but 
+
+        # Check facet.by It is FALSE by default, but user can specify it, but 
         # the value must be in taxonomyRanks.
-        if(!(is.null(facet_by) || facet_by %in% taxonomyRanks(x))){
-            stop("'facet_by' must be in taxonomyRanks.",  call. = FALSE)
+        if(!(is.null(facet.by) || facet.by %in% taxonomyRanks(x))){
+            stop("'facet.by' must be in taxonomyRanks.",  call. = FALSE)
         }
         #
         # Agglomerate data if specified
@@ -268,7 +288,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             x <- agglomerateByRank(x, rank = rank, ...)
         }
         # Check that labels are correct (or get rownames as labels if NULL)
-        label <- .norm_label(label, x)
+        label <- .norm_label(show.label, x)
         # Get prevalence data
         plot_data <- .get_prevalence_plot_point_data(
             x, assay.type, label = label, ...)
@@ -276,11 +296,11 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         vis_out <- .incorporate_prevalence_vis(
             plot_data,
             se = x,
-            colour_by = colour_by,
-            size_by = size_by,
-            shape_by = shape_by,
+            colour_by = colour.by,
+            size_by = size.by,
+            shape_by = shape.by,
             label = label,
-            facet_by = facet_by)
+            facet_by = facet.by)
         plot_data <- vis_out$df
         colour_by <- vis_out$colour_by
         size_by <- vis_out$size_by
@@ -296,9 +316,9 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
                             size_by = size_by,
                             shape_by = shape_by,
                             ...)
-        # If facet_by is not NULL, user has specified it. Adds the facets to
+        # If facet.by is not NULL, user has specified it. Adds the facets to
         # the plot.
-        if(!is.null(facet_by)){
+        if(!is.null(facet.by)){
             plot <- plot + 
                 # Create facets
                 facet_wrap(vars(!!sym("facet_by")))
@@ -404,6 +424,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
             rank = NULL,
             assay.type = assay_name, assay_name = "counts",
             detection = detections, detections = c(0.01, 0.1, 1, 2, 5, 10, 20),
+            min.prevalence = min_prevalence,
             min_prevalence = 0,
             BPPARAM = BiocParallel::SerialParam(),
             ...){
@@ -412,8 +433,9 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
             stop("'detection' must be numeric values.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        if(length(min_prevalence) != 1 || !.is_numeric_string(min_prevalence)){
-            stop("'min_prevalence' must be single numeric values.",
+        
+        if(length(min.prevalence) != 1 || !.is_numeric_string(min.prevalence)){
+            stop("'min.prevalence' must be single numeric values.",
                  call. = FALSE)
         }
         #
@@ -423,7 +445,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         }
         # Get prevalence data
         plot_data <- .get_prevalence_plot_matrix(
-            x, assay.type, detection, min_prevalence, BPPARAM, ...)
+            x, assay.type, detection, min.prevalence, BPPARAM, ...)
         plot_data$colour_by <- plot_data$colour_by * 100
         ylab <- ifelse(is.null(rank), "Features", rank)
         colour_by <- "Prevalence [%]"
@@ -452,7 +474,8 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray rowSums
 .get_prevalence_plot_matrix <- function(
         x, assay.type, detections, min_prevalence,
-        BPPARAM = BiocParallel::SerialParam(), as_relative = FALSE,
+        BPPARAM = BiocParallel::SerialParam(), as.relative = as_relative,
+        as_relative = FALSE,
         ndetection = 20, ...){
     # Input check
     if(!.is_a_bool(as_relative)){
@@ -535,7 +558,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
 #'   theme_classic
 .prevalence_plotter <- function(plot_data,
         layout = c("line","point","heatmap"),
-        xlab = paste0(ifelse(as_relative, "Rel. ", ""),"Abundance"),
+        xlab = paste0(ifelse(as.relative, "Rel. ", ""),"Abundance"),
         ylab = NULL,
         colour_by = NULL,
         size_by = NULL,
@@ -547,6 +570,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         line_alpha = 1,
         line_type = NULL,
         line_size = 1,
+        as.relative = as_relative,
         as_relative = FALSE,
         ...){
     # Start plotting

@@ -17,16 +17,26 @@ plotRowGraph(x, y, ...)
 \S4method{plotColGraph}{ANY,SummarizedExperiment}(
   x,
   y,
+  show.label = show_label,
   show_label = FALSE,
+  add.legend = add_legend,
   add_legend = TRUE,
   layout = "kk",
+  edge.type = edge_type,
   edge_type = c("fan", "link", "arc", "parallel"),
+  edge.colour.by = edge_colour_by,
   edge_colour_by = NULL,
+  edge.width.by = edge_width_by,
   edge_width_by = NULL,
+  colour.by = colour_by,
   colour_by = NULL,
+  shape.by = shape_by,
   shape_by = NULL,
+  size.by = size_by,
   size_by = NULL,
+  assay.type = by_exprs_values,
   by_exprs_values = "counts",
+  other.fields = other_fields,
   other_fields = list(),
   ...
 )
@@ -36,16 +46,25 @@ plotRowGraph(x, y, ...)
 \S4method{plotRowGraph}{ANY,SummarizedExperiment}(
   x,
   y,
+  show.label = show_label,
   show_label = FALSE,
+  add.legend = add_legend,
   add_legend = TRUE,
   layout = "kk",
+  edge.type = edge_type,
   edge_type = c("fan", "link", "arc", "parallel"),
+  edge.colour.by = edge_colour_by,
   edge_colour_by = NULL,
+  edge.width.by = edge_width_by,
   edge_width_by = NULL,
+  colour.by = colour_by,
   colour_by = NULL,
+  shape.by = shape_by,
   shape_by = NULL,
-  size_by = NULL,
+  size.by = NULL,
+  assay.type = by_exprs_values,
   by_exprs_values = "counts",
+  other.fields = other_fields,
   other_fields = list(),
   ...
 )
@@ -62,7 +81,7 @@ For the latter object a graph object must be stored in \code{metadata(x)$name}.}
 \item{...}{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
-\item{show_label}{\code{logical} (scalar), \code{integer} or \code{character}
+\item{show.label}{\code{logical} (scalar), \code{integer} or \code{character}
 vector. If a \code{logical} scalar is given, should tip labels be plotted
 or if a logical vector is provided, which labels should be shown? If an
 \code{integer} or \code{character} vector is provided, it will be converted
@@ -71,48 +90,68 @@ and number of nodes, whereas the values of a \code{character} vector must
 match values of a \code{label} or \code{name} column in the node data. In
 case of a \code{character} vector only values corresponding to actual
 labels will be plotted and if no labels are provided no labels will be
-shown. (default: \code{show_label = FALSE})}
+shown. (default: \code{show.label = FALSE})}
 
-\item{add_legend}{logical scalar. Should legends be plotted?
-(default: \code{add_legend = TRUE})}
+\item{show_label}{Deprecated. Use \code{show.label} instead.}
+
+\item{add.legend}{logical scalar. Should legends be plotted?
+(default: \code{add.legend = TRUE})}
+
+\item{add_legend}{Deprecated. Use \code{add.legend} instead.}
 
 \item{layout}{layout for the plotted graph. See
 \code{\link[ggraph:ggraph]{ggraph}} for details. (default:
 \code{layout = "kk"})}
 
-\item{edge_type}{type of edge plotted on the graph. See
+\item{edge.type}{type of edge plotted on the graph. See
 \code{\link[ggraph:geom_edge_fan]{geom_edge_fan}} for details and other
 available geoms. (default:
-\code{edge_type = "fan"})}
+\code{edge.type = "fan"})}
 
-\item{edge_colour_by}{Specification of a edge metadata field to use for
+\item{edge_type}{Deprecated. Use \code{edge.type} instead.}
+
+\item{edge.colour.by}{Specification of a edge metadata field to use for
 setting colours of the edges.}
 
-\item{edge_width_by}{Specification of a edge metadata field to use for
+\item{edge_colour_by}{Deprecated. Use \code{edge.colour.by} instead.}
+
+\item{edge.width.by}{Specification of a edge metadata field to use for
 setting width of the edges.}
 
-\item{colour_by}{Specification of a column metadata field or a feature to
+\item{edge_width_by}{Deprecated. Use \code{edge.width.by} instead.}
+
+\item{colour.by}{Specification of a column metadata field or a feature to
 colour graph nodes by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
-\item{shape_by}{Specification of a column metadata field or a feature to
+\item{colour_by}{Deprecated. Use \code{colour.by} instead.}
+
+\item{shape.by}{Specification of a column metadata field or a feature to
 shape graph nodes by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
-\item{size_by}{Specification of a column metadata field or a feature to
+\item{shape_by}{Deprecated. Use \code{shape.by} instead.}
+
+\item{size.by}{Specification of a column metadata field or a feature to
 size graph nodes by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
-\item{by_exprs_values}{A string or integer scalar specifying which assay to
+\item{size_by}{Deprecated. Use \code{size.by} instead.}
+
+\item{assay.type}{A string or integer scalar specifying which assay to
 obtain expression values from, for use in point aesthetics - see the
 \code{exprs_values} argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.}
 
-\item{other_fields}{Additional fields to include in the node information
+\item{by_exprs_values}{Deprecated. Use \code{assay.type} instead.}
+
+\item{other.fields}{Additional fields to include in the node information
 without plotting them.}
+
+\item{other_fields}{Deprecated. Use \code{other.fields} instead.}
 
 \item{name}{If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -149,57 +188,57 @@ metadata(order)$row_graph <- row_graph_order
 # plot a graph independently
 plotColGraph(col_graph,
              genus,
-             colour_by = "SampleType",
-             edge_colour_by = "weight",
-             edge_width_by = "weight",
-             show_label = TRUE)
+             colour.by = "SampleType",
+             edge.colour.by = "weight",
+             edge.width.by = "weight",
+             show.label = TRUE)
 
 # plot the graph stored in the object
 plotColGraph(genus,
              name = "col_graph",
-             colour_by = "SampleType",
-             edge_colour_by = "weight",
-             edge_width_by = "weight")
+             colour.by = "SampleType",
+             edge.colour.by = "weight",
+             edge.width.by = "weight")
              
 
 # plot a graph independently
 plotRowGraph(row_graph,
              genus,
-             colour_by = "Kingdom",
-             edge_colour_by = "weight",
-             edge_width_by = "weight")
+             colour.by = "Kingdom",
+             edge.colour.by = "weight",
+             edge.width.by = "weight")
 
 # plot the graph stored in the object
 plotRowGraph(genus,
              name = "row_graph",
-             colour_by = "Phylum",
-             edge_colour_by = "weight",
-             edge_width_by = "weight")
+             colour.by = "Phylum",
+             edge.colour.by = "weight",
+             edge.width.by = "weight")
 
                            
 # plot a graph independently
 plotRowGraph(row_graph_order,
              order,
-             colour_by = "Kingdom",
-             edge_colour_by = "weight",
-             edge_width_by = "weight")
+             colour.by = "Kingdom",
+             edge.colour.by = "weight",
+             edge.width.by = "weight")
 
 # plot the graph stored in the object and include some labels
 plotRowGraph(order,
              name = "row_graph",
-             colour_by = "Phylum",
-             edge_colour_by = "weight",
-             edge_width_by = "weight", 
-             show_label = c("Sulfolobales","Spirochaetales",
+             colour.by = "Phylum",
+             edge.colour.by = "weight",
+             edge.width.by = "weight", 
+             show.label = c("Sulfolobales","Spirochaetales",
                             "Verrucomicrobiales"))
                             
 # labels can also be included via selecting specific rownames of x/y
 plotRowGraph(order,
              name = "row_graph",
-             colour_by = "Phylum",
-             edge_colour_by = "weight",
-             edge_width_by = "weight", 
-             show_label = c(1,10,50))
+             colour.by = "Phylum",
+             edge.colour.by = "weight",
+             edge.width.by = "weight", 
+             show.label = c(1,10,50))
              
 # labels can also be included via a logical vector, which has the same length
 # as nodes are present
@@ -207,9 +246,9 @@ label_select <- rep(FALSE,nrow(order))
 label_select[c(1,10,50)] <-  TRUE
 plotRowGraph(order,
              name = "row_graph",
-             colour_by = "Phylum",
-             edge_colour_by = "weight",
-             edge_width_by = "weight",
-             show_label = label_select)
+             colour.by = "Phylum",
+             edge.colour.by = "weight",
+             edge.width.by = "weight",
+             show.label = label_select)
 }
 }
