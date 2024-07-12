@@ -69,12 +69,12 @@ test_that("plot tree", {
     plot <- expect_warning(plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
                                        tip.colour.by = "log_mean",
                                        tip.size.by = "detected"))
-    expect_true(all(c("colour.by", "size.by") %in% colnames(plot$data)))
+    expect_true(all(c("colour_by", "size_by") %in% colnames(plot$data)))
     # plot with tip labels
     plot <- expect_warning(plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
                                        tip.colour.by = "log_mean",
                                        show.label = TRUE))
-    expect_true(all(c("colour.by") %in% colnames(plot$data)))
+    expect_true(all(c("colour_by") %in% colnames(plot$data)))
     # plot with selected labels
     labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
     plot <- expect_warning(plotRowTree(altExp(GlobalPatterns,"genus")[top_taxa,],
@@ -82,7 +82,7 @@ test_that("plot tree", {
                                        tip.size.by = "detected",
                                        show.label = labels,
                                        layout="rectangular"))
-    expect_true(all(c("colour.by", "size.by") %in% colnames(plot$data)))
+    expect_true(all(c("colour_by", "size_by") %in% colnames(plot$data)))
     # Test that error occurs if tree.name is wrong
     expect_error( plotRowTree(GlobalPatterns, tree.name = "test") )
     expect_error( plotRowTree(GlobalPatterns, tree.name = NULL) )
