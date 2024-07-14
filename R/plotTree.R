@@ -5,25 +5,33 @@
 #' \code{colData} information can be taken for enriching the tree plots with
 #' additional information.
 #'
-#' @param object a
+#' @param x a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#' object.
+#' x.
 #' 
-#' @param tree_name a single \code{character} value specifying a rowTree/colTree from
-#'   \code{object}. (By default: \code{tree_name = "phylo"})
+#' @param tree.name a single \code{character} value specifying a rowTree/colTree from
+#'   \code{x}. (By default: \code{tree.name = "phylo"})
+#'   
+#' @param tree_name Deprecated. Use \code{tree.name} instead.
 #'
-#' @param relabel_tree logical scalar, Should the tip labels be relabeled using 
-#'   the output of \code{getTaxonomyLabels(object, with_rank = TRUE)}?  
-#'   (default: \code{relabel_tree = FALSE})
+#' @param relabel.tree logical scalar, Should the tip labels be relabeled using 
+#'   the output of \code{getTaxonomyLabels(x, with_rank = TRUE)}?  
+#'   (default: \code{relabel.tree = FALSE})
 #'   
-#' @param order_tree logical scalar, Should the tree be ordered based on 
+#' @param relabel_tree Deprecated. Use \code{relavel.tree} instead.
+#'   
+#' @param order.tree logical scalar, Should the tree be ordered based on 
 #'   alphabetic order of taxonomic levels?  
-#'   (default: \code{order_tree = FALSE})
+#'   (default: \code{order.tree = FALSE})
 #'   
-#' @param remove_levels logical scalar, Should taxonomic level information
-#'   be removed from labels? (default: \code{relabel_tree = FALSE})
+#' @param order_tree Deprecated. Use \code{order.tree} instead.
 #'   
-#' @param show_label,show_highlights,show_highlight_label,abbr_label
+#' @param levels.rm logical scalar, Should taxonomic level information
+#'   be removed from labels? (default: \code{levels.rm = FALSE})
+#'   
+#' @param remove_levels Deprecated. Use \code{levels.rm} instead.
+#'   
+#' @param show.label,show.highlights,show.highlight.label,abbr.label
 #'   \code{logical} (scalar), \code{integer} or \code{character} vector. If a
 #'   \code{logical} scalar is given, should tip labels be plotted or if a
 #'   logical vector is provided, which labels should be shown? If an
@@ -35,63 +43,90 @@
 #'   plotted and if no labels are provided no labels will be shown. (default:
 #'   \code{FALSE})
 #'   
-#' @param add_legend logical scalar. Should legends be plotted? 
-#'   (default: \code{add_legend = TRUE})
+#' @param show_label,show_highlights,show_highlight_label,abbr_label Deprecated. 
+#' Use \code{show.label, show.highlights, show.highlight.label, abbr_label} instead.
+#'   
+#' @param add.legend logical scalar. Should legends be plotted? 
+#'   (default: \code{add.legend = TRUE})
+#'   
+#' @param add_legend Deprecated. Use \code{add.legend} instead.
 #'   
 #' @param layout layout for the plotted tree. See 
 #'   \code{\link[ggtree:ggtree]{ggtree}} for details.
 #'   
-#' @param edge_colour_by Specification of a column metadata field or a feature 
+#' @param edge.colour.by Specification of a column metadata field or a feature 
 #'   to colour tree edges by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
 #'   
-#' @param edge_size_by Specification of a column metadata field or a feature 
+#' @param edge_colour_by Deprecated. Use \code{edge.colour.by} instead.
+#'   
+#' @param edge.size.by Specification of a column metadata field or a feature 
 #'   to size tree edges by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
 #'   
-#' @param tip_colour_by Specification of a column metadata field or a feature to
+#' @param edge_size_by Deprecated. Use \code{edge.size.by} instead.
+#'   
+#' @param tip.colour.by Specification of a column metadata field or a feature to
 #'   colour tree tips by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
 #'   
-#' @param tip_shape_by Specification of a column metadata field or a feature to
+#' @param tip_colour_by Deprecated. Use \code{tip.colour.by} instead.
+#'   
+#' @param tip.shape.by Specification of a column metadata field or a feature to
 #'   shape tree tips by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
 #'   
-#' @param tip_size_by Specification of a column metadata field or a feature to
+#' @param tip_shape_by Deprecated. Use \code{tip.shape.by} isntead.
+#'   
+#' @param tip.size.by Specification of a column metadata field or a feature to
 #'   size tree tips by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
 #'   values.
 #'   
-#' @param node_colour_by Specification of a column metadata field or a feature to
-#'   colour tree nodes by. Must be a field from \code{other_fields}.
+#' @param tip_size_by Deprecated. Use \code{tip.size.by} instead.
 #'   
-#' @param node_shape_by Specification of a column metadata field or a feature to
-#'   shape tree nodes by. Must be a field from \code{other_fields}.
+#' @param node.colour.by Specification of a column metadata field or a feature to
+#'   colour tree nodes by. Must be a field from \code{other.fields}.
 #'   
-#' @param node_size_by Specification of a column metadata field or a feature to
-#'   size tree nodes by. Must be a field from \code{other_fields}.
+#' @param node_colour_by Deprecated. Use \code{node.colour.by} instead.
 #'   
-#' @param colour_highlights_by Should the highlights be colour differently?
-#'   If \code{show_highlights = TRUE}, \code{colour_highlights} will be set to
+#' @param node.shape.by Specification of a column metadata field or a feature to
+#'   shape tree nodes by. Must be a field from \code{other.fields}.
+#'   
+#' @param node_shape_by Deprecated. Use \code{node.shape.by} instead.
+#'   
+#' @param node.size.by Specification of a column metadata field or a feature to
+#'   size tree nodes by. Must be a field from \code{other.fields}.
+#'   
+#' @param node_size_by Deprecated. Use \code{node.size.by} instead.
+#'   
+#' @param colour.highlights.by Should the highlights be colour differently?
+#'   If \code{show.highlights = TRUE}, \code{colour_highlights} will be set to
 #'   \code{TRUE} as default. (default: \code{colour_highlights = FALSE})
 #'   
-#' @param by_exprs_values A string or integer scalar specifying which assay to
+#' @param colour_highlights_by Deprecated. Use \code{colour.highlights.by} isntead.
+#'   
+#' @param assay.type A string or integer scalar specifying which assay to
 #'   obtain expression values from, for use in point aesthetics - see the 
 #'   \code{exprs_values} argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
 #'   
-#' @param other_fields Additional fields to include in the node information
+#' @param by_exprs_values Deprecated. Use \code{assay.type} instead.
+#'   
+#' @param other.fields Additional fields to include in the node information
 #'   without plotting them.
+#'   
+#' @param other_fields Deprecated. Use \code{other.fields} instead.
 #'   
 #' @param ... additional arguments for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @details 
-#' If \code{show_label} or \code{show_highlight_label} have the same length
+#' If \code{show.label} or \code{show.highlight.label} have the same length
 #' as the number of nodes, the vector will be used to relabel the nodes.
 #'
 #' @return a \code{\link{ggtree}} plot
@@ -119,31 +154,31 @@
 #' #
 #' x <- altExp(GlobalPatterns,"Genus")
 #' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             tip_colour_by = "log_mean",
-#'             tip_size_by = "detected")
+#'             tip.colour.by = "log_mean",
+#'             tip.size.by = "detected")
 #' 
 #' # plot with tip labels
 #' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             tip_colour_by = "log_mean",
-#'             tip_size_by = "detected",
-#'             show_label = TRUE)
+#'             tip.colour.by = "log_mean",
+#'             tip.size.by = "detected",
+#'             show.label = TRUE)
 #' # plot with selected labels
 #' labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
 #' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             tip_colour_by = "log_mean",
-#'             tip_size_by = "detected",
-#'             show_label = labels,
+#'             tip.colour.by = "log_mean",
+#'             tip.size.by = "detected",
+#'             show.label = labels,
 #'             layout="rectangular")
 #' 
 #' # plot with labeled edges
 #' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             edge_colour_by = "Phylum",
-#'             tip_colour_by = "log_mean")
+#'             edge.colour.by = "Phylum",
+#'             tip.colour.by = "log_mean")
 #' # if edges are sized, colours might disappear depending on plotting device
 #' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             edge_colour_by = "Phylum",
-#'             edge_size_by = "detected",
-#'             tip_colour_by = "log_mean")
+#'             edge.colour.by = "Phylum",
+#'             edge.size.by = "detected",
+#'             tip.colour.by = "log_mean")
 #' 
 #' # aggregating data over the taxonomic levels for plotting a taxonomic tree
 #' # please note that the original tree of GlobalPatterns is dropped by
@@ -167,159 +202,200 @@
 #' highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
 #'                 "Family:Pseudomonadaceae","Order:Bifidobacteriales")
 #' plotRowTree(x[rowData(x)$Phylum %in% top_phyla,],
-#'             tip_colour_by = "log_mean",
-#'             node_colour_by = "log_mean",
-#'             show_highlights = highlights,
-#'             show_highlight_label = highlights,
-#'             colour_highlights_by = "Phylum")
+#'             tip.colour.by = "log_mean",
+#'             node.colour.by = "log_mean",
+#'             show.highlights = highlights,
+#'             show.highlight.label = highlights,
+#'             colour.highlights.by = "Phylum")
 #' 
 #' plotRowTree(x[rowData(x)$Phylum %in% top_phyla,],
-#'             edge_colour_by = "Phylum",
-#'             edge_size_by = "detected",
-#'             tip_colour_by = "log_mean",
-#'             node_colour_by = "log_mean")
+#'             edge.colour.by = "Phylum",
+#'             edge.size.by = "detected",
+#'             tip.colour.by = "log_mean",
+#'             node.colour.by = "log_mean")
 NULL
 
 #' @rdname plotTree
-setGeneric("plotRowTree", signature = c("object"),
-           function(object, ...)
+setGeneric("plotRowTree", signature = c("x"),
+           function(x, ...)
                standardGeneric("plotRowTree"))
 #' @rdname plotTree
-setGeneric("plotColTree", signature = c("object"),
-           function(object, ...)
+setGeneric("plotColTree", signature = c("x"),
+           function(x, ...)
                standardGeneric("plotColTree"))
 
 #' @rdname plotTree
 #' @export
-setMethod("plotColTree", signature = c(object = "TreeSummarizedExperiment"),
-    function(object,
-             tree_name = "phylo",
-             relabel_tree = FALSE,
-             order_tree = FALSE,
-             remove_levels = FALSE,
-             show_label = FALSE,
-             show_highlights = FALSE,
-             show_highlight_label = FALSE,
-             abbr_label = FALSE,
-             add_legend = TRUE,
-             layout = "circular",
-             edge_colour_by = NULL,
-             edge_size_by = NULL,
-             tip_colour_by = NULL,
-             tip_shape_by = NULL,
-             tip_size_by = NULL,
-             node_colour_by = NULL,
-             node_shape_by = NULL,
-             node_size_by = NULL,
-             colour_highlights_by = NULL,
-             by_exprs_values = "counts",
-             other_fields = list(),
-             ...){
-        .plot_row_column_tree(object, 
-                              tree_name = tree_name,
-                              relabel_tree = relabel_tree,
-                              order_tree = order_tree,
-                              remove_levels = remove_levels,
-                              show_label = show_label,
-                              show_highlights = show_highlights,
-                              show_highlight_label = show_highlight_label,
-                              abbr_label = abbr_label,
-                              add_legend = add_legend,
-                              layout = layout,
-                              edge_colour_by = edge_colour_by,
-                              edge_size_by = edge_size_by,
-                              tip_colour_by = tip_colour_by,
-                              tip_shape_by = tip_shape_by,
-                              tip_size_by = tip_size_by,
-                              node_colour_by = node_colour_by,
-                              node_shape_by = node_shape_by,
-                              node_size_by = node_size_by,
-                              colour_highlights_by = colour_highlights_by,
-                              by_exprs_values = by_exprs_values,
-                              other_fields = other_fields,
-                              type = "column",
-                              ...)
+setMethod("plotColTree", signature = c(x = "TreeSummarizedExperiment"),
+    function(x,
+        tree.name = tree_name,
+        tree_name = "phylo",
+        relabel.tree = relabel_tree,
+        relabel_tree = FALSE,
+        order.tree = order_tree,
+        order_tree = FALSE,
+        levels.rm = remove_levels,
+        remove_levels = FALSE,
+        show.label = show_label,
+        show_label = FALSE,
+        show.highlights = show_highlights,
+        show_highlights = FALSE,
+        show.highlight.label = show_highlight_label,
+        show_highlight_label = FALSE,
+        abbr.label = abbr_label,
+        abbr_label = FALSE,
+        add.legend = add_legend,
+        add_legend = TRUE,
+        layout = "circular",
+        edge.colour.by = edge.colour.by,
+        edge_colour_by = NULL,
+        edge.size.by = edge_size_by,
+        edge_size_by = NULL,
+        tip.colour.by = tip_colour_by,
+        tip_colour_by = NULL,
+        tip.shape.by = tip_shape_by,
+        tip_shape_by = NULL,
+        tip.size.by = tip_size_by,
+        tip_size_by = NULL,
+        node.colour.by = node_colour_by,
+        node_colour_by = NULL,
+        node.shape.by = node_shape_by,
+        node_shape_by = NULL,
+        node.size.by = node_size_by,
+        node_size_by = NULL,
+        colour.highlights.by = colour_highlights_by,
+        colour_highlights_by = NULL,
+        assay.type = by_exprs_values,
+        by_exprs_values = "counts",
+        other.fields = other_fields,
+        other_fields = list(),
+        ...){
+        .plot_row_column_tree(x, 
+            tree_name = tree.name,
+            relabel_tree = relabel.tree,
+            order_tree = order.tree,
+            remove_levels = levels.rm,
+            show_label = show.label,
+            show_highlights = show.highlights,
+            show_highlight_label = show.highlight.label,
+            abbr_label = abbr.label,
+            add_legend = add.legend,
+            layout = layout,
+            edge_colour_by = edge.colour.by,
+            edge_size_by = edge.size.by,
+            tip_colour_by = tip.colour.by,
+            tip_shape_by = tip.shape.by,
+            tip_size_by = tip.size.by,
+            node_colour_by = node.colour.by,
+            node_shape_by = node.shape.by,
+            node_size_by = node.size.by,
+            colour_highlights_by = colour.highlights.by,
+            by_exprs_values = assay.type,
+            other_fields = other.fields,
+            type = "column",
+            ...)
     }
 )
 #' @rdname plotTree
 #' @export
-setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
-    function(object,
-             tree_name = "phylo",
-             relabel_tree = FALSE,
-             order_tree = FALSE,
-             remove_levels = FALSE,
-             show_label = FALSE,
-             show_highlights = FALSE,
-             show_highlight_label = FALSE,
-             abbr_label = FALSE,
-             add_legend = TRUE,
-             layout = "circular",
-             edge_colour_by = NULL,
-             edge_size_by = NULL,
-             tip_colour_by = NULL,
-             tip_shape_by = NULL,
-             tip_size_by = NULL,
-             node_colour_by = NULL,
-             node_shape_by = NULL,
-             node_size_by = NULL,
-             colour_highlights_by = NULL,
-             by_exprs_values = "counts",
-             other_fields = list(),
-             ...){
-        .plot_row_column_tree(object,
-                              tree_name = tree_name,
-                              relabel_tree = relabel_tree,
-                              order_tree = order_tree,
-                              remove_levels = remove_levels,
-                              show_label = show_label,
-                              show_highlights = show_highlights,
-                              show_highlight_label = show_highlight_label,
-                              abbr_label = abbr_label,
-                              add_legend = add_legend,
-                              layout = layout,
-                              edge_colour_by = edge_colour_by,
-                              edge_size_by = edge_size_by,
-                              tip_colour_by = tip_colour_by,
-                              tip_shape_by = tip_shape_by,
-                              tip_size_by = tip_size_by,
-                              node_colour_by = node_colour_by,
-                              node_shape_by = node_shape_by,
-                              node_size_by = node_size_by,
-                              colour_highlights_by = colour_highlights_by,
-                              by_exprs_values = by_exprs_values,
-                              other_fields = other_fields,
-                              type = "row",
-                              ...)
+setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
+    function(x,
+        tree.name = tree_name,
+        tree_name = "phylo",
+        relabel.tree = relabel_tree,
+        relabel_tree = FALSE,
+        order.tree = order_tree,
+        order_tree = FALSE,
+        levels.rm = remove_levels,
+        remove_levels = FALSE,
+        show.label = show_label,
+        show_label = FALSE,
+        show.highlights = show_highlights,
+        show_highlights = FALSE,
+        show.highlight.label = show_highlight_label,
+        show_highlight_label = FALSE,
+        abbr.label = abbr_label,
+        abbr_label = FALSE,
+        add.legend = add_legend,
+        add_legend = TRUE,
+        layout = "circular",
+        edge.colour.by = edge_colour_by,
+        edge_colour_by = NULL,
+        edge.size.by = edge_size_by,
+        edge_size_by = NULL,
+        tip.colour.by = tip_colour_by,
+        tip_colour_by = NULL,
+        tip.shape.by = tip_shape_by,
+        tip_shape_by = NULL,
+        tip.size.by = tip_size_by,
+        tip_size_by = NULL,
+        node.colour.by = node_colour_by,
+        node_colour_by = NULL,
+        node.shape.by = node_shape_by,
+        node_shape_by = NULL,
+        node.size.by = node_size_by,
+        node_size_by = NULL,
+        colour.highlights.by = colour_highlights_by,
+        colour_highlights_by = NULL,
+        assay.type = by_exprs_values,
+        by_exprs_values = "counts",
+        other.fields = other_fields,
+        other_fields = list(),
+        ...){
+        #
+        .plot_row_column_tree(x,
+            tree_name = tree.name,
+            relabel_tree = relabel.tree,
+            order_tree = order.tree,
+            remove_levels = levels.rm,
+            show_label = show.label,
+            show_highlights = show.highlights,
+            show_highlight_label = show.highlight.label,
+            abbr_label = abbr.label,
+            add_legend = add.legend,
+            layout = layout,
+            edge_colour_by = edge.colour.by,
+            edge_size_by = edge.size.by,
+            tip_colour_by = tip.colour.by,
+            tip_shape_by = tip.shape.by,
+            tip_size_by = tip.size.by,
+            node_colour_by = node.colour.by,
+            node_shape_by = node.shape.by,
+            node_size_by = node.size.by,
+            colour_highlights_by = colour.highlights.by,
+            by_exprs_values = assay.type,
+            other_fields = other.fields,
+            type = "row",
+            ...)
     }
 )
 
 .check_tree_plot_switches <- function(layout,
-                                      relabel_tree,
-                                      remove_levels,
-                                      order_tree,
-                                      show_label, 
-                                      show_highlights,
-                                      show_highlight_label,
-                                      abbr_label,
-                                      add_legend){
+        relabel_tree,
+        remove_levels,
+        order_tree,
+        show_label, 
+        show_highlights,
+        show_highlight_label,
+        abbr_label,
+        add_legend){
     if(!.is_a_string(layout)){
         stop("'layout' must be a single character value.", call. = FALSE)
     }
     if(!.is_a_bool(relabel_tree)){
-        stop("'relabel_tree' must be either TRUE or FALSE.", call. = FALSE)
+        stop("'relabel.tree' must be either TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(remove_levels)){
-        stop("'remove_levels' must be either TRUE or FALSE.", call. = FALSE)
+        stop("'level.rm' must be either TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(order_tree)){
-        stop("'order_tree' must be either TRUE or FALSE.", call. = FALSE)
+        stop("'order.tree' must be either TRUE or FALSE.", call. = FALSE)
     }
     if(!.is_a_bool(show_label)){
         if( (!is.logical(show_label) && !is.character(show_label) &&
              !is.numeric(show_label)) ||
             is.null(show_label)){
-            stop("'show_label' must be either TRUE or FALSE or logical, ",
+            stop("'show.label' must be either TRUE or FALSE or logical, ",
                  "integer or character ",
                  "vector. Character alues should match the label of the tree.",
                  call. = FALSE)
@@ -329,7 +405,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
         if( (!is.logical(show_highlights) && !is.character(show_highlights) &&
              !is.numeric(show_highlights)) ||
             is.null(show_highlights)){
-            stop("'show_label' must be either TRUE or FALSE or logical, ",
+            stop("'show.label' must be either TRUE or FALSE or logical, ",
                  "integer or character ",
                  "vector. Character alues should match the label of the tree.",
                  call. = FALSE)
@@ -339,7 +415,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
         if( (!is.logical(show_highlight_label) && !is.character(show_highlight_label) &&
              !is.numeric(show_highlight_label)) ||
             is.null(show_highlight_label)){
-            stop("'show_highlight_label' must be either TRUE or FALSE or logical, ",
+            stop("'show.highlight.label' must be either TRUE or FALSE or logical, ",
                  "integer or character ",
                  "vector. Character alues should match the label of the tree.",
                  call. = FALSE)
@@ -349,63 +425,63 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
         if( (!is.logical(abbr_label) && !is.character(abbr_label) &&
              !is.numeric(abbr_label)) ||
             is.null(abbr_label)){
-            stop("'abbr_label' must be either TRUE or FALSE or logical, ",
+            stop("'abbr.label' must be either TRUE or FALSE or logical, ",
                  "integer or character ",
                  "vector. Character alues should match the label of the tree.",
                  call. = FALSE)
         }
     }
     if(!.is_a_bool(add_legend)){
-        stop("'add_legend' must be either TRUE or FALSE.", call. = FALSE)
+        stop("'add.legend' must be either TRUE or FALSE.", call. = FALSE)
     }
 }
 
 .plot_row_column_tree <- function(object,
-                                  tree_name = "phylo",
-                                  relabel_tree = FALSE,
-                                  order_tree = FALSE,
-                                  remove_levels = FALSE,
-                                  show_label = FALSE,
-                                  show_highlights = FALSE,
-                                  show_highlight_label = FALSE,
-                                  abbr_label = FALSE,
-                                  add_legend = TRUE,
-                                  layout = "circular",
-                                  edge_colour_by = NULL,
-                                  edge_size_by = NULL,
-                                  tip_colour_by = NULL,
-                                  tip_shape_by = NULL,
-                                  tip_size_by = NULL,
-                                  node_colour_by = NULL,
-                                  node_shape_by = NULL,
-                                  node_size_by = NULL,
-                                  colour_highlights_by = NULL,
-                                  by_exprs_values = "counts",
-                                  other_fields = list(),
-                                  type = c("row","column"),
-                                  ...){
+        tree_name = "phylo",
+        relabel_tree = FALSE,
+        order_tree = FALSE,
+        remove_levels = FALSE,
+        show_label = FALSE,
+        show_highlights = FALSE,
+        show_highlight_label = FALSE,
+        abbr_label = FALSE,
+        add_legend = TRUE,
+        layout = "circular",
+        edge_colour_by = NULL,
+        edge_size_by = NULL,
+        tip_colour_by = NULL,
+        tip_shape_by = NULL,
+        tip_size_by = NULL,
+        node_colour_by = NULL,
+        node_shape_by = NULL,
+        node_size_by = NULL,
+        colour_highlights_by = NULL,
+        by_exprs_values = "counts",
+        other_fields = list(),
+        type = c("row","column"),
+        ...){
     type <- match.arg(type)
     # input check
     # Check tree_name
     if( !.is_a_string(tree_name) ){
-        stop("'tree_name' must be a single character value specifying a colTree.",
+        stop("'tree.name' must be a single character value specifying a colTree.",
              call. = FALSE)
     }
     FUN <- switch(type,
                   row = "rowTree",
                   column = "colTree")
     if(is.null(do.call(FUN,list(x = object, whichTree = tree_name)))){
-        stop(FUN,"(object, tree_name) is empty.", call. = FALSE)
+        stop(FUN,"(object, tree.name) is empty.", call. = FALSE)
     }
     .check_tree_plot_switches(layout = layout,
-                              relabel_tree = relabel_tree,
-                              remove_levels = remove_levels,
-                              order_tree = order_tree,
-                              show_label = show_label,
-                              show_highlights = show_highlights,
-                              show_highlight_label = show_highlight_label,
-                              abbr_label = abbr_label,
-                              add_legend = add_legend)
+        relabel_tree = relabel_tree,
+        remove_levels = remove_levels,
+        order_tree = order_tree,
+        show_label = show_label,
+        show_highlights = show_highlights,
+        show_highlight_label = show_highlight_label,
+        abbr_label = abbr_label,
+        add_legend = add_legend)
     #
     tree_out <- .get_object_and_trimmed_tree(
         object,
@@ -633,7 +709,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                 mutate(node_label = show_label)
             show_label <- TRUE
         } else if(!("node_label" %in% colnames(tree_data))){
-            warning("If 'show_label' is a character with length != ",
+            warning("If 'show.label' is a character with length != ",
                     "number of nodes in the graph or a logical/integer ",
                     "vector, a 'label' ",
                     "column must exist in the tree data.",
@@ -644,7 +720,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                 if(any(show_label != as.integer(show_label)) ||
                    min(show_label) < 1 ||
                    max(show_label) > nrow(tree_data)){
-                    stop("If 'show_label' is numeric, values have to be whole ",
+                    stop("If 'show.label' is numeric, values have to be whole ",
                          "numbers and must be between 1 and the number of nodes ",
                          "in the graph",
                          call. = FALSE)
@@ -657,7 +733,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
             }
             if(is.logical(show_label) &&
                length(show_label) != nrow(tree_data)){
-                stop("If 'show_label' is logical, it must have the length as ",
+                stop("If 'show.label' is logical, it must have the length as ",
                      "nodes are in the graph.",
                      call. = FALSE)
             }
@@ -694,7 +770,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
             if(any(show_highlights != as.integer(show_highlights)) ||
                min(show_highlights) < 1 ||
                max(show_highlights) > nrow(tree_data)){
-                stop("If 'show_highlights' is numeric, values have to be whole ",
+                stop("If 'show.highlights' is numeric, values have to be whole ",
                      "numbers and must be between 1 and the number of nodes ",
                      "in the graph",
                      call. = FALSE)
@@ -707,7 +783,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
         }
         if(is.logical(show_highlights) &&
            length(show_highlights) != nrow(tree_data)){
-            stop("If 'show_highlights' is logical, it must have the length as ",
+            stop("If 'show.highlights' is logical, it must have the length as ",
                  "nodes are in the graph.",
                  call. = FALSE)
         }
@@ -750,7 +826,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                 mutate(highlight_label = show_highlight_label)
             show_highlight_label <- TRUE
         } else if(!("highlight_label" %in% colnames(tree_data))){
-            warning("If 'show_highlight_label' is a character with length != ",
+            warning("If 'show.highlight.label' is a character with length != ",
                     "number of nodes in the graph or a logical/integer ",
                     "vector, a 'label' column must exist in the tree data.",
                     call. = FALSE)
@@ -760,7 +836,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
                 if(any(show_highlight_label != as.integer(show_highlight_label)) ||
                    min(show_highlight_label) < 1 ||
                    max(show_highlight_label) > nrow(tree_data)){
-                    stop("If 'show_highlight_label' is numeric, values have ",
+                    stop("If 'show.highlight.label' is numeric, values have ",
                          "to be whole numbers and must be between 1 and the ",
                          "number of nodes in the graph",
                          call. = FALSE)
@@ -774,7 +850,7 @@ setMethod("plotRowTree", signature = c(object = "TreeSummarizedExperiment"),
             }
             if(is.logical(show_highlight_label) &&
                length(show_highlight_label) != nrow(tree_data)){
-                stop("If 'show_highlight_label' is logical, it must have the ",
+                stop("If 'show.highlight.label' is logical, it must have the ",
                      "length as nodes are in the graph.",
                      call. = FALSE)
             }
