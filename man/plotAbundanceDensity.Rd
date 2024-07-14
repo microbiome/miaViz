@@ -5,23 +5,27 @@
 \alias{plotAbundanceDensity,SummarizedExperiment-method}
 \title{Plot abundance density}
 \usage{
-plotAbundanceDensity(object, ...)
+plotAbundanceDensity(x, ...)
 
 \S4method{plotAbundanceDensity}{SummarizedExperiment}(
-  object,
+  x,
   layout = c("jitter", "density", "point"),
   assay.type = assay_name,
   assay_name = "counts",
-  n = min(nrow(object), 25L),
+  n = min(nrow(x), 25L),
+  colour.by = colour_by,
   colour_by = NULL,
+  shape.by = shape_by,
   shape_by = NULL,
+  size.by = size_by,
   size_by = NULL,
+  decreasing = order_descending,
   order_descending = TRUE,
   ...
 )
 }
 \arguments{
-\item{object}{a
+\item{x}{a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
@@ -69,26 +73,34 @@ assay to use for calculation.
 will be disabled.)}
 
 \item{n}{a positive integer specifying the number of the most abundant taxa
-to show. (default: \code{n = min(nrow(object), 25L)})}
+to show. (default: \code{n = min(nrow(x), 25L)})}
 
-\item{colour_by}{a single character value defining a column from
+\item{colour.by}{a single character value defining a column from
 \code{colData}, that is used to color plot. Must be a value of
-\code{colData()} function. (default: \code{colour_by = NULL})}
+\code{colData()} function. (default: \code{colour.by = NULL})}
 
-\item{shape_by}{a single character value defining a column from
+\item{colour_by}{Deprecated. Use \code{colour.by} instead.}
+
+\item{shape.by}{a single character value defining a column from
 \code{colData}, that is used to group observations to different point shape
-groups. Must be a value of \code{colData()} function. \code{shape_by} is
-disabled when \code{layout = "density"}. (default: \code{shape_by = NULL})}
+groups. Must be a value of \code{colData()} function. \code{shape.by} is
+disabled when \code{layout = "density"}. (default: \code{shape.by = NULL})}
 
-\item{size_by}{a single character value defining a column from
+\item{shape_by}{Deprecated. Use \code{shape.by} instead.}
+
+\item{size.by}{a single character value defining a column from
 \code{colData}, that is used to group observations to different point size
-groups. Must be a value of \code{colData()} function. \code{size_by} is
-disabled when \code{layout = "density"}. (default: \code{size_by = NULL})}
+groups. Must be a value of \code{colData()} function. \code{size.by} is
+disabled when \code{layout = "density"}. (default: \code{size.by = NULL})}
 
-\item{order_descending}{\code{TRUE}, \code{FALSE} or\code{NA}: Should the
-results be ordered in a descending order? If \code{NA} is given the order
-as found in \code{object} for the \code{n} most abundant taxa is used.
-(default: \code{order_descending = TRUE})}
+\item{size_by}{Deprecated. Use \code{size.by} instead.}
+
+\item{decreasing}{\code{Boolean} indicating whether the results should be ordered
+in a descending order or not. If \code{NA} is given the order
+as found in \code{x} for the \code{n} most abundant taxa is used.
+(Default: \code{TRUE})}
+
+\item{order_descending}{Deprecated. Use \code{order.descending} instead.}
 }
 \value{
 A \code{ggplot2} object
@@ -119,7 +131,7 @@ tse <- transformAssay(tse, method = "relabundance")
 # "nationality" information is used to color the points. X-axis is log-scaled.
 plotAbundanceDensity(
     tse, layout = "jitter", assay.type = "relabundance", n = 10,
-    colour_by = "Geographical_location") +
+    colour.by = "Geographical_location") +
     scale_x_log10() 
                      
 # Plots the relative abundance of 10 most abundant taxa as a density plot.
@@ -139,16 +151,16 @@ plotAbundanceDensity(
 # and adjusted for point size
 plotAbundanceDensity(
     tse, layout = "point", assay.type = "relabundance", n = 10,
-    shape_by = "Geographical_location", size_by = "Age", point_size=1)
+    shape.by = "Geographical_location", size.by = "Age", point_size=1)
 
-# Ordering via order_descending
+# Ordering via decreasing
 plotAbundanceDensity(
-    tse, assay.type = "relabundance", order_descending = FALSE)
+    tse, assay.type = "relabundance", decreasing = FALSE)
 
-# for custom ordering set order_descending = NA and order the input object
+# for custom ordering set decreasing = NA and order the input object
 # to your wishes
 plotAbundanceDensity(
-    tse, assay.type = "relabundance", order_descending = NA)
+    tse, assay.type = "relabundance", decreasing = NA)
 
 }
 \author{
