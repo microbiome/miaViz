@@ -27,16 +27,22 @@
 #'   to agglomerate the data. Must be a value of \code{taxonomicRanks()} 
 #'   function.
 #'  
-#' @param colour_by a single character value defining a taxonomic rank, that is used to
+#' @param colour.by a single character value defining a taxonomic rank, that is used to
 #'   color plot. Must be a value of \code{taxonomicRanks()} function.
+#'   
+#' @param colour_by Deprecated. Use \code{colour.by} instead.
 #' 
-#' @param linetype_by a single character value defining a taxonomic rank, that
+#' @param linetype.by a single character value defining a taxonomic rank, that
 #'   is used to divide taxa to different line types. Must be a value of
 #'   \code{taxonomicRanks()} function.
+#'   
+#' @param linetype_by Deprecated. Use \code{linetype.by} instead.
 #' 
-#' @param size_by a single character value defining a taxonomic rank, that is
+#' @param size.by a single character value defining a taxonomic rank, that is
 #'   used to divide taxa to different line size types. Must be a value of
 #'   \code{taxonomicRanks()} function.
+#'   
+#' @param size_by Deprecated. Use \code{size.by} instead.
 #'   
 #' @param ... additional parameters for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
@@ -64,7 +70,7 @@
 #' plotSeries(object,
 #'            x = "DAY_ORDER",
 #'            y = getTop(object, 2),
-#'            colour_by = "Family")
+#'            colour.by = "Family")
 #' 
 #' # Counts relative abundances
 #' object <- transformAssay(object, method = "relabundance")
@@ -75,16 +81,16 @@
 #' # Plots relative abundances of phylums
 #' plotSeries(object[taxa,],
 #'            x = "DAY_ORDER", 
-#'            colour_by = "Family",
-#'            linetype_by = "Phylum",
+#'            colour.by = "Family",
+#'            linetype.by = "Phylum",
 #'            assay.type = "relabundance")
 #' 
-#' # In addition to 'colour_by' and 'linetype_by', 'size_by' can also be used to group taxa.
+#' # In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used to group taxa.
 #' plotSeries(object,
 #'            x = "DAY_ORDER", 
 #'            y = getTop(object, 5), 
-#'            colour_by = "Family",
-#'            size_by = "Phylum",
+#'            colour.by = "Family",
+#'            size.by = "Phylum",
 #'            assay.type = "counts")
 #' }
 NULL
@@ -96,8 +102,11 @@ setGeneric("plotSeries", signature = c("object"),
                     x,
                     y = NULL,
                     rank = NULL,
+                    colour.by = colour_by,
                     colour_by = NULL,
+                    size.by = size_by,
                     size_by = NULL,
+                    linetype.by = linetype_by,
                     linetype_by = NULL,
                     assay.type = assay_name, assay_name = "counts",
                     ...)
@@ -112,8 +121,11 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
              x,
              y = NULL,
              rank = NULL,
+             colour.by = colour_by,
              colour_by = NULL,
+             size.by = size_by,
              size_by = NULL,
+             linetype.by = linetype_by,
              linetype_by = NULL,
              assay.type = assay_name, assay_name = "counts",
              ...){
@@ -157,9 +169,9 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         # Fetches sample and features data as a list. 
         vis_out <- .incorporate_series_vis(object,
                                            x,
-                                           colour_by,
-                                           linetype_by,
-                                           size_by)
+                                           colour.by,
+                                           linetype.by,
+                                           size.by)
         series_data <- vis_out$series_data
         feature_data <- vis_out$feature_data
         x <- vis_out$x
