@@ -132,14 +132,12 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         ###################### Input check #######################
         # Checks assay.type
         .check_assay_present(assay.type, object)
-        
         # Checks X
         if( !.is_a_string(x) ||
             !(x %in% names(colData(object))) ){
             stop("'x' must be a name of column of colData(object)",
                  call. = FALSE)
         }
-        
         # If rank is not null, data will be agglomerated by rank
         if( !is.null(rank) ){
             # Check rank
@@ -148,7 +146,6 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
             # Agglomerates the object
             object <- agglomerateByRank(object, rank = rank)
         }
-        
         # Checks Y
         # If Y is not null, user has specified it
         if (!is.null(y)){
@@ -161,141 +158,80 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
             # Select taxa that user has specified
             object <- object[y,]
         }
+        # Gets warning or error if too many taxa are selected. Too many taxa
+        # cannot be plotted since otherwise the plot is too crowded.
+        if( length(rownames(object)) > 20 ){
+            stop("Over 20 taxa selected. 20 or under allowed.", call. = FALSE)
+        } else if ( length(rownames(object)) > 10 ){
+            warning("Over 10 taxa selected.", call. = FALSE)
+        }
         ###################### Input check end ####################
-        
-        # Gets assay data
-        assay <- .get_assay_data(object, assay.type)
-        
-        # Fetches sample and features data as a list. 
-        vis_out <- .incorporate_series_vis(object,
-                                           x,
-                                           colour.by,
-                                           linetype.by,
-                                           size.by)
-        series_data <- vis_out$series_data
-        feature_data <- vis_out$feature_data
-        x <- vis_out$x
-        colour_by <- vis_out$colour_by
-        linetype_by <- vis_out$linetype_by
-        size_by <- vis_out$size_by
-        
-        # Melts the data
-        browser()
-        plot_data <- .melt_series_data(assay,
-                                       series_data,
-                                       feature_data)
+        # Get the data
+        plot_data <- .get_series_data(
+            object, assay.type, x, colour.by, size.by, linetype.by)
+        # Adjust labels
         xlab <- paste0(x)
         ylab <- paste0(assay.type)
-        
-        # Plots the data
-        .series_plotter(plot_data, 
-                        xlab = xlab,
-                        ylab = ylab,
-                        colour_by = colour_by,
-                        linetype_by = linetype_by,
-                        size_by = size_by,
-                        ...)
+        # Create the plot
+        p <- .series_plotter(
+            plot_data, 
+            xlab = xlab,
+            ylab = ylab,
+            colour_by = colour.by,
+            linetype_by = linetype.by,
+            size_by = size.by,
+            ...)
+        return(p)
     }
 )
 
 ################## HELP FUNCTIONS ##########################
 
-.get_assay_data <- function(object, assay.type){
-    # Gets warning or error if too many taxa are selected. 
-    if( length(rownames(object)) > 20 ){
-        stop("Over 20 taxa selected. 20 or under allowed.", call. = FALSE)
-    } else if ( length(rownames(object)) > 10 ){
-        warning("Over 10 taxa selected.", call. = FALSE)
-    }
-    
-    # Retrieves the assay
-    assay <- assay(object, assay.type, withDimnames = TRUE)
-    
-    # Gets rownames
-    rownames(assay) <- rownames(object)
-    return(assay)
-}
-
-.incorporate_series_vis <- function(object, x, colour_by, linetype_by, size_by){
-    
-    # This variable is set by defaults
-    series_data <- retrieveCellInfo(object, x, search = "colData")
-    x <- series_data$name
-    series_data <- series_data$value
-    
-    # This variables are optional
-    row_vars <- c(colour_by = colour_by,
-                  linetype_by = linetype_by,
-                  size_by = size_by)
-    colour_by <- NULL
-    linetype_by <- NULL
-    size_by <- NULL
-    feature_data <- NULL
-    if(!is.null(row_vars)){
-        feature_data <- list()
-        for(i in seq_along(row_vars)){
-            # get data
-            feature_data[[i]] <- retrieveFeatureInfo(object, row_vars[i],
-                                                     search = "rowData")
-            feature_info_name <- feature_data[[i]]$name
-            # mirror back variable name, if a partial match was used
-            var_name <- names(row_vars)[i]
-            assign(var_name, feature_info_name)
-            # rename columns by their usage
-            feature_data[[i]]$name <- var_name
-        }
-        # squash the feature data
-        if(length(feature_data) > 0L){
-            names <- vapply(feature_data,"[[",character(1),"name")
-            data <- lapply(feature_data,"[[","value")
-            feature_data <- data.frame(data)
-            colnames(feature_data) <- names
-            rownames(feature_data) <- rownames(object)
-        }
-    }
-    return(list(series_data = series_data,
-                feature_data = feature_data,
-                x = x,
-                colour_by = colour_by,
-                linetype_by = linetype_by,
-                size_by = size_by))
-}
-
-#' @importFrom tidyr pivot_longer
-#' @importFrom tibble rownames_to_column
+# This function fetches data from SE object. It outputs data in a format that
+# can directly be plotted with .series_plotter().
 #' @importFrom dplyr group_by summarize ungroup
 #' @importFrom stats sd
-.melt_series_data <- function(assay, series_data, feature_data){
-    colnames(assay) <- seq_len(ncol(assay))
-    # Melts assay table
-    melted_data <- as.data.frame(assay) %>% 
-        rownames_to_column("feature") %>% 
-        pivot_longer(-c("feature"),
-                     names_to = "sample",
-                     values_to = "Y")
-    # joing the series data
-    melted_data <- melted_data %>%
-        dplyr::left_join(data.frame(sample = colnames(assay),
-                             X = series_data),
-                  by = "sample") %>%
-        select(!sym("sample"))
-    # if replicates are present calculate sd
-    if(anyDuplicated(melted_data$X)){
-        melted_data <- melted_data %>% 
-            group_by(!!sym("X"),!!sym("feature")) %>%
-            summarize(sd = sd(.data$Y, na.rm = TRUE),
-                      Y = mean(.data$Y, na.rm = TRUE)) %>%
+.get_series_data <- function(
+        object, assay.type, x, colour.by, size.by, linetype.by){
+    # Get variables that can be found from rowData
+    row_vars <- c(
+        colour_by = colour.by, size_by = size.by, linetype_by = linetype.by)
+    # Rename rowData columns. If we do not do this, this might cause
+    # problems in melting step if "x" is named equally to colour.by, size.by or
+    # linetype.by. Duplicate colnames get suffix, and variable names are not
+    # then detected correctly.
+    colnames(rowData(object))[ match(row_vars, colnames(rowData(object))) ] <-
+        names(row_vars)
+    row_vars <- names(row_vars)
+    
+    # Melt SE object. If value is not found from rowData/colData, user get
+    # informative error message.
+    plot_data <- meltSE(
+        object, assay.type = assay.type,
+        row.name = "feature",
+        add.row = row_vars,
+        add.col = x)
+    # Rename abundance value and timepoint columns
+    colnames(plot_data)[ colnames(plot_data) == assay.type ] <- "Y"
+    colnames(plot_data)[ colnames(plot_data) == x ] <- "X"
+    # If time point replicates are present calculate sd and mean for each
+    # timepoint
+    if( anyDuplicated(plot_data[["X"]]) ){
+        # Step 1: Summarize the data
+        summary_data <- plot_data %>%
+            group_by(!!sym("X"), !!sym("feature")) %>%
+            summarize(
+                sd = sd(.data[["Y"]], na.rm = TRUE),
+                Y = mean(.data[["Y"]], na.rm = TRUE)
+            ) %>%
             ungroup()
+        # Step 2: Join the summarized data back to the original data
+        plot_data <- plot_data %>%
+            select(-Y) %>%
+            dplyr::left_join(
+                summary_data, by = c("X" = "X", "feature" = "feature"))
     }
-    # join the feature data
-    if(!is.null(feature_data)){
-        feature_data <- feature_data %>%
-            rownames_to_column("feature")
-        melted_data <- melted_data %>%
-            dplyr::left_join(feature_data,
-                      by = "feature")
-    }
-    melted_data
+    return(plot_data)
 }
 
 .series_plotter <- function(
