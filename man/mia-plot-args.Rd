@@ -11,21 +11,21 @@ available. These are described on this page.
 
 
 \describe{
-\item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{line.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the tree edges. Defaults to \code{1}.}
-\item{\code{line_width}:}{Numeric scalar, specifying the default width of
+\item{\code{line.width}:}{Numeric scalar, specifying the default width of
 an edge. Defaults to NULL to use default of the \code{ggtree} package}
-\item{\code{line_width_range}:}{Two numeric values, the range for plotting
+\item{\code{line.width.range}:}{Two numeric values, the range for plotting
 dynamic edge widths in. Defaults to \code{c(0.5,3)}.}
-\item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the tips. Defaults to \code{1}.}
-\item{\code{point_size}:}{Numeric scalar, specifying the
+\item{\code{point.size}:}{Numeric scalar, specifying the
 default size of tips Defaults to \code{2.}.}
-\item{\code{point_size_range}:}{Two numeric values, the range for plotting
+\item{\code{point.size.range}:}{Two numeric values, the range for plotting
 dynamic tip sizes in. Defaults to \code{c(1,4)}.}
-\item{\code{label_font_size}:}{Numeric scalar, font size for the tip and
+\item{\code{label.font.size}:}{Numeric scalar, font size for the tip and
 node labels. Default to \code{3}.}
-\item{\code{highlight_font_size}:}{Numeric scalar, font size for the
+\item{\code{highlight.font.size}:}{Numeric scalar, font size for the
 highlight labels. Default to \code{3}.}
 }
 }
@@ -34,17 +34,17 @@ highlight labels. Default to \code{3}.}
 
 
 \describe{
-\item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{line.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the tree edges. Defaults to \code{1}.}
-\item{\code{line_width}:}{Numeric scalar, specifying the default width of
+\item{\code{line.width}:}{Numeric scalar, specifying the default width of
 an edge. Defaults to NULL to use default of the \code{ggraph} package}
-\item{\code{line_width_range}:}{Two numeric values, the range for plotting
+\item{\code{line.width.range}:}{Two numeric values, the range for plotting
 dynamic edge widths in. Defaults to \code{c(0.5,3)}.}
-\item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the tips. Defaults to \code{1}.}
-\item{\code{point_size}:}{Numeric scalar, specifying the
+\item{\code{point.size}:}{Numeric scalar, specifying the
 default size of tips Defaults to \code{2.}.}
-\item{\code{point_size_range}:}{Two numeric values, the range for plotting
+\item{\code{point.size.range}:}{Two numeric values, the range for plotting
 dynamic tip sizes in. Defaults to \code{c(1,4)}.}
 }
 }
@@ -55,17 +55,17 @@ dynamic tip sizes in. Defaults to \code{c(1,4)}.}
 \describe{
 \item{\code{flipped}:}{Logical scalar. Should the plot be flipped? Defaults
 to \code{FALSE}.}
-\item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
+\item{\code{add.legend}:}{Logical scalar. Should legends be plotted?
 Defaults to \code{TRUE}.}
-\item{\code{add_x_text}:}{Logical scalar. Should x tick labels be plotted?
+\item{\code{add.x.text}:}{Logical scalar. Should x tick labels be plotted?
 Defaults to \code{FALSE}.}
-\item{\code{add_border}:}{Logical scalar. Should border of bars be plotted?
+\item{\code{add.border}:}{Logical scalar. Should border of bars be plotted?
 Defaults to \code{FALSE}.}
-\item{\code{bar_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{bar.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the bars. Defaults to \code{1}.}
-\item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the points. Defaults to \code{1}.}
-\item{\code{point_size}:}{Numeric scalar, specifying the
+\item{\code{point.size}:}{Numeric scalar, specifying the
 default size of points. Defaults to \code{2.}.}
 }
 }
@@ -74,21 +74,21 @@ default size of points. Defaults to \code{2.}.}
 
 
 \describe{
-\item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
+\item{\code{add.legend}:}{Logical scalar. Should legends be plotted?
 Defaults to \code{TRUE}.}
-\item{\code{point_shape}:}{Numeric scalar setting the shape of points.
+\item{\code{point.shape}:}{Numeric scalar setting the shape of points.
 Defaults to \code{21}.}
-\item{\code{point_colour}:}{Character scalar, specifying the
+\item{\code{point.colour}:}{Character scalar, specifying the
 default colour of points. Defaults to \code{2.}.}
-\item{\code{point_size}:}{Numeric scalar, specifying the
+\item{\code{point.size}:}{Numeric scalar, specifying the
 default size of points. Defaults to \code{2.}.}
-\item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the points. Defaults to \code{1}.}
 \item{\code{flipped}:}{Logical scalar. Should the plot be flipped? Defaults
 to \code{FALSE}.}
-\item{\code{scales_free}:}{Logical scalar. Should \code{scales = "free"} be
+\item{\code{scales.free}:}{Logical scalar. Should \code{scales = "free"} be
 set for faceted plots? Defaults to \code{TRUE}.}
-\item{\code{angle_x_text}:}{Logical scalar. Should x tick labels be plotted?
+\item{\code{angle.x.text}:}{Logical scalar. Should x tick labels be plotted?
 Defaults to \code{FALSE}.}
 }
 }
@@ -99,17 +99,17 @@ Defaults to \code{FALSE}.}
 \describe{
 \item{\code{flipped}:}{Logical scalar, specifying whether the plot should
 be flipped. Defaults to \code{FALSE}.}
-\item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
+\item{\code{add.legend}:}{Logical scalar. Should legends be plotted?
 Defaults to \code{TRUE}.}
-\item{\code{point_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{point.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the tips. Defaults to \code{1}.}
-\item{\code{point_size}:}{Numeric scalar, specifying the
+\item{\code{point.size}:}{Numeric scalar, specifying the
 default size of tips Defaults to \code{2.}.}
-\item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{line.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the tree edges. Defaults to \code{1}.}
-\item{\code{line_type}:}{Numeric scalar, specifying the default line type.
+\item{\code{line.type}:}{Numeric scalar, specifying the default line type.
 Defaults to NULL to use default of the \code{ggplot2} package}
-\item{\code{line_size}:}{Numeric scalar, specifying the default width of
+\item{\code{line.size}:}{Numeric scalar, specifying the default width of
 a line. Defaults to NULL to use default of the \code{ggplot2} package}
 }
 }
@@ -118,17 +118,17 @@ a line. Defaults to NULL to use default of the \code{ggplot2} package}
 
 
 \describe{
-\item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
+\item{\code{add.legend}:}{Logical scalar. Should legends be plotted?
 Defaults to \code{TRUE}.}
-\item{\code{line_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{line.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the tree edges. Defaults to \code{1}.}
-\item{\code{line_type}:}{Numeric scalar, specifying the default line type.
+\item{\code{line.type}:}{Numeric scalar, specifying the default line type.
 Defaults to NULL to use default of the \code{ggplot2} package}
-\item{\code{line_width}:}{Numeric scalar, specifying the default width of
+\item{\code{line.width}:}{Numeric scalar, specifying the default width of
 a line. Defaults to NULL to use default of the \code{ggplot2} package}
-\item{\code{line_width_range}:}{Two numeric values, the range for plotting
+\item{\code{line.width.range}:}{Two numeric values, the range for plotting
 dynamic line widths in. Defaults to \code{c(0.5,3)}.}
-\item{\code{ribbon_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{ribbon.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the ribbon. Defaults to \code{0.3}.}
 }
 }
@@ -137,11 +137,11 @@ transparency of the ribbon. Defaults to \code{0.3}.}
 
 
 \describe{
-\item{\code{add_legend}:}{Logical scalar. Should legends be plotted?
+\item{\code{add.legend}:}{Logical scalar. Should legends be plotted?
 Defaults to \code{TRUE}.}
-\item{\code{rect_alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
+\item{\code{rect.alpha}:}{Numeric scalar in \code{[0, 1]}, specifying the
 transparency of the areas. Defaults to \code{1}.}
-\item{\code{rect_colour}:}{Character scalar, specifying the colour to use
+\item{\code{rect.colour}:}{Character scalar, specifying the colour to use
 for colouring the borders of the areas. Defaults to \code{"black"}.}
 \item{\code{na.value}:}{Character scalar, specifying the colour to use
 for \code{NA} values. Defaults to \code{"grey80"}.}
