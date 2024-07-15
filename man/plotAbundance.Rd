@@ -10,11 +10,15 @@ plotAbundance(x, ...)
 \S4method{plotAbundance}{SummarizedExperiment}(
   x,
   rank = NULL,
+  col.var = features,
   features = NULL,
+  order.row.by = order_rank_by,
   order_rank_by = c("name", "abund", "revabund"),
+  order.col.by = order_sample_by,
   order_sample_by = NULL,
   decreasing = TRUE,
   layout = c("bar", "point"),
+  one.facet = one_facet,
   one_facet = TRUE,
   ncol = 2,
   scales = "fixed",
@@ -30,40 +34,48 @@ object.}
 
 \item{...}{additional parameters for plotting.
 \itemize{
-\item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-be calculated? (default: \code{use_relative = FALSE} }
+\item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+be calculated? (default: \code{as.relative = FALSE} }
 }
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{rank}{a single \code{character} value defining the taxonomic rank to
 use. Must be a value of \code{taxonomyRanks(x)}.}
 
-\item{features}{a single \code{character} value defining a column from
+\item{col.var}{a single \code{character} value defining a column from
 \code{colData} to be plotted below the abundance plot.
 Continuous numeric values will be plotted as point, whereas factors and
-character will be plotted as colour-code bar. (default: \code{features =
+character will be plotted as colour-code bar. (default: \code{col.var =
   NULL})}
 
-\item{order_rank_by}{How to order abundance value: By name (\dQuote{name})
+\item{features}{Deprecated. Use \code{col.var} instead.}
+
+\item{order.row.by}{How to order abundance value: By name (\dQuote{name})
 for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
 sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).}
 
-\item{order_sample_by}{A single character value from the chosen rank of abundance
-data or from \code{colData} to select values to order the abundance
-plot by. (default: \code{order_sample_by = NULL})}
+\item{order_rank_by}{Deprecated. Use \code{order.row.by} instead.}
 
-\item{decreasing}{TRUE or FALSE: If the \code{order_sample_by} is defined and the
+\item{order.col.by}{A single character value from the chosen rank of abundance
+data or from \code{colData} to select values to order the abundance
+plot by. (default: \code{order.col.by = NULL})}
+
+\item{order_sample_by}{Deprecated. Use \code{order.col.by} instead.}
+
+\item{decreasing}{TRUE or FALSE: If the \code{order.col.by} is defined and the
 values are numeric, should the values used to order in decreasing or
 increasing fashion? (default: \code{decreasing = FALSE})}
 
 \item{layout}{Either \dQuote{bar} or \dQuote{point}.}
 
-\item{one_facet}{Should the plot be returned in on facet or split into
+\item{one.facet}{Should the plot be returned in on facet or split into
 different facet, one facet per different value detect in \code{rank}. If
-\code{features} or \code{order_sample_by} is not \code{NULL}, this setting will
+\code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
 be disregarded.}
 
-\item{ncol, scales}{if \code{one_facet = FALSE}, \code{ncol} defines many
+\item{one_facet}{Deprecated. Use \code{one.facet} instead.}
+
+\item{ncol, scales}{if \code{one.facet = FALSE}, \code{ncol} defines many
 columns should be for plotting the different facets and \code{scales} is
 used to define the behavior of the scales of each facet. Both values are
 passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.}
@@ -78,7 +90,7 @@ will be disabled.)}
 }
 \value{
 a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two
-\code{\link[ggplot2:ggplot]{ggplot}} objects, if \code{features} are added to
+\code{\link[ggplot2:ggplot]{ggplot}} objects, if \code{col.var} are added to
 the plot.
 }
 \description{
@@ -90,7 +102,7 @@ If only \sQuote{counts} is present, the relative abundance is computed.
 \details{
 Subsetting to rows of interested and ordering of those is expected to be done
 outside of this functions, e.g. \code{x[1:2,]}. This will plot data of all
-features present.
+col.var present.
 }
 \examples{
 data(GlobalPatterns, package="mia")
@@ -115,19 +127,19 @@ plotAbundance(
 ## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
 plotAbundance(
     tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
-    use_relative = TRUE)
+    as.relative = TRUE)
 
   
 ## A feature from colData or taxon from chosen rank can be used for ordering
 ## samples.
 plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
-           order_sample_by = "Bacteroidetes")
+           order.col.by = "Bacteroidetes")
 
-## Features from colData can be plotted together with abundance plot.
+## col.var from colData can be plotted together with abundance plot.
 # Returned object is a list that includes two plot; other visualizes
-## abundance other features. 
+## abundance other col.var. 
 plot <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
-                   features = "SampleType")
+                   col.var = "SampleType")
 \donttest{
 # These two plots can be combined with wrap_plots function from patchwork
 # package
@@ -138,8 +150,8 @@ wrap_plots(plot, ncol = 1)
 ## Same plot as above but showing sample IDs as labels for the x axis on the
 ## top plot
 plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
-                           features = "SampleType", add_legend = FALSE,
-                           add_x_text = TRUE)[[1]] +
+                           col.var = "SampleType", add.legend = FALSE,
+                           add.x.text = TRUE)[[1]] +
                            theme(axis.text.x = element_text(angle = 90)) 
 \donttest{
 wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
@@ -160,5 +172,5 @@ rowData(tse)$Phylum <- as.character(phylum_renamed)
 
 # Compositional barplot
 plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
-           order_rank_by="abund", order_sample_by = "Bacteroidetes")
+           order.row.by="abund", order.col.by = "Bacteroidetes")
 }

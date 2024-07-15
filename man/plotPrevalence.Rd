@@ -35,10 +35,15 @@ plotPrevalentAbundance(x, ...)
   rank = NULL,
   assay.type = assay_name,
   assay_name = "counts",
+  colour.by = colour_by,
   colour_by = NULL,
+  size.by = size_by,
   size_by = NULL,
+  shape.by = shape_by,
   shape_by = NULL,
+  show.label = label,
   label = NULL,
+  facet.by = facet_by,
   facet_by = NULL,
   ...
 )
@@ -52,7 +57,7 @@ plotRowPrevalence(x, ...)
   assay_name = "counts",
   detection = detections,
   detections = c(0.01, 0.1, 1, 2, 5, 10, 20),
-  ndetection = 20,
+  min.prevalence = min_prevalence,
   min_prevalence = 0,
   BPPARAM = BiocParallel::SerialParam(),
   ...
@@ -73,13 +78,13 @@ object.}
 
 \item{detection}{Detection thresholds for absence/presence. Either an
 absolutes value compared directly to the values of \code{x} or a relative
-value between 0 and 1, if \code{as_relative = TRUE}.}
+value between 0 and 1, if \code{as.relative = TRUE}.}
 
 \item{detections}{Deprecated. Use \code{detection} instead.}
 
 \item{prevalence}{Prevalence thresholds (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
-limit, set \code{include_lowest} to \code{TRUE}.}
+limit, set \code{include.lowest} to \code{TRUE}.}
 
 \item{prevalences}{Deprecated. Use \code{prevalence} instead.}
 
@@ -93,8 +98,13 @@ will be disabled.)}
 
 \item{rank, ...}{additional arguments
 \itemize{
-\item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+\item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
 be calculated? (Default: \code{FALSE}) }
+
+\item{ndetection}{ \code{Integer scalar}. Determines the number of breaks
+calculated detection thresholds when \code{detection=NULL}. When
+\code{TRUE},  \code{as_relative} is then also regarded as \code{TRUE}.
+(Default: \code{20})}
 
 \item{If \code{!is.null(rank)} matching arguments are passed on to
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
@@ -110,36 +120,44 @@ be calculated? (Default: \code{FALSE}) }
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the UniFrac calculation should be parallelized.}
 
-\item{colour_by}{Specification of a feature to colour points by, see the
+\item{colour.by}{Specification of a feature to colour points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
 
-\item{size_by}{Specification of a feature to size points by, see the
+\item{colour_by}{Deprecated. Use \code{colour.by} instead.}
+
+\item{size.by}{Specification of a feature to size points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
 
-\item{shape_by}{Specification of a feature to shape points by, see the
+\item{size_by}{Deprecated. Use \code{size.by} instead.}
+
+\item{shape.by}{Specification of a feature to shape points by, see the
 \code{by} argument in
 \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 possible values. Only used with \code{layout = "point"}.}
 
-\item{label}{a \code{logical}, \code{character} or \code{integer} vector
+\item{shape_by}{Deprecated. Use \code{shape.by} instead.}
+
+\item{show.label}{a \code{logical}, \code{character} or \code{integer} vector
 for selecting labels from the rownames of \code{x}. If \code{rank} is not
-\code{NULL} the rownames might change. (default: \code{label = NULL})}
+\code{NULL} the rownames might change. (default: \code{show.label = NULL})}
 
-\item{facet_by}{Taxonomic rank to facet the plot by.
+\item{label}{Deprecated. Use \code{show.label} instead.}
+
+\item{facet.by}{Taxonomic rank to facet the plot by.
 Value must be of \code{taxonomyRanks(x)}
 Argument can only be used in function plotPrevalentAbundance.}
 
-\item{ndetection}{If \code{detection} is \code{NULL}, a number of breaks
-are calculated automatically. \code{as_relative} is then also regarded as
-\code{TRUE}.}
+\item{facet_by}{Deprecated. Use \code{facet.by} instead.}
 
-\item{min_prevalence}{a single numeric value to apply as a threshold for
+\item{min.prevalence}{a single numeric value to apply as a threshold for
 plotting. The threshold is applied per row and column.
 (default: \code{min_prevalence = 0})}
+
+\item{min_prevalence}{Deprecated. Use \code{min.prevalence} instead.}
 }
 \value{
 A \code{ggplot2} object or \code{plotly} object, if more than one
@@ -182,14 +200,14 @@ plotRowPrevalence(
 # point layout for plotRowPrevalence can be used to visualize by additional
 # information
 plotPrevalentAbundance(
-    GlobalPatterns, rank = "Family", colour_by = "Phylum") +
+    GlobalPatterns, rank = "Family", colour.by = "Phylum") +
     scale_x_log10()
 
 # When using function plotPrevalentAbundace, it is possible to create facets
-# with 'facet_by'.
+# with 'facet.by'.
 plotPrevalentAbundance(
     GlobalPatterns, rank = "Family",
-    colour_by = "Phylum", facet_by = "Kingdom") +
+    colour.by = "Phylum", facet.by = "Kingdom") +
     scale_x_log10()
 }
 \seealso{

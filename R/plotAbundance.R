@@ -7,7 +7,7 @@
 #'
 #' Subsetting to rows of interested and ordering of those is expected to be done
 #' outside of this functions, e.g. \code{x[1:2,]}. This will plot data of all
-#' features present.
+#' col.var present.
 #'
 #' @param x a
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -24,47 +24,54 @@
 #'   (Please use \code{assay.type} instead. At some point \code{assay_name}
 #'   will be disabled.)
 #'   
-#' @param features a single \code{character} value defining a column from 
+#' @param col.var a single \code{character} value defining a column from 
 #'   \code{colData} to be plotted below the abundance plot.
 #'   Continuous numeric values will be plotted as point, whereas factors and
-#'   character will be plotted as colour-code bar. (default: \code{features =
+#'   character will be plotted as colour-code bar. (default: \code{col.var =
 #'   NULL})
 #'   
-#' @param order_rank_by How to order abundance value: By name (\dQuote{name}) 
+#' @param features Deprecated. Use \code{col.var} instead.
+#'   
+#' @param order.row.by How to order abundance value: By name (\dQuote{name}) 
 #' for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
 #' sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).
-#'  
+#' 
+#' @param order_rank_by Deprecated. Use \code{order.row.by} instead.  
 #'   
-#' @param order_sample_by A single character value from the chosen rank of abundance
+#' @param order.col.by A single character value from the chosen rank of abundance
 #'   data or from \code{colData} to select values to order the abundance
-#'   plot by. (default: \code{order_sample_by = NULL})
+#'   plot by. (default: \code{order.col.by = NULL})
 #'   
-#' @param decreasing TRUE or FALSE: If the \code{order_sample_by} is defined and the
+#' @param order_sample_by Deprecated. Use \code{order.col.by} instead.
+#'   
+#' @param decreasing TRUE or FALSE: If the \code{order.col.by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
 #'   increasing fashion? (default: \code{decreasing = FALSE})
 #'
 #' @param layout Either \dQuote{bar} or \dQuote{point}. 
 #' 
-#' @param one_facet Should the plot be returned in on facet or split into 
+#' @param one.facet Should the plot be returned in on facet or split into 
 #'   different facet, one facet per different value detect in \code{rank}. If
-#'   \code{features} or \code{order_sample_by} is not \code{NULL}, this setting will
+#'   \code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
 #'   be disregarded.
+#'   
+#' @param one_facet Deprecated. Use \code{one.facet} instead.
 #' 
-#' @param ncol,scales if \code{one_facet = FALSE}, \code{ncol} defines many 
+#' @param ncol,scales if \code{one.facet = FALSE}, \code{ncol} defines many 
 #'   columns should be for plotting the different facets and \code{scales} is
 #'   used to define the behavior of the scales of each facet. Both values are 
 #'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
 #' 
 #' @param ... additional parameters for plotting.
 #'   \itemize{
-#'   \item{use_relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-#'   be calculated? (default: \code{use_relative = FALSE} }
+#'   \item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
+#'   be calculated? (default: \code{as.relative = FALSE} }
 #' }
 #' See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'
 #' @return 
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two 
-#' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `features` are added to 
+#' \code{\link[ggplot2:ggplot]{ggplot}} objects, if `col.var` are added to 
 #' the plot. 
 #'
 #' @name plotAbundance
@@ -73,15 +80,14 @@
 #' data(GlobalPatterns, package="mia")
 #' tse <- GlobalPatterns
 #' 
-#' # Apply relative transform
-#' tse <- transformAssay(tse, method = "relabundance")
-#' 
 #' ## If rank is set to NULL (default), agglomeration is not done. However, note
 #' ## that there is maximum number of rows that can be plotted. That is why
 #' ## we take sample from the data.
 #' set.seed(26348)
 #' sample <- sample(rownames(tse), 20)
 #' tse_sub <- tse[sample, ]
+#' # Apply relative transformation
+#' tse_sub <- transformAssay(tse_sub, method = "relabundance")
 #' plotAbundance(tse_sub, assay.type = "relabundance")
 #' 
 #' ## Plotting counts using the first taxonomic rank as default
@@ -92,19 +98,21 @@
 #' ## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
 #' plotAbundance(
 #'     tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
-#'     use_relative = TRUE)
+#'     as.relative = TRUE)
 #' 
+#' # Apply relative transform
+#' tse <- transformAssay(tse, method = "relabundance")
 #'   
 #' ## A feature from colData or taxon from chosen rank can be used for ordering
 #' ## samples.
 #' plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
-#'            order_sample_by = "Bacteroidetes")
+#'            order.col.by = "Bacteroidetes")
 #' 
-#' ## Features from colData can be plotted together with abundance plot.
+#' ## col.var from colData can be plotted together with abundance plot.
 #' # Returned object is a list that includes two plot; other visualizes
-#' ## abundance other features. 
+#' ## abundance other col.var. 
 #' plot <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
-#'                    features = "SampleType")
+#'                    col.var = "SampleType")
 #' \donttest{
 #' # These two plots can be combined with wrap_plots function from patchwork
 #' # package
@@ -115,8 +123,8 @@
 #' ## Same plot as above but showing sample IDs as labels for the x axis on the
 #' ## top plot
 #' plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
-#'                            features = "SampleType", add_legend = FALSE,
-#'                            add_x_text = TRUE)[[1]] +
+#'                            col.var = "SampleType", add.legend = FALSE,
+#'                            add.x.text = TRUE)[[1]] +
 #'                            theme(axis.text.x = element_text(angle = 90)) 
 #' \donttest{
 #' wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
@@ -137,7 +145,7 @@
 #' 
 #' # Compositional barplot
 #' plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
-#'            order_rank_by="abund", order_sample_by = "Bacteroidetes")
+#'            order.row.by="abund", order.col.by = "Bacteroidetes")
 NULL
 
 #' @rdname plotAbundance
@@ -163,11 +171,15 @@ setGeneric("plotAbundance", signature = c("x"),
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
             rank = NULL,
+            col.var = features,
             features = NULL,
+            order.row.by = order_rank_by,
             order_rank_by = c("name","abund","revabund"),
+            order.col.by = order_sample_by,
             order_sample_by = NULL,
             decreasing = TRUE,
             layout = c("bar","point"),
+            one.facet = one_facet,
             one_facet = TRUE,
             ncol = 2,
             scales = "fixed",
@@ -187,34 +199,34 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         }
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
-        order_rank_by <- match.arg(order_rank_by, c("name","abund","revabund"))
-        .check_abund_plot_args(one_facet = one_facet,
+        order.row.by <- match.arg(order.row.by, c("name","abund","revabund"))
+        .check_abund_plot_args(one_facet = one.facet,
                             ncol = ncol)
-        if( !is.null(features) ){
-            features <- match.arg(features, colnames(colData(x)))
+        if( !is.null(col.var) ){
+            col.var <- match.arg(col.var, colnames(colData(x)))
         }
         ########################### INPUT CHECK END ###########################
         # Get the abundance data to be plotted. Agglomerate and apply relative
         # transformation if specified.
         abund_data <- .get_abundance_data(
-            x, rank, assay.type, order_rank_by, ...)
+            x, rank, assay.type, order.row.by, ...)
         # If rank was NULL, then the data was not agglomerated. The rank is
         # still used in coloring (passed to colour_by parameter in
         # .abund_plotter), which is why we adjust the value of it to apply
         # coloring in (NULL means that coloring is not applied).
         rank <- ifelse(is.null(rank), "Feature", rank)
         # Order columns
-        order_sample_by <- .norm_order_sample_by(
-            order_sample_by, unique(abund_data$colour_by), x)
+        order_col_by <- .norm_order_sample_by(
+            order.col.by, unique(abund_data$colour_by), x)
         # Get additional column metadata to be plotted
         features_data <- NULL
-        if(!is.null(features) || !is.null(order_sample_by)){
-            features_data <- .get_features_data(features, order_sample_by, x)
+        if(!is.null(col.var) || !is.null(order_col_by)){
+            features_data <- .get_features_data(col.var, order_col_by, x)
         }
         # Order the whole data to follow user specified ordering
         if(!is.null(order_sample_by)){
             order_out <- .order_abund_feature_data(
-                abund_data, features_data, order_sample_by, decreasing)
+                abund_data, features_data, order_col_by, decreasing)
             abund_data <- order_out$abund_data
             features_data <- order_out$features_data
         }
@@ -225,14 +237,13 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
                                 ...)
         # Create the column metadata plot and create a list from plots
         if(!is.null(features_data)){
-            plot_feature_out <- .features_plotter(features_data,
-                                                order_sample_by,
-                                                ...)
+            plot_feature_out <- .features_plotter(
+                features_data, order.col.by, ...)
             plot_out <- c(list(abundance = plot_out), plot_feature_out)
         } else {
             # Whether to split the main plot to multiple facets. This is
             # disabled if user wants to plot also column metadata.
-            if (!one_facet) {
+            if (!one.facet) {
                 plot_out <- plot_out + 
                     facet_wrap(~colour_by, ncol = ncol, scales = scales)
             }
@@ -243,11 +254,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             # If features is specified, then only abundance and features plots
             # are returned as a list. If it is not, then only abundance plot is
             # returned.
-            if( !is.null(features) ){
+            if( !is.null(col.var) ){
                 plot_out <- list(
-                    abundance = plot_out[["abundance"]], plot_out[[features]])
+                    abundance = plot_out[["abundance"]], plot_out[[col.var]])
                 # Assigns the names back
-                names(plot_out) <- c("abundance", features)
+                names(plot_out) <- c("abundance", col.var)
             } else{
                 plot_out <- plot_out[["abundance"]]
             }
@@ -258,10 +269,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 
 #' @importFrom dplyr group_by summarize rename
 .get_abundance_data <- function(
-        x, rank, assay.type, order_rank_by = "name", use_relative = FALSE, ...){
+        x, rank, assay.type, order_rank_by = "name", as.relative = use_relative,
+        use_relative = FALSE, ...){
     # Input check
-    if(!.is_a_bool(use_relative)){
-        stop("'use_relative' must be TRUE or FALSE.",
+    if(!.is_a_bool(as.relative)){
+        stop("'as.relative' must be TRUE or FALSE.",
              call. = FALSE)
     }
     #
@@ -282,7 +294,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     }
     # If user wants to calculate relative abundances, apply relative transform
     # and use relative assay instead of the original assay in plotting.
-    if( use_relative ){
+    if( as.relative ){
         temp_name <- "temporary_relative_abundance"
         x <- transformAssay(
             x, assay.type = assay.type, method = "relabundance",
@@ -337,7 +349,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         return(order_sample_by)
     }
     # Chec that the parameter is string
-    msg <- paste0("'order_sample_by' must be a single non-empty character value, ",
+    msg <- paste0("'order.col.by' must be a single non-empty character value, ",
                 "either present in the abundance data as group variable or ",
                 "in the column data of 'x'. (The abundance data takes ",
                 "precedence)")
@@ -453,7 +465,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 #'   scale_y_continuous
 .abund_plotter <- function(object,
         xlab = "Samples",
-        ylab = paste0(ifelse(use_relative, "Rel. ", ""),"Abundance"),
+        ylab = paste0(ifelse(as.relative, "Rel. ", ""),"Abundance"),
         colour_by = NULL,
         layout = "bar",
         flipped = FALSE,
@@ -463,6 +475,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         bar_alpha = 0.65,
         point_alpha = 1,
         point_size = 2,
+        as.relative = use_relative,
         use_relative = FALSE,
         ...
         ){

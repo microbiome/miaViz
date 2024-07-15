@@ -24,15 +24,15 @@ test_that("plot abundance", {
     expect_equal(as.character(actual[1,1,drop=TRUE]),"ABY1_OD1")
     expect_equal(as.character(actual2[1,1,drop=TRUE]),"Proteobacteria")
     actual3 <- miaViz:::.get_abundance_data(x,"Phylum","counts",
-                                            order_rank_by = "abund",
-                                            use_relative = FALSE)
+                                            order.row.by = "abund",
+                                            as.relative = FALSE)
     expect_true(max(actual3$Y) > 1)
     # .norm_order_sample_by
     expect_true(is.null(miaViz:::.norm_order_sample_by(NULL)))
     expect_error(miaViz:::.norm_order_sample_by("meep"),
                  'argument "factors" is missing')
     expect_error(miaViz:::.norm_order_sample_by("meep","meep2",x),
-                 "'order_sample_by' must be a single non-empty character value")
+                 "'order.col.by' must be a single non-empty character value")
     expect_equal(miaViz:::.norm_order_sample_by("Primer","meep2",x),"Primer")
     # .get_feature_data
     expect_true(is.null(miaViz:::.get_feature_data()))
@@ -70,8 +70,8 @@ test_that("plot abundance", {
     expect_s3_class(plot,"ggplot")
     expect_named(plot$data,c("colour_by","X","Y"))
     plot <- plotAbundance(x, assay.type="counts", rank = "Phylum",
-                          features = "SampleType",
-                          order_sample_by = "SampleType")
+                          col.var = "SampleType",
+                          order.col.by = "SampleType")
     expect_true(is.list(plot))
     expect_s3_class(plot[[1]],"ggplot")
 })
