@@ -472,7 +472,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         add_legend = TRUE,
         add_x_text = add.x.text,
         add.x.text = FALSE,
-        add_border = add,border,
+        add_border = add.border,
         add.border = NULL,
         bar_alpha = bar.alpha,
         bar.alpha = 0.65,
@@ -534,14 +534,15 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 }
 
 #' @importFrom ggplot2 ggplot aes labs geom_point geom_raster
-.feature_plotter <- function(feature_data,
-                            name,
-                            xlab = "Samples",
-                            flipped,
-                            add_legend,
-                            add_x_text,
-                            point_alpha,
-                            point_size){
+.feature_plotter <- function(
+        feature_data,
+        name,
+        xlab = "Samples",
+        flipped,
+        add_legend,
+        add_x_text,
+        point_alpha,
+        point_size){
     # If the values are factors, use coloring to plot them. This step is to
     # ensure that this functions works both with factors and numeric values.
     if(is.factor(feature_data$Y)){
