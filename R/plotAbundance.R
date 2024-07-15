@@ -585,19 +585,20 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     return(feature_plot_out)
 }
 
-.features_plotter <- function(features_data,
-                            order_sample_by,
-                            xlab = NULL,
-                            flipped = FALSE,
-                            add_legend = add.legend,
-                            add.legend = TRUE,
-                            add_x_text = add.x.text,
-                            add.x.text = FALSE,
-                            point_alpha = point.alpha,
-                            point.alpha = 1,
-                            point_size = point.size,
-                            point.size = 2,
-                            ...){
+.features_plotter <- function(
+        features_data,
+        order_sample_by,
+        xlab = NULL,
+        flipped = FALSE,
+        add_legend = add.legend,
+        add.legend = TRUE,
+        add_x_text = add.x.text,
+        add.x.text = FALSE,
+        point_alpha = point.alpha,
+        point.alpha = 1,
+        point_size = point.size,
+        point.size = 2,
+        ...){
     # Get the name of sample metadata variables that will be plotted
     names <- colnames(features_data)
     # For each variable, create a data.frame that contains sample names,
