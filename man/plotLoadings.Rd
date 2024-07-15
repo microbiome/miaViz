@@ -8,16 +8,32 @@
 \usage{
 plotLoadings(x, ...)
 
-\S4method{plotLoadings}{TreeSummarizedExperiment}(x, dimred = "PCA", layout = "heatmap", n = 10, name = NULL, ...)
+\S4method{plotLoadings}{TreeSummarizedExperiment}(
+  x,
+  dimred = "PCA",
+  layout = "heatmap",
+  n = 10,
+  ncomponents = 5,
+  tree_name = "phylo",
+  ...
+)
 
-\S4method{plotLoadings}{matrix}(x, dimred = "PCA", layout = "heatmap", n = 10, name = NULL, ...)
+\S4method{plotLoadings}{matrix}(
+  x,
+  dimred = "PCA",
+  layout = "heatmap",
+  n = 10,
+  ncomponents = 5,
+  tree_name = "phylo",
+  ...
+)
 }
 \arguments{
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 x.}
 
-\item{dimred}{One dimensionality reduction method of \code{c("PCA", "LDA", "NMF")}
+\item{dimred}{One dimensionality reduction method of reducedDimNames
 indicating which method will be used.
 (default: \code{dimred = "PCA"})}
 
@@ -27,8 +43,11 @@ indicating which method will be used.
 \item{n}{A numeric specifying the number of features to be plotted.
 (default: \code{n = 10})}
 
-\item{name}{A single \code{character} value specifying the name of the loadings matrix if it is
-different from default naming. (default: \code{name = NULL})}
+\item{ncomponents}{A numeric specifying the number of components.
+(default: \code{ncomponents = 5})}
+
+\item{tree_name}{a single \code{character} value specifying a rowTree/colTree from
+\code{object}. (By default: \code{tree_name = "phylo"})}
 }
 \value{
 A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
@@ -52,31 +71,30 @@ data("GlobalPatterns", package = "mia")
 tse <- GlobalPatterns
 tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
-tse <- runPCA(tse, ncomponents = 2, assay.type = "clr")
+tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 plotLoadings(tse, dimred= "PCA", layout = "tree")
-
 
 # Plotting without tree as a heatmap
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-plotLoadings(loadings_matrix, dimred= "PCA", layout = "heatmap")
+plotLoadings(loadings_matrix, layout = "heatmap")
 
 # Plotting without tree as a barplot
-plotLoadings(loadings_matrix, dimred= "PCA", layout = "barplot")
+plotLoadings(loadings_matrix, layout = "barplot")
 
 # Plotting without tree as a screeplot
-plotLoadings(loadings_matrix, dimred= "PCA", layout = "screeplot")
+plotLoadings(loadings_matrix, layout = "screeplot")
 
 # Plotting more features
-plotLoadings(loadings_matrix, dimred= "PCA", layout = "heatmap", n = 12)
+plotLoadings(loadings_matrix, layout = "heatmap", n = 12)
 
-# Plotting with more components
+# Plotting with less components
 tse <- runPCA(tse, ncomponents = 4, assay.type = "clr")
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-plotLoadings(loadings_matrix, dimred= "PCA", layout = "heatmap")
+plotLoadings(loadings_matrix, layout = "heatmap", ncomponents = 4 )
 
 # Plotting if loadings matrix name has been changed
-tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 2, assay.type = "clr")
-plotLoadings(loadings_matrix, dimred= "PCA", layout = "heatmap", name = "myPCAmatrix")
+tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
+plotLoadings(tse, dimred= "myPCAmatrix", layout = "heatmap")
 }
 \author{
 Ely Seraidarian
