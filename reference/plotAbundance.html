@@ -20,7 +20,7 @@ If only &amp;#8216;counts&amp;#8217; is present, the relative abundance is compu
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.7</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.8</span>
       </span>
     </div>
 
@@ -188,15 +188,14 @@ col.var present.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Apply relative transform</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## If rank is set to NULL (default), agglomeration is not done. However, note</span></span></span>
 <span class="r-in"><span><span class="co">## that there is maximum number of rows that can be plotted. That is why</span></span></span>
 <span class="r-in"><span><span class="co">## we take sample from the data.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">26348</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">sample</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span><span class="va">sample</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span><span class="co"># Apply relative transformation</span></span></span>
+<span class="r-in"><span><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse_sub</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse_sub</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
@@ -212,6 +211,8 @@ col.var present.</p>
 <span class="r-in"><span>    as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Apply relative transform</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  </span></span>
 <span class="r-in"><span><span class="co">## A feature from colData or taxon from chosen rank can be used for ordering</span></span></span>
 <span class="r-in"><span><span class="co">## samples.</span></span></span>
