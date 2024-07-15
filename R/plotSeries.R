@@ -180,6 +180,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         size_by <- vis_out$size_by
         
         # Melts the data
+        browser()
         plot_data <- .melt_series_data(assay,
                                        series_data,
                                        feature_data)
@@ -297,18 +298,25 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     melted_data
 }
 
-.series_plotter <- function(plot_data,
-                            xlab = NULL,
-                            ylab = NULL,
-                            colour_by = NULL,
-                            linetype_by = NULL,
-                            size_by = NULL,
-                            add_legend = TRUE,
-                            line_alpha = 1,
-                            line_type = NULL,
-                            line_width = 1,
-                            line_width_range = c(0.5,3),
-                            ribbon_alpha = 0.3){
+.series_plotter <- function(
+        plot_data,
+        xlab,
+        ylab,
+        colour_by,
+        linetype_by,
+        size_by,
+        add_legend = add.legend,
+        add.legend = TRUE,
+        line_alpha = line.alpha,
+        line.alpha = 1,
+        line_type = line.type,
+        line.type = NULL,
+        line_width = line.width,
+        line.width = 1,
+        line_width_range = line.width.range,
+        line.width.range =  c(0.5,3),
+        ribbon_alpha = ribbon.alpha,
+        ribbon.alpha = 0.3){
     # fall back for feature grouping
     if(is.null(colour_by)){
         colour_by <- "feature"

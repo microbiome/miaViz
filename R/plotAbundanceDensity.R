@@ -281,21 +281,28 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                 size_by = size_by))
 }
 
-.density_plotter <- function(density_data, 
-                             layout,
-                             add_legend = TRUE,
-                             xlab,
-                             ylab = NULL,
-                             colour_by = NULL,
-                             shape_by = NULL,
-                             size_by = NULL,
-                             point_shape = 21,
-                             point_size = 2,
-                             point_alpha = 0.6,
-                             point_colour = "grey70",
-                             flipped = FALSE,
-                             scales_free = TRUE,
-                             angle_x_text = TRUE){
+.density_plotter <- function(
+        density_data, 
+        layout,
+        add_legend = TRUE,
+        xlab,
+        ylab = NULL,
+        colour_by = NULL,
+        shape_by = NULL,
+        size_by = NULL,
+        point_shape = point.shape,
+        point.shape = 21,
+        point_size = point.size,
+        point.size = 2,
+        point_alpha = point.alpha,
+        point.alpha = 0.6,
+        point_colour = point.colour,
+        point.colour = "grey70",
+        flipped = FALSE,
+        scales_free = scales.free,
+        scales.free = TRUE,
+        angle_x_text = angle.x.test,
+        angle.x.text = TRUE){
     # start plotting
     plot_out <- ggplot(density_data, aes(x=.data[["X"]])) +
         xlab(xlab) +
