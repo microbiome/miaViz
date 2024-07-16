@@ -1104,30 +1104,39 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 #' @importFrom ggplot2 scale_size_identity
 #' @importFrom ggtree ggtree geom_tree geom_tippoint geom_nodepoint groupOTU
 #'   theme_tree
-.tree_plotter <- function(object,
-                          layout = "circular",
-                          add_legend = TRUE,
-                          show_label = FALSE,
-                          show_highlights = FALSE,
-                          show_highlight_label = FALSE,
-                          abbr_label = FALSE,
-                          show_tips = FALSE,
-                          show_nodes = FALSE,
-                          edge_colour_by = NULL,
-                          edge_size_by = NULL,
-                          colour_by = NULL,
-                          shape_by = NULL,
-                          size_by = NULL,
-                          colour_highlights_by = NULL,
-                          order_tree = FALSE,
-                          line_alpha = 1,
-                          line_width = NULL,
-                          line_width_range = c(0.5,3),
-                          point_alpha = 1,
-                          point_size = 2,
-                          point_size_range = c(1,4),
-                          label_font_size = 3,
-                          highlight_font_size = 3){
+.tree_plotter <- function(
+        object,
+        layout,
+        add_legend,
+        show_label,
+        show_highlights,
+        show_highlight_label,
+        abbr_label,
+        show_tips,
+        show_nodes,
+        edge_colour_by,
+        edge_size_by,
+        colour_by,
+        shape_by,
+        size_by,
+        colour_highlights_by,
+        order_tree,
+        line_alpha = line.alpha,
+        line.alpha = 1,
+        line_width = line.width,
+        line.width = NULL,
+        line_width_range = line.width.range,
+        line.width.range = c(0.5,3),
+        point_alpha = point.alpha,
+        point.alpha = 1,
+        point_size = point.size,
+        point.size = 2,
+        point_size_range = point.size.range,
+        point.size.range = c(1,4),
+        label_font_size = label.font.size,
+        label.font.size = 3,
+        highlight_font_size = highlight.font.size,
+        highlight.font.size = 3){
     # start plotting
     plot_out <- ggtree(object,
                        ladderize = !order_tree,
@@ -1210,8 +1219,7 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
     plot_out
 }
 
-.get_hightlight_args <- function(nodes,
-                                 colour_highlights_by = NULL){
+.get_hightlight_args <- function(nodes, colour_highlights_by){
     aes_args <- list()
     aes_args$subset <- paste0("node %in% c(",paste(nodes, collapse = ","),")")
     aes_args$extendto <- ~highlight_extendto
@@ -1442,10 +1450,8 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
 }
 
 #' @importFrom ggtree geom_tiplab geom_nodelab
-.plot_tree_node_labels <- function(plot_out,
-                                   show_label,
-                                   abbr_label,
-                                   label_font_size = 3){
+.plot_tree_node_labels <- function(
+        plot_out, show_label, abbr_label, label_font_size){
     if(show_label){
         data <- plot_out$data
         label_data <- plot_out$data %>% drop_na(.data$node_label)

@@ -470,11 +470,16 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         layout = "bar",
         flipped = FALSE,
         add_legend = TRUE,
-        add_x_text = FALSE,
-        add_border = NULL,
-        bar_alpha = 0.65,
-        point_alpha = 1,
-        point_size = 2,
+        add_x_text = add.x.text,
+        add.x.text = FALSE,
+        add_border = add.border,
+        add.border = NULL,
+        bar_alpha = bar.alpha,
+        bar.alpha = 0.65,
+        point_alpha = point.alpha,
+        point.alpha = 1,
+        point_size = point.size,
+        point.size = 2,
         as.relative = use_relative,
         use_relative = FALSE,
         ...
@@ -529,14 +534,15 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 }
 
 #' @importFrom ggplot2 ggplot aes labs geom_point geom_raster
-.feature_plotter <- function(feature_data,
-                            name,
-                            xlab = "Samples",
-                            flipped,
-                            add_legend,
-                            add_x_text,
-                            point_alpha,
-                            point_size){
+.feature_plotter <- function(
+        feature_data,
+        name,
+        xlab = "Samples",
+        flipped,
+        add_legend,
+        add_x_text,
+        point_alpha,
+        point_size){
     # If the values are factors, use coloring to plot them. This step is to
     # ensure that this functions works both with factors and numeric values.
     if(is.factor(feature_data$Y)){
@@ -579,15 +585,20 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     return(feature_plot_out)
 }
 
-.features_plotter <- function(features_data,
-                            order_sample_by = NULL,
-                            xlab = NULL,
-                            flipped = FALSE,
-                            add_legend = TRUE,
-                            add_x_text = FALSE,
-                            point_alpha = 1,
-                            point_size = 2,
-                            ...){
+.features_plotter <- function(
+        features_data,
+        order_sample_by,
+        xlab = NULL,
+        flipped = FALSE,
+        add_legend = add.legend,
+        add.legend = TRUE,
+        add_x_text = add.x.text,
+        add.x.text = FALSE,
+        point_alpha = point.alpha,
+        point.alpha = 1,
+        point_size = point.size,
+        point.size = 2,
+        ...){
     # Get the name of sample metadata variables that will be plotted
     names <- colnames(features_data)
     # For each variable, create a data.frame that contains sample names,
