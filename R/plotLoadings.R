@@ -20,8 +20,8 @@
 #' @param ncomponents A numeric specifying the number of components.
 #'   (default: \code{ncomponents = 5})
 #' 
-#' @param tree_name a single \code{character} value specifying a rowTree/colTree from
-#'   \code{object}. (By default: \code{tree_name = "phylo"})
+#' @param tree.name a single \code{character} value specifying a rowTree/colTree from
+#'   \code{object}. (By default: \code{tree.name = "phylo"})
 #'     
 #' 
 #' @details
@@ -41,15 +41,15 @@
 #' 
 #' 
 #' # Plotting feature loadings with tree
-#' library(mia)
-#' library(ggtree)
-#' library(scater)
-#' data("GlobalPatterns", package = "mia")
-#' tse <- GlobalPatterns
-#' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
-#' tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
-#' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, dimred= "PCA", layout = "tree")
+# library(mia)
+# library(ggtree)
+# library(scater)
+# data("GlobalPatterns", package = "mia")
+# tse <- GlobalPatterns
+# tse <- transformAssay(tse, method = "clr", pseudocount = 1)
+# tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
+# tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
+# plotLoadings(tse, layout = "tree")
 #' 
 #' # Plotting without tree as a heatmap
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
@@ -88,7 +88,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
             layout = "heatmap",
             n = 10,
             ncomponents = 5,
-            tree_name = "phylo",
+            tree.name = "phylo",
             ...) {
         
             
@@ -98,7 +98,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
                         layout = layout,
                         n = n,
                         ncomponents = ncomponents,
-                        tree_name = tree_name,
+                        tree.name = tree.name,
                         ...)  
 
         loadings_matrix <- attr(reducedDim(x, dimred), "rotation")
@@ -109,7 +109,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         
         if (layout == "tree") {
             # Plot tree with feature loadings
-            p <- .loadings_tree_plotter(x, loadings_matrix, ncomponents, tree_name)
+            p <- .loadings_tree_plotter(x, loadings_matrix, ncomponents, tree.name)
         } else {
             # Plot features with the layout selected
             p <- .plot_pca_feature_loadings(L, layout, ncomponents)
@@ -125,7 +125,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             layout = "heatmap",
             n = 10,
             ncomponents = 5,
-            tree_name = "phylo",
+            tree.name = "phylo",
             ...) {
         # Making sure there is no error in parameters given by the user
         .check_parameters(x,
@@ -133,7 +133,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                         layout = layout,
                         n = n,
                         ncomponents = ncomponents,
-                        tree_name = tree_name,
+                        tree.name = tree.name,
                         ...)
                       
         #Checking if there are enough components in the matrix
@@ -147,10 +147,10 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     }
 )
 
-.check_parameters <- function(x, dimred, layout, n, ncomponents, tree_name,...) {
-    # Check tree_name
-    if( is(x, "TreeSummarizedExperiment") && !(tree_name %in% rowTreeNames(x)  && .is_a_string(tree_name))){
-        stop("'tree_name' must be a single character value specifying a colTree.", call. = FALSE)
+.check_parameters <- function(x, dimred, layout, n, ncomponents, tree.name,...) {
+    # Check tree.name
+    if( is(x, "TreeSummarizedExperiment") && !(tree.name %in% rowTreeNames(x)  && .is_a_string(tree.name))){
+        stop("'tree.name' must be a single character value specifying a colTree.", call. = FALSE)
     }
     # Checking if dimred is correct
     if( is(x, "TreeSummarizedExperiment") && !(dimred %in% reducedDimNames(x)  && .is_a_string(dimred))){
@@ -158,14 +158,14 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     }
     # Checking if layout is correct
     if ( !(layout %in% c("screeplot", "barplot", "tree", "heatmap") && .is_a_string(layout)) ) {
-        stop("'dimred' must be one of c('screeplot', 'barplot', 'tree', 'heatmap').", call. = FALSE)
+        stop("'layout' must be one of c('screeplot', 'barplot', 'tree', 'heatmap').", call. = FALSE)
     }
     # Making sure the user doesn't try to plot the tree if he gives only the matrix
     if (is.matrix(x) && layout == "tree") {
         stop("TreeSummarizedExperiment object is required for the tree plotting.", call. = FALSE)
     }
     # Making sure the tree is not null
-    if( layout == "tree" && !(is(x, "TreeSummarizedExperiment") && !is.null(rowTree(x, tree_name)) )) {
+    if( layout == "tree" && !(is(x, "TreeSummarizedExperiment") && !is.null(rowTree(x, tree.name)) )) {
         stop ("Tree is null.", call. = FALSE)
     }
     #Checking if n is a positive number
@@ -212,17 +212,17 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 }
 
 
-.loadings_tree_plotter <- function(x, loadings_matrix, ncomponents, tree_name) {
+.loadings_tree_plotter <- function(x, loadings_matrix, ncomponents, tree.name) {
     # Retrieve rowTree
-    phylo <- rowTree(x, tree_name)
+    phylo <- rowTree(x, tree.name)
     #Subset data based on the tree
-    ind <- rowLinks(x)[["whichTree"]] == tree_name
+    ind <- rowLinks(x)[["whichTree"]] == tree.name
     if( any(ind) ){
       warning("Data was subsetted")
     }
     x <- x[ind, ]
     # Store plot tree
-    circ <- ggtree(phylo, layout = "circular")
+    circ <- ggtree::ggtree(phylo, layout = "circular")
     df <- rowData(x)
     # Get distincts colors for legend
     color <- randomcoloR::distinctColorPalette(
@@ -243,19 +243,16 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     rownames(df2) <- phylo$tip.label
     
     # Plot tree with first inner circle (Classes)
-    p <- gheatmap(
+    p <- ggtree::gheatmap(
         p = circ,
         data = df,
         offset = -.1,
         width = .1,
-        colnames_angle = 95,
-        colnames_offset_y = .5,
-        font.size = 4,
-        color = "black") +
-        ggplot2::scale_fill_manual(
-            values = color,
-            name = "Class"
-        )
+        color = "black",
+        colnames = FALSE,
+        legend_title = "Class") + 
+        scale_fill_manual(values = color,
+            name = "Class")
         # Plot others circles (loadings)
         for(i in 1:ncomponents){
             if(i == 1){
@@ -266,18 +263,20 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 df2, (all_of(i))
             )
             
-            p <- gheatmap(
+            p <- ggtree::gheatmap(
                 p,
                 df3,
                 offset = i*.065,
                 width = .1,
-                colnames_angle = 90,
-                font.size = 4,
                 high = "darkslateblue",
                 low = "gray98",
                 color = "black",
+                colnames = FALSE,
                 legend_title = expression(beta[k])
             )
+            p <- p + labs(title = "Tree feature loadings plot") +
+              theme(legend.key.size = unit(0.5, 'cm'),
+                    plot.title = element_text(size = 18, hjust=0.5))
         }
     return(p)
 }

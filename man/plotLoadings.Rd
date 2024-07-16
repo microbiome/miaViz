@@ -14,7 +14,7 @@ plotLoadings(x, ...)
   layout = "heatmap",
   n = 10,
   ncomponents = 5,
-  tree_name = "phylo",
+  tree.name = "phylo",
   ...
 )
 
@@ -24,7 +24,7 @@ plotLoadings(x, ...)
   layout = "heatmap",
   n = 10,
   ncomponents = 5,
-  tree_name = "phylo",
+  tree.name = "phylo",
   ...
 )
 }
@@ -46,8 +46,8 @@ indicating which method will be used.
 \item{ncomponents}{A numeric specifying the number of components.
 (default: \code{ncomponents = 5})}
 
-\item{tree_name}{a single \code{character} value specifying a rowTree/colTree from
-\code{object}. (By default: \code{tree_name = "phylo"})}
+\item{tree.name}{a single \code{character} value specifying a rowTree/colTree from
+\code{object}. (By default: \code{tree.name = "phylo"})}
 }
 \value{
 A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
@@ -72,7 +72,7 @@ tse <- GlobalPatterns
 tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, dimred= "PCA", layout = "tree")
+plotLoadings(tse, layout = "tree")
 
 # Plotting without tree as a heatmap
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
