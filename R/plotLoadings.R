@@ -111,7 +111,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
             # Ordering loadings and adding factor to keep the order
             L <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
             # Plot features with the layout selected
-            p <- .plot_pca_feature_loadings(L, layout, ncomponents)
+            p <- .plot_pca_feature_loadings(L, layout, n, ncomponents)
         }
     return(p)
     }
@@ -138,7 +138,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         # Ordering loadings and adding factor to keep the order
         df <- .get_loadings_plot_data(x, n, ncomponents)
         # Plot features with the layout selected
-        p <- .plot_pca_feature_loadings(df, layout, ncomponents)
+        p <- .plot_pca_feature_loadings(df, layout, n, ncomponents)
         
         return(p)
     }
@@ -187,10 +187,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 
 # Function to process each component
 .process_component <- function(i, df, n) {
-    print(df)
     # Ordering loadings by absolute value
     df <- df[order(-abs(df[[i]])), ][1:n, ]
-    print(df)
     # Ordering by actual loadings
     df <- df[order(df[[i]]), ]
     # Add factor to keep order
@@ -224,14 +222,6 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Store plot tree
     circ <- ggtree::ggtree(phylo, layout = "circular")
     df <- rowData(x)
-    # Get distincts colors for legend
-    color <- randomcoloR::distinctColorPalette(
-      length(
-        unique(
-          df$Phylum
-        )
-      )
-    )
     # Transform into a dataframe
     df <- data.frame(Class = df$Phylum)
     # Match labels
@@ -250,9 +240,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         width = .1,
         color = "black",
         colnames = FALSE,
-        legend_title = "Class") + 
-        scale_fill_manual(values = color,
-            name = "Class")
+        legend_title = "Class") 
         # Plot others circles (loadings)
         for(i in 1:ncomponents){
             if(i == 1){
@@ -281,18 +269,18 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     return(p)
 }
 
-.plot_pca_feature_loadings <- function(L, layout, ncomponents) {
+.plot_pca_feature_loadings <- function(L, layout, n, ncomponents) {
     names <- colnames(L[[1]])
     if (layout == "heatmap") {
         # Transform into a dataframe and round numerics for plotting
         df <- data.frame(PC = round(L[[1]][[1]], 2), Feature = L[[1]][["Feature"]])
         # Plot first component
         p <- ggplot(df, aes(x = "PC", y = Feature, label = PC))  +
-            geom_point(aes(fill = PC), size=15, shape = 22) +
+            geom_point(aes(fill = PC), size=15 - 0.4*n, shape = 22) +
             theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
             scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
                 mid = "white", high = "darkred", guide = NULL) +
-            geom_text(color="black", size=4) +
+            geom_text(color="black", size=4 - 0.075 * n) +
             labs(title=names[1])
         # Loop plotting others components
         for (i in 2:length(L)) {
@@ -302,23 +290,23 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             if (i != length(L)) {
                 p <- p +
                     ggplot(df, aes(x = "PC", y = Feature, label = PC))  +
-                    geom_point(aes(fill = PC), size=15, shape = 22) +
+                    geom_point(aes(fill = PC), size=15 - 0.4*n, shape = 22) +
                     theme(axis.title.x = element_blank(), axis.title.y = element_blank(),
                         axis.text.x = element_blank()) +
                     scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
                         mid = "white", high = "darkred", guide = NULL) +
-                    geom_text(color="black", size=4) +
+                    geom_text(color="black", size=4 - 0.075 * n) +
                     labs(title=names[i])
             # Only show legend for last one
             } else {
                 p <- p +
                     ggplot(df, aes(x = "PC", y = Feature, label = PC))  +
-                    geom_point(aes(fill = PC), size=15, shape = 22) +
+                    geom_point(aes(fill = PC), size=15 - 0.4*n, shape = 22) +
                     theme(axis.title.x = element_blank(), axis.title.y = element_blank(),
                         axis.text.x = element_blank()) +
                     scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
                         mid = "white", high = "darkred") +
-                    geom_text(color="black", size=4) +
+                    geom_text(color="black", size=4 - 0.075*n) +
                     labs(title=names[i])
             }
         }
@@ -332,7 +320,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             geom_bar(stat="identity") +
             theme(axis.title.x = element_blank()) +
             xlim(-1,1) +
-            labs(title="PC1")
+            labs(title=names[1])
         # Loop to plot others components
         for (i in 2:length(L)) {
             df <- data.frame(PC =L[[i]][[i]],
@@ -341,7 +329,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 geom_bar(stat="identity") +
                 theme(axis.title.x = element_blank()) +
                 xlim(-1,1) +
-                labs(title=paste("PC",i,sep=""))
+                labs(title=names[i])
         }
     }
     
@@ -351,9 +339,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         # Plot first component
         p <- ggplot(df, aes(x = .data[["PC"]], .data[["Feature"]])) +
             geom_bar(stat="identity") +
-            theme(axis.title.x = element_blank()) +
+            theme(axis.title.x = element_blank(), 
+                axis.text.x = element_text(angle = 90, 
+                    , size = 6, vjust = 0.5, hjust=1)) +
             xlim(-1,1) +
-            labs(title="PC1") +
+            labs(title=names[1]) +
             coord_flip()
         # Plot others components
         for (i in 2:length(L)) {
@@ -361,9 +351,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 Feature = L[[i]][["Feature"]])
             p <- p + ggplot(df, aes(x = .data[["PC"]], .data[["Feature"]])) +
                 geom_bar(stat="identity") +
-                theme(axis.title.x = element_blank()) +
+                theme(axis.title.x = element_blank(),
+                    axis.text.x = element_text(angle = 90,
+                        vjust = 0.5, hjust=1, size=6)) +
                 xlim(-1,1) +
-                labs(title=paste("PC",i,sep="")) +
+                labs(title=names[i]) +
                 coord_flip()
         }
     }
