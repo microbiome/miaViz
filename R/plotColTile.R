@@ -144,13 +144,17 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
         mutate(xmid = .data$xmin + (.data$x - .data$xmin)/2 )
 }
 
-.tile_plotter <- function(data,
-                          add_legend = TRUE,
-                          xlab,
-                          ylab,
-                          rect_alpha = 1,
-                          rect_colour = "black",
-                          na.value = "grey80"){
+.tile_plotter <- function(
+        data,
+        xlab,
+        ylab,
+        add_legend = add.legend,
+        add.legend = TRUE,
+        rect_alpha = rect.alpha,
+        rect.alpha = 1,
+        rect_colour = rect.colour,
+        rect.colour = "black",
+        na.value = "grey80"){
     coord <- .get_xcoord_mid(data)
     # get plotting arguments for rect
     rect_args <- .get_rect_args(colour_by = ylab, 
