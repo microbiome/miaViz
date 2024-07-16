@@ -24,7 +24,6 @@ plotLoadings(x, ...)
   layout = "heatmap",
   n = 10,
   ncomponents = 5,
-  tree.name = "phylo",
   ...
 )
 }
@@ -33,8 +32,7 @@ plotLoadings(x, ...)
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 x.}
 
-\item{dimred}{One dimensionality reduction method of reducedDimNames
-indicating which method will be used.
+\item{dimred}{\code{Character scalar}. Dimension reduction from reducedDimNames to be plotted.
 (default: \code{dimred = "PCA"})}
 
 \item{layout}{One way to plot feature loadings of \code{c("heatmap", "barplot", "screeplot", "tree")}
@@ -46,8 +44,8 @@ indicating which method will be used.
 \item{ncomponents}{A numeric specifying the number of components.
 (default: \code{ncomponents = 5})}
 
-\item{tree.name}{a single \code{character} value specifying a rowTree/colTree from
-\code{object}. (By default: \code{tree.name = "phylo"})}
+\item{tree.name}{a single \code{character} value specifying a rowTree from
+TreeSummarizedExperiment. (By default: \code{tree.name = "phylo"})}
 }
 \value{
 A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
@@ -61,7 +59,6 @@ It is impossible to plot tree if only the matrix is given. Number of features mu
 before calling function or it will not be understandable.
 }
 \examples{
-
 
 # Plotting feature loadings with tree
 library(mia)
