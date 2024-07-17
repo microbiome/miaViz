@@ -224,7 +224,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             features_data <- .get_features_data(col.var, order_col_by, x)
         }
         # Order the whole data to follow user specified ordering
-        if(!is.null(order_sample_by)){
+        if(!is.null(order_col_by)){
             order_out <- .order_abund_feature_data(
                 abund_data, features_data, order_col_by, decreasing)
             abund_data <- order_out$abund_data
