@@ -228,7 +228,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     rownames(df) <- phylo$tip.label
     
     # Transform into a dataframe
-    df2 <- data.frame(abs(loadings_matrix))
+    df2 <- data.frame(loadings_matrix)
     # Match labels
     rownames(df2) <- phylo$tip.label
     
@@ -256,12 +256,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 df3,
                 offset = i*.065,
                 width = .1,
-                high = "darkslateblue",
-                low = "gray98",
                 color = "black",
-                colnames = FALSE,
-                legend_title = expression(beta[k])
-            )
+                colnames = FALSE) + 
+                scale_fill_gradient2(limits = c(-1,1),
+                    low = "darkslateblue", mid = "white",
+                    high = "darkred", name = expression(beta[k]))
             p <- p + labs(title = "Tree feature loadings plot") +
               theme(legend.key.size = unit(0.5, 'cm'),
                     plot.title = element_text(size = 18, hjust=0.5))
