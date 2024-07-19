@@ -12,13 +12,13 @@
 #'   
 #' @param rank,... additional arguments
 #' \itemize{
-#'   \item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-#'   be calculated? (Default: \code{FALSE}) }
+#'   \item as.relative \code{Logical scalar}. Should the relative values
+#'   be calculated? (Default: \code{FALSE}) 
 #'   
-#'   \item{ndetection}{ \code{Integer scalar}. Determines the number of breaks
+#'   \item ndetection \code{Integer scalar}. Determines the number of breaks
 #'   calculated detection thresholds when \code{detection=NULL}. When
 #'   \code{TRUE},  \code{as_relative} is then also regarded as \code{TRUE}.
-#'   (Default: \code{20})}
+#'   (Default: \code{20})
 #'   
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
@@ -34,59 +34,53 @@
 #' @param assay.type a \code{character} value defining which assay data to
 #'   use. (default: \code{assay.type = "relabundance"})
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'   
-#' @param colour.by Specification of a feature to colour points by, see the 
-#'   \code{by} argument in 
-#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}.
+#' @param colour.by \code{Character scalar}. Specification of a feature to colour points by, see the 
+#'   \code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})
 #'   
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
 #'   
-#' @param shape.by Specification of a feature to shape points by, see the 
-#'   \code{by} argument in 
-#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}.
+#' @param shape.by \code{Character scalar}. Specification of a feature to shape points by, see the 
+#'   \code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})
 #'
 #' @param shape_by Deprecated. Use \code{shape.by} instead.   
 #'   
-#' @param size.by Specification of a feature to size points by, see the 
-#'   \code{by} argument in 
-#'   \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}.
+#' @param size.by \code{Character scalar}. Specification of a feature to size points by, see the 
+#'   \code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#'   possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})
 #'   
 #' @param size_by Deprecated. Use \code{size.by} instead.
 #'   
-#' @param facet.by Taxonomic rank to facet the plot by. 
+#' @param facet.by \code{Character scalar}. Taxonomic rank to facet the plot by. 
 #' Value must be of \code{taxonomyRanks(x)}
 #' Argument can only be used in function plotPrevalentAbundance. 
 #' 
 #' @param facet_by Deprecated. Use \code{facet.by} instead.
 #' 
-#' @param show.label a \code{logical}, \code{character} or \code{integer} vector
+#' @param show.label \code{Logical scalar}, \code{character scalar} or \code{integer vector} 
 #'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
-#'   \code{NULL} the rownames might change. (default: \code{show.label = NULL})
+#'   \code{NULL} the rownames might change. (Default: \code{NULL})
 #'   
 #' @param label Deprecated. Use \code{show.label} instead.
 #'
-#' @param detection Detection thresholds for absence/presence. Either an
+#' @param detection \code{Numeric scalar}. Detection thresholds for absence/presence. Either an
 #'   absolutes value compared directly to the values of \code{x} or a relative
-#'   value between 0 and 1, if \code{as.relative = TRUE}.
+#'   value between 0 and 1, if \code{TRUE}. 
 #' 
 #' @param detections Deprecated. Use \code{detection} instead.
 #'   
-#' @param prevalence Prevalence thresholds (in 0 to 1). The
+#' @param prevalence \code{Numeric scalar}. Prevalence thresholds (in 0 to 1). The
 #'   required prevalence is strictly greater by default. To include the
 #'   limit, set \code{include.lowest} to \code{TRUE}.
 #' 
 #' @param prevalences Deprecated. Use \code{prevalence} instead.
 #'
-#' @param min.prevalence a single numeric value to apply as a threshold for 
+#' @param min.prevalence \code{Numeric scalar}. Applied as a threshold for 
 #'   plotting. The threshold is applied per row and column.
-#'   (default: \code{min_prevalence = 0})
+#'   (Default: \code{0})
 #'   
 #' @param min_prevalence Deprecated. Use \code{min.prevalence} instead.
 #' 

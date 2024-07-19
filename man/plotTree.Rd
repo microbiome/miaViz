@@ -112,25 +112,24 @@ x.}
 \item{...}{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
-\item{tree.name}{a single \code{character} value specifying a rowTree/colTree from
-\code{x}. (By default: \code{tree.name = "phylo"})}
+\item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
+\code{x}. (Default: \code{tree.name = "phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
-\item{relabel.tree}{logical scalar, Should the tip labels be relabeled using
+\item{relabel.tree}{\code{Logical scalar}. Should the tip labels be relabeled using
 the output of \code{getTaxonomyLabels(x, with_rank = TRUE)}?
-(default: \code{relabel.tree = FALSE})}
+(Default: \code{FALSE})}
 
 \item{relabel_tree}{Deprecated. Use \code{relavel.tree} instead.}
 
-\item{order.tree}{logical scalar, Should the tree be ordered based on
-alphabetic order of taxonomic levels?
-(default: \code{order.tree = FALSE})}
+\item{order.tree}{\code{Logical scalar}. Should the tree be ordered based on
+alphabetic order of taxonomic levels? (Default: \code{FALSE})}
 
 \item{order_tree}{Deprecated. Use \code{order.tree} instead.}
 
-\item{levels.rm}{logical scalar, Should taxonomic level information
-be removed from labels? (default: \code{levels.rm = FALSE})}
+\item{levels.rm}{\code{Logical scalar}. Should taxonomic level information
+be removed from labels? (Default: \code{FALSE})}
 
 \item{remove_levels}{Deprecated. Use \code{levels.rm} instead.}
 
@@ -148,79 +147,79 @@ plotted and if no labels are provided no labels will be shown. (default:
 \item{show_label, show_highlights, show_highlight_label, abbr_label}{Deprecated.
 Use \code{show.label, show.highlights, show.highlight.label, abbr_label} instead.}
 
-\item{add.legend}{logical scalar. Should legends be plotted?
-(default: \code{add.legend = TRUE})}
+\item{add.legend}{\code{Logical scalar}. Should legends be plotted?
+(Default: \code{TRUE})}
 
 \item{add_legend}{Deprecated. Use \code{add.legend} instead.}
 
 \item{layout}{layout for the plotted tree. See
 \code{\link[ggtree:ggtree]{ggtree}} for details.}
 
-\item{edge.colour.by}{Specification of a column metadata field or a feature
+\item{edge.colour.by}{\code{Character scalar}. Specification of a column metadata field or a feature
 to colour tree edges by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 values.}
 
 \item{edge_colour_by}{Deprecated. Use \code{edge.colour.by} instead.}
 
-\item{edge.size.by}{Specification of a column metadata field or a feature
+\item{edge.size.by}{\code{Character scalar}. Specification of a column metadata field or a feature
 to size tree edges by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values.}
+values. (Default: \code{NULL})}
 
 \item{edge_size_by}{Deprecated. Use \code{edge.size.by} instead.}
 
-\item{tip.colour.by}{Specification of a column metadata field or a feature to
+\item{tip.colour.by}{\code{Character scalar}. Specification of a column metadata field or a feature to
 colour tree tips by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values.}
+values. (Default: \code{NULL})}
 
 \item{tip_colour_by}{Deprecated. Use \code{tip.colour.by} instead.}
 
-\item{tip.shape.by}{Specification of a column metadata field or a feature to
+\item{tip.shape.by}{\code{Character scalar}. Specification of a column metadata field or a feature to
 shape tree tips by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values.}
+values. (Default: \code{NULL})}
 
 \item{tip_shape_by}{Deprecated. Use \code{tip.shape.by} isntead.}
 
-\item{tip.size.by}{Specification of a column metadata field or a feature to
+\item{tip.size.by}{\code{Character scalar}. Specification of a column metadata field or a feature to
 size tree tips by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values.}
+values. (Default: \code{NULL})}
 
 \item{tip_size_by}{Deprecated. Use \code{tip.size.by} instead.}
 
-\item{node.colour.by}{Specification of a column metadata field or a feature to
-colour tree nodes by. Must be a field from \code{other.fields}.}
+\item{node.colour.by}{\code{Character scalar}. Specification of a column metadata field or a feature to
+colour tree nodes by. Must be a field from \code{other.fields}. (Default: \code{NULL})}
 
 \item{node_colour_by}{Deprecated. Use \code{node.colour.by} instead.}
 
-\item{node.shape.by}{Specification of a column metadata field or a feature to
-shape tree nodes by. Must be a field from \code{other.fields}.}
+\item{node.shape.by}{\code{Character scalar}. Specification of a column metadata field or a feature to
+shape tree nodes by. Must be a field from \code{other.fields}. (Default: \code{NULL})}
 
 \item{node_shape_by}{Deprecated. Use \code{node.shape.by} instead.}
 
-\item{node.size.by}{Specification of a column metadata field or a feature to
-size tree nodes by. Must be a field from \code{other.fields}.}
+\item{node.size.by}{\code{Character scalar}. Specification of a column metadata field or a feature to
+size tree nodes by. Must be a field from \code{other.fields}. (Default: \code{NULL})}
 
 \item{node_size_by}{Deprecated. Use \code{node.size.by} instead.}
 
-\item{colour.highlights.by}{Should the highlights be colour differently?
+\item{colour.highlights.by}{\code{Logical scalar}. Should the highlights be colour differently?
 If \code{show.highlights = TRUE}, \code{colour_highlights} will be set to
-\code{TRUE} as default. (default: \code{colour_highlights = FALSE})}
+\code{TRUE} as default. (Default: \code{FALSE})}
 
-\item{colour_highlights_by}{Deprecated. Use \code{colour.highlights.by} isntead.}
+\item{colour_highlights_by}{Deprecated. Use \code{colour.highlights.by} instead.}
 
-\item{assay.type}{A string or integer scalar specifying which assay to
+\item{assay.type}{\code{Character scalar}. or \code{integer scalar}. Specifies which assay to
 obtain expression values from, for use in point aesthetics - see the
-\code{exprs_values} argument in
-\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.}
+\code{exprs_values} argument in \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
+(Default: \code{"counts"})}
 
 \item{by_exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
-\item{other.fields}{Additional fields to include in the node information
-without plotting them.}
+\item{other.fields}{\code{Character vector}. Additional fields to include in the node information
+without plotting them. (Default: \code{list()})}
 
 \item{other_fields}{Deprecated. Use \code{other.fields} instead.}
 }

@@ -1,48 +1,37 @@
 #' Plot abundance density
 #'
 #' This function plots abundance of the most abundant taxa. 
-#'
-#' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object.
 #' 
-#' @param layout a single character value for selecting the layout of the plot.
+#' @inheritParams plotAbundance
+#'
+#' @param layout \code{Character scalar}. Selects the layout of the plot.
 #'   There are three different options: \code{jitter}, \code{density}, and
 #'   \code{point} plot. (default: \code{layout = "jitter"})
-#'
-#' @param assay.type a single character value for selecting the
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   plotted. (default: \code{assay.type = "counts"})
-#'
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
 #'   
-#' @param n a positive integer specifying the number of the most abundant taxa
-#'   to show. (default: \code{n = min(nrow(x), 25L)})
+#' @param n \code{Integer scalar}. Specifies the number of the most abundant taxa
+#'   to show. (Default: \code{min(nrow(x), 25L)})
 #'  
-#' @param colour.by a single character value defining a column from
+#' @param colour.by \code{Character scalar}. Defines a column from
 #'   \code{colData}, that is used to color plot. Must be a value of
-#'   \code{colData()} function. (default: \code{colour.by = NULL})
+#'   \code{colData()} function. (Default: \code{NULL})
 #'   
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
 #' 
-#' @param shape.by a single character value defining a column from
+#' @param shape.by \code{Character scalar}. Defines a column from
 #'   \code{colData}, that is used to group observations to different point shape
 #'   groups. Must be a value of \code{colData()} function. \code{shape.by} is
-#'   disabled when \code{layout = "density"}. (default: \code{shape.by = NULL})
+#'   disabled when \code{layout = "density"}. (Default: \code{NULL})
 #'   
 #' @param shape_by Deprecated. Use \code{shape.by} instead.
 #' 
-#' @param size.by a single character value defining a column from
+#' @param size.by \code{Character scalar}. Defines a column from
 #'   \code{colData}, that is used to group observations to different point size
 #'   groups. Must be a value of \code{colData()} function. \code{size.by} is
-#'   disabled when \code{layout = "density"}. (default: \code{size.by = NULL})
+#'   disabled when \code{layout = "density"}. (Default: \code{NULL})
 #'   
 #' @param size_by Deprecated. Use \code{size.by} instead.
 #' 
-#' @param decreasing \code{Boolean} indicating whether the results should be ordered 
+#' @param decreasing \code{Logical scalar}. Indicates whether the results should be ordered 
 #'   in a descending order or not. If \code{NA} is given the order
 #'   as found in \code{x} for the \code{n} most abundant taxa is used.
 #'   (Default: \code{TRUE})
@@ -51,31 +40,30 @@
 #'   
 #' @param ... additional parameters for plotting. 
 #' \itemize{
-#'   \item{xlab}{ a single character value for selecting the x-axis label. 
-#'   (default: \code{xlab = assay.type}) }
+#'   \item \code{xlab} \code{Character scalar}. Selects the x-axis label. 
+#'   (Default: \code{assay.type})
 #'   
-#'   \item{ylab}{ a single character value for selecting the y-axis label. 
+#'   \item \code{ylab} \code{Character scalar}. Selects the y-axis label. 
 #'   \code{ylab} is disabled when \code{layout = "density"}. 
-#'   (default: \code{ylab = "Taxa")} }
+#'   (Default: \code{"Taxa"})
 #'   
-#'   \item{point_alpha}{ a numeric value from range 0 to 1 selecting the transparency of
-#'   colour in \code{jitter} and \code{point} plot. (default: \code{point_alpha = 0.6}) }
+#'   \item \code{point_alpha} \code{Numeric scalar}. From range 0 to 1. Selects the transparency of
+#'   colour in \code{jitter} and \code{point} plot. (Default: \code{0.6})
 #'   
-#'   \item{point_shape}{ a positive integer value selecting the shape of point in
-#'   \code{jitter} and \code{point} plot. (default: \code{point_shape = 21}) }
+#'   \item \code{point_shape} \code{Positive integer scalar}. Value selecting the shape of point in
+#'   \code{jitter} and \code{point} plot. (Default: \code{21})
 #'   
-#'   \item{point_size}{ a positive numeric value selecting the size of point in
-#'   \code{jitter} and \code{point} plot. (default: \code{point_size = 2}) }
+#'   \item \code{point_size} \code{Positive integer scalar}. Selects the size of point in
+#'   \code{jitter} and \code{point} plot. (Default: \code{2})
 #'   
-#'   \item{add_legend}{ a boolean value selecting if legend is added. 
-#'   (default: \code{add_legend = TRUE}) }
+#'   \item \code{add_legend} \code{Logical scalar}. Determines if legend is added. 
+#'   (Default: \code{TRUE})
 #'   
-#'   \item{flipped}{ a boolean value selecting if the orientation of plot is changed 
-#'   so that x-axis and y-axis are swapped. (default \code{flipped = FALSE}) }
+#'   \item \code{flipped}: \code{Logical scalar}. Determines if the orientation of plot is changed 
+#'   so that x-axis and y-axis are swapped. (Default: \code{FALSE})
 #'   
-#'   \item{add_x_text}{ a boolean value selecting if text that represents values is included
-#'   in x-axis. (default: \code{add_x_text = TRUE}) }
-#'
+#'   \item \code{add_x_text} \code{Logical scalar}. Determines if text that represents values is included
+#'   in x-axis. (Default: \code{TRUE})
 #' }
 #' See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'

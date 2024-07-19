@@ -76,13 +76,13 @@ plotFeaturePrevalence(x, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{detection}{Detection thresholds for absence/presence. Either an
+\item{detection}{\code{Numeric scalar}. Detection thresholds for absence/presence. Either an
 absolutes value compared directly to the values of \code{x} or a relative
-value between 0 and 1, if \code{as.relative = TRUE}.}
+value between 0 and 1, if \code{TRUE}.}
 
 \item{detections}{Deprecated. Use \code{detection} instead.}
 
-\item{prevalence}{Prevalence thresholds (in 0 to 1). The
+\item{prevalence}{\code{Numeric scalar}. Prevalence thresholds (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set \code{include.lowest} to \code{TRUE}.}
 
@@ -91,20 +91,17 @@ limit, set \code{include.lowest} to \code{TRUE}.}
 \item{assay.type}{a \code{character} value defining which assay data to
 use. (default: \code{assay.type = "relabundance"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{rank, ...}{additional arguments
 \itemize{
-\item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-be calculated? (Default: \code{FALSE}) }
+\item as.relative \code{Logical scalar}. Should the relative values
+be calculated? (Default: \code{FALSE})
 
-\item{ndetection}{ \code{Integer scalar}. Determines the number of breaks
+\item ndetection \code{Integer scalar}. Determines the number of breaks
 calculated detection thresholds when \code{detection=NULL}. When
 \code{TRUE},  \code{as_relative} is then also regarded as \code{TRUE}.
-(Default: \code{20})}
+(Default: \code{20})
 
 \item{If \code{!is.null(rank)} matching arguments are passed on to
 \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
@@ -120,42 +117,39 @@ calculated detection thresholds when \code{detection=NULL}. When
 \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 object specifying whether the UniFrac calculation should be parallelized.}
 
-\item{colour.by}{Specification of a feature to colour points by, see the
-\code{by} argument in
-\code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
-possible values. Only used with \code{layout = "point"}.}
+\item{colour.by}{\code{Character scalar}. Specification of a feature to colour points by, see the
+\code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
+possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})}
 
 \item{colour_by}{Deprecated. Use \code{colour.by} instead.}
 
-\item{size.by}{Specification of a feature to size points by, see the
-\code{by} argument in
-\code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
-possible values. Only used with \code{layout = "point"}.}
+\item{size.by}{\code{Character scalar}. Specification of a feature to size points by, see the
+\code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
+possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})}
 
 \item{size_by}{Deprecated. Use \code{size.by} instead.}
 
-\item{shape.by}{Specification of a feature to shape points by, see the
-\code{by} argument in
-\code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
-possible values. Only used with \code{layout = "point"}.}
+\item{shape.by}{\code{Character scalar}. Specification of a feature to shape points by, see the
+\code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
+possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})}
 
 \item{shape_by}{Deprecated. Use \code{shape.by} instead.}
 
-\item{show.label}{a \code{logical}, \code{character} or \code{integer} vector
+\item{show.label}{\code{Logical scalar}, \code{character scalar} or \code{integer vector}
 for selecting labels from the rownames of \code{x}. If \code{rank} is not
-\code{NULL} the rownames might change. (default: \code{show.label = NULL})}
+\code{NULL} the rownames might change. (Default: \code{NULL})}
 
 \item{label}{Deprecated. Use \code{show.label} instead.}
 
-\item{facet.by}{Taxonomic rank to facet the plot by.
+\item{facet.by}{\code{Character scalar}. Taxonomic rank to facet the plot by.
 Value must be of \code{taxonomyRanks(x)}
 Argument can only be used in function plotPrevalentAbundance.}
 
 \item{facet_by}{Deprecated. Use \code{facet.by} instead.}
 
-\item{min.prevalence}{a single numeric value to apply as a threshold for
+\item{min.prevalence}{\code{Numeric scalar}. Applied as a threshold for
 plotting. The threshold is applied per row and column.
-(default: \code{min_prevalence = 0})}
+(Default: \code{0})}
 
 \item{min_prevalence}{Deprecated. Use \code{min.prevalence} instead.}
 }

@@ -34,59 +34,56 @@ object.}
 
 \item{...}{additional parameters for plotting.
 \itemize{
-\item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-be calculated? (default: \code{as.relative = FALSE} }
+\item \code{as.relative} \code{Character scalar}. Should the relative values
+be calculated? (Default: \code{FALSE})
 }
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
-\item{rank}{a single \code{character} value defining the taxonomic rank to
-use. Must be a value of \code{taxonomyRanks(x)}.}
+\item{rank}{\code{Character scalar}. Defines the taxonomic rank to
+use. Must be a value of \code{taxonomyRanks(x)}. (Default: \code{NULL})}
 
-\item{col.var}{a single \code{character} value defining a column from
+\item{col.var}{\code{Character scalar}. Selects a column from
 \code{colData} to be plotted below the abundance plot.
 Continuous numeric values will be plotted as point, whereas factors and
-character will be plotted as colour-code bar. (default: \code{col.var =
-  NULL})}
+character will be plotted as colour-code bar. (Default: \code{NULL})}
 
 \item{features}{Deprecated. Use \code{col.var} instead.}
 
-\item{order.row.by}{How to order abundance value: By name (\dQuote{name})
+\item{order.row.by}{\code{Character scalar}. How to order abundance value: By name (\dQuote{name})
 for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
 sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).}
 
 \item{order_rank_by}{Deprecated. Use \code{order.row.by} instead.}
 
-\item{order.col.by}{A single character value from the chosen rank of abundance
+\item{order.col.by}{\code{Character scalar}. from the chosen rank of abundance
 data or from \code{colData} to select values to order the abundance
-plot by. (default: \code{order.col.by = NULL})}
+plot by. (Default: \code{NULL})}
 
 \item{order_sample_by}{Deprecated. Use \code{order.col.by} instead.}
 
-\item{decreasing}{TRUE or FALSE: If the \code{order.col.by} is defined and the
+\item{decreasing}{\code{Logical scalar}. If the \code{order.col.by} is defined and the
 values are numeric, should the values used to order in decreasing or
-increasing fashion? (default: \code{decreasing = FALSE})}
+increasing fashion? (Default: \code{FALSE})}
 
-\item{layout}{Either \dQuote{bar} or \dQuote{point}.}
+\item{layout}{\code{Character scalar}. Either \dQuote{bar} or \dQuote{point}.}
 
-\item{one.facet}{Should the plot be returned in on facet or split into
+\item{one.facet}{\code{Logical scalar}. Should the plot be returned in on facet or split into
 different facet, one facet per different value detect in \code{rank}. If
 \code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
-be disregarded.}
+be disregarded. (Default: \code{TRUE})}
 
 \item{one_facet}{Deprecated. Use \code{one.facet} instead.}
 
-\item{ncol, scales}{if \code{one.facet = FALSE}, \code{ncol} defines many
-columns should be for plotting the different facets and \code{scales} is
-used to define the behavior of the scales of each facet. Both values are
-passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.}
+\item{ncol}{\code{Numeric scalar}. if \code{one.facet = FALSE}, \code{ncol} defines many
+columns should be for plotting the different facets. (Default: \code{2})}
 
-\item{assay.type}{a \code{character} value defining which assay data to
-use. (default: \code{assay.type = "relabundance"})}
+\item{scales}{\code{Character scalar}. Defines the behavior of the scales of each facet. Both values are
+passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"fixed"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay.type}{\code{Character scalar} value defining which assay data to
+use. (Default: \code{"relabundance"})}
+
+\item{assay_name}{Deprecate. Use \code{assay.type} instead.}
 }
 \value{
 a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two
