@@ -168,8 +168,8 @@ x.</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
-<dd><p>a single <code>character</code> value specifying a rowTree/colTree from
-<code>x</code>. (By default: <code>tree.name = "phylo"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Specifies a rowTree/colTree from
+<code>x</code>. (Default: <code>tree.name = "phylo"</code>)</p></dd>
 
 
 <dt id="arg-tree-name">tree_name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
@@ -177,9 +177,9 @@ x.</p></dd>
 
 
 <dt id="arg-relabel-tree">relabel.tree<a class="anchor" aria-label="anchor" href="#arg-relabel-tree"></a></dt>
-<dd><p>logical scalar, Should the tip labels be relabeled using
+<dd><p><code>Logical scalar</code>. Should the tip labels be relabeled using
 the output of <code>getTaxonomyLabels(x, with_rank = TRUE)</code>?
-(default: <code>relabel.tree = FALSE</code>)</p></dd>
+(Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-relabel-tree">relabel_tree<a class="anchor" aria-label="anchor" href="#arg-relabel-tree"></a></dt>
@@ -187,9 +187,8 @@ the output of <code>getTaxonomyLabels(x, with_rank = TRUE)</code>?
 
 
 <dt id="arg-order-tree">order.tree<a class="anchor" aria-label="anchor" href="#arg-order-tree"></a></dt>
-<dd><p>logical scalar, Should the tree be ordered based on
-alphabetic order of taxonomic levels?
-(default: <code>order.tree = FALSE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should the tree be ordered based on
+alphabetic order of taxonomic levels? (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-order-tree">order_tree<a class="anchor" aria-label="anchor" href="#arg-order-tree"></a></dt>
@@ -197,8 +196,8 @@ alphabetic order of taxonomic levels?
 
 
 <dt id="arg-levels-rm">levels.rm<a class="anchor" aria-label="anchor" href="#arg-levels-rm"></a></dt>
-<dd><p>logical scalar, Should taxonomic level information
-be removed from labels? (default: <code>levels.rm = FALSE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should taxonomic level information
+be removed from labels? (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-remove-levels">remove_levels<a class="anchor" aria-label="anchor" href="#arg-remove-levels"></a></dt>
@@ -224,8 +223,8 @@ Use <code>show.label, show.highlights, show.highlight.label, abbr_label</code> i
 
 
 <dt id="arg-add-legend">add.legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
-<dd><p>logical scalar. Should legends be plotted?
-(default: <code>add.legend = TRUE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should legends be plotted?
+(Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-add-legend">add_legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
@@ -238,7 +237,7 @@ Use <code>show.label, show.highlights, show.highlight.label, abbr_label</code> i
 
 
 <dt id="arg-edge-colour-by">edge.colour.by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature
+<dd><p><code>Character scalar</code>. Specification of a column metadata field or a feature
 to colour tree edges by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
 values.</p></dd>
@@ -249,10 +248,10 @@ values.</p></dd>
 
 
 <dt id="arg-edge-size-by">edge.size.by<a class="anchor" aria-label="anchor" href="#arg-edge-size-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature
+<dd><p><code>Character scalar</code>. Specification of a column metadata field or a feature
 to size tree edges by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
-values.</p></dd>
+values. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-edge-size-by">edge_size_by<a class="anchor" aria-label="anchor" href="#arg-edge-size-by"></a></dt>
@@ -260,10 +259,10 @@ values.</p></dd>
 
 
 <dt id="arg-tip-colour-by">tip.colour.by<a class="anchor" aria-label="anchor" href="#arg-tip-colour-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
+<dd><p><code>Character scalar</code>. Specification of a column metadata field or a feature to
 colour tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
-values.</p></dd>
+values. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-tip-colour-by">tip_colour_by<a class="anchor" aria-label="anchor" href="#arg-tip-colour-by"></a></dt>
@@ -271,10 +270,10 @@ values.</p></dd>
 
 
 <dt id="arg-tip-shape-by">tip.shape.by<a class="anchor" aria-label="anchor" href="#arg-tip-shape-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
+<dd><p><code>Character scalar</code>. Specification of a column metadata field or a feature to
 shape tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
-values.</p></dd>
+values. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-tip-shape-by">tip_shape_by<a class="anchor" aria-label="anchor" href="#arg-tip-shape-by"></a></dt>
@@ -282,10 +281,10 @@ values.</p></dd>
 
 
 <dt id="arg-tip-size-by">tip.size.by<a class="anchor" aria-label="anchor" href="#arg-tip-size-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
+<dd><p><code>Character scalar</code>. Specification of a column metadata field or a feature to
 size tree tips by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
-values.</p></dd>
+values. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-tip-size-by">tip_size_by<a class="anchor" aria-label="anchor" href="#arg-tip-size-by"></a></dt>
@@ -293,8 +292,8 @@ values.</p></dd>
 
 
 <dt id="arg-node-colour-by">node.colour.by<a class="anchor" aria-label="anchor" href="#arg-node-colour-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
-colour tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
+<dd><p><code>Character scalar</code>. Specification of a column metadata field or a feature to
+colour tree nodes by. Must be a field from <code>other.fields</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-node-colour-by">node_colour_by<a class="anchor" aria-label="anchor" href="#arg-node-colour-by"></a></dt>
@@ -302,8 +301,8 @@ colour tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
 
 
 <dt id="arg-node-shape-by">node.shape.by<a class="anchor" aria-label="anchor" href="#arg-node-shape-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
-shape tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
+<dd><p><code>Character scalar</code>. Specification of a column metadata field or a feature to
+shape tree nodes by. Must be a field from <code>other.fields</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-node-shape-by">node_shape_by<a class="anchor" aria-label="anchor" href="#arg-node-shape-by"></a></dt>
@@ -311,8 +310,8 @@ shape tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
 
 
 <dt id="arg-node-size-by">node.size.by<a class="anchor" aria-label="anchor" href="#arg-node-size-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
-size tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
+<dd><p><code>Character scalar</code>. Specification of a column metadata field or a feature to
+size tree nodes by. Must be a field from <code>other.fields</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-node-size-by">node_size_by<a class="anchor" aria-label="anchor" href="#arg-node-size-by"></a></dt>
@@ -320,20 +319,20 @@ size tree nodes by. Must be a field from <code>other.fields</code>.</p></dd>
 
 
 <dt id="arg-colour-highlights-by">colour.highlights.by<a class="anchor" aria-label="anchor" href="#arg-colour-highlights-by"></a></dt>
-<dd><p>Should the highlights be colour differently?
+<dd><p><code>Logical scalar</code>. Should the highlights be colour differently?
 If <code>show.highlights = TRUE</code>, <code>colour_highlights</code> will be set to
-<code>TRUE</code> as default. (default: <code>colour_highlights = FALSE</code>)</p></dd>
+<code>TRUE</code> as default. (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-colour-highlights-by">colour_highlights_by<a class="anchor" aria-label="anchor" href="#arg-colour-highlights-by"></a></dt>
-<dd><p>Deprecated. Use <code>colour.highlights.by</code> isntead.</p></dd>
+<dd><p>Deprecated. Use <code>colour.highlights.by</code> instead.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>A string or integer scalar specifying which assay to
+<dd><p><code>Character scalar</code>. or <code>integer scalar</code>. Specifies which assay to
 obtain expression values from, for use in point aesthetics - see the
-<code>exprs_values</code> argument in
-<code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.</p></dd>
+<code>exprs_values</code> argument in <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.
+(Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-by-exprs-values">by_exprs_values<a class="anchor" aria-label="anchor" href="#arg-by-exprs-values"></a></dt>
@@ -341,8 +340,8 @@ obtain expression values from, for use in point aesthetics - see the
 
 
 <dt id="arg-other-fields">other.fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>
-<dd><p>Additional fields to include in the node information
-without plotting them.</p></dd>
+<dd><p><code>Character vector</code>. Additional fields to include in the node information
+without plotting them. (Default: <code><a href="https://rdrr.io/r/base/list.html" class="external-link">list()</a></code>)</p></dd>
 
 
 <dt id="arg-other-fields">other_fields<a class="anchor" aria-label="anchor" href="#arg-other-fields"></a></dt>

@@ -124,9 +124,9 @@ object.</p></dd>
 
 
 <dt id="arg-detection">detection<a class="anchor" aria-label="anchor" href="#arg-detection"></a></dt>
-<dd><p>Detection thresholds for absence/presence. Either an
+<dd><p><code>Numeric scalar</code>. Detection thresholds for absence/presence. Either an
 absolutes value compared directly to the values of <code>x</code> or a relative
-value between 0 and 1, if <code>as.relative = TRUE</code>.</p></dd>
+value between 0 and 1, if <code>TRUE</code>.</p></dd>
 
 
 <dt id="arg-detections">detections<a class="anchor" aria-label="anchor" href="#arg-detections"></a></dt>
@@ -134,7 +134,7 @@ value between 0 and 1, if <code>as.relative = TRUE</code>.</p></dd>
 
 
 <dt id="arg-prevalence">prevalence<a class="anchor" aria-label="anchor" href="#arg-prevalence"></a></dt>
-<dd><p>Prevalence thresholds (in 0 to 1). The
+<dd><p><code>Numeric scalar</code>. Prevalence thresholds (in 0 to 1). The
 required prevalence is strictly greater by default. To include the
 limit, set <code>include.lowest</code> to <code>TRUE</code>.</p></dd>
 
@@ -149,14 +149,11 @@ use. (default: <code>assay.type = "relabundance"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-rank-">rank, ...<a class="anchor" aria-label="anchor" href="#arg-rank-"></a></dt>
-<dd><p>additional arguments</p><ul><li><p>as.relative <code>TRUE</code> or <code>FALSE</code>: Should the relative values
+<dd><p>additional arguments</p><ul><li><p>as.relative <code>Logical scalar</code>. Should the relative values
 be calculated? (Default: <code>FALSE</code>)</p></li>
 <li><p>ndetection <code>Integer scalar</code>. Determines the number of breaks
 calculated detection thresholds when <code>detection=NULL</code>. When
@@ -178,10 +175,9 @@ object specifying whether the UniFrac calculation should be parallelized.</p></d
 
 
 <dt id="arg-colour-by">colour.by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
-<dd><p>Specification of a feature to colour points by, see the
-<code>by</code> argument in
-<code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
-possible values. Only used with <code>layout = "point"</code>.</p></dd>
+<dd><p><code>Character scalar</code>. Specification of a feature to colour points by, see the
+<code>by</code> argument in <code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
+possible values. Only used with <code>layout = "point"</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
@@ -189,10 +185,9 @@ possible values. Only used with <code>layout = "point"</code>.</p></dd>
 
 
 <dt id="arg-size-by">size.by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
-<dd><p>Specification of a feature to size points by, see the
-<code>by</code> argument in
-<code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
-possible values. Only used with <code>layout = "point"</code>.</p></dd>
+<dd><p><code>Character scalar</code>. Specification of a feature to size points by, see the
+<code>by</code> argument in <code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
+possible values. Only used with <code>layout = "point"</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
@@ -200,10 +195,9 @@ possible values. Only used with <code>layout = "point"</code>.</p></dd>
 
 
 <dt id="arg-shape-by">shape.by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
-<dd><p>Specification of a feature to shape points by, see the
-<code>by</code> argument in
-<code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
-possible values. Only used with <code>layout = "point"</code>.</p></dd>
+<dd><p><code>Character scalar</code>. Specification of a feature to shape points by, see the
+<code>by</code> argument in <code><a href="https://rdrr.io/pkg/scater/man/retrieveFeatureInfo.html" class="external-link">?retrieveFeatureInfo</a></code> for
+possible values. Only used with <code>layout = "point"</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-shape-by">shape_by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
@@ -211,9 +205,9 @@ possible values. Only used with <code>layout = "point"</code>.</p></dd>
 
 
 <dt id="arg-show-label">show.label<a class="anchor" aria-label="anchor" href="#arg-show-label"></a></dt>
-<dd><p>a <code>logical</code>, <code>character</code> or <code>integer</code> vector
+<dd><p><code>Logical scalar</code>, <code>character scalar</code> or <code>integer vector</code>
 for selecting labels from the rownames of <code>x</code>. If <code>rank</code> is not
-<code>NULL</code> the rownames might change. (default: <code>show.label = NULL</code>)</p></dd>
+<code>NULL</code> the rownames might change. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-label">label<a class="anchor" aria-label="anchor" href="#arg-label"></a></dt>
@@ -221,7 +215,7 @@ for selecting labels from the rownames of <code>x</code>. If <code>rank</code> i
 
 
 <dt id="arg-facet-by">facet.by<a class="anchor" aria-label="anchor" href="#arg-facet-by"></a></dt>
-<dd><p>Taxonomic rank to facet the plot by.
+<dd><p><code>Character scalar</code>. Taxonomic rank to facet the plot by.
 Value must be of <code>taxonomyRanks(x)</code>
 Argument can only be used in function plotPrevalentAbundance.</p></dd>
 
@@ -231,9 +225,9 @@ Argument can only be used in function plotPrevalentAbundance.</p></dd>
 
 
 <dt id="arg-min-prevalence">min.prevalence<a class="anchor" aria-label="anchor" href="#arg-min-prevalence"></a></dt>
-<dd><p>a single numeric value to apply as a threshold for
+<dd><p><code>Numeric scalar</code>. Applied as a threshold for
 plotting. The threshold is applied per row and column.
-(default: <code>min_prevalence = 0</code>)</p></dd>
+(Default: <code>0</code>)</p></dd>
 
 
 <dt id="arg-min-prevalence">min_prevalence<a class="anchor" aria-label="anchor" href="#arg-min-prevalence"></a></dt>

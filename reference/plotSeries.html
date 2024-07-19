@@ -92,26 +92,26 @@ object.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>a single character value for selecting the column from
+<dd><p><code>Character scalar</code>. selecting the column from
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">ColData</a></code> that
 will specify values of x-axis.</p></dd>
 
 
 <dt id="arg-y">y<a class="anchor" aria-label="anchor" href="#arg-y"></a></dt>
-<dd><p>a single character value for selecting the taxa from
+<dd><p><code>Character scalar</code>. Selects the taxa from
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rownames</a></code>.
 This parameter specifies taxa whose abundances will be plotted.</p></dd>
 
 
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p>a single character value defining a taxonomic rank, that is used
+<dd><p><code>Character scalar</code>. A taxonomic rank, that is used
 to agglomerate the data. Must be a value of <code>taxonomicRanks()</code>
-function.</p></dd>
+function. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-colour-by">colour.by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
-<dd><p>a single character value defining a taxonomic rank, that is used to
-color plot. Must be a value of <code>taxonomicRanks()</code> function.</p></dd>
+<dd><p><code>Character scalar</code>. A taxonomic rank, that is used to
+color plot. Must be a value of <code>taxonomicRanks()</code> function. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
@@ -119,9 +119,9 @@ color plot. Must be a value of <code>taxonomicRanks()</code> function.</p></dd>
 
 
 <dt id="arg-size-by">size.by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
-<dd><p>a single character value defining a taxonomic rank, that is
+<dd><p><code>Character scalar</code>. A taxonomic rank, that is
 used to divide taxa to different line size types. Must be a value of
-<code>taxonomicRanks()</code> function.</p></dd>
+<code>taxonomicRanks()</code> function. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
@@ -129,9 +129,9 @@ used to divide taxa to different line size types. Must be a value of
 
 
 <dt id="arg-linetype-by">linetype.by<a class="anchor" aria-label="anchor" href="#arg-linetype-by"></a></dt>
-<dd><p>a single character value defining a taxonomic rank, that
+<dd><p><code>Character scalar</code>. A taxonomic rank, that
 is used to divide taxa to different line types. Must be a value of
-<code>taxonomicRanks()</code> function.</p></dd>
+<code>taxonomicRanks()</code> function. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-linetype-by">linetype_by<a class="anchor" aria-label="anchor" href="#arg-linetype-by"></a></dt>
@@ -139,16 +139,13 @@ is used to divide taxa to different line types. Must be a value of
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a single character value for selecting the
+<dd><p><code>Character scalar</code>. selecting the
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
-plotted. (default: <code>assay.type = "counts"</code>)</p></dd>
+plotted. (Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecated. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>

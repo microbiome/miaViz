@@ -88,22 +88,21 @@ object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional parameters for plotting.</p><ul><li><p>as.relative <code>TRUE</code> or <code>FALSE</code>: Should the relative values
-be calculated? (default: <code>as.relative = FALSE</code></p></li>
+<dd><p>additional parameters for plotting.</p><ul><li><p><code>as.relative</code> <code>Character scalar</code>. Should the relative values
+be calculated? (Default: <code>FALSE</code>)</p></li>
 </ul><p>See <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
 <dt id="arg-rank">rank<a class="anchor" aria-label="anchor" href="#arg-rank"></a></dt>
-<dd><p>a single <code>character</code> value defining the taxonomic rank to
-use. Must be a value of <code>taxonomyRanks(x)</code>.</p></dd>
+<dd><p><code>Character scalar</code>. Defines the taxonomic rank to
+use. Must be a value of <code>taxonomyRanks(x)</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-col-var">col.var<a class="anchor" aria-label="anchor" href="#arg-col-var"></a></dt>
-<dd><p>a single <code>character</code> value defining a column from
+<dd><p><code>Character scalar</code>. Selects a column from
 <code>colData</code> to be plotted below the abundance plot.
 Continuous numeric values will be plotted as point, whereas factors and
-character will be plotted as colour-code bar. (default: <code>col.var =
-  NULL</code>)</p></dd>
+character will be plotted as colour-code bar. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
@@ -111,7 +110,7 @@ character will be plotted as colour-code bar. (default: <code>col.var =
 
 
 <dt id="arg-order-row-by">order.row.by<a class="anchor" aria-label="anchor" href="#arg-order-row-by"></a></dt>
-<dd><p>How to order abundance value: By name (“name”)
+<dd><p><code>Character scalar</code>. How to order abundance value: By name (“name”)
 for sorting the taxonomic labels alphabetically, by abundance (“abund”) to
 sort by abundance values or by a reverse order of abundance values (“revabund”).</p></dd>
 
@@ -121,9 +120,9 @@ sort by abundance values or by a reverse order of abundance values (“revabund�
 
 
 <dt id="arg-order-col-by">order.col.by<a class="anchor" aria-label="anchor" href="#arg-order-col-by"></a></dt>
-<dd><p>A single character value from the chosen rank of abundance
+<dd><p><code>Character scalar</code>. from the chosen rank of abundance
 data or from <code>colData</code> to select values to order the abundance
-plot by. (default: <code>order.col.by = NULL</code>)</p></dd>
+plot by. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-order-sample-by">order_sample_by<a class="anchor" aria-label="anchor" href="#arg-order-sample-by"></a></dt>
@@ -131,43 +130,43 @@ plot by. (default: <code>order.col.by = NULL</code>)</p></dd>
 
 
 <dt id="arg-decreasing">decreasing<a class="anchor" aria-label="anchor" href="#arg-decreasing"></a></dt>
-<dd><p>TRUE or FALSE: If the <code>order.col.by</code> is defined and the
+<dd><p><code>Logical scalar</code>. If the <code>order.col.by</code> is defined and the
 values are numeric, should the values used to order in decreasing or
-increasing fashion? (default: <code>decreasing = FALSE</code>)</p></dd>
+increasing fashion? (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
-<dd><p>Either “bar” or “point”.</p></dd>
+<dd><p><code>Character scalar</code>. Either “bar” or “point”.</p></dd>
 
 
 <dt id="arg-one-facet">one.facet<a class="anchor" aria-label="anchor" href="#arg-one-facet"></a></dt>
-<dd><p>Should the plot be returned in on facet or split into
+<dd><p><code>Logical scalar</code>. Should the plot be returned in on facet or split into
 different facet, one facet per different value detect in <code>rank</code>. If
 <code>col.var</code> or <code>order.col.by</code> is not <code>NULL</code>, this setting will
-be disregarded.</p></dd>
+be disregarded. (Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-one-facet">one_facet<a class="anchor" aria-label="anchor" href="#arg-one-facet"></a></dt>
 <dd><p>Deprecated. Use <code>one.facet</code> instead.</p></dd>
 
 
-<dt id="arg-ncol-scales">ncol, scales<a class="anchor" aria-label="anchor" href="#arg-ncol-scales"></a></dt>
-<dd><p>if <code>one.facet = FALSE</code>, <code>ncol</code> defines many
-columns should be for plotting the different facets and <code>scales</code> is
-used to define the behavior of the scales of each facet. Both values are
-passed onto <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></code>.</p></dd>
+<dt id="arg-ncol">ncol<a class="anchor" aria-label="anchor" href="#arg-ncol"></a></dt>
+<dd><p><code>Numeric scalar</code>. if <code>one.facet = FALSE</code>, <code>ncol</code> defines many
+columns should be for plotting the different facets. (Default: <code>2</code>)</p></dd>
+
+
+<dt id="arg-scales">scales<a class="anchor" aria-label="anchor" href="#arg-scales"></a></dt>
+<dd><p><code>Character scalar</code>. Defines the behavior of the scales of each facet. Both values are
+passed onto <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></code>. (Default: <code>"fixed"</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a <code>character</code> value defining which assay data to
-use. (default: <code>assay.type = "relabundance"</code>)</p></dd>
+<dd><p><code>Character scalar</code> value defining which assay data to
+use. (Default: <code>"relabundance"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecate. Use <code>assay.type</code> instead.</p></dd>
 
 </dl></div>
     <div id="value">

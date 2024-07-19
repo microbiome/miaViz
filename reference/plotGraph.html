@@ -135,8 +135,8 @@ For the latter object a graph object must be stored in <code>metadata(x)$name</c
 
 
 <dt id="arg-show-label">show.label<a class="anchor" aria-label="anchor" href="#arg-show-label"></a></dt>
-<dd><p><code>logical</code> (scalar), <code>integer</code> or <code>character</code>
-vector. If a <code>logical</code> scalar is given, should tip labels be plotted
+<dd><p><code>Logical scalar</code>, <code>integer scalar</code> or <code>character vector</code>
+If a <code>logical</code> scalar is given, should tip labels be plotted
 or if a logical vector is provided, which labels should be shown? If an
 <code>integer</code> or <code>character</code> vector is provided, it will be converted
 to a logical vector. The <code>integer</code> values must be in the range of 1
@@ -144,7 +144,7 @@ and number of nodes, whereas the values of a <code>character</code> vector must
 match values of a <code>label</code> or <code>name</code> column in the node data. In
 case of a <code>character</code> vector only values corresponding to actual
 labels will be plotted and if no labels are provided no labels will be
-shown. (default: <code>show.label = FALSE</code>)</p></dd>
+shown. (Default: <code>FALSE</code>)</p></dd>
 
 
 <dt id="arg-show-label">show_label<a class="anchor" aria-label="anchor" href="#arg-show-label"></a></dt>
@@ -152,8 +152,8 @@ shown. (default: <code>show.label = FALSE</code>)</p></dd>
 
 
 <dt id="arg-add-legend">add.legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
-<dd><p>logical scalar. Should legends be plotted?
-(default: <code>add.legend = TRUE</code>)</p></dd>
+<dd><p><code>Logical scalar</code>. Should legends be plotted?
+(Default: <code>TRUE</code>)</p></dd>
 
 
 <dt id="arg-add-legend">add_legend<a class="anchor" aria-label="anchor" href="#arg-add-legend"></a></dt>
@@ -161,16 +161,14 @@ shown. (default: <code>show.label = FALSE</code>)</p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
-<dd><p>layout for the plotted graph. See
-<code><a href="https://ggraph.data-imaginist.com/reference/ggraph.html" class="external-link">ggraph</a></code> for details. (default:
-<code>layout = "kk"</code>)</p></dd>
+<dd><p><code>Character scalar</code>. Layout for the plotted graph. See
+<code><a href="https://ggraph.data-imaginist.com/reference/ggraph.html" class="external-link">ggraph</a></code> for details. (Default: <code>"kk"</code>)</p></dd>
 
 
 <dt id="arg-edge-type">edge.type<a class="anchor" aria-label="anchor" href="#arg-edge-type"></a></dt>
-<dd><p>type of edge plotted on the graph. See
+<dd><p><code>Character scalar</code>. Type of edge plotted on the graph. See
 <code><a href="https://ggraph.data-imaginist.com/reference/geom_edge_fan.html" class="external-link">geom_edge_fan</a></code> for details and other
-available geoms. (default:
-<code>edge.type = "fan"</code>)</p></dd>
+available geoms. (Default: <code>"fan"</code>)</p></dd>
 
 
 <dt id="arg-edge-type">edge_type<a class="anchor" aria-label="anchor" href="#arg-edge-type"></a></dt>
@@ -178,8 +176,8 @@ available geoms. (default:
 
 
 <dt id="arg-edge-colour-by">edge.colour.by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
-<dd><p>Specification of a edge metadata field to use for
-setting colours of the edges.</p></dd>
+<dd><p><code>Character scalar</code>. Specification of an edge
+metadata field to use for setting colours of the edges. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-edge-colour-by">edge_colour_by<a class="anchor" aria-label="anchor" href="#arg-edge-colour-by"></a></dt>
@@ -187,8 +185,8 @@ setting colours of the edges.</p></dd>
 
 
 <dt id="arg-edge-width-by">edge.width.by<a class="anchor" aria-label="anchor" href="#arg-edge-width-by"></a></dt>
-<dd><p>Specification of a edge metadata field to use for
-setting width of the edges.</p></dd>
+<dd><p><code>Character scalar</code>. Specification of an edge metadata
+field to use for setting width of the edges. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-edge-width-by">edge_width_by<a class="anchor" aria-label="anchor" href="#arg-edge-width-by"></a></dt>
@@ -196,10 +194,10 @@ setting width of the edges.</p></dd>
 
 
 <dt id="arg-colour-by">colour.by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
-colour graph nodes by, see the by argument in
+<dd><p><code>Character scalar</code>. Specification of a column metadata
+field or a feature to colour graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
-values.</p></dd>
+values. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
@@ -207,10 +205,10 @@ values.</p></dd>
 
 
 <dt id="arg-shape-by">shape.by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
-shape graph nodes by, see the by argument in
+<dd><p><code>Character scalar</code>. Specification of a column metadata
+field or a feature to shape graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
-values.</p></dd>
+values. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-shape-by">shape_by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
@@ -218,10 +216,10 @@ values.</p></dd>
 
 
 <dt id="arg-size-by">size.by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
-<dd><p>Specification of a column metadata field or a feature to
-size graph nodes by, see the by argument in
+<dd><p><code>Character scalar</code>. Specification of a column metadata
+field or a feature to size graph nodes by, see the by argument in
 <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code> for possible
-values.</p></dd>
+values. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
@@ -229,10 +227,10 @@ values.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>A string or integer scalar specifying which assay to
-obtain expression values from, for use in point aesthetics - see the
-<code>exprs_values</code> argument in
-<code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.</p></dd>
+<dd><p><code>Character scalar</code>. or <code>integer scalar</code>. Specifies
+which assay to obtain expression values from, for use in point aesthetics - see the
+<code>exprs_values</code> argument in <code><a href="https://rdrr.io/pkg/scater/man/retrieveCellInfo.html" class="external-link">?retrieveCellInfo</a></code>.
+(Default: <code>"counts"</code>)</p></dd>
 
 
 <dt id="arg-by-exprs-values">by_exprs_values<a class="anchor" aria-label="anchor" href="#arg-by-exprs-values"></a></dt>
@@ -249,9 +247,9 @@ without plotting them.</p></dd>
 
 
 <dt id="arg-name">name<a class="anchor" aria-label="anchor" href="#arg-name"></a></dt>
-<dd><p>If <code>x</code> is a
+<dd><p><code>Character scalar</code>. If <code>x</code> is a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
-the key for subsetting the <code>metadata(x)</code> to a graph object.</p></dd>
+the key for subsetting the <code>metadata(x)</code> to a graph object. (Default: <code>"graph"</code>)</p></dd>
 
 </dl></div>
     <div id="value">

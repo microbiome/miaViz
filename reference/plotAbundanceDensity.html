@@ -79,54 +79,50 @@ object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional parameters for plotting.</p><ul><li><p>xlab a single character value for selecting the x-axis label.
-(default: <code>xlab = assay.type</code>)</p></li>
-<li><p>ylab a single character value for selecting the y-axis label.
+<dd><p>additional parameters for plotting.</p><ul><li><p><code>xlab</code> <code>Character scalar</code>. Selects the x-axis label.
+(Default: <code>assay.type</code>)</p></li>
+<li><p><code>ylab</code> <code>Character scalar</code>. Selects the y-axis label.
 <code>ylab</code> is disabled when <code>layout = "density"</code>.
-(default: <code>ylab = "Taxa")</code></p></li>
-<li><p>point_alpha a numeric value from range 0 to 1 selecting the transparency of
-colour in <code>jitter</code> and <code>point</code> plot. (default: <code>point_alpha = 0.6</code>)</p></li>
-<li><p>point_shape a positive integer value selecting the shape of point in
-<code>jitter</code> and <code>point</code> plot. (default: <code>point_shape = 21</code>)</p></li>
-<li><p>point_size a positive numeric value selecting the size of point in
-<code>jitter</code> and <code>point</code> plot. (default: <code>point_size = 2</code>)</p></li>
-<li><p>add_legend a boolean value selecting if legend is added.
-(default: <code>add_legend = TRUE</code>)</p></li>
-<li><p>flipped a boolean value selecting if the orientation of plot is changed
-so that x-axis and y-axis are swapped. (default <code>flipped = FALSE</code>)</p></li>
-<li><p>add_x_text a boolean value selecting if text that represents values is included
-in x-axis. (default: <code>add_x_text = TRUE</code>)</p></li>
+(Default: <code>"Taxa"</code>)</p></li>
+<li><p><code>point_alpha</code> <code>Numeric scalar</code>. From range 0 to 1. Selects the transparency of
+colour in <code>jitter</code> and <code>point</code> plot. (Default: <code>0.6</code>)</p></li>
+<li><p><code>point_shape</code> <code>Positive integer scalar</code>. Value selecting the shape of point in
+<code>jitter</code> and <code>point</code> plot. (Default: <code>21</code>)</p></li>
+<li><p><code>point_size</code> <code>Positive integer scalar</code>. Selects the size of point in
+<code>jitter</code> and <code>point</code> plot. (Default: <code>2</code>)</p></li>
+<li><p><code>add_legend</code> <code>Logical scalar</code>. Determines if legend is added.
+(Default: <code>TRUE</code>)</p></li>
+<li><p><code>flipped</code>: <code>Logical scalar</code>. Determines if the orientation of plot is changed
+so that x-axis and y-axis are swapped. (Default: <code>FALSE</code>)</p></li>
+<li><p><code>add_x_text</code> <code>Logical scalar</code>. Determines if text that represents values is included
+in x-axis. (Default: <code>TRUE</code>)</p></li>
 </ul><p>See <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
-<dd><p>a single character value for selecting the layout of the plot.
+<dd><p><code>Character scalar</code>. Selects the layout of the plot.
 There are three different options: <code>jitter</code>, <code>density</code>, and
 <code>point</code> plot. (default: <code>layout = "jitter"</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
-<dd><p>a single character value for selecting the
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></code> to be
-plotted. (default: <code>assay.type = "counts"</code>)</p></dd>
+<dd><p><code>Character scalar</code> value defining which assay data to
+use. (Default: <code>"relabundance"</code>)</p></dd>
 
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
-<dd><p>a single <code>character</code> value for specifying which
-assay to use for calculation.
-(Please use <code>assay.type</code> instead. At some point <code>assay_name</code>
-will be disabled.)</p></dd>
+<dd><p>Deprecate. Use <code>assay.type</code> instead.</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>a positive integer specifying the number of the most abundant taxa
-to show. (default: <code>n = min(nrow(x), 25L)</code>)</p></dd>
+<dd><p><code>Integer scalar</code>. Specifies the number of the most abundant taxa
+to show. (Default: <code>min(nrow(x), 25L)</code>)</p></dd>
 
 
 <dt id="arg-colour-by">colour.by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
-<dd><p>a single character value defining a column from
+<dd><p><code>Character scalar</code>. Defines a column from
 <code>colData</code>, that is used to color plot. Must be a value of
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> function. (default: <code>colour.by = NULL</code>)</p></dd>
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> function. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
@@ -134,10 +130,10 @@ to show. (default: <code>n = min(nrow(x), 25L)</code>)</p></dd>
 
 
 <dt id="arg-shape-by">shape.by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
-<dd><p>a single character value defining a column from
+<dd><p><code>Character scalar</code>. Defines a column from
 <code>colData</code>, that is used to group observations to different point shape
 groups. Must be a value of <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> function. <code>shape.by</code> is
-disabled when <code>layout = "density"</code>. (default: <code>shape.by = NULL</code>)</p></dd>
+disabled when <code>layout = "density"</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-shape-by">shape_by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
@@ -145,10 +141,10 @@ disabled when <code>layout = "density"</code>. (default: <code>shape.by = NULL</
 
 
 <dt id="arg-size-by">size.by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
-<dd><p>a single character value defining a column from
+<dd><p><code>Character scalar</code>. Defines a column from
 <code>colData</code>, that is used to group observations to different point size
 groups. Must be a value of <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> function. <code>size.by</code> is
-disabled when <code>layout = "density"</code>. (default: <code>size.by = NULL</code>)</p></dd>
+disabled when <code>layout = "density"</code>. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-size-by">size_by<a class="anchor" aria-label="anchor" href="#arg-size-by"></a></dt>
@@ -156,7 +152,7 @@ disabled when <code>layout = "density"</code>. (default: <code>size.by = NULL</c
 
 
 <dt id="arg-decreasing">decreasing<a class="anchor" aria-label="anchor" href="#arg-decreasing"></a></dt>
-<dd><p><code>Boolean</code> indicating whether the results should be ordered
+<dd><p><code>Logical scalar</code>. Indicates whether the results should be ordered
 in a descending order or not. If <code>NA</code> is given the order
 as found in <code>x</code> for the <code>n</code> most abundant taxa is used.
 (Default: <code>TRUE</code>)</p></dd>
