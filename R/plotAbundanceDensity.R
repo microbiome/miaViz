@@ -47,13 +47,13 @@
 #'   \code{ylab} is disabled when \code{layout = "density"}. 
 #'   (Default: \code{"Taxa"})
 #'   
-#'   \item \code{point_alpha} \code{Numeric scalar}. From range 0 to 1. Selects the transparency of
+#'   \item \code{point.alpha} \code{Numeric scalar}. From range 0 to 1. Selects the transparency of
 #'   colour in \code{jitter} and \code{point} plot. (Default: \code{0.6})
 #'   
-#'   \item \code{point_shape} \code{Positive integer scalar}. Value selecting the shape of point in
+#'   \item \code{point.shape} \code{Positive integer scalar}. Value selecting the shape of point in
 #'   \code{jitter} and \code{point} plot. (Default: \code{21})
 #'   
-#'   \item \code{point_size} \code{Positive integer scalar}. Selects the size of point in
+#'   \item \code{point.size} \code{Positive integer scalar}. Selects the size of point in
 #'   \code{jitter} and \code{point} plot. (Default: \code{2})
 #'   
 #'   \item \code{add_legend} \code{Logical scalar}. Determines if legend is added. 
