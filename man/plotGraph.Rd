@@ -81,8 +81,8 @@ For the latter object a graph object must be stored in \code{metadata(x)$name}.}
 \item{...}{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
-\item{show.label}{\code{logical} (scalar), \code{integer} or \code{character}
-vector. If a \code{logical} scalar is given, should tip labels be plotted
+\item{show.label}{\code{Logical scalar}, \code{integer vector} or \code{character vector}
+If a \code{logical} scalar is given, should tip labels be plotted
 or if a logical vector is provided, which labels should be shown? If an
 \code{integer} or \code{character} vector is provided, it will be converted
 to a logical vector. The \code{integer} values must be in the range of 1
@@ -90,61 +90,59 @@ and number of nodes, whereas the values of a \code{character} vector must
 match values of a \code{label} or \code{name} column in the node data. In
 case of a \code{character} vector only values corresponding to actual
 labels will be plotted and if no labels are provided no labels will be
-shown. (default: \code{show.label = FALSE})}
+shown. (Default: \code{FALSE})}
 
 \item{show_label}{Deprecated. Use \code{show.label} instead.}
 
-\item{add.legend}{logical scalar. Should legends be plotted?
-(default: \code{add.legend = TRUE})}
+\item{add.legend}{\code{Logical scalar}. Should legends be plotted?
+(Default: \code{TRUE})}
 
 \item{add_legend}{Deprecated. Use \code{add.legend} instead.}
 
-\item{layout}{layout for the plotted graph. See
-\code{\link[ggraph:ggraph]{ggraph}} for details. (default:
-\code{layout = "kk"})}
+\item{layout}{\code{Character scalar}. Layout for the plotted graph. See
+\code{\link[ggraph:ggraph]{ggraph}} for details. (Default: \code{"kk"})}
 
-\item{edge.type}{type of edge plotted on the graph. See
+\item{edge.type}{\code{Character scalar}. Type of edge plotted on the graph. See
 \code{\link[ggraph:geom_edge_fan]{geom_edge_fan}} for details and other
-available geoms. (default:
-\code{edge.type = "fan"})}
+available geoms. (Default: \code{"fan"})}
 
 \item{edge_type}{Deprecated. Use \code{edge.type} instead.}
 
-\item{edge.colour.by}{Specification of a edge metadata field to use for
-setting colours of the edges.}
+\item{edge.colour.by}{\code{Character scalar}. Specification of an edge
+metadata field to use for setting colours of the edges. (Default: \code{NULL})}
 
 \item{edge_colour_by}{Deprecated. Use \code{edge.colour.by} instead.}
 
-\item{edge.width.by}{Specification of a edge metadata field to use for
-setting width of the edges.}
+\item{edge.width.by}{\code{Character scalar}. Specification of an edge metadata
+field to use for setting width of the edges. (Default: \code{NULL})}
 
 \item{edge_width_by}{Deprecated. Use \code{edge.width.by} instead.}
 
-\item{colour.by}{Specification of a column metadata field or a feature to
-colour graph nodes by, see the by argument in
+\item{colour.by}{\code{Character scalar}. Specification of a column metadata
+field or a feature to colour graph nodes by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values.}
+values. (Default: \code{NULL})}
 
 \item{colour_by}{Deprecated. Use \code{colour.by} instead.}
 
-\item{shape.by}{Specification of a column metadata field or a feature to
-shape graph nodes by, see the by argument in
+\item{shape.by}{\code{Character scalar}. Specification of a column metadata
+field or a feature to shape graph nodes by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values.}
+values. (Default: \code{NULL})}
 
 \item{shape_by}{Deprecated. Use \code{shape.by} instead.}
 
-\item{size.by}{Specification of a column metadata field or a feature to
-size graph nodes by, see the by argument in
+\item{size.by}{\code{Character scalar}. Specification of a column metadata
+field or a feature to size graph nodes by, see the by argument in
 \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values.}
+values. (Default: \code{NULL})}
 
 \item{size_by}{Deprecated. Use \code{size.by} instead.}
 
-\item{assay.type}{A string or integer scalar specifying which assay to
-obtain expression values from, for use in point aesthetics - see the
-\code{exprs_values} argument in
-\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.}
+\item{assay.type}{\code{Character scalar}. or \code{integer scalar}. Specifies
+which assay to obtain expression values from, for use in point aesthetics - see the
+\code{exprs_values} argument in \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
+(Default: \code{"counts"})}
 
 \item{by_exprs_values}{Deprecated. Use \code{assay.type} instead.}
 
@@ -153,9 +151,9 @@ without plotting them.}
 
 \item{other_fields}{Deprecated. Use \code{other.fields} instead.}
 
-\item{name}{If \code{x} is a
+\item{name}{\code{Character scalar}. If \code{x} is a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-the key for subsetting the \code{metadata(x)} to a graph object.}
+the key for subsetting the \code{metadata(x)} to a graph object. (Default: \code{"graph"})}
 }
 \value{
 a \code{\link{ggtree}} plot

@@ -15,9 +15,9 @@ represent the principal components (PCs) and rows should represent the
 entities being analyzed (e.g. features or samples). There should be 2 columns
 only representing 2 PCs.}
 
-\item{centering}{A single \code{character} value specifying the method to
+\item{centering}{\code{Character scalar}. Specifies the method to
 center the data. Options are \code{"mean"}, \code{"median"}, or \code{NULL}
-if your data is already centered. (default: \code{"mean"})}
+if your data is already centered. (Default: \code{"mean"})}
 
 \item{...}{Additional arguments passed to other methods.}
 }

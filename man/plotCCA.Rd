@@ -56,7 +56,7 @@ or a matrix of weights. The latter is returned as output from \code{\link[mia:ru
 \code{\link[ggplot2:geom_label]{geom_label}} and
 \code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.}
 
-\item{dimred}{A string or integer scalar indicating the reduced dimension to
+\item{dimred}{\code{Character scalar} or \code{integer scalar}. Determines the reduced dimension to
 plot. This is the output of \code{\link[mia:runCCA]{addRDA}} and resides in
 \code{reducedDim(tse, dimred)}.}
 
@@ -64,63 +64,63 @@ plot. This is the output of \code{\link[mia:runCCA]{addRDA}} and resides in
 indicating whether ellipses should be present, absent, filled or colored.
 (default: \code{ellipse.fill = TRUE})}
 
-\item{ellipse.alpha}{Number between 0 and 1 to adjust the opacity of ellipses.
-(default: \code{ellipse.alpha = 0.2})}
+\item{ellipse.alpha}{\code{Numeric scalar}. Between 0 and 1. Adjusts the opacity of ellipses.
+(Default: \code{0.2})}
 
-\item{ellipse.linewidth}{Number specifying the size of ellipses.
-(default: \code{ellipse.linewidth = 0.1})}
+\item{ellipse.linewidth}{\code{Numeric scalar}. Specifies the size of ellipses.
+(Default: \code{0.1})}
 
-\item{ellipse.linetype}{Discrete number specifying the style of ellipses.
-(default: \code{ellipse.linetype = 1})}
+\item{ellipse.linetype}{\code{Integer scalar}. Specifies the style of ellipses.
+(Default: \code{1})}
 
-\item{confidence.level}{Number between 0 and 1 to adjust confidence level.
-(default: \code{confidence.level = 0.95})}
+\item{confidence.level}{\code{Numeric scalar}. Between 0 and 1. Adjusts confidence level.
+(Default: \code{0.95})}
 
-\item{vec.size}{Number specifying the size of vectors.
-(default: \code{vec.size = 0.5})}
+\item{vec.size}{\code{Numeric scalar}. Specifies the size of vectors.
+(Default: \code{0.5})}
 
 \item{vec.color}{Alias for \code{vec.colour}.}
 
-\item{vec.colour}{String specifying the colour of vectors.
-(default: \code{vec.color = "black"})}
+\item{vec.colour}{\code{Character scalar}. Specifies the colour of vectors.
+(Default: \code{"black"})}
 
-\item{vec.linetype}{Discrete number specifying the style of vector lines.
-(default: \code{vec.linetype = 1})}
+\item{vec.linetype}{\code{Integer scalar}. Specifies the style of vector lines.
+(Default: \code{1})}
 
-\item{arrow.size}{Number specifying the size of arrows.
+\item{arrow.size}{\code{Numeric scalar}. Specifies the size of arrows.
 (defaults: \code{arrow.size = 0.25})}
 
 \item{label.color}{Alias for \code{label.colour}.}
 
-\item{label.colour}{String specifying the colour of text and labels.
-(default: \code{label.color = "black"})}
+\item{label.colour}{\code{Character scalar}. Specifies the colour of text and labels.
+(Default: \code{"black"})}
 
-\item{label.size}{Number specifying the size of text and labels.
-(default: \code{label.size = 4})}
+\item{label.size}{\code{Numeric scalar}. Specifies the size of text and labels.
+(Default: \code{4})}
 
-\item{vec.text}{TRUE or FALSE, should text instead of labels be used to label vectors.
-(default: \code{vec.text = TRUE})}
+\item{vec.text}{\code{Logical scalar}. Should text instead of labels be used to label vectors.
+(Default: \code{TRUE})}
 
-\item{repel.labels}{TRUE or FALSE, should labels be repelled.
-(default: \code{repel.labels = TRUE})}
+\item{repel.labels}{\code{Logical scalar}. Should labels be repelled.
+(Default: \code{TRUE})}
 
-\item{sep.group}{String specifying the separator used in the labels.
-(default: \code{sep.group = "\U2014"})}
+\item{sep.group}{\code{Character scalar}. Specifies the separator used in the labels.
+(Default: \code{"\U2014"})}
 
-\item{repl.underscore}{String used to replace underscores in the labels.
-(default: \code{repl.underscore = " "})}
+\item{repl.underscore}{\code{Character scalar}. Used to replace underscores in the labels.
+(Default: \code{" "})}
 
-\item{add.significance}{TRUE or FALSE, should explained variance and p-value
-appear in the labels. (default: \code{add.significance = TRUE})}
+\item{add.significance}{\code{Logical scalar}. Should explained variance and p-value
+appear in the labels. (Default: \code{TRUE})}
 
-\item{add.expl.var}{TRUE or FALSE, should explained variance appear on the
-coordinate axes. (default: \code{add.expl.var = TRUE})}
+\item{add.expl.var}{\code{Logical scalar}. Should explained variance appear on the
+coordinate axes. (Default: \code{TRUE})}
 
-\item{add.vectors}{TRUE or FALSE, should vectors appear in the plot.
-(default: \code{add.vectors = TRUE})}
+\item{add.vectors}{\code{Logical scalar}. Should vectors appear in the plot.
+(Default: \code{TRUE})}
 
-\item{parse.labels}{TRUE or FALSE, should labels be parsed.
-(default: \code{parse.labels = TRUE})}
+\item{parse.labels}{\code{Logical scalar}. Should labels be parsed.
+(Default: \code{TRUE})}
 }
 \value{
 A \code{ggplot2} object

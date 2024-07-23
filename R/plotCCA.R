@@ -8,7 +8,7 @@
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 #'   or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{getRDA}}.
 #' 
-#' @param dimred A string or integer scalar indicating the reduced dimension to
+#' @param dimred \code{Character scalar} or \code{integer scalar}. Determines the reduced dimension to
 #'   plot. This is the output of \code{\link[mia:runCCA]{addRDA}} and resides in
 #'   \code{reducedDim(tse, dimred)}.
 #' 
@@ -16,63 +16,63 @@
 #'   indicating whether ellipses should be present, absent, filled or colored.
 #'   (default: \code{ellipse.fill = TRUE})
 #'
-#' @param ellipse.alpha Number between 0 and 1 to adjust the opacity of ellipses.
-#'   (default: \code{ellipse.alpha = 0.2})
+#' @param ellipse.alpha \code{Numeric scalar}. Between 0 and 1. Adjusts the opacity of ellipses.
+#'   (Default: \code{0.2})
 #'
-#' @param ellipse.linewidth Number specifying the size of ellipses.
-#'   (default: \code{ellipse.linewidth = 0.1})
+#' @param ellipse.linewidth \code{Numeric scalar}. Specifies the size of ellipses.
+#'   (Default: \code{0.1})
 #' 
-#' @param ellipse.linetype Discrete number specifying the style of ellipses.
-#'   (default: \code{ellipse.linetype = 1})
+#' @param ellipse.linetype \code{Integer scalar}. Specifies the style of ellipses.
+#'   (Default: \code{1})
 #'   
-#' @param confidence.level Number between 0 and 1 to adjust confidence level.
-#'   (default: \code{confidence.level = 0.95})
+#' @param confidence.level \code{Numeric scalar}. Between 0 and 1. Adjusts confidence level.
+#'   (Default: \code{0.95})
 #'
-#' @param add.vectors TRUE or FALSE, should vectors appear in the plot.
-#'    (default: \code{add.vectors = TRUE})
+#' @param add.vectors \code{Logical scalar}. Should vectors appear in the plot.
+#'    (Default: \code{TRUE})
 #' 
-#' @param vec.size Number specifying the size of vectors.
-#'   (default: \code{vec.size = 0.5})
+#' @param vec.size \code{Numeric scalar}. Specifies the size of vectors.
+#'   (Default: \code{0.5})
 #' 
-#' @param vec.colour String specifying the colour of vectors.
-#'   (default: \code{vec.color = "black"})
+#' @param vec.colour \code{Character scalar}. Specifies the colour of vectors.
+#'   (Default: \code{"black"})
 #' 
 #' @param vec.color Alias for `vec.colour`.
 #' 
-#' @param vec.linetype Discrete number specifying the style of vector lines.
-#'   (default: \code{vec.linetype = 1})
+#' @param vec.linetype \code{Integer scalar}. Specifies the style of vector lines.
+#'   (Default: \code{1})
 #' 
-#' @param arrow.size Number specifying the size of arrows.
+#' @param arrow.size \code{Numeric scalar}. Specifies the size of arrows.
 #'   (defaults: \code{arrow.size = 0.25})
 #' 
-#' @param label.size Number specifying the size of text and labels.
-#'   (default: \code{label.size = 4})
+#' @param label.size \code{Numeric scalar}. Specifies the size of text and labels.
+#'   (Default: \code{4})
 #' 
-#' @param label.colour String specifying the colour of text and labels.
-#'   (default: \code{label.color = "black"})
+#' @param label.colour \code{Character scalar}. Specifies the colour of text and labels.
+#'   (Default: \code{"black"})
 #' 
 #' @param label.color Alias for `label.colour`.
 #' 
-#' @param sep.group String specifying the separator used in the labels.
-#'   (default: \code{sep.group = "\U2014"})
+#' @param sep.group \code{Character scalar}. Specifies the separator used in the labels.
+#'   (Default: \code{"\U2014"})
 #'   
-#' @param repl.underscore String used to replace underscores in the labels.
-#'   (default: \code{repl.underscore = " "})
+#' @param repl.underscore \code{Character scalar}. Used to replace underscores in the labels.
+#'   (Default: \code{" "})
 #' 
-#' @param vec.text TRUE or FALSE, should text instead of labels be used to label vectors.
-#'   (default: \code{vec.text = TRUE})
+#' @param vec.text \code{Logical scalar}. Should text instead of labels be used to label vectors.
+#'   (Default: \code{TRUE})
 #' 
-#' @param repel.labels TRUE or FALSE, should labels be repelled.
-#'   (default: \code{repel.labels = TRUE})
+#' @param repel.labels \code{Logical scalar}. Should labels be repelled.
+#'   (Default: \code{TRUE})
 #'
-#' @param parse.labels TRUE or FALSE, should labels be parsed.
-#'   (default: \code{parse.labels = TRUE})
+#' @param parse.labels \code{Logical scalar}. Should labels be parsed.
+#'   (Default: \code{TRUE})
 #'
-#' @param add.significance TRUE or FALSE, should explained variance and p-value
-#'   appear in the labels. (default: \code{add.significance = TRUE})
+#' @param add.significance \code{Logical scalar}. Should explained variance and p-value
+#'   appear in the labels. (Default: \code{TRUE})
 #'
-#' @param add.expl.var TRUE or FALSE, should explained variance appear on the
-#'   coordinate axes. (default: \code{add.expl.var = TRUE})
+#' @param add.expl.var \code{Logical scalar}. Should explained variance appear on the
+#'   coordinate axes. (Default: \code{TRUE})
 #' 
 #' @param ... additional parameters for plotting, inherited from
 #'   \code{\link[scater:plotReducedDim]{plotReducedDim}},

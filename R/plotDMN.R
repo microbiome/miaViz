@@ -6,11 +6,12 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object contain the DMN data in \code{metadata}.
 #'   
-#' @param type the type of measure for access the goodness of fit. One of
+#' @param type \code{Character scalar}. The type of measure for access the goodness of fit. One of
 #'   \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.
 #'
-#' @param name the name to store the result in
+#' @param name \code{Character scalar}. The name to store the result in
 #'   \code{\link[SummarizedExperiment:RangedSummarizedExperiment-class]{metadata}}
+#'   (Default: \code{"DMN"})
 #'
 #' @param ... optional arguments not used.
 #'

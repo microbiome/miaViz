@@ -13,9 +13,9 @@ object.}
 
 \item{...}{additional arguments passed to scater::plotReducedDim().}
 
-\item{ncomponents}{A numeric scalar indicating the number of dimensions to plot, starting from
+\item{ncomponents}{\code{Numeric scalar}. indicating the number of dimensions to plot, starting from
 the first dimension. Alternatively, a numeric vector specifying the
-dimensions to be plotted. (Default: 2)}
+dimensions to be plotted. (Default: \code{2})}
 }
 \description{
 Wrapper for scater::plotReducedDim()
