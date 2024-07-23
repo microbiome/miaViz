@@ -9,12 +9,12 @@
 #'   object.
 #'
 #' @param other.fields,value a \code{data.frame} or coercible to one, with at least one type
-#'   of id information. See details.
+#'   of id information. See details.(Default: \code{list()})
 #'   
 #' @param other_fields Deprecated. Use \code{other.fields} instead.
 #'  
-#' @param tree.name a single \code{character} value specifying a rowTree/colTree from
-#'   \code{x}. (By default: \code{tree.name = "phylo"})
+#' @param tree.name \code{Character scalar}. Specifies a rowTree/colTree from
+#'   \code{x}. (Default: \code{"phylo"})
 #'   
 #' @param tree_name  Deprecated. Use \code{tree.name} instead.
 #'   

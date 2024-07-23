@@ -13,59 +13,56 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'
-#' @param rank a single \code{character} value defining the taxonomic rank to
-#'   use. Must be a value of \code{taxonomyRanks(x)}.
+#' @param rank \code{Character scalar}. Defines the taxonomic rank to
+#'   use. Must be a value of \code{taxonomyRanks(x)}. (Default: \code{NULL})
 #'
-#' @param assay.type a \code{character} value defining which assay data to
-#'   use. (default: \code{assay.type = "relabundance"})
+#' @param assay.type \code{Character scalar} value defining which assay data to
+#'   use. (Default: \code{"relabundance"})
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecate. Use \code{assay.type} instead.
 #'   
-#' @param col.var a single \code{character} value defining a column from 
+#' @param col.var \code{Character scalar}. Selects a column from 
 #'   \code{colData} to be plotted below the abundance plot.
 #'   Continuous numeric values will be plotted as point, whereas factors and
-#'   character will be plotted as colour-code bar. (default: \code{col.var =
-#'   NULL})
+#'   character will be plotted as colour-code bar. (Default: \code{NULL})
 #'   
 #' @param features Deprecated. Use \code{col.var} instead.
 #'   
-#' @param order.row.by How to order abundance value: By name (\dQuote{name}) 
+#' @param order.row.by \code{Character scalar}. How to order abundance value: By name (\dQuote{name}) 
 #' for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
 #' sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).
 #' 
 #' @param order_rank_by Deprecated. Use \code{order.row.by} instead.  
 #'   
-#' @param order.col.by A single character value from the chosen rank of abundance
+#' @param order.col.by \code{Character scalar}. from the chosen rank of abundance
 #'   data or from \code{colData} to select values to order the abundance
-#'   plot by. (default: \code{order.col.by = NULL})
+#'   plot by. (Default: \code{NULL})
 #'   
 #' @param order_sample_by Deprecated. Use \code{order.col.by} instead.
 #'   
-#' @param decreasing TRUE or FALSE: If the \code{order.col.by} is defined and the
+#' @param decreasing \code{Logical scalar}. If the \code{order.col.by} is defined and the
 #'   values are numeric, should the values used to order in decreasing or
-#'   increasing fashion? (default: \code{decreasing = FALSE})
+#'   increasing fashion? (Default: \code{FALSE})
 #'
-#' @param layout Either \dQuote{bar} or \dQuote{point}. 
+#' @param layout \code{Character scalar}. Either \dQuote{bar} or \dQuote{point}. 
 #' 
-#' @param one.facet Should the plot be returned in on facet or split into 
+#' @param one.facet \code{Logical scalar}. Should the plot be returned in on facet or split into 
 #'   different facet, one facet per different value detect in \code{rank}. If
 #'   \code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
-#'   be disregarded.
+#'   be disregarded. (Default: \code{TRUE})
 #'   
 #' @param one_facet Deprecated. Use \code{one.facet} instead.
 #' 
-#' @param ncol,scales if \code{one.facet = FALSE}, \code{ncol} defines many 
-#'   columns should be for plotting the different facets and \code{scales} is
-#'   used to define the behavior of the scales of each facet. Both values are 
-#'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
+#' @param ncol \code{Numeric scalar}. if \code{one.facet = FALSE}, \code{ncol} defines many 
+#'   columns should be for plotting the different facets. (Default: \code{2})
+#'   
+#' @param scales \code{Character scalar}. Defines the behavior of the scales of each facet. Both values are 
+#'   passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"fixed"})
 #' 
 #' @param ... additional parameters for plotting.
 #'   \itemize{
-#'   \item{as.relative}{ \code{TRUE} or \code{FALSE}: Should the relative values
-#'   be calculated? (default: \code{as.relative = FALSE} }
+#'   \item \code{as.relative} \code{Character scalar}. Should the relative values
+#'   be calculated? (Default: \code{FALSE})
 #' }
 #' See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}
 #'

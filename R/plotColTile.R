@@ -8,12 +8,12 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #' 
-#' @param x String specifying the column-level metadata field to show on the x-axis.
+#' @param x \code{Character scalar}. Specifies the column-level metadata field to show on the x-axis.
 #'   Alternatively, an \link{AsIs} vector or data.frame, see 
 #'   \code{?\link{retrieveFeatureInfo}} or \code{?\link{retrieveCellInfo}}. Must
 #'   result in a returned \code{character} or \code{factor} vector.
 #'   
-#' @param y String specifying the column-level metadata to show on the y-axis.
+#' @param y \code{Character scalar}. Specifies the column-level metadata to show on the y-axis.
 #'   Alternatively, an \link{AsIs} vector or data.frame, see 
 #'   \code{?\link{retrieveFeatureInfo}} or \code{?\link{retrieveCellInfo}}. Must
 #'   result in a returned \code{character} or \code{factor} vector.

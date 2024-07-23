@@ -42,43 +42,40 @@ plotSeries(
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{x}{a single character value for selecting the column from
+\item{x}{\code{Character scalar}. selecting the column from
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} that
 will specify values of x-axis.}
 
-\item{y}{a single character value for selecting the taxa from
+\item{y}{\code{Character scalar}. Selects the taxa from
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
 This parameter specifies taxa whose abundances will be plotted.}
 
-\item{rank}{a single character value defining a taxonomic rank, that is used
+\item{rank}{\code{Character scalar}. A taxonomic rank, that is used
 to agglomerate the data. Must be a value of \code{taxonomicRanks()}
-function.}
+function. (Default: \code{NULL})}
 
-\item{colour.by}{a single character value defining a taxonomic rank, that is used to
-color plot. Must be a value of \code{taxonomicRanks()} function.}
+\item{colour.by}{\code{Character scalar}. A taxonomic rank, that is used to
+color plot. Must be a value of \code{taxonomicRanks()} function. (Default: \code{NULL})}
 
 \item{colour_by}{Deprecated. Use \code{colour.by} instead.}
 
-\item{size.by}{a single character value defining a taxonomic rank, that is
+\item{size.by}{\code{Character scalar}. A taxonomic rank, that is
 used to divide taxa to different line size types. Must be a value of
-\code{taxonomicRanks()} function.}
+\code{taxonomicRanks()} function. (Default: \code{NULL})}
 
 \item{size_by}{Deprecated. Use \code{size.by} instead.}
 
-\item{linetype.by}{a single character value defining a taxonomic rank, that
+\item{linetype.by}{\code{Character scalar}. A taxonomic rank, that
 is used to divide taxa to different line types. Must be a value of
-\code{taxonomicRanks()} function.}
+\code{taxonomicRanks()} function. (Default: \code{NULL})}
 
 \item{linetype_by}{Deprecated. Use \code{linetype.by} instead.}
 
-\item{assay.type}{a single character value for selecting the
+\item{assay.type}{\code{Character scalar}. selecting the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-plotted. (default: \code{assay.type = "counts"})}
+plotted. (Default: \code{"counts"})}
 
-\item{assay_name}{a single \code{character} value for specifying which
-assay to use for calculation.
-(Please use \code{assay.type} instead. At some point \code{assay_name}
-will be disabled.)}
+\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 
 \item{...}{additional parameters for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}

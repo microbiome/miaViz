@@ -6,41 +6,38 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'    object.
 #'
-#' @param assay.type a single character value for selecting the
+#' @param assay.type \code{Character scalar}. selecting the
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#'   plotted. (default: \code{assay.type = "counts"})
+#'   plotted. (Default: \code{"counts"})
 #'   
-#' @param assay_name a single \code{character} value for specifying which
-#'   assay to use for calculation.
-#'   (Please use \code{assay.type} instead. At some point \code{assay_name}
-#'   will be disabled.)
+#' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
-#' @param x a single character value for selecting the column from
+#' @param x \code{Character scalar}. selecting the column from
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} that
 #'   will specify values of x-axis.
 #'  
-#' @param y a single character value for selecting the taxa from
+#' @param y \code{Character scalar}. Selects the taxa from
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
 #'   This parameter specifies taxa whose abundances will be plotted.
 #'  
-#' @param rank a single character value defining a taxonomic rank, that is used 
+#' @param rank \code{Character scalar}. A taxonomic rank, that is used 
 #'   to agglomerate the data. Must be a value of \code{taxonomicRanks()} 
-#'   function.
+#'   function. (Default: \code{NULL})
 #'  
-#' @param colour.by a single character value defining a taxonomic rank, that is used to
-#'   color plot. Must be a value of \code{taxonomicRanks()} function.
+#' @param colour.by \code{Character scalar}. A taxonomic rank, that is used to
+#'   color plot. Must be a value of \code{taxonomicRanks()} function. (Default: \code{NULL})
 #'   
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
 #' 
-#' @param linetype.by a single character value defining a taxonomic rank, that
+#' @param linetype.by \code{Character scalar}. A taxonomic rank, that
 #'   is used to divide taxa to different line types. Must be a value of
-#'   \code{taxonomicRanks()} function.
+#'   \code{taxonomicRanks()} function. (Default: \code{NULL})
 #'   
 #' @param linetype_by Deprecated. Use \code{linetype.by} instead.
 #' 
-#' @param size.by a single character value defining a taxonomic rank, that is
+#' @param size.by \code{Character scalar}. A taxonomic rank, that is
 #'   used to divide taxa to different line size types. Must be a value of
-#'   \code{taxonomicRanks()} function.
+#'   \code{taxonomicRanks()} function. (Default: \code{NULL})
 #'   
 #' @param size_by Deprecated. Use \code{size.by} instead.
 #'   
