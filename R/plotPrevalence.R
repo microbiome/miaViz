@@ -31,8 +31,8 @@
 #' }
 #' 
 #'   
-#' @param assay.type a \code{character} value defining which assay data to
-#'   use. (default: \code{assay.type = "relabundance"})
+#' @param assay.type \code{Character scalar}. Defines which assay data to
+#'   use. (Default: \code{"relabundance"})
 #'   
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'   

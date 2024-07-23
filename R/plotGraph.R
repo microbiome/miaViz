@@ -14,7 +14,7 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' the key for subsetting the \code{metadata(x)} to a graph object. (Default: \code{"graph"})
 #' 
-#' @param show.label \code{Logical scalar}, \code{integer scalar} or \code{character vector}
+#' @param show.label \code{Logical scalar}, \code{integer vector} or \code{character vector}
 #'   If a \code{logical} scalar is given, should tip labels be plotted
 #'   or if a logical vector is provided, which labels should be shown? If an
 #'   \code{integer} or \code{character} vector is provided, it will be converted

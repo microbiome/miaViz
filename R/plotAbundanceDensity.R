@@ -110,14 +110,14 @@
 #' # Point shape is changed from default (21) to 41.
 #' plotAbundanceDensity(
 #'     tse, layout = "point", assay.type = "relabundance", n = 10,
-#'     point_shape = 41)
+#'     point.shape = 41)
 #'                      
 #' # Plots the relative abundance of 10 most abundant taxa as a point plot.
 #' # In addition to colour, groups can be visualized by size and shape in point plots,
 #' # and adjusted for point size
 #' plotAbundanceDensity(
 #'     tse, layout = "point", assay.type = "relabundance", n = 10,
-#'     shape.by = "Geographical_location", size.by = "Age", point_size=1)
+#'     shape.by = "Geographical_location", size.by = "Age", point.size=1)
 #' 
 #' # Ordering via decreasing
 #' plotAbundanceDensity(

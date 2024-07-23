@@ -88,8 +88,8 @@ limit, set \code{include.lowest} to \code{TRUE}.}
 
 \item{prevalences}{Deprecated. Use \code{prevalence} instead.}
 
-\item{assay.type}{a \code{character} value defining which assay data to
-use. (default: \code{assay.type = "relabundance"})}
+\item{assay.type}{\code{Character scalar}. Defines which assay data to
+use. (Default: \code{"relabundance"})}
 
 \item{assay_name}{Deprecated. Use \code{assay.type} instead.}
 

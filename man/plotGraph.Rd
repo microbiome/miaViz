@@ -81,7 +81,7 @@ For the latter object a graph object must be stored in \code{metadata(x)$name}.}
 \item{...}{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
-\item{show.label}{\code{Logical scalar}, \code{integer scalar} or \code{character vector}
+\item{show.label}{\code{Logical scalar}, \code{integer vector} or \code{character vector}
 If a \code{logical} scalar is given, should tip labels be plotted
 or if a logical vector is provided, which labels should be shown? If an
 \code{integer} or \code{character} vector is provided, it will be converted
