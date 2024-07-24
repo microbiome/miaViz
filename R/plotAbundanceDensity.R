@@ -140,7 +140,7 @@ setGeneric("plotAbundanceDensity", signature = c("x"),
 #' @export
 setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
           function(x,
-                   layout = c("jitter", "density", "point"),
+                   layout = c("jitter", "density", "point", "box", "violin"),
                    assay.type = assay_name, assay_name = "counts",
                    n = min(nrow(x), 25L), colour.by = colour_by, 
                    colour_by = NULL,
@@ -153,7 +153,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                    ...){
               ############################# Input Check ##############################
               # Check layout
-              layout <- match.arg(layout, c("jitter", "density", "point"))
+              layout <- match.arg(layout, c("jitter", "density", "point", "box", "violin"))
               # Checks assay.type
               .check_assay_present(assay.type, x)
               # Checks n
@@ -290,79 +290,77 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
         scales_free = scales.free,
         scales.free = TRUE,
         angle_x_text = angle.x.test,
-        angle.x.text = TRUE){
+        angle.x.text = TRUE
+) {
     # start plotting
-    plot_out <- ggplot(density_data, aes(x=.data[["X"]])) +
+    plot_out <- ggplot(density_data, aes(x = .data[["X"]])) +
         xlab(xlab) +
         ylab(ylab)
-    # Layout can be "density", "jitter", or "point"
-    if (layout == "density"){
-        plot_out$data$Y <- factor(plot_out$data$Y,
-                                  levels = rev(levels(plot_out$data$Y)) )
-        point_args <- .get_density_args(colour_by,
-                                        alpha = point_alpha)
-        # density specific options for flipping
-        grid_args <- list(switch = ifelse(flipped, "x", "y"),
-                          scales = ifelse(scales_free, "free", "fixed"))
-        if(flipped){
+    
+    # Prepare arguments for different geoms
+    geom_args <- list()
+    if (layout == "density") {
+        geom_args <- .get_density_args(colour_by, alpha = point_alpha)
+        geom_args$args$mapping$y <- NULL  # Density plots don't need y mapping
+    } else if (layout %in% c("point", "jitter", "box", "violin")) {
+        geom_args <- .get_point_args(
+            colour_by, shape_by = shape_by, size_by = size_by, 
+            alpha = point_alpha, shape = point_shape, 
+            size = point_size, colour = point_colour
+        )
+        geom_args$args$mapping$y <- sym("Y")
+    }
+      else {
+        stop("Unsupported layout option: '", layout, "'.", call. = FALSE)
+    }
+    
+    # Add the appropriate geom to the plot
+    if (layout == "density") {
+        plot_out$data$Y <- factor(plot_out$data$Y, levels = rev(levels(plot_out$data$Y)))
+        
+        grid_args <- list(switch = ifelse(flipped, "x", "y"), scales = ifelse(scales_free, "free", "fixed"))
+        if (flipped) {
             grid_args$cols <- vars(!!sym("Y"))
         } else {
             grid_args$rows <- vars(!!sym("Y"))
         }
-        #
+        
         plot_out <- plot_out +
-            do.call(geom_density, point_args$args) + 
+            do.call(geom_density, geom_args$args) + 
             do.call(facet_grid, grid_args)
+        
         shape_by <- NULL
         size_by <- NULL
         angle_x_text <- FALSE
-    } else if (layout %in% c("point","jitter")) {
-        point_args <- .get_point_args(colour_by,
-                                      shape_by = shape_by,
-                                      size_by = size_by,
-                                      alpha = point_alpha,
-                                      shape = point_shape,
-                                      size = point_size,
-                                      colour = point_colour)
-        point_args$args$mapping$y <- sym("Y")
-        if (layout == "point"){
-            plot_out <- plot_out +
-                do.call(geom_point, point_args$args)
+    } else if (layout %in% c("point", "jitter", "box", "violin")) {
+        if (layout == "point") {
+            plot_out <- plot_out + do.call(geom_point, geom_args$args)
         } else if (layout == "jitter") {
-            point_args$args$height <- 0.25
-            plot_out <- plot_out +
-                do.call(geom_jitter, point_args$args)
-        } else {
-            stop(".")
+            geom_args$args$height <- 0.25
+            plot_out <- plot_out + do.call(geom_jitter, geom_args$args)
+        } else if (layout == "box") {
+            plot_out <- plot_out + do.call(geom_boxplot, geom_args$args)
+        } else if (layout == "violin") {
+            plot_out <- plot_out + do.call(geom_violin, geom_args$args)
         }
-    } else{
-        stop("Unsupported layout option: '",layout,"'.", call. = FALSE)
     }
+    
     # If colour_by is specified, colours are resolved
     if (!is.null(colour_by)) {
-        plot_out <- .resolve_plot_colours(plot_out,
-                                          density_data$colour_by,
-                                          colour_by,
-                                          fill = point_args$fill,
-                                          na.translate = FALSE)
-        if(layout == "density"){
-            plot_out <- .resolve_plot_colours(plot_out,
-                                              density_data$colour_by,
-                                              colour_by,
-                                              fill = !point_args$fill,
-                                              na.translate = FALSE)
+        plot_out <- .resolve_plot_colours(plot_out, density_data$colour_by, colour_by, fill = geom_args$fill, na.translate = FALSE)
+        if (layout == "density") {
+            plot_out <- .resolve_plot_colours(plot_out, density_data$colour_by, colour_by, fill = !geom_args$fill, na.translate = FALSE)
         }
     }
+    
     # set the theme
-    plot_out <- plot_out +
-        theme_classic()
+    plot_out <- plot_out + theme_classic()
+    
     # fine tuning for density layout
-    if( layout == "density" ){
-        plot_out <- plot_out +
-            theme(strip.background = element_blank())
-        if(flipped){
+    if (layout == "density") {
+        plot_out <- plot_out + theme(strip.background = element_blank())
+        if (flipped) {
             plot_out <- plot_out +
-            # Removes label grid, horizontal labels
                 theme(strip.text.x.bottom = element_text(angle = 90, hjust = 1), 
                       axis.ticks.x = element_blank(),
                       axis.text.x = element_blank(), # Removes x-axis
@@ -370,7 +368,6 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                       axis.line.x = element_blank()) # Removes x-axis
         } else {
             plot_out <- plot_out +
-             # Removes label grid, horizontal labels
                 theme(strip.text.y.left = element_text(angle = 0, hjust = 1), 
                       axis.ticks.y = element_blank(),
                       axis.text.y = element_blank(), # Removes y-axis
@@ -378,14 +375,13 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                       axis.line.y = element_blank()) # Removes y-axis
         }
     }
+    
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
     # add legend
     plot_out <- .add_legend(plot_out, add_legend)
     # flip
-    plot_out <- .flip_plot(plot_out,
-                           flipped = flipped,
-                           add_x_text = TRUE,
-                           angle_x_text = angle_x_text)
+    plot_out <- .flip_plot(plot_out, flipped = flipped, add_x_text = TRUE, angle_x_text = angle_x_text)
+    
     return(plot_out)
 }

@@ -9,7 +9,7 @@ plotAbundanceDensity(x, ...)
 
 \S4method{plotAbundanceDensity}{SummarizedExperiment}(
   x,
-  layout = c("jitter", "density", "point"),
+  layout = c("jitter", "density", "point", "box", "violin"),
   assay.type = assay_name,
   assay_name = "counts",
   n = min(nrow(x), 25L),
