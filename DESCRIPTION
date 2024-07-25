@@ -59,6 +59,7 @@ Imports:
     ape,
     DirichletMultinomial,
     ggrepel,
+    magick,
     SingleCellExperiment
 Suggests:
     knitr,
