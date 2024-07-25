@@ -112,6 +112,8 @@ setGeneric("plotSeries", signature = c("object"),
 
 #' @rdname plotSeries
 #' @importFrom SummarizedExperiment colData
+#' @importFrom mia meltSE
+#' @importFrom stats sd
 #' @export
 setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     function(object,
