@@ -10,12 +10,12 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #'   For the latter object a graph object must be stored in \code{metadata(x)$name}.
 #'   
-#' @param name If \code{x} is a 
+#' @param name \code{Character scalar}. If \code{x} is a 
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' the key for subsetting the \code{metadata(x)} to a graph object.
+#' the key for subsetting the \code{metadata(x)} to a graph object. (Default: \code{"graph"})
 #' 
-#' @param show.label \code{logical} (scalar), \code{integer} or \code{character}
-#'   vector. If a \code{logical} scalar is given, should tip labels be plotted
+#' @param show.label \code{Logical scalar}, \code{integer vector} or \code{character vector}
+#'   If a \code{logical} scalar is given, should tip labels be plotted
 #'   or if a logical vector is provided, which labels should be shown? If an
 #'   \code{integer} or \code{character} vector is provided, it will be converted
 #'   to a logical vector. The \code{integer} values must be in the range of 1
@@ -23,61 +23,59 @@
 #'   match values of a \code{label} or \code{name} column in the node data. In
 #'   case of a \code{character} vector only values corresponding to actual
 #'   labels will be plotted and if no labels are provided no labels will be
-#'   shown. (default: \code{show.label = FALSE})
+#'   shown. (Default: \code{FALSE})
 #'   
 #' @param show_label Deprecated. Use \code{show.label} instead.
 #' 
-#' @param add.legend logical scalar. Should legends be plotted? 
-#'   (default: \code{add.legend = TRUE})
+#' @param add.legend \code{Logical scalar}. Should legends be plotted? 
+#'   (Default: \code{TRUE})
 #'   
 #' @param add_legend Deprecated. Use \code{add.legend} instead.
 #'   
-#' @param layout layout for the plotted graph. See 
-#'   \code{\link[ggraph:ggraph]{ggraph}} for details. (default: 
-#'   \code{layout = "kk"})
+#' @param layout \code{Character scalar}. Layout for the plotted graph. See 
+#'   \code{\link[ggraph:ggraph]{ggraph}} for details. (Default: \code{"kk"})
 #'   
-#' @param edge.type type of edge plotted on the graph. See 
+#' @param edge.type \code{Character scalar}. Type of edge plotted on the graph. See 
 #'   \code{\link[ggraph:geom_edge_fan]{geom_edge_fan}} for details and other 
-#'   available geoms. (default: 
-#'   \code{edge.type = "fan"})
+#'   available geoms. (Default: \code{"fan"})
 #' 
 #' @param edge_type Deprecated. Use \code{edge.type} instead.
 #'   
-#' @param edge.colour.by Specification of a edge metadata field to use for 
-#'   setting colours of the edges.
+#' @param edge.colour.by \code{Character scalar}. Specification of an edge 
+#'   metadata field to use for setting colours of the edges. (Default: \code{NULL})
 #'   
 #' @param edge_colour_by Deprecated. Use \code{edge.colour.by} instead.
 #'   
-#' @param edge.width.by Specification of a edge metadata field to use for 
-#'   setting width of the edges.
+#' @param edge.width.by \code{Character scalar}. Specification of an edge metadata 
+#'   field to use for setting width of the edges. (Default: \code{NULL})
 #'   
 #' @param edge_width_by Deprecated. Use \code{edge.width.by} instead.
 #' 
-#' @param colour.by Specification of a column metadata field or a feature to
-#'   colour graph nodes by, see the by argument in 
+#' @param colour.by \code{Character scalar}. Specification of a column metadata 
+#'   field or a feature to colour graph nodes by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
-#'   values.
+#'   values. (Default: \code{NULL})
 #'   
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
 #'   
-#' @param shape.by Specification of a column metadata field or a feature to
-#'   shape graph nodes by, see the by argument in 
+#' @param shape.by \code{Character scalar}. Specification of a column metadata 
+#'   field or a feature to shape graph nodes by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
-#'   values.
+#'   values. (Default: \code{NULL})
 #'   
 #' @param shape_by Deprecated. Use \code{shape.by} instead.
 #'   
-#' @param size.by Specification of a column metadata field or a feature to
-#'   size graph nodes by, see the by argument in 
+#' @param size.by \code{Character scalar}. Specification of a column metadata 
+#'   field or a feature to size graph nodes by, see the by argument in 
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible 
-#'   values.
+#'   values. (Default: \code{NULL})
 #'   
 #' @param size_by Deprecated. Use \code{size.by} instead.
 #'   
-#' @param assay.type A string or integer scalar specifying which assay to
-#'   obtain expression values from, for use in point aesthetics - see the 
-#'   \code{exprs_values} argument in 
-#'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
+#' @param assay.type \code{Character scalar}. or \code{integer scalar}. Specifies 
+#'   which assay to obtain expression values from, for use in point aesthetics - see the 
+#'   \code{exprs_values} argument in \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
+#'   (Default: \code{"counts"})
 #' 
 #' @param by_exprs_values Deprecated. Use \code{assay.type} instead.
 #'   

@@ -14,8 +14,16 @@ Authors@R:
       person(given = "Basil", family = "Courbayre", role = c("ctb")),
       person(given = "Giulio", family = "Benedetti", role = c("ctb"),
              email = "giulio.benedetti@utu.fi",
-             comment = c(ORCID = "0000-0002-8732-7692"))
-	     )
+             comment = c(ORCID = "0000-0002-8732-7692")),
+      person(given = "Théotime", family = "Pralas", role=c("ctb")),
+      person(given = "Nitesh", family = "Turaga", role=c("ctb")),
+      person(given = "Chouaib", family = "Benchraka", role=c("ctb")),
+      person(given = "Sam", family = "Hillman", role=c("ctb")),
+      person(given = "Muluh", family = "Muluh", role=c("ctb")),
+      person(given = "Noah", family = "De Gunst", role=c("ctb")),
+      person(given = "Ely", family = "Seraidarian", role=c("ctb")),
+      person(given = "Himmi", family = "Lindgren", role=c("ctb")),
+      person(given = "Vivian", family = "Ikeh", role=c("ctb")))
 Description: The miaViz package implements functions to visualize
     TreeSummarizedExperiment objects especially in the context of microbiome
     analysis. Part of the mia family of R/Bioconductor packages.
@@ -65,5 +73,5 @@ Suggests:
 Remotes:
     github::microbiome/miaTime
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.2
 VignetteBuilder: knitr

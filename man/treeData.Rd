@@ -46,13 +46,13 @@ object.}
 
 \item{...}{additional arguments, currently not used.}
 
-\item{tree.name}{a single \code{character} value specifying a rowTree/colTree from
-\code{x}. (By default: \code{tree.name = "phylo"})}
+\item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
+\code{x}. (Default: \code{"phylo"})}
 
 \item{tree_name}{Deprecated. Use \code{tree.name} instead.}
 
 \item{other.fields, value}{a \code{data.frame} or coercible to one, with at least one type
-of id information. See details.}
+of id information. See details.(Default: \code{list()})}
 
 \item{other_fields}{Deprecated. Use \code{other.fields} instead.}
 }
