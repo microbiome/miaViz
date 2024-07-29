@@ -5,8 +5,9 @@
 #' @inheritParams plotAbundance
 #'
 #' @param layout \code{Character scalar}. Selects the layout of the plot.
-#'   There are three different options: \code{jitter}, \code{density}, and
-#'   \code{point} plot. (default: \code{layout = "jitter"})
+#'   There are three different options: \code{jitter}, \code{density},
+#'   \code{point}, \code{box}, and \code{violin} plot. 
+#'   (Default: \code{"jitter"})
 #'   
 #' @param n \code{Integer scalar}. Specifies the number of the most abundant taxa
 #'   to show. (Default: \code{min(nrow(x), 25L)})

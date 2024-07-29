@@ -59,8 +59,9 @@ in x-axis. (Default: \code{TRUE})
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{layout}{\code{Character scalar}. Selects the layout of the plot.
-There are three different options: \code{jitter}, \code{density}, and
-\code{point} plot. (default: \code{layout = "jitter"})}
+There are three different options: \code{jitter}, \code{density},
+\code{point}, \code{box}, and \code{violin} plot.
+(Default: \code{"jitter"})}
 
 \item{assay.type}{\code{Character scalar} value defining which assay data to
 use. (Default: \code{"relabundance"})}
