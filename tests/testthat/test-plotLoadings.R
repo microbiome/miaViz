@@ -18,7 +18,7 @@ test_that("plot Loadings", {
   # Wrong-entry scenarios
   expect_error(plotLoadings(tse, layout = "wrong name"))
   expect_warning(plotLoadings(tse, layout = "tree"),
-               "Data was subsetted")
+               "message here")
   
   # Test that error occurs if tree.name is wrong
   expect_error( plotLoadings(tse, tree.name = "test") )

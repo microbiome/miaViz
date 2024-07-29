@@ -8,19 +8,22 @@
 #'   x.
 #' 
 #' @param dimred \code{Character scalar}. Dimension reduction from reducedDimNames to be plotted. 
-#'   (default: \code{dimred = "PCA"})
+#'   (default: \code{"PCA"})
 #'  
-#' @param layout One way to plot feature loadings of \code{c("heatmap", "barplot", "screeplot", "tree")} 
-#'   (default: \code{layout = "heatmap"})
+#' @param layout One way to plot feature loadings of \code{c("heatmap", "barplot", "tree")} 
+#'   (default: \code{"heatmap"})
 #' 
 #' @param n A numeric specifying the number of features to be plotted.
-#'   (default: \code{n = 10})
+#'   (default: \code{10})
 #'   
 #' @param ncomponents A numeric specifying the number of components.
-#'   (default: \code{ncomponents = 5})
+#'   (default: \code{5})
 #' 
-#' @param tree.name a single \code{character} value specifying a rowTree from
-#'   TreeSummarizedExperiment. (By default: \code{tree.name = "phylo"})
+#' @param tree.name A single \code{character} value specifying a rowTree from a
+#'   TreeSummarizedExperiment object. (By default: \code{"phylo"})
+#'   
+#' @param class A single \code{character} value specifying a rank from taxonomyRanks
+#'   (default: \code{rownames})
 #'     
 #' 
 #' @details
@@ -57,9 +60,6 @@
 #' # Plotting without tree as a barplot
 #' plotLoadings(loadings_matrix, layout = "barplot")
 #' 
-#' # Plotting without tree as a screeplot
-#' plotLoadings(loadings_matrix, layout = "screeplot")
-#' 
 #' # Plotting more features
 #' plotLoadings(loadings_matrix, layout = "heatmap", n = 12)
 #'
@@ -88,6 +88,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
             n = 10,
             ncomponents = 5,
             tree.name = "phylo",
+            class = rownames(x),
             ...) {
         
             
@@ -98,6 +99,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
                         n = n,
                         ncomponents = ncomponents,
                         tree.name = tree.name,
+                        class = class,
                         ...)  
 
         loadings_matrix <- attr(reducedDim(x, dimred), "rotation")
@@ -106,7 +108,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         
         if (layout == "tree") {
             # Plot tree with feature loadings
-            p <- .loadings_tree_plotter(x, loadings_matrix, ncomponents, tree.name)
+            p <- .loadings_tree_plotter(x, loadings_matrix, ncomponents, tree.name, class)
         } else {
             # Ordering loadings and adding factor to keep the order
             L <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
@@ -131,6 +133,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                         layout = layout,
                         n = n,
                         ncomponents = ncomponents,
+                        
                         ...)
                       
         # Checking if there are enough components in the matrix
@@ -144,7 +147,38 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     }
 )
 
-.check_parameters <- function(x, dimred, layout, n, ncomponents, tree.name,...) {
+#' @rdname plotLoadings
+#' @export 
+setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
+    function(x,
+            dimred = "PCA",
+            layout = "heatmap",
+            n = 10,
+            ncomponents = 5,
+            ...) {
+      
+        # Making sure there is no error in parameters given by the user
+        .check_parameters(x,
+                          dimred = dimred,
+                          layout = layout,
+                          n = n,
+                          ncomponents = ncomponents,
+                          ...)  
+        
+        loadings_matrix <- attr(reducedDim(x, dimred), "rotation")
+        # Checking if there are enough components in the matrix
+        .check_components(loadings_matrix, ncomponents)
+            
+        # Ordering loadings and adding factor to keep the order
+        L <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
+        # Plot features with the layout selected
+        p <- .plot_pca_feature_loadings(L, layout, n, ncomponents)
+        
+        return(p)
+    }
+)
+
+.check_parameters <- function(x, dimred, layout, n, ncomponents, tree.name, class, ...) {
     # Check tree.name
     if( is(x, "TreeSummarizedExperiment") && !(tree.name %in% rowTreeNames(x)  && .is_a_string(tree.name))){
         stop("'tree.name' must be a single character value specifying a colTree.", call. = FALSE)
@@ -154,11 +188,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         stop("'dimred' must specify reducedDim.", call. = FALSE)
     }
     # Checking if layout is correct
-    if ( !(layout %in% c("screeplot", "barplot", "tree", "heatmap") && .is_a_string(layout)) ) {
-        stop("'layout' must be one of c('screeplot', 'barplot', 'tree', 'heatmap').", call. = FALSE)
+    if ( !(layout %in% c("barplot", "tree", "heatmap") && .is_a_string(layout)) ) {
+        stop("'layout' must be one of c('barplot', 'tree', 'heatmap').", call. = FALSE)
     }
     # Making sure the user doesn't try to plot the tree if he gives only the matrix
-    if (is.matrix(x) && layout == "tree") {
+    if ( !(is(x, "TreeSummarizedExperiment")) && layout == "tree") {
         stop("TreeSummarizedExperiment object is required for the tree plotting.", call. = FALSE)
     }
     # Making sure the tree is not null
@@ -172,6 +206,10 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Checking if ncomponents is a positive number 
     if ( !(is.numeric(ncomponents) && ncomponents > 0) ) {
         stop("'ncomponents' must be a positive number.", call. = FALSE)
+    }
+    # Checking if class is correct
+    if ( !(is(x, "TreeSummarizedExperiment") && (any(class %in% taxonomyRanks(x)) || identical(class, rownames(x))))) {
+        stop("'class' must be one of taxonomyRanks", call. = FALSE)
     }
     return(NULL)
 
@@ -196,12 +234,13 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     return(df)
 }
 
+#' @importFrom dplyr select
 .get_loadings_plot_data <- function(x, n, ncomponents) {
   # Transform into a dataframe
   x <- as.data.frame(x)
   # Keep only the number of components needed
   names <- colnames(x)[1:ncomponents]
-  df <- dplyr::select(x, all_of(names))
+  df <- select(x, all_of(names))
   # Add feature labels
   x[["Feature"]] <- rownames(x)
   # Apply the function to each component and return the list
@@ -209,31 +248,36 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
   return(L)
 }
 
-
-.loadings_tree_plotter <- function(x, loadings_matrix, ncomponents, tree.name) {
+#' @importFrom dplyr select
+#' @importFrom ggtree ggtree gheatmap
+.loadings_tree_plotter <- function(x, loadings_matrix, ncomponents, tree.name, class) {
     # Retrieve rowTree
     phylo <- rowTree(x, tree.name)
     # Subset data based on the tree
     ind <- rowLinks(x)[["whichTree"]] == tree.name
     if( any(ind) ){
-      warning("Data was subsetted")
+        warning("message here", call. = FALSE)
     }
     x <- x[ind, ]
     # Store plot tree
-    circ <- ggtree::ggtree(phylo, layout = "circular")
+    circ <- ggtree(phylo, layout = "circular")
     df <- rowData(x)
     # Transform into a dataframe
-    df <- data.frame(Class = df$Phylum)
+    if (identical(class, rownames(x))) {
+        df <- data.frame(Class = class)
+    } else {
+        df <- data.frame(Class = df[[class]])
+    }
     # Match labels
-    rownames(df) <- phylo$tip.label
+    rownames(df) <- rowLinks(x)$nodeLab
     
     # Transform into a dataframe
     df2 <- data.frame(loadings_matrix)
     # Match labels
-    rownames(df2) <- phylo$tip.label
+    rownames(df2) <- rowLinks(x)$nodeLab
     
     # Plot tree with first inner circle (Classes)
-    p <- ggtree::gheatmap(
+    p <- gheatmap(
         p = circ,
         data = df,
         offset = -.1,
@@ -247,11 +291,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 p <- p +
                 ggnewscale::new_scale_fill()
             }
-            df3 <- dplyr::select(
+            df3 <- select(
                 df2, (all_of(i))
             )
             
-            p <- ggtree::gheatmap(
+            p <- gheatmap(
                 p,
                 df3,
                 offset = i*.065,
@@ -260,7 +304,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 colnames = FALSE) + 
                 scale_fill_gradient2(limits = c(-1,1),
                     low = "darkslateblue", mid = "white",
-                    high = "darkred", name = expression(beta[k]))
+                    high = "darkred", name = "Value")
             p <- p + labs(title = "Tree feature loadings plot") +
               theme(legend.key.size = unit(0.5, 'cm'),
                     plot.title = element_text(size = 18, hjust=0.5))
@@ -268,95 +312,69 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     return(p)
 }
 
+#' @importFrom dplyr arrange
 .plot_pca_feature_loadings <- function(L, layout, n, ncomponents) {
-    names <- colnames(L[[1]])
+    k <- seq_len(length(L))
+    # Prepare the data in correct format
+    df <- lapply(k, function(i){
+      L[[i]][, i, drop = FALSE]
+    })
+    names <- unique(unlist(lapply(L, rownames)))
+    cnames <- unique(unlist(lapply(L, colnames)))
+    cnames <- cnames[!cnames %in% c("Feature") ]
+    
+    new_df <- data.frame(matrix(-1, nrow = length(names), ncol = length(cnames)), row.names = names)
+    colnames(new_df) <- cnames
+    for (i in seq_along(L)) {
+      pc_df <- df[[i]]
+      name <- colnames(pc_df)
+      new_df[rownames(pc_df), name] <- pc_df[, 1]
+    }
+    new_df[["Feature"]] <- names
+    
+    
+    # To long format
+    df <- reshape(
+      new_df, varying = colnames(new_df)[ !colnames(new_df) %in% c("Feature") ],
+      v.names = "Value", 
+      timevar = "PC",
+      times = colnames(new_df)[ !colnames(new_df) %in% c("Feature") ],
+      direction = "long")
+    # Arrange dara
+    df <- filter(df, Value != -1)
     if (layout == "heatmap") {
-        # Transform into a dataframe and round numerics for plotting
-        df <- data.frame(PC = round(L[[1]][[1]], 2), Feature = L[[1]][["Feature"]])
-        # Plot first component
-        p <- ggplot(df, aes(x = "PC", y = Feature, label = PC))  +
-            geom_point(aes(fill = PC), size=15 - 0.4*n, shape = 22) +
-            theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
+        plots <- lapply(1:ncomponents, function(i) {
+            data_subset <- subset(df, PC %in% cnames[i])
+            data_subset <- arrange(data_subset, Value)
+            data_subset$Feature <- factor(data_subset$Feature, levels = data_subset$Feature)
+            #Plot loadings
+            ggplot(data_subset, aes(x = "PC", y = Feature, label = round(Value, 2)))  +
+            geom_point(aes(fill = Value), size=15 - 0.4*n, shape = 22) +
+            theme(axis.title.x = element_blank(), axis.title.y = element_blank(),
+                axis.text.x = element_blank()) +
             scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
-                mid = "white", high = "darkred", guide = NULL) +
+                mid = "white", high = "darkred") +
             geom_text(color="black", size=4 - 0.075 * n) +
-            labs(title=names[1])
-        # Loop plotting others components
-        for (i in 2:length(L)) {
-            df <- data.frame(PC = round(L[[i]][[i]], 2),
-                Feature = L[[i]][["Feature"]])
-            # Not showing legend for each plot
-            if (i != length(L)) {
-                p <- p +
-                    ggplot(df, aes(x = "PC", y = Feature, label = PC))  +
-                    geom_point(aes(fill = PC), size=15 - 0.4*n, shape = 22) +
-                    theme(axis.title.x = element_blank(), axis.title.y = element_blank(),
-                        axis.text.x = element_blank()) +
-                    scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
-                        mid = "white", high = "darkred", guide = NULL) +
-                    geom_text(color="black", size=4 - 0.075 * n) +
-                    labs(title=names[i])
-            # Only show legend for last one
-            } else {
-                p <- p +
-                    ggplot(df, aes(x = "PC", y = Feature, label = PC))  +
-                    geom_point(aes(fill = PC), size=15 - 0.4*n, shape = 22) +
-                    theme(axis.title.x = element_blank(), axis.title.y = element_blank(),
-                        axis.text.x = element_blank()) +
-                    scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
-                        mid = "white", high = "darkred") +
-                    geom_text(color="black", size=4 - 0.075*n) +
-                    labs(title=names[i])
-            }
-        }
+            facet_wrap(~ PC)
+      })
+      p <- patchwork::wrap_plots(plots, guides = "collect")
+      
     }
     
     else if (layout == "barplot") {
-        # Transform into a dataframe
-        df <- data.frame(PC = L[[1]][[1]], Feature = L[[1]][["Feature"]]) 
-        # Plot first component
-        p <- ggplot(df, aes(x = .data[["PC"]], .data[["Feature"]])) +
-            geom_bar(stat="identity") +
-            theme(axis.title.x = element_blank()) +
-            xlim(-1,1) +
-            labs(title=names[1])
-        # Loop to plot others components
-        for (i in 2:length(L)) {
-            df <- data.frame(PC =L[[i]][[i]],
-                Feature = L[[i]][["Feature"]])
-            p <- p + ggplot(df, aes(x = .data[["PC"]], .data[["Feature"]])) +
-                geom_bar(stat="identity") +
-                theme(axis.title.x = element_blank()) +
-                xlim(-1,1) +
-                labs(title=names[i])
-        }
-    }
-    
-    else if (layout == "screeplot") {
-        # Transform into a dataframe
-        df <- data.frame(PC = L[[1]][[1]], Feature = L[[1]][["Feature"]]) 
-        # Plot first component
-        p <- ggplot(df, aes(x = .data[["PC"]], .data[["Feature"]])) +
-            geom_bar(stat="identity") +
-            theme(axis.title.x = element_blank(), 
-                axis.text.x = element_text(angle = 90, 
-                    , size = 6, vjust = 0.5, hjust=1)) +
-            xlim(-1,1) +
-            labs(title=names[1]) +
-            coord_flip()
-        # Plot others components
-        for (i in 2:length(L)) {
-            df <- data.frame(PC =L[[i]][[i]],
-                Feature = L[[i]][["Feature"]])
-            p <- p + ggplot(df, aes(x = .data[["PC"]], .data[["Feature"]])) +
-                geom_bar(stat="identity") +
-                theme(axis.title.x = element_blank(),
-                    axis.text.x = element_text(angle = 90,
-                        vjust = 0.5, hjust=1, size=6)) +
-                xlim(-1,1) +
-                labs(title=names[i]) +
-                coord_flip()
-        }
+        plots <- lapply(1:ncomponents, function(i) {
+            data_subset <- subset(df, PC %in% cnames[i])
+            data_subset <- data_subset %>%
+                arrange(Value) %>%
+                mutate(Feature = fct_reorder(Feature, Value))
+            #Plot loadings
+            ggplot(data_subset) +
+                geom_bar(stat = "identity", aes(x = .data[["Value"]], y = .data[["Feature"]])) +
+                xlim(-1,1) + facet_wrap(~ PC) +
+                theme(axis.title.x = element_blank(), axis.title.y = element_blank())
+        })
+        p <- patchwork::wrap_plots(plots)
+        
     }
     return(p)
 }

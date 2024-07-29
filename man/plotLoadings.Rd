@@ -4,6 +4,7 @@
 \alias{plotLoadings}
 \alias{plotLoadings,TreeSummarizedExperiment-method}
 \alias{plotLoadings,matrix-method}
+\alias{plotLoadings,SingleCellExperiment-method}
 \title{Plot feature loadings after performing a reducedDim}
 \usage{
 plotLoadings(x, ...)
@@ -15,10 +16,20 @@ plotLoadings(x, ...)
   n = 10,
   ncomponents = 5,
   tree.name = "phylo",
+  class = rownames(x),
   ...
 )
 
 \S4method{plotLoadings}{matrix}(
+  x,
+  dimred = "PCA",
+  layout = "heatmap",
+  n = 10,
+  ncomponents = 5,
+  ...
+)
+
+\S4method{plotLoadings}{SingleCellExperiment}(
   x,
   dimred = "PCA",
   layout = "heatmap",
@@ -33,19 +44,22 @@ plotLoadings(x, ...)
 x.}
 
 \item{dimred}{\code{Character scalar}. Dimension reduction from reducedDimNames to be plotted.
-(default: \code{dimred = "PCA"})}
+(default: \code{"PCA"})}
 
-\item{layout}{One way to plot feature loadings of \code{c("heatmap", "barplot", "screeplot", "tree")}
-(default: \code{layout = "heatmap"})}
+\item{layout}{One way to plot feature loadings of \code{c("heatmap", "barplot", "tree")}
+(default: \code{"heatmap"})}
 
 \item{n}{A numeric specifying the number of features to be plotted.
-(default: \code{n = 10})}
+(default: \code{10})}
 
 \item{ncomponents}{A numeric specifying the number of components.
-(default: \code{ncomponents = 5})}
+(default: \code{5})}
 
-\item{tree.name}{a single \code{character} value specifying a rowTree from
-TreeSummarizedExperiment. (By default: \code{tree.name = "phylo"})}
+\item{tree.name}{A single \code{character} value specifying a rowTree from a
+TreeSummarizedExperiment object. (By default: \code{"phylo"})}
+
+\item{class}{A single \code{character} value specifying a rank from taxonomyRanks
+(default: \code{rownames})}
 }
 \value{
 A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
@@ -77,9 +91,6 @@ plotLoadings(loadings_matrix, layout = "heatmap")
 
 # Plotting without tree as a barplot
 plotLoadings(loadings_matrix, layout = "barplot")
-
-# Plotting without tree as a screeplot
-plotLoadings(loadings_matrix, layout = "screeplot")
 
 # Plotting more features
 plotLoadings(loadings_matrix, layout = "heatmap", n = 12)
