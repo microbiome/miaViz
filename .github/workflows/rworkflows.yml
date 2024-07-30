@@ -29,12 +29,12 @@ jobs:
           rspm: ~
         - os: macOS-latest
           bioc: devel
-          r: auto
+          r: 4.4.1
           cont: ~
           rspm: ~
         - os: windows-latest
           bioc: devel
-          r: auto
+          r: 4.4.1
           cont: ~
           rspm: ~
     steps:
