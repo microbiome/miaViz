@@ -5,14 +5,15 @@
 \alias{plotLoadings,TreeSummarizedExperiment-method}
 \alias{plotLoadings,matrix-method}
 \alias{plotLoadings,SingleCellExperiment-method}
-\title{Plot feature loadings after performing a reducedDim}
+\title{Plot feature loadings for TreeSummarizedExperiment/SingleCellExperiment objects
+or feature loadings numeric matrix.}
 \usage{
 plotLoadings(x, ...)
 
 \S4method{plotLoadings}{TreeSummarizedExperiment}(
   x,
   dimred = "PCA",
-  layout = "heatmap",
+  layout = "tree",
   n = 10,
   ncomponents = 5,
   tree.name = "phylo",
@@ -43,11 +44,14 @@ plotLoadings(x, ...)
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 x.}
 
+\item{...}{additional arguments for plotting. See
+\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
+
 \item{dimred}{\code{Character scalar}. Dimension reduction from reducedDimNames to be plotted.
 (default: \code{"PCA"})}
 
 \item{layout}{One way to plot feature loadings of \code{c("heatmap", "barplot", "tree")}
-(default: \code{"heatmap"})}
+(default: \code{"tree"} for TSE, \code{"heatmap"} for others)}
 
 \item{n}{A numeric specifying the number of features to be plotted.
 (default: \code{10})}
@@ -65,12 +69,19 @@ TreeSummarizedExperiment object. (By default: \code{"phylo"})}
 A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
 }
 \description{
-Inspired by the \code{\link[diffTop:plotASVcircular]{plotASVcircular}} method using phyloseq
-and has been converted to use TreeSummarizedExperiment objects.
+This function is used after performing a reduction method. If TSE object is
+given it retrieves the feature loadings matrix to plot values with tree.
+Plotting with other layouts is possible as SCE objects and numeric matrices
+does not include a tree.
 }
 \details{
+Inspired by the \code{\link[diffTop:plotASVcircular]{plotASVcircular}} method using phyloseq
+and has been converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
+
+TreeSummarizedExperiment/SingleCellExperiment objects are expected to have content in reducedDim slot.
 It is impossible to plot tree if only the matrix is given. Number of features must be reduced
-before calling function or it will not be understandable.
+before calling function or it will not be understandable. For example
+agglomerating data by rank or prevalence (see examples).
 }
 \examples{
 
@@ -83,7 +94,7 @@ tse <- GlobalPatterns
 tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, layout = "tree")
+plotLoadings(tse)
 
 # Plotting without tree as a heatmap
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
@@ -106,7 +117,7 @@ plotLoadings(tse, dimred= "myPCAmatrix")
 
 # Plotting tree with taxonomic rank classification
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, layout = "tree", class = "Phylum")
+plotLoadings(tse, class = "Phylum")
 }
 \author{
 Ely Seraidarian

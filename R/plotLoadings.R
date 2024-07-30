@@ -1,8 +1,11 @@
-#' Plot feature loadings after performing a reducedDim 
+#' Plot feature loadings for TreeSummarizedExperiment/SingleCellExperiment objects
+#' or feature loadings numeric matrix.
 #'
-#' Inspired by the \code{\link[diffTop:plotASVcircular]{plotASVcircular}} method using phyloseq 
-#' and has been converted to use TreeSummarizedExperiment objects.
-#'
+#' This function is used after performing a reduction method. If TSE object is
+#' given it retrieves the feature loadings matrix to plot values with tree.
+#' Plotting with other layouts is possible as SCE objects and numeric matrices
+#' does not include a tree.
+#' 
 #' @param x a
 #'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 #'   x.
@@ -11,7 +14,7 @@
 #'   (default: \code{"PCA"})
 #'  
 #' @param layout One way to plot feature loadings of \code{c("heatmap", "barplot", "tree")} 
-#'   (default: \code{"heatmap"})
+#'   (default: \code{"tree"} for TSE, \code{"heatmap"} for others)
 #' 
 #' @param n A numeric specifying the number of features to be plotted.
 #'   (default: \code{10})
@@ -24,11 +27,19 @@
 #'   
 #' @param class A single \code{character} value specifying a rank from taxonomyRanks
 #'   (default: \code{rownames})
-#'     
+#'   
+#' @param ... additional arguments for plotting. See 
+#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}     
 #' 
 #' @details
+#' 
+#' Inspired by the \code{\link[diffTop:plotASVcircular]{plotASVcircular}} method using phyloseq 
+#' and has been converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
+#' 
+#' TreeSummarizedExperiment/SingleCellExperiment objects are expected to have content in reducedDim slot.
 #' It is impossible to plot tree if only the matrix is given. Number of features must be reduced
-#' before calling function or it will not be understandable. 
+#' before calling function or it will not be understandable. For example
+#' agglomerating data by rank or prevalence (see examples).
 #' 
 #' @return 
 #' A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
@@ -51,7 +62,7 @@
 #' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, layout = "tree")
+#' plotLoadings(tse)
 #' 
 #' # Plotting without tree as a heatmap
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
@@ -74,7 +85,7 @@
 #' 
 #' # Plotting tree with taxonomic rank classification
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, layout = "tree", class = "Phylum")
+#' plotLoadings(tse, class = "Phylum")
 NULL
 
 #' @rdname plotLoadings
@@ -88,7 +99,7 @@ setGeneric("plotLoadings", signature = c("x"),
 setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
     function(x,
             dimred = "PCA",
-            layout = "heatmap",
+            layout = "tree",
             n = 10,
             ncomponents = 5,
             tree.name = "phylo",
@@ -104,9 +115,15 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
                         ncomponents = ncomponents,
                         tree.name = tree.name,
                         class = class,
-                        ...)  
+                        ...)
+        loading_names <- c("rotation", "loadings")
+        attr_names <- names(attributes(reduced_dim))
+        attr_name <- attr_names[ attr_names %in% loading_names ]
+        if( length(attr_name) != 1 )){
+            stop("Loadings cannot be found..")
+        }
+        loadings_matrix <- attr(tse, attr_name)
 
-        loadings_matrix <- attr(reducedDim(x, dimred), "rotation")
         # Checking if there are enough components in the matrix
         .check_components(loadings_matrix, ncomponents)
         
