@@ -28,13 +28,13 @@ jobs:
           cont: ghcr.io/bioconductor/bioconductor_docker:devel
           rspm: ~
         - os: macOS-latest
-          bioc: 3.20
-          r: auto
+          bioc: devel
+          r: 4.4.1
           cont: ~
           rspm: ~
         - os: windows-latest
-          bioc: 3.20
-          r: auto
+          bioc: devel
+          r: 4.4.1
           cont: ~
           rspm: ~
     steps:
