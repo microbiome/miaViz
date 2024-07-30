@@ -35,7 +35,7 @@ Depends:
     R (>= 4.0),
     SummarizedExperiment,
     TreeSummarizedExperiment,
-    mia (>= 0.99),
+    mia (>= 1.13.0),
     ggplot2,
     ggraph (>= 2.0)
 Imports:
