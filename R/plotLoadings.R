@@ -89,7 +89,7 @@
 #' 
 #' # Plotting after performing LDA method
 #' tse <- addLDA(tse)
-#' plotLoadings(tse, dim = "LDA")
+#' plotLoadings(tse, dimred = "LDA", ncomponents = 2)
 NULL
 
 #' @rdname plotLoadings
@@ -109,8 +109,11 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
             tree.name = "phylo",
             class = rownames(x),
             ...) {
+      
+        if (length(reducedDimNames(x)) == 1) {
+            dimred <- reducedDimNames(x)
+        }
         
-            
         # Making sure there is no error in parameters given by the user
         .check_parameters(x,
                         dimred = dimred,
