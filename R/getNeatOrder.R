@@ -138,6 +138,7 @@ setMethod("getNeatOrder", signature = c("matrix"),
     return(NULL)
 }
 
+#' @importFrom stats median
 # Computes the radial theta values for each row in the data matrix.
 .radial_theta <- function(data, centering) {
     # Apply the centering if centering is specified
