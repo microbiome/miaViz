@@ -113,11 +113,15 @@ plotLoadings(loadings_matrix, ncomponents = 4)
 
 # Plotting if loadings matrix name has been changed
 tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, dimred= "myPCAmatrix")
+plotLoadings(tse, dimred = "myPCAmatrix")
 
 # Plotting tree with taxonomic rank classification
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 plotLoadings(tse, class = "Phylum")
+
+# Plotting after performing LDA method
+tse <- addLDA(tse)
+plotLoadings(tse, dim = "LDA")
 }
 \author{
 Ely Seraidarian

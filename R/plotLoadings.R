@@ -81,11 +81,15 @@
 #' 
 #' # Plotting if loadings matrix name has been changed
 #' tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, dimred= "myPCAmatrix")
+#' plotLoadings(tse, dimred = "myPCAmatrix")
 #' 
 #' # Plotting tree with taxonomic rank classification
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 #' plotLoadings(tse, class = "Phylum")
+#' 
+#' # Plotting after performing LDA method
+#' tse <- addLDA(tse)
+#' plotLoadings(tse, dim = "LDA")
 NULL
 
 #' @rdname plotLoadings
@@ -117,13 +121,14 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
                         class = class,
                         ...)
         loading_names <- c("rotation", "loadings")
-        attr_names <- names(attributes(reduced_dim))
+        attr_names <- names(attributes(reducedDim(x, dimred)))
         attr_name <- attr_names[ attr_names %in% loading_names ]
-        if( length(attr_name) != 1 )){
+        if( length(attr_name) != 1 ) {
             stop("Loadings cannot be found..")
         }
-        loadings_matrix <- attr(tse, attr_name)
+        loadings_matrix <- attr(reducedDim(x, dimred), attr_name)
 
+        
         # Checking if there are enough components in the matrix
         .check_components(loadings_matrix, ncomponents)
         
@@ -186,7 +191,13 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
                           ncomponents = ncomponents,
                           ...)  
         
-        loadings_matrix <- attr(reducedDim(x, dimred), "rotation")
+        loading_names <- c("rotation", "loadings")
+        attr_names <- names(attributes(reducedDim(x, dimred)))
+        attr_name <- attr_names[ attr_names %in% loading_names ]
+        if( length(attr_name) != 1 ) {
+            stop("Loadings cannot be found..")
+        }
+        loadings_matrix <- attr(reducedDim(x, dimred), attr_name)
         # Checking if there are enough components in the matrix
         .check_components(loadings_matrix, ncomponents)
             
