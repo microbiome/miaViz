@@ -55,22 +55,26 @@
 #' 
 #' # Plotting without tree as a heatmap
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-#' plotLoadings(loadings_matrix, layout = "heatmap")
+#' plotLoadings(loadings_matrix)
 #' 
 #' # Plotting without tree as a barplot
 #' plotLoadings(loadings_matrix, layout = "barplot")
 #' 
 #' # Plotting more features
-#' plotLoadings(loadings_matrix, layout = "heatmap", n = 12)
+#' plotLoadings(loadings_matrix, n = 12)
 #'
 #' # Plotting with less components
 #' tse <- runPCA(tse, ncomponents = 4, assay.type = "clr")
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-#' plotLoadings(loadings_matrix, layout = "heatmap", ncomponents = 4 )
+#' plotLoadings(loadings_matrix, ncomponents = 4)
 #' 
 #' # Plotting if loadings matrix name has been changed
 #' tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, dimred= "myPCAmatrix", layout = "heatmap")
+#' plotLoadings(tse, dimred= "myPCAmatrix")
+#' 
+#' # Plotting tree with taxonomic rank classification
+#' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
+#' plotLoadings(tse, layout = "tree", class = "Phylum")
 NULL
 
 #' @rdname plotLoadings
@@ -208,7 +212,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
         stop("'ncomponents' must be a positive number.", call. = FALSE)
     }
     # Checking if class is correct
-    if ( !(is(x, "TreeSummarizedExperiment") && (any(class %in% taxonomyRanks(x)) || identical(class, rownames(x))))) {
+    if ( is(x, "TreeSummarizedExperiment") && !(any(class %in% taxonomyRanks(x)) || identical(class, rownames(x)))) {
         stop("'class' must be one of taxonomyRanks", call. = FALSE)
     }
     return(NULL)
@@ -270,10 +274,12 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     }
     # Match labels
     rownames(df) <- rowLinks(x)$nodeLab
-    
+
     # Transform into a dataframe
     df2 <- data.frame(loadings_matrix)
+    
     # Match labels
+    df2 <- df2[match(rownames(x), rownames(df2)), ]
     rownames(df2) <- rowLinks(x)$nodeLab
     
     # Plot tree with first inner circle (Classes)
@@ -364,9 +370,8 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     else if (layout == "barplot") {
         plots <- lapply(1:ncomponents, function(i) {
             data_subset <- subset(df, PC %in% cnames[i])
-            data_subset <- data_subset %>%
-                arrange(Value) %>%
-                mutate(Feature = fct_reorder(Feature, Value))
+            data_subset <- arrange(data_subset, Value)
+            data_subset$Feature <- factor(data_subset$Feature, levels = data_subset$Feature)
             #Plot loadings
             ggplot(data_subset) +
                 geom_bar(stat = "identity", aes(x = .data[["Value"]], y = .data[["Feature"]])) +

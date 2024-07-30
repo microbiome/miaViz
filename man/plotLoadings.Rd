@@ -87,22 +87,26 @@ plotLoadings(tse, layout = "tree")
 
 # Plotting without tree as a heatmap
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-plotLoadings(loadings_matrix, layout = "heatmap")
+plotLoadings(loadings_matrix)
 
 # Plotting without tree as a barplot
 plotLoadings(loadings_matrix, layout = "barplot")
 
 # Plotting more features
-plotLoadings(loadings_matrix, layout = "heatmap", n = 12)
+plotLoadings(loadings_matrix, n = 12)
 
 # Plotting with less components
 tse <- runPCA(tse, ncomponents = 4, assay.type = "clr")
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-plotLoadings(loadings_matrix, layout = "heatmap", ncomponents = 4 )
+plotLoadings(loadings_matrix, ncomponents = 4)
 
 # Plotting if loadings matrix name has been changed
 tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, dimred= "myPCAmatrix", layout = "heatmap")
+plotLoadings(tse, dimred= "myPCAmatrix")
+
+# Plotting tree with taxonomic rank classification
+tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
+plotLoadings(tse, layout = "tree", class = "Phylum")
 }
 \author{
 Ely Seraidarian
