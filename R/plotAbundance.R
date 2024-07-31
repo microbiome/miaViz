@@ -265,6 +265,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 )
 
 #' @importFrom dplyr group_by summarize rename
+#' @importFrom mia meltSE
 .get_abundance_data <- function(
         x, rank, assay.type, order_rank_by = "name", as.relative = use_relative,
         use_relative = FALSE, ...){
