@@ -12,32 +12,18 @@ plotLoadings(x, ...)
 
 \S4method{plotLoadings}{TreeSummarizedExperiment}(
   x,
-  dimred = "PCA",
-  layout = "tree",
+  dimred,
+  layout = "barplot",
   n = 10,
   ncomponents = 5,
   tree.name = "phylo",
-  class = rownames(x),
+  rank = NULL,
   ...
 )
 
-\S4method{plotLoadings}{matrix}(
-  x,
-  dimred = "PCA",
-  layout = "heatmap",
-  n = 10,
-  ncomponents = 5,
-  ...
-)
+\S4method{plotLoadings}{matrix}(x, layout = "barplot", n = 10, ncomponents = 5, ...)
 
-\S4method{plotLoadings}{SingleCellExperiment}(
-  x,
-  dimred = "PCA",
-  layout = "heatmap",
-  n = 10,
-  ncomponents = 5,
-  ...
-)
+\S4method{plotLoadings}{SingleCellExperiment}(x, dimred, layout = "barplot", n = 10, ncomponents = 5, ...)
 }
 \arguments{
 \item{x}{a
@@ -47,23 +33,24 @@ x.}
 \item{...}{additional arguments for plotting. See
 \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
-\item{dimred}{\code{Character scalar}. Dimension reduction from reducedDimNames to be plotted.
-(default: \code{"PCA"})}
+\item{dimred}{\code{Character scalar}. Name of the reduction method if there are several in reducedDim slot.}
 
-\item{layout}{One way to plot feature loadings of \code{c("heatmap", "barplot", "tree")}
-(default: \code{"tree"} for TSE, \code{"heatmap"} for others)}
+\item{layout}{\code{Character scalar}. One way to plot feature loadings of \code{c("heatmap", "barplot", "tree")}.
+(Default: \code{"barplot"})}
 
-\item{n}{A numeric specifying the number of features to be plotted.
-(default: \code{10})}
+\item{n}{\code{Numeric scalar}. Number of features to be plotted.
+(Default: \code{10})}
 
-\item{ncomponents}{A numeric specifying the number of components.
-(default: \code{5})}
+\item{ncomponents}{\code{Numeric scalar}. Number of components must be lower or equal
+to the number of components choosen in the reduction method.
+(Default: \code{5})}
 
-\item{tree.name}{A single \code{character} value specifying a rowTree from a
-TreeSummarizedExperiment object. (By default: \code{"phylo"})}
+\item{tree.name}{\code{Character scalar}. Value specifying a rowTree from a
+TreeSummarizedExperiment object.
+(Default: \code{"phylo"})}
 
-\item{class}{A single \code{character} value specifying a rank from taxonomyRanks
-(default: \code{rownames})}
+\item{rank}{\code{Character scalar}. Value specifying a rank from taxonomyRanks
+(Default: \code{NULL})}
 }
 \value{
 A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
@@ -94,14 +81,14 @@ tse <- GlobalPatterns
 tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse)
+plotLoadings(tse, layout = "tree")
 
 # Plotting without tree as a heatmap
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-plotLoadings(loadings_matrix)
+plotLoadings(loadings_matrix, layout = "heatmap")
 
 # Plotting without tree as a barplot
-plotLoadings(loadings_matrix, layout = "barplot")
+plotLoadings(loadings_matrix)
 
 # Plotting more features
 plotLoadings(loadings_matrix, n = 12)
@@ -117,11 +104,11 @@ plotLoadings(tse, dimred = "myPCAmatrix")
 
 # Plotting tree with taxonomic rank classification
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, class = "Phylum")
+plotLoadings(tse, rank = "Phylum")
 
 # Plotting after performing LDA method
 tse <- addLDA(tse)
-plotLoadings(tse, dim = "LDA")
+plotLoadings(tse, dimred = "LDA", ncomponents = 2)
 }
 \author{
 Ely Seraidarian

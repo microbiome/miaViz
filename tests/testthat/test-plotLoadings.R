@@ -5,7 +5,7 @@ test_that("plot Loadings", {
   ### 1). TEST error messages ###
   
   # Object without reducedDim
-  expect_error(plotLoadings(tse), "'dimred' must specify reducedDim.")
+  expect_error(plotLoadings(tse), "Reduction method cannot be found")
   
   # Run/calculate PCA
   tse <- transformAssay(tse, method = "clr", pseudocount = 1)
@@ -21,11 +21,11 @@ test_that("plot Loadings", {
                "message here")
   
   # Test that error occurs if tree.name is wrong
-  expect_error( plotLoadings(tse, tree.name = "test") )
-  expect_error( plotLoadings(tse, tree.name = NULL) )
-  expect_error( ploLoadings(tse, tree.name = c("test", "phylo")) )
-  expect_error( plotLoadings(tse, tree.name = 1) )
-  expect_error( plotLoadings(tse, tree.name = TRUE) )
+  expect_error( plotLoadings(tse, layout = "tree", tree.name = "test") )
+  expect_error( plotLoadings(tse, layout = "tree", tree.name = NULL) )
+  expect_error( ploLoadings(tse, layout = "tree", tree.name = c("test", "phylo")) )
+  expect_error( plotLoadings(tse, layout = "tree", tree.name = 1) )
+  expect_error( plotLoadings(tse, layout = "tree", tree.name = TRUE) )
 
   
 })
