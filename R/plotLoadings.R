@@ -2,7 +2,7 @@
 #' or feature loadings numeric matrix.
 #'
 #' This function is used after performing a reduction method. If TSE object is
-#' given it retrieves the feature loadings matrix to plot values with tree.
+#' given it retrieves the feature loadings matrix to plot values, tree can be added to heatmap.
 #' Plotting with other layouts is possible as SCE objects and numeric matrices
 #' does not include a tree.
 #' 
@@ -12,7 +12,7 @@
 #' 
 #' @param dimred \code{Character scalar}. Name of the reduction method if there are several in reducedDim slot. 
 #'  
-#' @param layout \code{Character scalar}. One way to plot feature loadings of \code{c("heatmap", "barplot", "tree")}. 
+#' @param layout \code{Character scalar}. One way to plot feature loadings of \code{c("heatmap", "barplot")}. 
 #'   (Default: \code{"barplot"})
 #' 
 #' @param n \code{Numeric scalar}. Number of features to be plotted.
@@ -29,6 +29,9 @@
 #' @param rank \code{Character scalar}. Value specifying a rank from taxonomyRanks
 #'   (Default: \code{NULL})
 #'   
+#' @param add.tree \code{Logical scalar}. Whether or not to add tree to heatmap layout.
+#'   (Default: \code{FALSE})
+#'   
 #' @param ... additional arguments for plotting. See 
 #'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}     
 #' 
@@ -38,7 +41,7 @@
 #' and has been converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
 #' 
 #' TreeSummarizedExperiment/SingleCellExperiment objects are expected to have content in reducedDim slot.
-#' It is impossible to plot tree if only the matrix is given. Number of features must be reduced
+#' It is impossible to add tree if only the matrix is given. Number of features must be reduced
 #' before calling function or it will not be understandable. For example
 #' agglomerating data by rank or prevalence (see examples).
 #' 
@@ -58,27 +61,29 @@
 #' library(mia)
 #' library(ggtree)
 #' library(scater)
+#' library(shadowtext)
+#' library(tidytext)
 #' data("GlobalPatterns", package = "mia")
 #' tse <- GlobalPatterns
 #' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, layout = "tree")
+#' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
 #' 
 #' # Plotting without tree as a heatmap
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-#' plotLoadings(loadings_matrix, layout = "heatmap")
+#' plotLoadings(loadings_matrix, dimred = "PCA", layout = "heatmap")
 #' 
 #' # Plotting without tree as a barplot
-#' plotLoadings(loadings_matrix)
+#' plotLoadings(loadings_matrix, dimred = "PCA")
 #' 
 #' # Plotting more features
-#' plotLoadings(loadings_matrix, n = 12)
+#' plotLoadings(loadings_matrix, n = 12, dimred = "PCA")
 #'
 #' # Plotting with less components
 #' tse <- runPCA(tse, ncomponents = 4, assay.type = "clr")
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-#' plotLoadings(loadings_matrix, ncomponents = 4)
+#' plotLoadings(loadings_matrix, dimred = "PCA", ncomponents = 4)
 #' 
 #' # Plotting if loadings matrix name has been changed
 #' tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
@@ -86,7 +91,7 @@
 #' 
 #' # Plotting tree with taxonomic rank classification
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, rank = "Phylum")
+#' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE, rank = "Phylum")
 #' 
 #' # Plotting after performing LDA method
 #' tse <- addLDA(tse)
@@ -109,13 +114,8 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
             ncomponents = 5,
             tree.name = "phylo",
             rank = NULL,
+            add.tree = FALSE,
             ...) {
-      
-        if (length(reducedDimNames(x)) == 1) {
-            dimred <- reducedDimNames(x)
-        } else if (length(reducedDimNames(x)) == 0) {
-            stop("Reduction method cannot be found", call. = FALSE)
-        }
       
         # Making sure there is no error in parameters given by the user
         .check_parameters(x,
@@ -125,6 +125,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
                         ncomponents = ncomponents,
                         tree.name = tree.name,
                         rank = rank,
+                        add.tree = add.tree,
                         ...)
         loading_names <- c("rotation", "loadings")
         attr_names <- names(attributes(reducedDim(x, dimred)))
@@ -138,14 +139,17 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         # Checking if there are enough components in the matrix
         .check_components(loadings_matrix, ncomponents)
         
-        if (layout == "tree") {
+        if (add.tree && layout == "heatmap") {
             # Plot tree with feature loadings
             p <- .loadings_tree_plotter(x, loadings_matrix, ncomponents, tree.name, rank)
+        } else if (layout == "heatmap") {
+            # Plot features with heatmap layout
+            p <- ComplexHeatmap::Heatmap(loadings_matrix, heatmap_legend_param = list(title = "Value")) 
         } else {
             # Ordering loadings and adding factor to keep the order
             df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
-            # Plot features with the layout selected
-            p <- .plot_pca_feature_loadings(df, layout, n, ncomponents)
+            # Plot features with barplot layout
+            p <- .barplot_feature_loadings(df, layout, n, ncomponents)
         }
     return(p)
     }
@@ -164,16 +168,20 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                         layout = layout,
                         n = n,
                         ncomponents = ncomponents,
-                        
                         ...)
                       
         # Checking if there are enough components in the matrix
         .check_components(x, ncomponents)
-        # Ordering loadings and adding factor to keep the order
-        df <- .get_loadings_plot_data(x, n, ncomponents)
-        # Plot features with the layout selected
-        p <- .plot_pca_feature_loadings(df, layout, n, ncomponents)
         
+        # Plot features with heatmap layout
+        if (layout == "heatmap") {
+            p <- ComplexHeatmap::Heatmap(loadings_matrix, heatmap_legend_param = list(title = "Value"))
+        } else {
+            # Ordering loadings and adding factor to keep the order
+            df <- .get_loadings_plot_data(x, n, ncomponents)
+            # Plot features with barplot layout
+            p <- .barplot_feature_loadings(df, layout, n, ncomponents)
+        }
         return(p)
     }
 )
@@ -187,10 +195,6 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
             n = 10,
             ncomponents = 5,
             ...) {
-        
-        if (length(reducedDimNames(x)) == 1) {
-            dimred <- reducedDimNames(x)
-        }
       
         # Making sure there is no error in parameters given by the user
         .check_parameters(x,
@@ -209,35 +213,40 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
         loadings_matrix <- attr(reducedDim(x, dimred), attr_name)
         # Checking if there are enough components in the matrix
         .check_components(loadings_matrix, ncomponents)
-            
-        # Ordering loadings and adding factor to keep the order
-        df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
-        # Plot features with the layout selected
-        p <- .plot_pca_feature_loadings(df, layout, n, ncomponents)
         
+        #Plot features with heatmap layout
+        if (layout == "heatmap") {
+            p <- ComplexHeatmap::Heatmap(loadings_matrix, heatmap_legend_param = list(title = "Value"))
+        } else {
+            # Ordering loadings and adding factor to keep the order
+            df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
+            # Plot features with barplot layout
+            p <- .barplot_feature_loadings(df, layout, n, ncomponents)
+        }
         return(p)
     }
 )
 
-.check_parameters <- function(x, dimred, layout, n, ncomponents, tree.name, rank, ...) {
+.check_parameters <- function(x, dimred, layout, n, ncomponents, tree.name, rank, add.tree, ...) {
+    
+    #Check add.tree
+    if (is(x, "TreeSummarizedExperiment") && !.is_a_bool(add.tree)) {
+        stop("'add.tree' must be either TRUE or FALSE", call. = FALSE)
+    }
     # Check tree.name
-    if( layout == "tree" && is(x, "TreeSummarizedExperiment") && !(tree.name %in% rowTreeNames(x)  && .is_a_string(tree.name))){
+    if(is(x, "TreeSummarizedExperiment") && add.tree && !(tree.name %in% rowTreeNames(x)  && .is_a_string(tree.name))){
         stop("'tree.name' must be a single character value specifying a rowTree.", call. = FALSE)
     }
     # Checking if dimred is correct
-    if( is(x, "TreeSummarizedExperiment") && !(dimred %in% reducedDimNames(x)  && .is_a_string(dimred))){
+    if( is(x, "SingleCellExperiment") && is.null(dimred) && !(dimred %in% reducedDimNames(x)  && .is_a_string(dimred))){
         stop("'dimred' must specify reducedDim.", call. = FALSE)
     }
     # Checking if layout is correct
-    if ( !(layout %in% c("barplot", "tree", "heatmap") && .is_a_string(layout)) ) {
-        stop("'layout' must be one of c('barplot', 'tree', 'heatmap').", call. = FALSE)
-    }
-    # Making sure the user doesn't try to plot the tree if he gives only the matrix
-    if ( !(is(x, "TreeSummarizedExperiment")) && layout == "tree") {
-        stop("TreeSummarizedExperiment object is required for the tree plotting.", call. = FALSE)
+    if ( !(layout %in% c("barplot", "heatmap") && .is_a_string(layout)) ) {
+        stop("'layout' must be one of c('barplot', 'heatmap').", call. = FALSE)
     }
     # Making sure the tree is not null
-    if( layout == "tree" && !(is(x, "TreeSummarizedExperiment") && !is.null(rowTree(x, tree.name)) )) {
+    if( is(x, "TreeSummarizedExperiment") && add.tree && is.null(rowTree(x, tree.name))) {
         stop ("Tree is null.", call. = FALSE)
     }
     # Checking if n is a positive number
@@ -249,7 +258,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
         stop("'ncomponents' must be a positive number.", call. = FALSE)
     }
     # Checking if rank is correct
-    if ( !(is.null(rank)) && is(x, "TreeSummarizedExperiment") && !(any(rank %in% taxonomyRanks(x)) )) {
+    if ( is(x, "TreeSummarizedExperiment") && !(is.null(rank)) &&!(any(rank %in% taxonomyRanks(x)) )) {
         stop("'rank' must be one of taxonomyRanks", call. = FALSE)
     }
     return(NULL)
@@ -386,36 +395,14 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     return(p)
 }
 
-#' @importFrom dplyr arrange
-.plot_pca_feature_loadings <- function(df, layout, n, ncomponents) {
+.barplot_feature_loadings <- function(df, layout, n, ncomponents) {
     cnames <- unique(df$PC)
-    if (layout == "heatmap") {
-        plots <- lapply(1:ncomponents, function(i) {
-            data_subset <- subset(df, PC %in% cnames[i])
-            data_subset <- arrange(data_subset, Value)
-            data_subset$Feature <- factor(data_subset$Feature, levels = data_subset$Feature)
-            #Plot loadings
-            ggplot(data_subset, aes(x = "PC", y = Feature, label = round(Value, 2)))  +
-            geom_point(aes(fill = Value), size=15 - 0.4*n, shape = 22) +
-            theme(axis.title.x = element_blank(), axis.title.y = element_blank(),
-                axis.text.x = element_blank()) +
-            scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
-                mid = "white", high = "darkred") +
-            geom_text(color="black", size=4 - 0.075 * n) +
-            facet_wrap(~ PC) 
-            
-      })
-      p <- patchwork::wrap_plots(plots, guides = "collect") 
-      
-    }
-    
-    else if (layout == "barplot") {
-        p <- ggplot(df, aes(x = Value, y = reorder_within(Feature, Value, PC))) +
-            geom_bar(stat = "identity") +
-            scale_y_reordered() +
-            facet_wrap(~ PC, scales = "free") +
-            theme_minimal() +
-            labs(x = "Value", y = "Feature") 
-    }
+    p <- ggplot(df, aes(x = Value, y = reorder_within(Feature, Value, PC))) +
+        geom_bar(stat = "identity") +
+        scale_y_reordered() +
+        facet_wrap(~ PC, scales = "free") +
+        theme_minimal() +
+        labs(x = "Value", y = "Feature") 
     return(p)
 }
+

@@ -18,6 +18,7 @@ plotLoadings(x, ...)
   ncomponents = 5,
   tree.name = "phylo",
   rank = NULL,
+  add.tree = FALSE,
   ...
 )
 
@@ -35,7 +36,7 @@ x.}
 
 \item{dimred}{\code{Character scalar}. Name of the reduction method if there are several in reducedDim slot.}
 
-\item{layout}{\code{Character scalar}. One way to plot feature loadings of \code{c("heatmap", "barplot", "tree")}.
+\item{layout}{\code{Character scalar}. One way to plot feature loadings of \code{c("heatmap", "barplot")}.
 (Default: \code{"barplot"})}
 
 \item{n}{\code{Numeric scalar}. Number of features to be plotted.
@@ -51,13 +52,16 @@ TreeSummarizedExperiment object.
 
 \item{rank}{\code{Character scalar}. Value specifying a rank from taxonomyRanks
 (Default: \code{NULL})}
+
+\item{add.tree}{\code{Logical scalar}. Whether or not to add tree to heatmap layout.
+(Default: \code{FALSE})}
 }
 \value{
 A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
 }
 \description{
 This function is used after performing a reduction method. If TSE object is
-given it retrieves the feature loadings matrix to plot values with tree.
+given it retrieves the feature loadings matrix to plot values, tree can be added to heatmap.
 Plotting with other layouts is possible as SCE objects and numeric matrices
 does not include a tree.
 }
@@ -66,7 +70,7 @@ Inspired by the \code{\link[diffTop:plotASVcircular]{plotASVcircular}} method us
 and has been converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
 
 TreeSummarizedExperiment/SingleCellExperiment objects are expected to have content in reducedDim slot.
-It is impossible to plot tree if only the matrix is given. Number of features must be reduced
+It is impossible to add tree if only the matrix is given. Number of features must be reduced
 before calling function or it will not be understandable. For example
 agglomerating data by rank or prevalence (see examples).
 }
@@ -76,27 +80,29 @@ agglomerating data by rank or prevalence (see examples).
 library(mia)
 library(ggtree)
 library(scater)
+library(shadowtext)
+library(tidytext)
 data("GlobalPatterns", package = "mia")
 tse <- GlobalPatterns
 tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, layout = "tree")
+plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
 
 # Plotting without tree as a heatmap
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-plotLoadings(loadings_matrix, layout = "heatmap")
+plotLoadings(loadings_matrix, dimred = "PCA", layout = "heatmap")
 
 # Plotting without tree as a barplot
-plotLoadings(loadings_matrix)
+plotLoadings(loadings_matrix, dimred = "PCA")
 
 # Plotting more features
-plotLoadings(loadings_matrix, n = 12)
+plotLoadings(loadings_matrix, n = 12, dimred = "PCA")
 
 # Plotting with less components
 tse <- runPCA(tse, ncomponents = 4, assay.type = "clr")
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-plotLoadings(loadings_matrix, ncomponents = 4)
+plotLoadings(loadings_matrix, dimred = "PCA", ncomponents = 4)
 
 # Plotting if loadings matrix name has been changed
 tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
@@ -104,7 +110,7 @@ plotLoadings(tse, dimred = "myPCAmatrix")
 
 # Plotting tree with taxonomic rank classification
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, rank = "Phylum")
+plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE, rank = "Phylum")
 
 # Plotting after performing LDA method
 tse <- addLDA(tse)
