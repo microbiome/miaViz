@@ -61,8 +61,6 @@
 #' library(mia)
 #' library(ggtree)
 #' library(scater)
-#' library(shadowtext)
-#' library(tidytext)
 #' data("GlobalPatterns", package = "mia")
 #' tse <- GlobalPatterns
 #' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
@@ -149,7 +147,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
             # Ordering loadings and adding factor to keep the order
             df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
             # Plot features with barplot layout
-            p <- .barplot_feature_loadings(df, layout, n, ncomponents)
+            p <- .barplot_feature_loadings(df)
         }
     return(p)
     }
@@ -395,7 +393,8 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     return(p)
 }
 
-.barplot_feature_loadings <- function(df, layout, n, ncomponents) {
+#' @importFrom tidytext scale_y_reordered
+.barplot_feature_loadings <- function(df) {
     cnames <- unique(df$PC)
     p <- ggplot(df, aes(x = Value, y = reorder_within(Feature, Value, PC))) +
         geom_bar(stat = "identity") +

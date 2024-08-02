@@ -80,8 +80,6 @@ agglomerating data by rank or prevalence (see examples).
 library(mia)
 library(ggtree)
 library(scater)
-library(shadowtext)
-library(tidytext)
 data("GlobalPatterns", package = "mia")
 tse <- GlobalPatterns
 tse <- transformAssay(tse, method = "clr", pseudocount = 1)
