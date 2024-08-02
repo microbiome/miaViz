@@ -37,9 +37,8 @@
 #' 
 #' @details
 #' 
-#' Inspired by the \code{\link[diffTop:plotASVcircular]{plotASVcircular}} method using phyloseq 
+#' Inspired by the \code{plotASVcircular} method using phyloseq 
 #' and has been converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
-#' 
 #' TreeSummarizedExperiment/SingleCellExperiment objects are expected to have content in reducedDim slot.
 #' It is impossible to add tree if only the matrix is given. Number of features must be reduced
 #' before calling function or it will not be understandable. For example
@@ -68,21 +67,21 @@
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 #' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
 #' 
-#' # Plotting without tree as a heatmap
-#' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-#' plotLoadings(loadings_matrix, dimred = "PCA", layout = "heatmap")
-#' 
 #' # Plotting without tree as a barplot
-#' plotLoadings(loadings_matrix, dimred = "PCA")
+#' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
+#' plotLoadings(loadings_matrix)
 #' 
 #' # Plotting more features
-#' plotLoadings(loadings_matrix, n = 12, dimred = "PCA")
-#'
+#' plotLoadings(loadings_matrix, n = 12)
+#' 
+#' # Plotting without tree as a heatmap
+#' plotLoadings(loadings_matrix, layout = "heatmap")
+#' 
 #' # Plotting with less components
 #' tse <- runPCA(tse, ncomponents = 4, assay.type = "clr")
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-#' plotLoadings(loadings_matrix, dimred = "PCA", ncomponents = 4)
-#' 
+#' plotLoadings(loadings_matrix, ncomponents = 4)
+#'
 #' # Plotting if loadings matrix name has been changed
 #' tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
 #' plotLoadings(tse, dimred = "myPCAmatrix")
@@ -91,7 +90,8 @@
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 #' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE, rank = "Phylum")
 #' 
-#' # Plotting after performing LDA method
+#' # Plotting after performing LDA 
+#' library(topicmodels)
 #' tse <- addLDA(tse)
 #' plotLoadings(tse, dimred = "LDA", ncomponents = 2)
 NULL
@@ -173,12 +173,12 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         
         # Plot features with heatmap layout
         if (layout == "heatmap") {
-            p <- ComplexHeatmap::Heatmap(loadings_matrix, heatmap_legend_param = list(title = "Value"))
+            p <- ComplexHeatmap::Heatmap(x, heatmap_legend_param = list(title = "Value"))
         } else {
             # Ordering loadings and adding factor to keep the order
             df <- .get_loadings_plot_data(x, n, ncomponents)
             # Plot features with barplot layout
-            p <- .barplot_feature_loadings(df, layout, n, ncomponents)
+            p <- .barplot_feature_loadings(df)
         }
         return(p)
     }
@@ -219,7 +219,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
             # Ordering loadings and adding factor to keep the order
             df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
             # Plot features with barplot layout
-            p <- .barplot_feature_loadings(df, layout, n, ncomponents)
+            p <- .barplot_feature_loadings(df)
         }
         return(p)
     }
@@ -393,7 +393,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     return(p)
 }
 
-#' @importFrom tidytext scale_y_reordered
+#' @importFrom tidytext scale_y_reordered reorder_within
 .barplot_feature_loadings <- function(df) {
     cnames <- unique(df$PC)
     p <- ggplot(df, aes(x = Value, y = reorder_within(Feature, Value, PC))) +

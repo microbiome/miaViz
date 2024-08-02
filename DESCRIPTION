@@ -50,6 +50,7 @@ Imports:
     ggnewscale,
     viridis,
     tibble,
+    tidytext,
     tidytree,
     tidygraph,
     rlang,
@@ -69,7 +70,8 @@ Suggests:
     vegan,
     bluster,
     ComplexHeatmap,
-    circlize
+    circlize,
+    topicmodels
 Remotes:
     github::microbiome/miaTime
 Roxygen: list(markdown = TRUE)
