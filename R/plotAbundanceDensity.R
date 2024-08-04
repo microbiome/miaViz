@@ -289,7 +289,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
         flipped = FALSE,
         scales_free = scales.free,
         scales.free = TRUE,
-        angle_x_text = angle.x.test,
+        angle_x_text = angle.x.text,
         angle.x.text = TRUE){
     # start plotting
     plot_out <- ggplot(density_data, aes(x=.data[["X"]])) +
