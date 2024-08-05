@@ -273,55 +273,34 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
 
 # Function to process each component
 .process_component <- function(i, df, n) {
-    # Ordering loadings by absolute value
-    df <- df[order(-abs(df[[i]])), ][1:n, ]
-    # Ordering by actual loadings
-    df <- df[order(df[[i]]), ]
-    # Add factor to keep order
-    df[["Feature"]] <- factor(df[["Feature"]], levels = df[["Feature"]])
+    # Get order of loadings based on absolute value
+    ind <- order(-abs(df[[i]]))
+    # Get top n values
+    ind <- ind[seq_len(n)]
+    # Get the sorted data of single PC
+    df <- df[ind, i, drop = FALSE]
+    # Add PC number to data.frame so that each row can be identified to belong
+    # to certain PC after merging the data into single dataset
+    df[["PC"]] <- colnames(df)
+    # Rename so that the colnames is same for all components
+    colnames(df)[[1]] <- "Value"
+    # Add rownames
+    df[["Feature"]] <- rownames(df)
     return(df)
 }
 
 #' @importFrom dplyr select
-.get_loadings_plot_data <- function(x, n, ncomponents) {
+.get_loadings_plot_data <- function(df, n, ncomponents) {
   # Transform into a dataframe
-  x <- as.data.frame(x)
+  df <- as.data.frame(df)
   # Keep only the number of components needed
-  names <- colnames(x)[1:ncomponents]
-  df <- select(x, all_of(names))
-  # Add feature labels
-  x[["Feature"]] <- rownames(x)
+  df <- df[ , seq_len(ncomponents), drop = FALSE]
   # Apply the function to each component and return the list
-  L <- lapply(1:ncomponents, .process_component, df = x, n = n)
-  k <- seq_len(length(L))
-  # Prepare the data in correct format
-  df <- lapply(k, function(i){
-    L[[i]][, i, drop = FALSE]
-  })
-  names <- unique(unlist(lapply(L, rownames)))
-  cnames <- unique(unlist(lapply(L, colnames)))
-  cnames <- cnames[!cnames %in% c("Feature") ]
-  
-  new_df <- data.frame(matrix(-1, nrow = length(names), ncol = length(cnames)), row.names = names)
-  colnames(new_df) <- cnames
-  for (i in seq_along(L)) {
-    pc_df <- df[[i]]
-    name <- colnames(pc_df)
-    new_df[rownames(pc_df), name] <- pc_df[, 1]
-  }
-  new_df[["Feature"]] <- names
-  
-  
-  # To long format
-  df <- reshape(
-    new_df, varying = colnames(new_df)[ !colnames(new_df) %in% c("Feature") ],
-    v.names = "Value", 
-    timevar = "PC",
-    times = colnames(new_df)[ !colnames(new_df) %in% c("Feature") ],
-    direction = "long")
-  # Arrange data
-  df <- filter(df, Value != -1)
-  return(df)
+  res <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
+  # Combine to single data.frame
+  res <- do.call(rbind, res)
+  res <- as.data.frame(res)
+  return(res)
 }
 
 #' @importFrom dplyr select
