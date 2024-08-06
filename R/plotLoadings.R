@@ -138,11 +138,23 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         .check_components(loadings_matrix, ncomponents)
         
         if (add.tree && layout == "heatmap") {
+            # Create dataframe for tree plotting
+            L <- .create_tree_dataframe(x, tree.name, rank)
+            df <- L[[1]]
+            legend_name <- L[[2]]
+            circ <- L[[3]]
+            # Create dataframe for loadings plotting
+            df2 <- data.frame(loadings_matrix)
+            # Match labels
+            df2 <- df2[match(rownames(x), rownames(df2)), ]
+            rownames(df2) <- rowLinks(x)$nodeLab
             # Plot tree with feature loadings
-            p <- .loadings_tree_plotter(x, loadings_matrix, ncomponents, tree.name, rank)
+            p <- .loadings_tree_plotter(x, df, df2, ncomponents, tree.name, legend_name, circ, rank)
         } else if (layout == "heatmap") {
+            # Ordering loadings and adding factor to keep the order
+            df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
             # Plot features with heatmap layout
-            p <- ComplexHeatmap::Heatmap(loadings_matrix, heatmap_legend_param = list(title = "Value")) 
+            p <- .heatmap_feature_loadings(df)
         } else {
             # Ordering loadings and adding factor to keep the order
             df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
@@ -171,12 +183,14 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         # Checking if there are enough components in the matrix
         .check_components(x, ncomponents)
         
+        # Ordering loadings and adding factor to keep the order
+        df <- .get_loadings_plot_data(x, n, ncomponents)
+        
         # Plot features with heatmap layout
         if (layout == "heatmap") {
-            p <- ComplexHeatmap::Heatmap(x, heatmap_legend_param = list(title = "Value"))
+            # Plot features with heatmap layout
+            p <- .heatmap_feature_loadings(df)
         } else {
-            # Ordering loadings and adding factor to keep the order
-            df <- .get_loadings_plot_data(x, n, ncomponents)
             # Plot features with barplot layout
             p <- .barplot_feature_loadings(df)
         }
@@ -212,12 +226,13 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
         # Checking if there are enough components in the matrix
         .check_components(loadings_matrix, ncomponents)
         
+        # Ordering loadings and adding factor to keep the order
+        df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
+        
         #Plot features with heatmap layout
         if (layout == "heatmap") {
-            p <- ComplexHeatmap::Heatmap(loadings_matrix, heatmap_legend_param = list(title = "Value"))
+            p <- .heatmap_feature_loadings(df)
         } else {
-            # Ordering loadings and adding factor to keep the order
-            df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
             # Plot features with barplot layout
             p <- .barplot_feature_loadings(df)
         }
@@ -304,38 +319,8 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
 }
 
 #' @importFrom dplyr select
-#' @importFrom ggtree ggtree gheatmap
-.loadings_tree_plotter <- function(x, loadings_matrix, ncomponents, tree.name, rank) {
-    # Retrieve rowTree
-    phylo <- rowTree(x, tree.name)
-    # Subset data based on the tree
-    ind <- rowLinks(x)[["whichTree"]] == tree.name
-    if( any(ind) ){
-        warning("message here", call. = FALSE)
-    }
-    x <- x[ind, ]
-    # Store plot tree
-    circ <- ggtree(phylo, layout = "circular")
-    df <- rowData(x)
-    # Transform into a dataframe
-    if (is.null(rank)) {
-        df <- data.frame(Class = rownames(x))
-        legend_name <- "Class"
-    } else {
-        df <- data.frame(Class = df[[rank]])
-        legend_name <- rank
-    }
-    # Match labels
-    rownames(df) <- rowLinks(x)$nodeLab
-
-    # Transform into a dataframe
-    df2 <- data.frame(loadings_matrix)
-    
-    # Match labels
-    df2 <- df2[match(rownames(x), rownames(df2)), ]
-    rownames(df2) <- rowLinks(x)$nodeLab
-    
-    
+#' @importFrom ggtree gheatmap
+.loadings_tree_plotter <- function(x, df, df2, ncomponents, tree.name, legend_name, circ, rank) {
     
     # Plot tree with first inner circle (Classes)
     p <- gheatmap(
@@ -372,15 +357,48 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     return(p)
 }
 
+#' @importFrom ggtree ggtree
+.create_tree_dataframe <- function(x, tree.name, rank) {
+    # Retrieve rowTree
+    phylo <- rowTree(x, tree.name)
+    # Subset data based on the tree
+    ind <- rowLinks(x)[["whichTree"]] == tree.name
+    if( any(ind) ){
+      warning("message here", call. = FALSE)
+    }
+    x <- x[ind, ]
+    # Store plot tree
+    circ <- ggtree(phylo, layout = "circular")
+    df <- rowData(x)
+    # Transform into a dataframe
+    if (is.null(rank)) {
+      df <- data.frame(Class = rownames(x))
+      legend_name <- "Class"
+    } else {
+      df <- data.frame(Class = df[[rank]])
+      legend_name <- rank
+    }
+    # Match labels
+    rownames(df) <- rowLinks(x)$nodeLab
+    return(list(df, legend_name, circ))
+}
+
 #' @importFrom tidytext scale_y_reordered reorder_within
 .barplot_feature_loadings <- function(df) {
-    cnames <- unique(df$PC)
     p <- ggplot(df, aes(x = Value, y = reorder_within(Feature, Value, PC))) +
         geom_bar(stat = "identity") +
         scale_y_reordered() +
         facet_wrap(~ PC, scales = "free") +
         theme_minimal() +
         labs(x = "Value", y = "Feature") 
+    return(p)
+}
+
+.heatmap_feature_loadings <- function(df) {
+    p <- ggplot(df, aes(x = PC, y = Feature, fill = Value)) +
+        geom_tile() +
+        scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
+            mid = "white", high = "darkred")
     return(p)
 }
 
