@@ -396,9 +396,10 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
 
 .heatmap_feature_loadings <- function(df) {
     p <- ggplot(df, aes(x = PC, y = Feature, fill = Value)) +
-        geom_tile() +
+        geom_tile(position = position_identity()) +
         scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
-            mid = "white", high = "darkred")
+            mid = "white", high = "darkred") +
+        theme_minimal()
     return(p)
 }
 
