@@ -114,7 +114,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
             rank = NULL,
             add.tree = FALSE,
             ...) {
-      
+        
         # Making sure there is no error in parameters given by the user
         .check_parameters(x,
                         dimred = dimred,
@@ -172,14 +172,14 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             n = 10,
             ncomponents = 5,
             ...) {
-      
+        
         # Making sure there is no error in parameters given by the user
         .check_parameters(x,
                         layout = layout,
                         n = n,
                         ncomponents = ncomponents,
                         ...)
-                      
+        
         # Checking if there are enough components in the matrix
         .check_components(x, ncomponents)
         
@@ -207,14 +207,14 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
             n = 10,
             ncomponents = 5,
             ...) {
-      
+    
         # Making sure there is no error in parameters given by the user
         .check_parameters(x,
-                          dimred = dimred,
-                          layout = layout,
-                          n = n,
-                          ncomponents = ncomponents,
-                          ...)  
+                        dimred = dimred,
+                        layout = layout,
+                        n = n,
+                        ncomponents = ncomponents,
+                        ...)  
         
         loading_names <- c("rotation", "loadings")
         attr_names <- names(attributes(reducedDim(x, dimred)))
@@ -306,16 +306,16 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
 
 #' @importFrom dplyr select
 .get_loadings_plot_data <- function(df, n, ncomponents) {
-  # Transform into a dataframe
-  df <- as.data.frame(df)
-  # Keep only the number of components needed
-  df <- df[ , seq_len(ncomponents), drop = FALSE]
-  # Apply the function to each component and return the list
-  res <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
-  # Combine to single data.frame
-  res <- do.call(rbind, res)
-  res <- as.data.frame(res)
-  return(res)
+    # Transform into a dataframe
+    df <- as.data.frame(df)
+    # Keep only the number of components needed
+    df <- df[ , seq_len(ncomponents), drop = FALSE]
+    # Apply the function to each component and return the list
+    res <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
+    # Combine to single data.frame
+    res <- do.call(rbind, res)
+    res <- as.data.frame(res)
+    return(res)
 }
 
 #' @importFrom dplyr select
@@ -332,7 +332,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
         colnames = FALSE,
         legend_title = legend_name) 
         # Plot others circles (loadings)
-        for(i in 1:ncomponents){
+        for(i in seq_len(ncomponents)){
             if(i == 1){
                 p <- p +
                 ggnewscale::new_scale_fill()
@@ -364,7 +364,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     # Subset data based on the tree
     ind <- rowLinks(x)[["whichTree"]] == tree.name
     if( any(ind) ){
-      warning("message here", call. = FALSE)
+        warning("message here", call. = FALSE)
     }
     x <- x[ind, ]
     # Store plot tree
@@ -372,11 +372,11 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     df <- rowData(x)
     # Transform into a dataframe
     if (is.null(rank)) {
-      df <- data.frame(Class = rownames(x))
-      legend_name <- "Class"
+        df <- data.frame(Class = rownames(x))
+        legend_name <- "Class"
     } else {
-      df <- data.frame(Class = df[[rank]])
-      legend_name <- rank
+        df <- data.frame(Class = df[[rank]])
+        legend_name <- rank
     }
     # Match labels
     rownames(df) <- rowLinks(x)$nodeLab
