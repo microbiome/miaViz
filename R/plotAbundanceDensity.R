@@ -361,10 +361,18 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
     }
     # If colour_by is specified, colours are resolved
     if (!is.null(colour_by)) {
-        plot_out <- .resolve_plot_colours(plot_out, density_data$colour_by, colour_by, fill = geom_args$fill, na.translate = FALSE)
-        if (layout == "density") {
-            plot_out <- .resolve_plot_colours(plot_out, density_data$colour_by, colour_by, fill = !geom_args$fill, na.translate = FALSE)
-        }
+        plot_out <- .resolve_plot_colours(plot_out,
+                                          density_data$colour_by,
+                                          colour_by,
+                                          fill = point_args$fill,
+                                          na.translate = FALSE)
+        if(layout == "density"){
+            plot_out <- .resolve_plot_colours(plot_out,
+                                              density_data$colour_by,
+                                              colour_by,
+                                              fill = !point_args$fill,
+                                              na.translate = FALSE)
+          }
     }
     
     # set the theme
