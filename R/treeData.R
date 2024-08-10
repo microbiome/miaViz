@@ -103,6 +103,7 @@ setMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
 )
 #' @rdname treeData
 #' @importFrom dplyr last_col
+#' @importFrom dplyr all_of
 #' @export
 setMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
     function(x, tree.name = tree_name, tree_name = "phylo"){

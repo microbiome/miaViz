@@ -111,7 +111,9 @@ setGeneric("plotSeries", signature = c("object"),
 
 
 #' @rdname plotSeries
-#' @importFrom SummarizedExperiment colData
+#' @importFrom SummarizedExperiment colData rowData assay
+#' @importFrom mia meltSE
+#' @importFrom stats sd
 #' @export
 setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     function(object,
@@ -188,6 +190,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 # can directly be plotted with .series_plotter().
 #' @importFrom dplyr group_by summarize ungroup
 #' @importFrom stats sd
+#' @importFrom mia meltSE
 .get_series_data <- function(
         object, assay.type, x, colour.by, size.by, linetype.by){
     # Get variables that can be found from rowData
