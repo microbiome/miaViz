@@ -52,7 +52,7 @@
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">plotAbundanceDensity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"jitter"</span>, <span class="st">"density"</span>, <span class="st">"point"</span><span class="op">)</span>,</span>
+<span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"jitter"</span>, <span class="st">"density"</span>, <span class="st">"point"</span>, <span class="st">"box"</span>, <span class="st">"violin"</span><span class="op">)</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">25L</span><span class="op">)</span>,</span>
@@ -101,8 +101,9 @@ in x-axis. (Default: <code>TRUE</code>)</p></li>
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
 <dd><p><code>Character scalar</code>. Selects the layout of the plot.
-There are three different options: <code>jitter</code>, <code>density</code>, and
-<code>point</code> plot. (default: <code>layout = "jitter"</code>)</p></dd>
+There are three different options: <code>jitter</code>, <code>density</code>,
+<code>point</code>, <code>box</code>, and <code>violin</code> plot.
+(Default: <code>"jitter"</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
