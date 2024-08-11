@@ -105,188 +105,172 @@ setGeneric("plotLoadings", signature = c("x"),
 #' @rdname plotLoadings
 #' @export 
 setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
-    function(x,
-            dimred,
-            layout = "barplot",
-            n = 10,
-            ncomponents = 5,
-            tree.name = "phylo",
-            rank = NULL,
-            add.tree = FALSE,
-            ...) {
-        
-        # Making sure there is no error in parameters given by the user
-        .check_parameters(x,
-                        dimred = dimred,
-                        layout = layout,
-                        n = n,
-                        ncomponents = ncomponents,
-                        tree.name = tree.name,
-                        rank = rank,
-                        add.tree = add.tree,
-                        ...)
-        loading_names <- c("rotation", "loadings")
-        attr_names <- names(attributes(reducedDim(x, dimred)))
-        attr_name <- attr_names[ attr_names %in% loading_names ]
-        if( length(attr_name) != 1 ) {
-            stop("Loadings cannot be found..", call. = FALSE)
+    function(
+        x, dimred, layout = "barplot", n = 10, ncomponents = 5,
+        tree.name = "phylo", rank = NULL, add.tree = FALSE, ...) {
+        # Check that there are reducedDim
+        if( length(reducedDims(x)) == 0 ){
+          stop("No reducedDims found.", call. = FALSE)
         }
-        loadings_matrix <- attr(reducedDim(x, dimred), attr_name)
-
-        
-        # Checking if there are enough components in the matrix
-        .check_components(loadings_matrix, ncomponents)
-        
-        if (add.tree && layout == "heatmap") {
+        # Check dimred. It must be either string specifying the name of
+        # reducedDim or an index of reducedDim.
+        if( !((.is_a_string(dimred) && dimred %in% reducedDimNames(x)) ||
+              .is_an_integer(dimred) && dimred > 0 &&
+              dimred <= length(reducedDims(x)) ) ){
+          stop("'dimred' must be a string or an integer.", call. = FALSE)
+        }
+        # Check add.tree
+        if( !.is_a_bool(add.tree) ){
+            stop("'add.tree' must be TRUE or FALSE.", call. = FALSE)
+        }
+        # Check that tree.name. If user wants to add tree, the tree name must
+        # specify a tree
+        if( !(.is_a_string(tree.name) &&
+                (add.tree && tree.name %in% rowTreeNames(x))) ){
+            stop(
+                "'tree.name' must be a string specifying a rowTree.",
+                call. = FALSE)
+        }
+        # Check rank
+        if( !(is.null(rank) ||
+                (.is_a_string(rank) && rank %in% colnames(rowData(x)))) ){
+            stop(
+                "'rank' must be NULL or a column from rowData(x).",
+                call. = FALSE)
+        }
+        #
+        # Get loadings matrix
+        mat <- .get_loadings_matrix(x, dimred)
+        if( add.tree && layout == "heatmap" ){
             # Create dataframe for tree plotting
-            L <- .create_tree_dataframe(x, tree.name, rank)
-            df <- L[[1]]
-            legend_name <- L[[2]]
-            circ <- L[[3]]
-            # Create dataframe for loadings plotting
-            df2 <- data.frame(loadings_matrix)
-            # Match labels
-            df2 <- df2[match(rownames(x), rownames(df2)), ]
-            rownames(df2) <- rowLinks(x)$nodeLab
+            data_list <- .get_loadings_tree_data(mat, x, tree.name, rank)
+            tree <- data_list[["tree"]]
+            mat <- data_list[["loadings"]]
             # Plot tree with feature loadings
-            p <- .loadings_tree_plotter(x, df, df2, ncomponents, tree.name, legend_name, circ, rank)
-        } else if (layout == "heatmap") {
-            # Ordering loadings and adding factor to keep the order
-            df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
-            # Plot features with heatmap layout
-            p <- .heatmap_feature_loadings(df)
+            p <- .loadings_tree_plotter(mat, tree, rank, ...)
         } else {
-            # Ordering loadings and adding factor to keep the order
-            df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
-            # Plot features with barplot layout
-            p <- .barplot_feature_loadings(df)
+            # Utilize matrix method to create a plot
+            p <- plotLoadings(
+                loadings_matrix, layout = layout, n = n,
+                ncomponents = ncomponents, ...) 
         }
     return(p)
-    }
-)
-#' @rdname plotLoadings
-#' @export 
-setMethod("plotLoadings", signature = c(x = "matrix"),
-    function(x,
-            layout = "barplot",
-            n = 10,
-            ncomponents = 5,
-            ...) {
-        
-        # Making sure there is no error in parameters given by the user
-        .check_parameters(x,
-                        layout = layout,
-                        n = n,
-                        ncomponents = ncomponents,
-                        ...)
-        
-        # Checking if there are enough components in the matrix
-        .check_components(x, ncomponents)
-        
-        # Ordering loadings and adding factor to keep the order
-        df <- .get_loadings_plot_data(x, n, ncomponents)
-        
-        # Plot features with heatmap layout
-        if (layout == "heatmap") {
-            # Plot features with heatmap layout
-            p <- .heatmap_feature_loadings(df)
-        } else {
-            # Plot features with barplot layout
-            p <- .barplot_feature_loadings(df)
-        }
-        return(p)
     }
 )
 
 #' @rdname plotLoadings
 #' @export 
 setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
-    function(x,
-            dimred,
-            layout = "barplot",
-            n = 10,
-            ncomponents = 5,
-            ...) {
-    
-        # Making sure there is no error in parameters given by the user
-        .check_parameters(x,
-                        dimred = dimred,
-                        layout = layout,
-                        n = n,
-                        ncomponents = ncomponents,
-                        ...)  
-        
-        loading_names <- c("rotation", "loadings")
-        attr_names <- names(attributes(reducedDim(x, dimred)))
-        attr_name <- attr_names[ attr_names %in% loading_names ]
-        if( length(attr_name) != 1 ) {
-            stop("Loadings cannot be found..", call. = FALSE)
+    function(x, dimred, layout = "barplot", n = 10, ncomponents = 5, ...){
+        # Check that there are reducedDim
+        if( length(reducedDims(x)) == 0 ){
+            stop("No reducedDims found.", call. = FALSE)
         }
-        loadings_matrix <- attr(reducedDim(x, dimred), attr_name)
-        # Checking if there are enough components in the matrix
-        .check_components(loadings_matrix, ncomponents)
-        
-        # Ordering loadings and adding factor to keep the order
-        df <- .get_loadings_plot_data(loadings_matrix, n, ncomponents)
-        
-        #Plot features with heatmap layout
-        if (layout == "heatmap") {
-            p <- .heatmap_feature_loadings(df)
-        } else {
-            # Plot features with barplot layout
-            p <- .barplot_feature_loadings(df)
+        # Check dimred. It must be either string specifying the name of
+        # reducedDim or an index of reducedDim.
+        if( !((.is_a_string(dimred) && dimred %in% reducedDimNames(x)) ||
+                .is_an_integer(dimred) && dimred > 0 &&
+                dimred <= length(reducedDims(x)) ) ){
+            stop("'dimred' must be a string or an integer.", call. = FALSE)
         }
+        # Get loadings matrix
+        mat <- .get_loadings_matrix(x, dimred)
+        # Utilize matrix method to create a plot
+        p <- plotLoadings(
+            mat, layout = layout, n = n, ncomponents = ncomponents, ...) 
         return(p)
     }
 )
 
-.check_parameters <- function(x, dimred, layout, n, ncomponents, tree.name, rank, add.tree, ...) {
-    
-    #Check add.tree
-    if (is(x, "TreeSummarizedExperiment") && !.is_a_bool(add.tree)) {
-        stop("'add.tree' must be either TRUE or FALSE", call. = FALSE)
+#' @rdname plotLoadings
+#' @export 
+setMethod("plotLoadings", signature = c(x = "matrix"),
+    function(x, layout = "barplot", n = 10, ncomponents = 5, ...) {
+        # Input check
+        .check_loadings_matrix(
+            x, layout = layout, n = n, ncomponents = ncomponents, ...)
+        #
+        # Get data for plotting
+        df <- .get_loadings_plot_data(x, layout, n, ncomponents)
+        # Create a plot
+        p <- .plot_loadings(df, layout = layout, ...)
+        return(p)
     }
-    # Check tree.name
-    if(is(x, "TreeSummarizedExperiment") && add.tree && !(tree.name %in% rowTreeNames(x)  && .is_a_string(tree.name))){
-        stop("'tree.name' must be a single character value specifying a rowTree.", call. = FALSE)
-    }
-    # Checking if dimred is correct
-    if( is(x, "SingleCellExperiment") && is.null(dimred) && !(dimred %in% reducedDimNames(x)  && .is_a_string(dimred))){
-        stop("'dimred' must specify reducedDim.", call. = FALSE)
-    }
-    # Checking if layout is correct
-    if ( !(layout %in% c("barplot", "heatmap") && .is_a_string(layout)) ) {
-        stop("'layout' must be one of c('barplot', 'heatmap').", call. = FALSE)
-    }
-    # Making sure the tree is not null
-    if( is(x, "TreeSummarizedExperiment") && add.tree && is.null(rowTree(x, tree.name))) {
-        stop ("Tree is null.", call. = FALSE)
-    }
-    # Checking if n is a positive number
-    if ( !(is.numeric(n) && n > 0) ) {
-        stop("'n' must be a positive number.", call. = FALSE)
-    }
-    # Checking if ncomponents is a positive number 
-    if ( !(is.numeric(ncomponents) && ncomponents > 0) ) {
-        stop("'ncomponents' must be a positive number.", call. = FALSE)
-    }
-    # Checking if rank is correct
-    if ( is(x, "TreeSummarizedExperiment") && !(is.null(rank)) &&!(any(rank %in% taxonomyRanks(x)) )) {
-        stop("'rank' must be one of taxonomyRanks", call. = FALSE)
-    }
-    return(NULL)
+)
 
+################################ HELP FUNCTIONS ################################
+
+# This function fetches loadings matrix from TreeSE object. The loadings
+# are fetched from attributes of reducedDim whcih means that the result must be
+# first calculated with standardized method.
+.get_loadings_matrix <- function(x, dimred, ...){
+    # Get reducedDim
+    reddim <- reducedDim(x, dimred)
+    # Get loadings matrix.
+    attr_names <- names(attributes(reddim))
+    loading_names <- c("rotation", "loadings")
+    attr_name <- attr_names[ attr_names %in% loading_names ]
+    if( length(attr_name) != 1 ) {
+        stop("Loadings cannot be found.", call. = FALSE)
+    }
+    mat <- attr(reddim, attr_name)
+    # Convert to data.frame
+    mat <- as.data.frame(mat)
+    return(mat)
 }
 
-.check_components <- function(x, ncomponents) {
-    # Checking if there are enough components in the matrix
-    if (ncomponents > ncol(x)) {
-        stop("'ncomponents' must be lower or equal than number of components.", call. = FALSE)  
+# This functions checks that loadings matrix is correct
+.check_loadings_matrix <- function(mat, layout, n, ncomponents, ...) {
+    # Check layout
+    if( !(.is_a_string(layout) && layout %in% c("barplot", "heatmap")) ){
+        stop("'layout' must be 'barplot' or 'heatmap',", call. = FALSE)
+    }
+    # Check n
+    if( !(.is_an_integer(n) && n > 0 && n <= nrow(mat)) ){
+        stop(
+            "'n' must be a positive integer less than or equal to the total ",
+            "number of features.", call. = FALSE)
+    }
+    # Check ncomponents
+    if( !(.is_an_integer(ncomponents) && ncomponents > 0 &&
+            ncomponents <= ncol(mat)) ){
+        stop(
+            "'ncomponents' must be a positive integer less than or equal to ",
+            "the total number of components.", call. = FALSE)
     }
     return(NULL)
 }
 
-# Function to process each component
+# This function manipulates the loadings data into correct format. The output
+# is data.frame in long format directly usable for ggplot.
+#' @importFrom dplyr %>% rownames_to_column pivot_longer
+.get_loadings_plot_data <- function(df, layout, n, ncomponents) {
+    # Transform into a dataframe
+    df <- as.data.frame(df)
+    # Keep only the number of components needed
+    df <- df[ , seq_len(ncomponents), drop = FALSE]
+    # If the layout is barplot, choose top features for each component
+    if( layout %in% c("barplot") ){
+        res <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
+        # Combine to single data.frame
+        res <- do.call(rbind, res)
+    } else{
+        # For heatmap, the whole data.frame is just converted into long format.
+        components <- colnames(df)
+        res <- df %>%
+            rownames_to_column(var = "Feature") %>%
+            pivot_longer(
+                cols = components, 
+                names_to = "PC", 
+                values_to = "Value")
+    }
+    # Convert into data.frame
+    res <- as.data.frame(res)
+    return(res)
+}
+
+# This function subsets the data so that it selects top features that have the
+# greatest loadings for single component. 
 .process_component <- function(i, df, n) {
     # Get order of loadings based on absolute value
     ind <- order(-abs(df[[i]]))
@@ -304,102 +288,119 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     return(df)
 }
 
-#' @importFrom dplyr select
-.get_loadings_plot_data <- function(df, n, ncomponents) {
-    # Transform into a dataframe
-    df <- as.data.frame(df)
-    # Keep only the number of components needed
-    df <- df[ , seq_len(ncomponents), drop = FALSE]
-    # Apply the function to each component and return the list
-    res <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
-    # Combine to single data.frame
-    res <- do.call(rbind, res)
-    res <- as.data.frame(res)
-    return(res)
-}
-
-#' @importFrom dplyr select
-#' @importFrom ggtree gheatmap
-.loadings_tree_plotter <- function(x, df, df2, ncomponents, tree.name, legend_name, circ, rank) {
-    
-    # Plot tree with first inner circle (Classes)
-    p <- gheatmap(
-        p = circ,
-        data = df,
-        offset = -.1,
-        width = .1,
-        color = "black",
-        colnames = FALSE,
-        legend_title = legend_name) 
-        # Plot others circles (loadings)
-        for(i in seq_len(ncomponents)){
-            if(i == 1){
-                p <- p +
-                ggnewscale::new_scale_fill()
-            }
-            df3 <- select(
-                df2, (all_of(i))
-            )
+# This functions plots a data.frame in barplot or heatmap layout.
+#' @importFrom tidytext scale_y_reordered reorder_within
+#' @importFrom ggplot2 geom_tile scale_fill_gradient2 geom_bar
+.plot_loadings <- function(df, layout = "barplot", ...) {
+    # Initialize a plot
+    plot_out <- ggplot(df)
+    # Either create a heatmap or barplt
+    if( layout == "heatmap" ){
+        plot_out <- plot_out +
+            # Create a heatmap
+            geom_tile(
+                mapping = aes(x = PC, y = Feature, fill = Value),
+                position = position_identity()
+                ) +
+            # Adjust color scale
+            scale_fill_gradient2(
+                limits = c(-1, 1),
+                low = "darkslateblue", mid = "white", high = "darkred"
+                )
             
-            p <- gheatmap(
-                p,
-                df3,
-                offset = i*.065,
-                width = .1,
-                color = "black",
-                colnames = FALSE) + 
-                scale_fill_gradient2(limits = c(-1,1),
-                    low = "darkslateblue", mid = "white",
-                    high = "darkred", name = "Value")
-            p <- p +  theme(legend.key.size = unit(0.5, 'cm'),
-                    plot.title = element_text(size = 18, hjust=0.5))
-        }
-    return(p)
+    } else{
+        plot_out <- plot_out +
+            # Create a bar plot. Create unique facets for each PC. Each PC can
+            # have unique set of features. To reorder features by each facet,
+            # we use reorder_within() and scale_y_reordered().
+            geom_bar(
+                mapping = aes(
+                    x = Value, y = reorder_within(Feature, Value, PC)),
+                stat = "identity",
+                width = 0.8
+                ) +
+            scale_y_reordered() +
+            facet_wrap(~ PC, scales = "free") +
+            labs(x = "Value", y = "Feature") 
+        
+    }
+    # Adjust theme
+    plot_out <- plot_out +
+        theme_minimal()
+    return(plot_out)
 }
 
+# This function retrieves the data for tree + heatmap plotting. The output
+# is a list that includes tree and data.frame in wide format.
 #' @importFrom ggtree ggtree
-.create_tree_dataframe <- function(x, tree.name, rank) {
+.get_loadings_tree_data <- function(df, x, tree.name, rank) {
     # Retrieve rowTree
     phylo <- rowTree(x, tree.name)
     # Subset data based on the tree
     ind <- rowLinks(x)[["whichTree"]] == tree.name
-    if( any(ind) ){
-        warning("message here", call. = FALSE)
+    if( any(!ind) ){
+        warning("Data is subsetted.", call. = FALSE)
+        # Subset both TreeSE and loadings dfrix
+        x <- x[ind, ]
+        df <- df[ind, ]
     }
-    x <- x[ind, ]
-    # Store plot tree
-    circ <- ggtree(phylo, layout = "circular")
-    df <- rowData(x)
-    # Transform into a dataframe
-    if (is.null(rank)) {
-        df <- data.frame(Class = rownames(x))
-        legend_name <- "Class"
-    } else {
-        df <- data.frame(Class = df[[rank]])
-        legend_name <- rank
+    # Add feature to column
+    df[["Feature"]] <- rownames(df)
+    # Instead of rownames, user can also specify a column from rowData to be
+    # plotted
+    if( !is.null(rank) ){
+        df[["Feature"]] <- rowData(x)[[rank]]
     }
-    # Match labels
-    rownames(df) <- rowLinks(x)$nodeLab
-    return(list(df, legend_name, circ))
+    # Check that there are not too many features to plot. If there are too many
+    # rank values (or rownames), it is not possible to plot.
+    if( length(unique(df[["Feature"]])) > 100 ){
+        stop(
+            "Too many features to plot. Consider specifying 'rank'.",
+            call. = FALSE)
+    }
+    # Add rowlinks to data
+    rownames(df) <- rowLinks(x)[["nodeLab"]]
+    res <- list(tree = phylo, loadings = df)
+    return(res)
 }
 
-#' @importFrom tidytext scale_y_reordered reorder_within
-.barplot_feature_loadings <- function(df) {
-    p <- ggplot(df, aes(x = Value, y = reorder_within(Feature, Value, PC))) +
-        geom_bar(stat = "identity") +
-        scale_y_reordered() +
-        facet_wrap(~ PC, scales = "free") +
-        theme_minimal() +
-        labs(x = "Value", y = "Feature") 
-    return(p)
+# This function is for plotting tree with heatmap. It utilizes ggtree package.
+#' @importFrom ggtree ggtree gheatmap
+#' @importFrom ggnewscale new_scale_fill
+#' @importFrom viridis scale_fill_viridis_d
+#' @importFrom ggplot2 scale_fill_gradient2
+.loadings_tree_plotter <- function(
+    df, tree, rank, rank.title = ifelse(!is.null(rank), rank, "Feature"),
+    ...) {
+    # Check rank.title
+    if( !.is_a_string(rank.title) ){
+        stop("'rank.title' must be a string.", call. = FALSE)
+    }
+    #
+    # Get features
+    features <- df[ , colnames(df) %in% c("Feature"), drop = FALSE]
+    # Get loadings
+    loadings <- df[ , !colnames(df) %in% c("Feature"), drop = FALSE]
+    # Create a tree plot
+    plot_out <- ggtree(tree, layout = "circular")
+    # Add first inner circle (features)
+    plot_out <- gheatmap(
+        p = plot_out, data = features, width = 0.1, colnames_angle = 90)
+    # Adjust color scale for discrete feature values
+    plot_out <- plot_out +
+        scale_fill_viridis_d(option = "D", name = rank.title)
+    # Add outer circles (feature loadings)
+    plot_out <- plot_out + new_scale_fill()
+    plot_out <- gheatmap(
+        p = plot_out, data = loadings, offset = 0.1, width = 0.3,
+        colnames_angle = 90
+        )
+    # Adjust color scale in continuous scale
+    plot_out <- plot_out +
+        scale_fill_gradient2(
+            limits = c(-1, 1),
+            low = "darkslateblue", mid = "white", high = "darkred",
+            name = "Value"
+        )
+    return(plot_out)
 }
-
-.heatmap_feature_loadings <- function(df) {
-    p <- ggplot(df, aes(x = PC, y = Feature, fill = Value)) +
-        geom_tile(position = position_identity()) +
-        scale_fill_gradient2(limits = c(-1,1), low = "darkslateblue",
-            mid = "white", high = "darkred") +
-        theme_minimal()
-    return(p)
-}
-
