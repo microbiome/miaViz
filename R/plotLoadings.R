@@ -1,51 +1,54 @@
-#' Plot feature loadings for TreeSummarizedExperiment/SingleCellExperiment objects
-#' or feature loadings numeric matrix.
+#' Plot feature loadings for TreeSummarizedExperiment/SingleCellExperiment 
+#' objects or feature loadings numeric matrix.
 #'
-#' This function is used after performing a reduction method. If TSE object is
-#' given it retrieves the feature loadings matrix to plot values, tree can be added to heatmap.
+#' This function is used after performing a reduction method. If TSE object
+#' is given it retrieves the feature loadings matrix to plot values,
+#' tree can be added to heatmap.
 #' Plotting with other layouts is possible as SCE objects and numeric matrices
 #' does not include a tree.
 #' 
-#' @param x a
-#'   \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
-#'   x.
+#' @inheritParams plotTree
 #' 
-#' @param dimred \code{Character scalar}. Name of the reduction method if there are several in reducedDim slot. 
+#' @param dimred \code{Character scalar}. Name of the reduction method
+#'   if there are several in reducedDim slot. 
 #'  
-#' @param layout \code{Character scalar}. One way to plot feature loadings of \code{c("heatmap", "barplot")}. 
+#' @param layout \code{Character scalar}. One way to plot feature loadings
+#'   of \code{c("heatmap", "barplot")}. 
 #'   (Default: \code{"barplot"})
 #' 
 #' @param n \code{Numeric scalar}. Number of features to be plotted.
 #'   (Default: \code{10})
 #'   
-#' @param ncomponents \code{Numeric scalar}. Number of components must be lower or equal 
-#'   to the number of components choosen in the reduction method.
+#' @param ncomponents \code{Numeric scalar}. Number of components must be lower
+#'   or equal to the number of components choosen in the reduction method.
 #'   (Default: \code{5})
-#' 
-#' @param tree.name \code{Character scalar}. Value specifying a rowTree from a
-#'   TreeSummarizedExperiment object. 
-#'   (Default: \code{"phylo"})
 #'   
-#' @param rank \code{Character scalar}. Value specifying a rank from taxonomyRanks
+#' @param row.var \code{Character scalar}. Value specifying a rank from 
+#'   taxonomyRanks
 #'   (Default: \code{NULL})
 #'   
-#' @param add.tree \code{Logical scalar}. Whether or not to add tree to heatmap layout.
+#' @param add.tree \code{Logical scalar}. Whether or not to add tree to 
+#'   heatmap layout.
 #'   (Default: \code{FALSE})
 #'   
 #' @param ... additional arguments for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}     
+#'   \code{\link{mia-plot-args}} for more details i.e. call 
+#'   \code{help("mia-plot-args")}     
 #' 
 #' @details
 #' 
-#' Inspired by the \code{plotASVcircular} method using phyloseq 
-#' and has been converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
-#' TreeSummarizedExperiment/SingleCellExperiment objects are expected to have content in reducedDim slot.
-#' It is impossible to add tree if only the matrix is given. Number of features must be reduced
-#' before calling function or it will not be understandable. For example
-#' agglomerating data by rank or prevalence (see examples).
+#' Inspired by the \code{plotASVcircular} method using phyloseq and has been
+#' converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
+#' TreeSummarizedExperiment/SingleCellExperiment objects are expected to have
+#' content in reducedDim slot.
+#' It is impossible to add tree if only the matrix is given. 
+#' Number of features must be reduced before calling function or it will not
+#' be understandable. For example, agglomerating data by rank or
+#' prevalence (see examples).
 #' 
 #' @return 
-#' A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
+#' A \code{ggplot2} object. A circular plot annotated with 
+#' TreeSummarizedExperiment object.
 #'
 #' @name plotLoadings
 #' @export
@@ -88,7 +91,8 @@
 #' 
 #' # Plotting tree with taxonomic rank classification
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE, rank = "Phylum")
+#' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE,
+#' row.var = "Phylum")
 #' 
 #' # Plotting after performing LDA 
 #' library(topicmodels)
@@ -107,17 +111,17 @@ setGeneric("plotLoadings", signature = c("x"),
 setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
     function(
         x, dimred, layout = "barplot", n = 10, ncomponents = 5,
-        tree.name = "phylo", rank = NULL, add.tree = FALSE, ...) {
+        tree.name = "phylo", row.var = NULL, add.tree = FALSE, ...) {
         # Check that there are reducedDim
         if( length(reducedDims(x)) == 0 ){
-          stop("No reducedDims found.", call. = FALSE)
+            stop("No reducedDims found.", call. = FALSE)
         }
         # Check dimred. It must be either string specifying the name of
         # reducedDim or an index of reducedDim.
         if( !((.is_a_string(dimred) && dimred %in% reducedDimNames(x)) ||
-              .is_an_integer(dimred) && dimred > 0 &&
-              dimred <= length(reducedDims(x)) ) ){
-          stop("'dimred' must be a string or an integer.", call. = FALSE)
+            .is_an_integer(dimred) && dimred > 0 &&
+            dimred <= length(reducedDims(x)) ) ){
+                stop("'dimred' must be a string or an integer.", call. = FALSE)
         }
         # Check add.tree
         if( !.is_a_bool(add.tree) ){
@@ -125,17 +129,17 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         }
         # Check that tree.name. If user wants to add tree, the tree name must
         # specify a tree
-        if( !(.is_a_string(tree.name) &&
-                (add.tree && tree.name %in% rowTreeNames(x))) ){
+        if(add.tree && !(.is_a_string(tree.name) && 
+        tree.name %in% rowTreeNames(x)) ){
             stop(
                 "'tree.name' must be a string specifying a rowTree.",
                 call. = FALSE)
         }
-        # Check rank
-        if( !(is.null(rank) ||
-                (.is_a_string(rank) && rank %in% colnames(rowData(x)))) ){
+        # Check row.var
+        if( !(is.null(row.var) ||
+                (.is_a_string(row.var) && row.var %in% colnames(rowData(x)))) ){
             stop(
-                "'rank' must be NULL or a column from rowData(x).",
+                "'row.var' must be NULL or a column from rowData(x).",
                 call. = FALSE)
         }
         #
@@ -143,15 +147,15 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         mat <- .get_loadings_matrix(x, dimred)
         if( add.tree && layout == "heatmap" ){
             # Create dataframe for tree plotting
-            data_list <- .get_loadings_tree_data(mat, x, tree.name, rank)
+            data_list <- .get_loadings_tree_data(mat, x, tree.name, row.var)
             tree <- data_list[["tree"]]
             mat <- data_list[["loadings"]]
             # Plot tree with feature loadings
-            p <- .loadings_tree_plotter(mat, tree, rank, ...)
+            p <- .loadings_tree_plotter(mat, tree, row.var, ...)
         } else {
             # Utilize matrix method to create a plot
             p <- plotLoadings(
-                loadings_matrix, layout = layout, n = n,
+                as.matrix(mat), layout = layout, n = n,
                 ncomponents = ncomponents, ...) 
         }
     return(p)
@@ -175,6 +179,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
         }
         # Get loadings matrix
         mat <- .get_loadings_matrix(x, dimred)
+        mat <- as.matrix(mat)
         # Utilize matrix method to create a plot
         p <- plotLoadings(
             mat, layout = layout, n = n, ncomponents = ncomponents, ...) 
@@ -243,7 +248,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 
 # This function manipulates the loadings data into correct format. The output
 # is data.frame in long format directly usable for ggplot.
-#' @importFrom dplyr %>% rownames_to_column pivot_longer
+#' @importFrom tibble rownames_to_column 
+#' @importFrom tidyr pivot_longer
 .get_loadings_plot_data <- function(df, layout, n, ncomponents) {
     # Transform into a dataframe
     df <- as.data.frame(df)
@@ -333,7 +339,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function retrieves the data for tree + heatmap plotting. The output
 # is a list that includes tree and data.frame in wide format.
 #' @importFrom ggtree ggtree
-.get_loadings_tree_data <- function(df, x, tree.name, rank) {
+.get_loadings_tree_data <- function(df, x, tree.name, row.var) {
     # Retrieve rowTree
     phylo <- rowTree(x, tree.name)
     # Subset data based on the tree
@@ -348,14 +354,14 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     df[["Feature"]] <- rownames(df)
     # Instead of rownames, user can also specify a column from rowData to be
     # plotted
-    if( !is.null(rank) ){
-        df[["Feature"]] <- rowData(x)[[rank]]
+    if( !is.null(row.var) ){
+        df[["Feature"]] <- rowData(x)[[row.var]]
     }
     # Check that there are not too many features to plot. If there are too many
     # rank values (or rownames), it is not possible to plot.
     if( length(unique(df[["Feature"]])) > 100 ){
         stop(
-            "Too many features to plot. Consider specifying 'rank'.",
+            "Too many features to plot. Consider agglomerating tree.",
             call. = FALSE)
     }
     # Add rowlinks to data
@@ -367,8 +373,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function is for plotting tree with heatmap. It utilizes ggtree package.
 #' @importFrom ggtree ggtree gheatmap
 #' @importFrom ggnewscale new_scale_fill
-#' @importFrom viridis scale_fill_viridis_d
-#' @importFrom ggplot2 scale_fill_gradient2
+#' @importFrom ggplot2 scale_fill_gradient2 scale_fill_viridis_d
 .loadings_tree_plotter <- function(
     df, tree, rank, rank.title = ifelse(!is.null(rank), rank, "Feature"),
     ...) {

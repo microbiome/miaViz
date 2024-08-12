@@ -3,10 +3,10 @@
 \name{plotLoadings}
 \alias{plotLoadings}
 \alias{plotLoadings,TreeSummarizedExperiment-method}
-\alias{plotLoadings,matrix-method}
 \alias{plotLoadings,SingleCellExperiment-method}
-\title{Plot feature loadings for TreeSummarizedExperiment/SingleCellExperiment objects
-or feature loadings numeric matrix.}
+\alias{plotLoadings,matrix-method}
+\title{Plot feature loadings for TreeSummarizedExperiment/SingleCellExperiment
+objects or feature loadings numeric matrix.}
 \usage{
 plotLoadings(x, ...)
 
@@ -17,14 +17,14 @@ plotLoadings(x, ...)
   n = 10,
   ncomponents = 5,
   tree.name = "phylo",
-  rank = NULL,
+  row.var = NULL,
   add.tree = FALSE,
   ...
 )
 
-\S4method{plotLoadings}{matrix}(x, layout = "barplot", n = 10, ncomponents = 5, ...)
-
 \S4method{plotLoadings}{SingleCellExperiment}(x, dimred, layout = "barplot", n = 10, ncomponents = 5, ...)
+
+\S4method{plotLoadings}{matrix}(x, layout = "barplot", n = 10, ncomponents = 5, ...)
 }
 \arguments{
 \item{x}{a
@@ -32,46 +32,54 @@ plotLoadings(x, ...)
 x.}
 
 \item{...}{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
+\code{\link{mia-plot-args}} for more details i.e. call
+\code{help("mia-plot-args")}}
 
-\item{dimred}{\code{Character scalar}. Name of the reduction method if there are several in reducedDim slot.}
+\item{dimred}{\code{Character scalar}. Name of the reduction method
+if there are several in reducedDim slot.}
 
-\item{layout}{\code{Character scalar}. One way to plot feature loadings of \code{c("heatmap", "barplot")}.
+\item{layout}{\code{Character scalar}. One way to plot feature loadings
+of \code{c("heatmap", "barplot")}.
 (Default: \code{"barplot"})}
 
 \item{n}{\code{Numeric scalar}. Number of features to be plotted.
 (Default: \code{10})}
 
-\item{ncomponents}{\code{Numeric scalar}. Number of components must be lower or equal
-to the number of components choosen in the reduction method.
+\item{ncomponents}{\code{Numeric scalar}. Number of components must be lower
+or equal to the number of components choosen in the reduction method.
 (Default: \code{5})}
 
-\item{tree.name}{\code{Character scalar}. Value specifying a rowTree from a
-TreeSummarizedExperiment object.
-(Default: \code{"phylo"})}
+\item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
+\code{x}. (Default: \code{tree.name = "phylo"})}
 
-\item{rank}{\code{Character scalar}. Value specifying a rank from taxonomyRanks
+\item{row.var}{\code{Character scalar}. Value specifying a rank from
+taxonomyRanks
 (Default: \code{NULL})}
 
-\item{add.tree}{\code{Logical scalar}. Whether or not to add tree to heatmap layout.
+\item{add.tree}{\code{Logical scalar}. Whether or not to add tree to
+heatmap layout.
 (Default: \code{FALSE})}
 }
 \value{
-A \code{ggplot2} object. A circular plot annotated with TreeSummarizedExperiment object.
+A \code{ggplot2} object. A circular plot annotated with
+TreeSummarizedExperiment object.
 }
 \description{
-This function is used after performing a reduction method. If TSE object is
-given it retrieves the feature loadings matrix to plot values, tree can be added to heatmap.
+This function is used after performing a reduction method. If TSE object
+is given it retrieves the feature loadings matrix to plot values,
+tree can be added to heatmap.
 Plotting with other layouts is possible as SCE objects and numeric matrices
 does not include a tree.
 }
 \details{
-Inspired by the \code{plotASVcircular} method using phyloseq
-and has been converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
-TreeSummarizedExperiment/SingleCellExperiment objects are expected to have content in reducedDim slot.
-It is impossible to add tree if only the matrix is given. Number of features must be reduced
-before calling function or it will not be understandable. For example
-agglomerating data by rank or prevalence (see examples).
+Inspired by the \code{plotASVcircular} method using phyloseq and has been
+converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
+TreeSummarizedExperiment/SingleCellExperiment objects are expected to have
+content in reducedDim slot.
+It is impossible to add tree if only the matrix is given.
+Number of features must be reduced before calling function or it will not
+be understandable. For example, agglomerating data by rank or
+prevalence (see examples).
 }
 \examples{
 
@@ -107,7 +115,8 @@ plotLoadings(tse, dimred = "myPCAmatrix")
 
 # Plotting tree with taxonomic rank classification
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE, rank = "Phylum")
+plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE,
+row.var = "Phylum")
 
 # Plotting after performing LDA 
 library(topicmodels)
