@@ -9,7 +9,7 @@ plotAbundanceDensity(x, ...)
 
 \S4method{plotAbundanceDensity}{SummarizedExperiment}(
   x,
-  layout = c("jitter", "density", "point", "box", "violin"),
+  layout = c("jitter", "density", "point"),
   assay.type = assay_name,
   assay_name = "counts",
   n = min(nrow(x), 25L),
@@ -59,9 +59,8 @@ in x-axis. (Default: \code{TRUE})
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
 \item{layout}{\code{Character scalar}. Selects the layout of the plot.
-There are three different options: \code{jitter}, \code{density},
-\code{point}, \code{box}, and \code{violin} plot.
-(Default: \code{"jitter"})}
+There are three different options: \code{jitter}, \code{density}, and
+\code{point} plot. (default: \code{layout = "jitter"})}
 
 \item{assay.type}{\code{Character scalar} value defining which assay data to
 use. (Default: \code{"relabundance"})}
@@ -158,6 +157,18 @@ plotAbundanceDensity(
 plotAbundanceDensity(
     tse, assay.type = "relabundance", decreasing = NA)
 
+# Box plots and violin plots are supported by scater::plotExpression. 
+# Plots the relative abundance of 5 most abundant taxa as a violin plot.
+top <- getTop(tse, top = 5)
+plotExpression(tse, features = top, assay.type = "relabundance") + ggplot2::coord_flip()
+
+# Plots the relative abundance of 5 most abundant taxa as a box plot.
+plotExpression(tse, features = top, assay.type = "relabundance", 
+    show_violin = FALSE, show_box = TRUE) + ggplot2::coord_flip()
+
+}
+\seealso{
+\code{\link[scater:plotExpression]{scater::plotExpression}}
 }
 \author{
 Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}

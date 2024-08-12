@@ -5,9 +5,8 @@
 #' @inheritParams plotAbundance
 #'
 #' @param layout \code{Character scalar}. Selects the layout of the plot.
-#'   There are three different options: \code{jitter}, \code{density},
-#'   \code{point}, \code{box}, and \code{violin} plot. 
-#'   (Default: \code{"jitter"})
+#'   There are three different options: \code{jitter}, \code{density}, and
+#'   \code{point} plot. (default: \code{layout = "jitter"})
 #'   
 #' @param n \code{Integer scalar}. Specifies the number of the most abundant taxa
 #'   to show. (Default: \code{min(nrow(x), 25L)})
@@ -84,6 +83,9 @@
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
+#' @seealso
+#' \code{\link[scater:plotExpression]{scater::plotExpression}}
+#'
 #' @examples
 #' data("peerj13075", package = "mia")
 #' tse <- peerj13075
@@ -128,6 +130,15 @@
 #' # to your wishes
 #' plotAbundanceDensity(
 #'     tse, assay.type = "relabundance", decreasing = NA)
+#' 
+#' # Box plots and violin plots are supported by scater::plotExpression. 
+#' # Plots the relative abundance of 5 most abundant taxa as a violin plot.
+#' top <- getTop(tse, top = 5)
+#' plotExpression(tse, features = top, assay.type = "relabundance") + ggplot2::coord_flip()
+#' 
+#' # Plots the relative abundance of 5 most abundant taxa as a box plot.
+#' plotExpression(tse, features = top, assay.type = "relabundance", 
+#'     show_violin = FALSE, show_box = TRUE) + ggplot2::coord_flip()
 #'
 NULL
 
@@ -141,7 +152,7 @@ setGeneric("plotAbundanceDensity", signature = c("x"),
 #' @export
 setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
           function(x,
-                   layout = c("jitter", "density", "point", "box", "violin"),
+                   layout = c("jitter", "density", "point"),
                    assay.type = assay_name, assay_name = "counts",
                    n = min(nrow(x), 25L), colour.by = colour_by, 
                    colour_by = NULL,
@@ -154,7 +165,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                    ...){
               ############################# Input Check ##############################
               # Check layout
-              layout <- match.arg(layout, c("jitter", "density", "point", "box", "violin"))
+              layout <- match.arg(layout, c("jitter", "density", "point"))
               # Checks assay.type
               .check_assay_present(assay.type, x)
               # Checks n
@@ -183,48 +194,28 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
               }
               ########################### Input Check end ############################
               # Gets data that will be plotted. Gets a list
-              if (layout %in% c("density", "point", "jitter")) {
-                  density_data_list <- .incorporate_density_data(object = x,
-                                                                 assay.type = assay.type,
-                                                                 n = n,
-                                                                 colour_by = colour.by,
-                                                                 shape_by = shape.by,
-                                                                 size_by = size.by,
-                                                                 order_descending = decreasing)
-                  # Extracts the density data and aesthetic from the list
-                  density_data <- density_data_list$density_data
-                  colour_by <- density_data_list$colour_by
-                  shape_by <- density_data_list$shape_by
-                  size_by <- density_data_list$size_by
-                  
-                  # Gets the plot from plotter
-                  plot_out <- .density_plotter(density_data = density_data, 
-                                               layout = layout,
-                                               xlab = assay.type,
-                                               colour_by = colour_by,
-                                               shape_by = shape_by,
-                                               size_by = size_by,
-                                               ...)
-                  return(plot_out)
-              }
-              # Plot when layout is box
-              else if (layout == "box") {
-                  top_taxa <- getTop(x, top = n, assay.type = assay.type)
-                  plot_out <-  plotExpression(x, features = top_taxa, 
-                      assay.type = assay.type, show_boxplot = TRUE, show_violin = FALSE, ...) + 
-                      ggplot2::coord_flip()
-                  return(plot_out)
-              }
-              # Plot when layout is violin
-              else if (layout == "violin") {
-                  top_taxa <- getTop(x, top = n, assay.type = assay.type)
-                  plot_out <-  plotExpression(x, features = top_taxa, assay.type = assay.type, ...) + 
-                      ggplot2::coord_flip()
-                  return(plot_out)
-              }
-              else {
-                stop("Unsupported layout option: '", layout, "'.", call. = FALSE)
-              }
+              density_data_list <- .incorporate_density_data(object = x,
+                                                             assay.type = assay.type,
+                                                             n = n,
+                                                             colour_by = colour.by,
+                                                             shape_by = shape.by,
+                                                             size_by = size.by,
+                                                             order_descending = decreasing)
+              # Extracts the density data and aesthetic from the list
+              density_data <- density_data_list$density_data
+              colour_by <- density_data_list$colour_by
+              shape_by <- density_data_list$shape_by
+              size_by <- density_data_list$size_by
+              
+              # Gets the plot from plotter
+              plot_out <- .density_plotter(density_data = density_data, 
+                                           layout = layout,
+                                           xlab = assay.type,
+                                           colour_by = colour_by,
+                                           shape_by = shape_by,
+                                           size_by = size_by,
+                                           ...)
+              return(plot_out)
           }
 )
 
@@ -314,50 +305,50 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
         angle.x.text = TRUE){
     # start plotting
     plot_out <- ggplot(density_data, aes(x=.data[["X"]])) +
-      xlab(xlab) +
-      ylab(ylab)
+        xlab(xlab) +
+        ylab(ylab)
     # Layout can be "density", "jitter", or "point"
     if (layout == "density"){
-      plot_out$data$Y <- factor(plot_out$data$Y,
-                                levels = rev(levels(plot_out$data$Y)) )
-      point_args <- .get_density_args(colour_by,
-                                      alpha = point_alpha)
-      # density specific options for flipping
-      grid_args <- list(switch = ifelse(flipped, "x", "y"),
-                        scales = ifelse(scales_free, "free", "fixed"))
-      if(flipped){
-        grid_args$cols <- vars(!!sym("Y"))
-      } else {
-        grid_args$rows <- vars(!!sym("Y"))
-      }
-      #
-      plot_out <- plot_out +
-        do.call(geom_density, point_args$args) + 
-        do.call(facet_grid, grid_args)
-      shape_by <- NULL
-      size_by <- NULL
-      angle_x_text <- FALSE
+        plot_out$data$Y <- factor(plot_out$data$Y,
+                                  levels = rev(levels(plot_out$data$Y)) )
+        point_args <- .get_density_args(colour_by,
+                                        alpha = point_alpha)
+        # density specific options for flipping
+        grid_args <- list(switch = ifelse(flipped, "x", "y"),
+                          scales = ifelse(scales_free, "free", "fixed"))
+        if(flipped){
+            grid_args$cols <- vars(!!sym("Y"))
+        } else {
+            grid_args$rows <- vars(!!sym("Y"))
+        }
+        #
+        plot_out <- plot_out +
+            do.call(geom_density, point_args$args) + 
+            do.call(facet_grid, grid_args)
+        shape_by <- NULL
+        size_by <- NULL
+        angle_x_text <- FALSE
     } else if (layout %in% c("point","jitter")) {
-      point_args <- .get_point_args(colour_by,
-                                    shape_by = shape_by,
-                                    size_by = size_by,
-                                    alpha = point_alpha,
-                                    shape = point_shape,
-                                    size = point_size,
-                                    colour = point_colour)
-      point_args$args$mapping$y <- sym("Y")
-      if (layout == "point"){
-        plot_out <- plot_out +
-          do.call(geom_point, point_args$args)
-      } else if (layout == "jitter") {
-        point_args$args$height <- 0.25
-        plot_out <- plot_out +
-          do.call(geom_jitter, point_args$args)
-      } else {
-        stop(".")
-      }
+        point_args <- .get_point_args(colour_by,
+                                      shape_by = shape_by,
+                                      size_by = size_by,
+                                      alpha = point_alpha,
+                                      shape = point_shape,
+                                      size = point_size,
+                                      colour = point_colour)
+        point_args$args$mapping$y <- sym("Y")
+        if (layout == "point"){
+            plot_out <- plot_out +
+                do.call(geom_point, point_args$args)
+        } else if (layout == "jitter") {
+            point_args$args$height <- 0.25
+            plot_out <- plot_out +
+                do.call(geom_jitter, point_args$args)
+        } else {
+            stop(".")
+        }
     } else{
-      stop("Unsupported layout option: '",layout,"'.", call. = FALSE)
+        stop("Unsupported layout option: '",layout,"'.", call. = FALSE)
     }
     # If colour_by is specified, colours are resolved
     if (!is.null(colour_by)) {
@@ -372,17 +363,18 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                                               colour_by,
                                               fill = !point_args$fill,
                                               na.translate = FALSE)
-          }
+        }
     }
-    
     # set the theme
-    plot_out <- plot_out + theme_classic()
-    
+    plot_out <- plot_out +
+        theme_classic()
     # fine tuning for density layout
-    if (layout == "density") {
-        plot_out <- plot_out + theme(strip.background = element_blank())
-        if (flipped) {
+    if( layout == "density" ){
+        plot_out <- plot_out +
+            theme(strip.background = element_blank())
+        if(flipped){
             plot_out <- plot_out +
+            # Removes label grid, horizontal labels
                 theme(strip.text.x.bottom = element_text(angle = 90, hjust = 1), 
                       axis.ticks.x = element_blank(),
                       axis.text.x = element_blank(), # Removes x-axis
@@ -390,6 +382,7 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                       axis.line.x = element_blank()) # Removes x-axis
         } else {
             plot_out <- plot_out +
+             # Removes label grid, horizontal labels
                 theme(strip.text.y.left = element_text(angle = 0, hjust = 1), 
                       axis.ticks.y = element_blank(),
                       axis.text.y = element_blank(), # Removes y-axis
@@ -397,13 +390,14 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                       axis.line.y = element_blank()) # Removes y-axis
         }
     }
-    
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
     # add legend
     plot_out <- .add_legend(plot_out, add_legend)
     # flip
-    plot_out <- .flip_plot(plot_out, flipped = flipped, add_x_text = TRUE, angle_x_text = angle_x_text)
-    
+    plot_out <- .flip_plot(plot_out,
+                           flipped = flipped,
+                           add_x_text = TRUE,
+                           angle_x_text = angle_x_text)
     return(plot_out)
 }
