@@ -83,6 +83,9 @@
 #'
 #' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 #'
+#' @seealso
+#' \code{\link[scater:plotExpression]{scater::plotExpression}}
+#'
 #' @examples
 #' data("peerj13075", package = "mia")
 #' tse <- peerj13075
@@ -127,6 +130,16 @@
 #' # to your wishes
 #' plotAbundanceDensity(
 #'     tse, assay.type = "relabundance", decreasing = NA)
+#' 
+#' # Box plots and violin plots are supported by scater::plotExpression. 
+#' # Plots the relative abundance of 5 most abundant taxa as a violin plot.
+#' library(scater)
+#' top <- getTop(tse, top = 5)
+#' plotExpression(tse, features = top, assay.type = "relabundance") + ggplot2::coord_flip()
+#' 
+#' # Plots the relative abundance of 5 most abundant taxa as a box plot.
+#' plotExpression(tse, features = top, assay.type = "relabundance", 
+#'     show_violin = FALSE, show_box = TRUE) + ggplot2::coord_flip()
 #'
 NULL
 
