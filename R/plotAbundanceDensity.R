@@ -133,6 +133,7 @@
 #' 
 #' # Box plots and violin plots are supported by scater::plotExpression. 
 #' # Plots the relative abundance of 5 most abundant taxa as a violin plot.
+#' library(scater)
 #' top <- getTop(tse, top = 5)
 #' plotExpression(tse, features = top, assay.type = "relabundance") + ggplot2::coord_flip()
 #' 
