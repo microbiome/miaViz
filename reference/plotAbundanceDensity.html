@@ -52,7 +52,7 @@
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">plotAbundanceDensity</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"jitter"</span>, <span class="st">"density"</span>, <span class="st">"point"</span>, <span class="st">"box"</span>, <span class="st">"violin"</span><span class="op">)</span>,</span>
+<span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"jitter"</span>, <span class="st">"density"</span>, <span class="st">"point"</span><span class="op">)</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">25L</span><span class="op">)</span>,</span>
@@ -101,9 +101,8 @@ in x-axis. (Default: <code>TRUE</code>)</p></li>
 
 <dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
 <dd><p><code>Character scalar</code>. Selects the layout of the plot.
-There are three different options: <code>jitter</code>, <code>density</code>,
-<code>point</code>, <code>box</code>, and <code>violin</code> plot.
-(Default: <code>"jitter"</code>)</p></dd>
+There are three different options: <code>jitter</code>, <code>density</code>, and
+<code>point</code> plot. (default: <code>layout = "jitter"</code>)</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
@@ -176,6 +175,10 @@ individual taxa in individual sample. Most common abundances are shown as a high
 <p>A density plot can be seen as a smoothened bar plot. It visualized distribution of
 abundances where peaks represent most common abundances.</p>
     </div>
+    <div id="see-also">
+    <h2>See also</h2>
+    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/scater/man/plotExpression.html" class="external-link">scater::plotExpression</a></code></p></div>
+    </div>
     <div id="author">
     <h2>Author</h2>
     <p>Leo Lahti and Tuomas Borman. Contact: <a href="microbiome.github.io">microbiome.github.io</a></p>
@@ -238,6 +241,18 @@ abundances where peaks represent most common abundances.</p>
 <span class="r-in"><span><span class="fu">plotAbundanceDensity</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, decreasing <span class="op">=</span> <span class="cn">NA</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundanceDensity-7.png" alt="" width="3000" height="2100"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Box plots and violin plots are supported by scater::plotExpression. </span></span></span>
+<span class="r-in"><span><span class="co"># Plots the relative abundance of 5 most abundant taxa as a violin plot.</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">top</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, top <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotExpression.html" class="external-link">plotExpression</a></span><span class="op">(</span><span class="va">tse</span>, features <span class="op">=</span> <span class="va">top</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plotAbundanceDensity-8.png" alt="" width="3000" height="2100"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Plots the relative abundance of 5 most abundant taxa as a box plot.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotExpression.html" class="external-link">plotExpression</a></span><span class="op">(</span><span class="va">tse</span>, features <span class="op">=</span> <span class="va">top</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, </span></span>
+<span class="r-in"><span>    show_violin <span class="op">=</span> <span class="cn">FALSE</span>, show_box <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">+</span> <span class="fu">ggplot2</span><span class="fu">::</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/coord_flip.html" class="external-link">coord_flip</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plotAbundanceDensity-9.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
