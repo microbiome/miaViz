@@ -65,55 +65,38 @@ is given it retrieves the feature loadings matrix to plot values.
 A tree from \code{rowTree} can be added to heatmap layout.
 }
 \details{
-Inspired by the \code{plotASVcircular} method using \code{phyloseq} and has been
-converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
-TreeSummarizedExperiment/SingleCellExperiment objects are expected to have
-content in reducedDim slot.
-It is impossible to add tree if only the matrix is given.
-Number of features must be reduced before calling function or it will not
-be understandable. For example, agglomerating data by rank or
-prevalence (see examples).
+These method visualize feature loadings of dimension reduction results.
+Inspired by the \code{plotASVcircular} method using \code{phyloseq}.
+\code{TreeSummarizedExperiment} object is expected to have
+content in \code{reducedDim} slot calculated with standardized methods from
+\code{mia} or \code{scater} package.
 }
 \examples{
 
-# Plotting feature loadings with tree
 library(mia)
-library(ggtree)
 library(scater)
 data("GlobalPatterns", package = "mia")
 tse <- GlobalPatterns
-tse <- transformAssay(tse, method = "clr", pseudocount = 1)
+
+# Calculate PCA
 tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
+tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
+
+#' # Plotting feature loadings with tree
 plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
 
-# Plotting without tree as a barplot
+# Plotting matrix as a barplot
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
 plotLoadings(loadings_matrix)
 
-# Plotting more features
-plotLoadings(loadings_matrix, n = 12)
+# Plotting more features but less components
+plotLoadings(tse, dimred = "PCA", ncomponents = 2, n = 12)
 
-# Plotting without tree as a heatmap
+# Plotting matrix as heatmap without tree
 plotLoadings(loadings_matrix, layout = "heatmap")
 
-# Plotting with less components
-tse <- runPCA(tse, ncomponents = 4, assay.type = "clr")
-loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-plotLoadings(loadings_matrix, ncomponents = 4)
-
-# Plotting if loadings matrix name has been changed
-tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, dimred = "myPCAmatrix")
-
-# Plotting tree with taxonomic rank classification
-tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE,
-row.var = "Phylum")
-
-# Plotting after performing LDA 
-library(topicmodels)
-tse <- addLDA(tse)
-plotLoadings(tse, dimred = "LDA", ncomponents = 2)
+# Plot with less components
+plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)
 
 }
