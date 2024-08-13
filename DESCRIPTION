@@ -70,8 +70,7 @@ Suggests:
     vegan,
     bluster,
     ComplexHeatmap,
-    circlize,
-    topicmodels
+    circlize
 Remotes:
     github::microbiome/miaTime
 Roxygen: list(markdown = TRUE)

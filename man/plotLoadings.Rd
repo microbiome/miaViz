@@ -5,7 +5,7 @@
 \alias{plotLoadings,TreeSummarizedExperiment-method}
 \alias{plotLoadings,SingleCellExperiment-method}
 \alias{plotLoadings,matrix-method}
-\title{Plot feature loadings for TreeSummarizedExperiment/SingleCellExperiment
+\title{Plot feature loadings for TreeSummarizedExperiment
 objects or feature loadings numeric matrix.}
 \usage{
 plotLoadings(x, ...)
@@ -14,7 +14,6 @@ plotLoadings(x, ...)
   x,
   dimred,
   layout = "barplot",
-  n = 10,
   ncomponents = 5,
   tree.name = "phylo",
   row.var = NULL,
@@ -22,57 +21,51 @@ plotLoadings(x, ...)
   ...
 )
 
-\S4method{plotLoadings}{SingleCellExperiment}(x, dimred, layout = "barplot", n = 10, ncomponents = 5, ...)
+\S4method{plotLoadings}{SingleCellExperiment}(x, dimred, layout = "barplot", ncomponents = 5, ...)
 
-\S4method{plotLoadings}{matrix}(x, layout = "barplot", n = 10, ncomponents = 5, ...)
+\S4method{plotLoadings}{matrix}(x, layout = "barplot", ncomponents = 5, ...)
 }
 \arguments{
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}
 x.}
 
-\item{...}{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call
-\code{help("mia-plot-args")}}
+\item{...}{additional parameters for plotting.
+\itemize{
+\item \code{n}: \code{Integer scalar}. Number of features to be plotted.
+Applicable when \code{layout="barplot"}. (Default: \code{10}))
+}}
 
-\item{dimred}{\code{Character scalar}. Name of the reduction method
-if there are several in reducedDim slot.}
+\item{dimred}{\code{Character scalar}.  Determines the reduced dimension to
+plot.}
 
-\item{layout}{\code{Character scalar}. One way to plot feature loadings
-of \code{c("heatmap", "barplot")}.
-(Default: \code{"barplot"})}
-
-\item{n}{\code{Numeric scalar}. Number of features to be plotted.
-(Default: \code{10})}
+\item{layout}{\code{Character scalar}. Determines the layout of plot. Must be
+either \code{"barplot"} or \code{"heatmap"}. (Default: \code{"barplot"})}
 
 \item{ncomponents}{\code{Numeric scalar}. Number of components must be lower
-or equal to the number of components choosen in the reduction method.
+or equal to the number of components chosen in the reduction method.
 (Default: \code{5})}
 
 \item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
 \code{x}. (Default: \code{tree.name = "phylo"})}
 
-\item{row.var}{\code{Character scalar}. Value specifying a rank from
-taxonomyRanks
+\item{row.var}{\code{NULL} or \code{Character scalar}. Specifies a
+variable from \code{rowData} to plot with tree heatmap layout.
 (Default: \code{NULL})}
 
-\item{add.tree}{\code{Logical scalar}. Whether or not to add tree to
-heatmap layout.
+\item{add.tree}{\code{Logical scalar}. Whether to add tree to heatmap layout.
 (Default: \code{FALSE})}
 }
 \value{
-A \code{ggplot2} object. A circular plot annotated with
-TreeSummarizedExperiment object.
+A \code{ggplot2} object.
 }
 \description{
-This function is used after performing a reduction method. If TSE object
-is given it retrieves the feature loadings matrix to plot values,
-tree can be added to heatmap.
-Plotting with other layouts is possible as SCE objects and numeric matrices
-does not include a tree.
+This function is used after performing a reduction method. If \code{TreeSE}
+is given it retrieves the feature loadings matrix to plot values.
+A tree from \code{rowTree} can be added to heatmap layout.
 }
 \details{
-Inspired by the \code{plotASVcircular} method using phyloseq and has been
+Inspired by the \code{plotASVcircular} method using \code{phyloseq} and has been
 converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
 TreeSummarizedExperiment/SingleCellExperiment objects are expected to have
 content in reducedDim slot.
@@ -122,8 +115,5 @@ row.var = "Phylum")
 library(topicmodels)
 tse <- addLDA(tse)
 plotLoadings(tse, dimred = "LDA", ncomponents = 2)
-}
-\author{
-Ely Seraidarian
-Contact: \url{microbiome.github.io}
+
 }

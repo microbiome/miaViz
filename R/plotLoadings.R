@@ -1,103 +1,77 @@
-#' Plot feature loadings for TreeSummarizedExperiment/SingleCellExperiment 
+#' Plot feature loadings for TreeSummarizedExperiment 
 #' objects or feature loadings numeric matrix.
 #'
-#' This function is used after performing a reduction method. If TSE object
-#' is given it retrieves the feature loadings matrix to plot values,
-#' tree can be added to heatmap.
-#' Plotting with other layouts is possible as SCE objects and numeric matrices
-#' does not include a tree.
+#' This function is used after performing a reduction method. If \code{TreeSE}
+#' is given it retrieves the feature loadings matrix to plot values.
+#' A tree from \code{rowTree} can be added to heatmap layout.
 #' 
 #' @inheritParams plotTree
 #' 
-#' @param dimred \code{Character scalar}. Name of the reduction method
-#'   if there are several in reducedDim slot. 
+#' @param dimred \code{Character scalar}.  Determines the reduced dimension to
+#' plot.
 #'  
-#' @param layout \code{Character scalar}. One way to plot feature loadings
-#'   of \code{c("heatmap", "barplot")}. 
-#'   (Default: \code{"barplot"})
-#' 
-#' @param n \code{Numeric scalar}. Number of features to be plotted.
-#'   (Default: \code{10})
+#' @param layout \code{Character scalar}. Determines the layout of plot. Must be
+#' either \code{"barplot"} or \code{"heatmap"}. (Default: \code{"barplot"})
 #'   
 #' @param ncomponents \code{Numeric scalar}. Number of components must be lower
-#'   or equal to the number of components choosen in the reduction method.
-#'   (Default: \code{5})
+#' or equal to the number of components chosen in the reduction method.
+#' (Default: \code{5})
+#' 
+#' @param add.tree \code{Logical scalar}. Whether to add tree to heatmap layout.
+#' (Default: \code{FALSE})
+#' 
+#' @param row.var \code{NULL} or \code{Character scalar}. Specifies a
+#' variable from \code{rowData} to plot with tree heatmap layout.
+#' (Default: \code{NULL})
 #'   
-#' @param row.var \code{Character scalar}. Value specifying a rank from 
-#'   taxonomyRanks
-#'   (Default: \code{NULL})
-#'   
-#' @param add.tree \code{Logical scalar}. Whether or not to add tree to 
-#'   heatmap layout.
-#'   (Default: \code{FALSE})
-#'   
-#' @param ... additional arguments for plotting. See 
-#'   \code{\link{mia-plot-args}} for more details i.e. call 
-#'   \code{help("mia-plot-args")}     
+#' @param ... additional parameters for plotting.
+#'   \itemize{
+#'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
+#'   Applicable when \code{layout="barplot"}. (Default: \code{10}))
+#' }
 #' 
 #' @details
 #' 
-#' Inspired by the \code{plotASVcircular} method using phyloseq and has been
-#' converted to use TreeSummarizedExperiment/SingleCellExperiment objects.
-#' TreeSummarizedExperiment/SingleCellExperiment objects are expected to have
-#' content in reducedDim slot.
-#' It is impossible to add tree if only the matrix is given. 
-#' Number of features must be reduced before calling function or it will not
-#' be understandable. For example, agglomerating data by rank or
-#' prevalence (see examples).
+#' These method visualize feature loadings of dimension reduction results.
+#' Inspired by the \code{plotASVcircular} method using \code{phyloseq}.
+#' \code{TreeSummarizedExperiment} object is expected to have
+#' content in \code{reducedDim} slot calculated with standardized methods from
+#' \code{mia} or \code{scater} package.
 #' 
 #' @return 
-#' A \code{ggplot2} object. A circular plot annotated with 
-#' TreeSummarizedExperiment object.
+#' A \code{ggplot2} object.
 #'
 #' @name plotLoadings
 #' @export
-#' 
-#' @author
-#' Ely Seraidarian
-#' Contact: \url{microbiome.github.io}
 #'
 #' @examples
 #' 
-#' # Plotting feature loadings with tree
 #' library(mia)
-#' library(ggtree)
 #' library(scater)
 #' data("GlobalPatterns", package = "mia")
 #' tse <- GlobalPatterns
-#' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
+#' 
+#' # Calculate PCA
 #' tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
+#' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
+#' 
+#' #' # Plotting feature loadings with tree
 #' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
 #' 
-#' # Plotting without tree as a barplot
+#' # Plotting matrix as a barplot
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
 #' plotLoadings(loadings_matrix)
 #' 
-#' # Plotting more features
-#' plotLoadings(loadings_matrix, n = 12)
+#' # Plotting more features but less components
+#' plotLoadings(tse, dimred = "PCA", ncomponents = 2, n = 12)
 #' 
-#' # Plotting without tree as a heatmap
+#' # Plotting matrix as heatmap without tree
 #' plotLoadings(loadings_matrix, layout = "heatmap")
 #' 
-#' # Plotting with less components
-#' tse <- runPCA(tse, ncomponents = 4, assay.type = "clr")
-#' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
-#' plotLoadings(loadings_matrix, ncomponents = 4)
-#'
-#' # Plotting if loadings matrix name has been changed
-#' tse <- runPCA(tse, name = "myPCAmatrix", ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, dimred = "myPCAmatrix")
+#' # Plot with less components
+#' plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)
 #' 
-#' # Plotting tree with taxonomic rank classification
-#' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-#' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE,
-#' row.var = "Phylum")
-#' 
-#' # Plotting after performing LDA 
-#' library(topicmodels)
-#' tse <- addLDA(tse)
-#' plotLoadings(tse, dimred = "LDA", ncomponents = 2)
 NULL
 
 #' @rdname plotLoadings
@@ -110,8 +84,8 @@ setGeneric("plotLoadings", signature = c("x"),
 #' @export 
 setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, dimred, layout = "barplot", n = 10, ncomponents = 5,
-        tree.name = "phylo", row.var = NULL, add.tree = FALSE, ...) {
+        x, dimred, layout = "barplot", ncomponents = 5, tree.name = "phylo",
+        row.var = NULL, add.tree = FALSE, ...) {
         # Check that there are reducedDim
         if( length(reducedDims(x)) == 0 ){
             stop("No reducedDims found.", call. = FALSE)
@@ -155,8 +129,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         } else {
             # Utilize matrix method to create a plot
             p <- plotLoadings(
-                as.matrix(mat), layout = layout, n = n,
-                ncomponents = ncomponents, ...) 
+                mat, layout = layout, ncomponents = ncomponents, ...) 
         }
     return(p)
     }
@@ -165,7 +138,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
 #' @rdname plotLoadings
 #' @export 
 setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, layout = "barplot", n = 10, ncomponents = 5, ...){
+    function(x, dimred, layout = "barplot", ncomponents = 5, ...){
         # Check that there are reducedDim
         if( length(reducedDims(x)) == 0 ){
             stop("No reducedDims found.", call. = FALSE)
@@ -179,10 +152,9 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
         }
         # Get loadings matrix
         mat <- .get_loadings_matrix(x, dimred)
-        mat <- as.matrix(mat)
         # Utilize matrix method to create a plot
         p <- plotLoadings(
-            mat, layout = layout, n = n, ncomponents = ncomponents, ...) 
+            mat, layout = layout, ncomponents = ncomponents, ...) 
         return(p)
     }
 )
@@ -190,13 +162,13 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
 #' @rdname plotLoadings
 #' @export 
 setMethod("plotLoadings", signature = c(x = "matrix"),
-    function(x, layout = "barplot", n = 10, ncomponents = 5, ...) {
+    function(x, layout = "barplot", ncomponents = 5, ...) {
         # Input check
         .check_loadings_matrix(
-            x, layout = layout, n = n, ncomponents = ncomponents, ...)
+            x, layout = layout, ncomponents = ncomponents, ...)
         #
         # Get data for plotting
-        df <- .get_loadings_plot_data(x, layout, n, ncomponents)
+        df <- .get_loadings_plot_data(x, layout, ncomponents, ...)
         # Create a plot
         p <- .plot_loadings(df, layout = layout, ...)
         return(p)
@@ -219,13 +191,13 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         stop("Loadings cannot be found.", call. = FALSE)
     }
     mat <- attr(reddim, attr_name)
-    # Convert to data.frame
-    mat <- as.data.frame(mat)
+    # Ensure that the type is matrix
+    mat <- as.matrix(mat)
     return(mat)
 }
 
 # This functions checks that loadings matrix is correct
-.check_loadings_matrix <- function(mat, layout, n, ncomponents, ...) {
+.check_loadings_matrix <- function(mat, layout, ncomponents, n = 10, ...) {
     # Check layout
     if( !(.is_a_string(layout) && layout %in% c("barplot", "heatmap")) ){
         stop("'layout' must be 'barplot' or 'heatmap',", call. = FALSE)
@@ -250,7 +222,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # is data.frame in long format directly usable for ggplot.
 #' @importFrom tibble rownames_to_column 
 #' @importFrom tidyr pivot_longer
-.get_loadings_plot_data <- function(df, layout, n, ncomponents) {
+.get_loadings_plot_data <- function(df, layout, ncomponents, n = 10, ...) {
     # Transform into a dataframe
     df <- as.data.frame(df)
     # Keep only the number of components needed
@@ -297,7 +269,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This functions plots a data.frame in barplot or heatmap layout.
 #' @importFrom tidytext scale_y_reordered reorder_within
 #' @importFrom ggplot2 geom_tile scale_fill_gradient2 geom_bar
-.plot_loadings <- function(df, layout = "barplot", ...) {
+.plot_loadings <- function(df, layout, ...) {
     # Initialize a plot
     plot_out <- ggplot(df)
     # Either create a heatmap or barplt
@@ -314,7 +286,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 low = "darkslateblue", mid = "white", high = "darkred"
                 )
             
-    } else{
+    } else if( layout == "barplot" ){
         plot_out <- plot_out +
             # Create a bar plot. Create unique facets for each PC. Each PC can
             # have unique set of features. To reorder features by each facet,
@@ -339,7 +311,21 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function retrieves the data for tree + heatmap plotting. The output
 # is a list that includes tree and data.frame in wide format.
 #' @importFrom ggtree ggtree
-.get_loadings_tree_data <- function(df, x, tree.name, row.var) {
+.get_loadings_tree_data <- function(df, x, tree.name, row.var){
+    # Check that rownames of loading matrix match with rownames of TreeSE. It
+    # might be that TreeSE is updated after calculating the reduced dimension
+    # which is why rownames do not match.
+    all_match <- all(rownames(x) %in% rownames(df)) &&
+        all(rownames(df) %in% rownames(x))
+    if( !all_match ){
+        stop(
+            "Features of loading matrix do not match with rownames(x)",
+            call. = FALSE)
+    }
+    # Sort the loading matrix
+    df <- df[match(rownames(x), rownames(df)), ]
+    # Convert loadings matrix to data.frame
+    df <- as.data.frame(df)
     # Retrieve rowTree
     phylo <- rowTree(x, tree.name)
     # Subset data based on the tree
@@ -360,9 +346,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Check that there are not too many features to plot. If there are too many
     # rank values (or rownames), it is not possible to plot.
     if( length(unique(df[["Feature"]])) > 100 ){
-        stop(
-            "Too many features to plot. Consider agglomerating tree.",
-            call. = FALSE)
+        stop("Too many features to plot.", call. = FALSE)
     }
     # Add rowlinks to data
     rownames(df) <- rowLinks(x)[["nodeLab"]]
