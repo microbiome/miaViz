@@ -9,6 +9,7 @@ plotAbundance(x, ...)
 
 \S4method{plotAbundance}{SummarizedExperiment}(
   x,
+  group = rank,
   rank = NULL,
   col.var = features,
   features = NULL,
@@ -39,8 +40,10 @@ be calculated? (Default: \code{FALSE})
 }
 See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
 
-\item{rank}{\code{Character scalar}. Defines the taxonomic rank to
-use. Must be a value of \code{taxonomyRanks(x)}. (Default: \code{NULL})}
+\item{group}{\code{Character scalar}. Defines a group to use. Must be a value
+of \code{colnames(rowData(x))}. (Default: \code{NULL})}
+
+\item{rank}{Deprecated. Use \code{group} instead.}
 
 \item{col.var}{\code{Character scalar}. Selects a column from
 \code{colData} to be plotted below the abundance plot.
@@ -91,7 +94,7 @@ a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two
 the plot.
 }
 \description{
-\code{plotAbundance} plots the abundance on a selected taxonomic rank.
+\code{plotAbundance} plots the abundance on a selected column in rowData.
 Since this probably makes sense only for relative abundance data, the
 assay used by default is expected to be in the slot \sQuote{relabundance}.
 If only \sQuote{counts} is present, the relative abundance is computed.

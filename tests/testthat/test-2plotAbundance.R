@@ -5,12 +5,12 @@ test_that("plot abundance", {
     data(GlobalPatterns)
     x <- GlobalPatterns
     # .check_tree_plot_switches
-    expect_error(miaViz:::.get_abundance_data(rank = "Phylum"),
+    expect_error(miaViz:::.get_abundance_data(group = "Phylum"),
                  'argument "x" is missing')
-    expect_error(miaViz:::.get_abundance_data(x, rank = "Phylum"),
+    expect_error(miaViz:::.get_abundance_data(x, group = "Phylum"),
                  'argument "assay.type" is missing')
     expect_error(miaViz:::.get_abundance_data(x),
-                 'argument "rank" is missing')
+                 'argument "group" is missing')
     actual <- miaViz:::.get_abundance_data(x,"Phylum","counts")
     expect_s3_class(actual,"tbl_df")
     expect_named(actual,c("colour_by","X","Y"))
@@ -70,6 +70,13 @@ test_that("plot abundance", {
     expect_s3_class(plot,"ggplot")
     expect_named(plot$data,c("colour_by","X","Y"))
     plot <- plotAbundance(x, assay.type="counts", rank = "Phylum",
+                          col.var = "SampleType",
+                          order.col.by = "SampleType")
+    expect_true(is.list(plot))
+    expect_s3_class(plot[[1]],"ggplot")
+    #
+    rowData(x)$Salame <- sample(letters[1:5], nrow(x), replace=TRUE)
+    plot <- plotAbundance(x, assay.type="counts", rank = "Salame",
                           col.var = "SampleType",
                           order.col.by = "SampleType")
     expect_true(is.list(plot))

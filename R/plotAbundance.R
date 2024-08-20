@@ -1,6 +1,6 @@
 #' Plotting abundance data
 #'
-#' \code{plotAbundance} plots the abundance on a selected taxonomic rank.
+#' \code{plotAbundance} plots the abundance on a selected column in rowData.
 #' Since this probably makes sense only for relative abundance data, the
 #' assay used by default is expected to be in the slot \sQuote{relabundance}.
 #' If only \sQuote{counts} is present, the relative abundance is computed.
@@ -13,8 +13,10 @@
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #'   object.
 #'
-#' @param rank \code{Character scalar}. Defines the taxonomic rank to
-#'   use. Must be a value of \code{taxonomyRanks(x)}. (Default: \code{NULL})
+#' @param group \code{Character scalar}. Defines a group to use. Must be a value 
+#' of \code{colnames(rowData(x))}. (Default: \code{NULL})
+#'   
+#' @param rank Deprecated. Use \code{group} instead.
 #'
 #' @param assay.type \code{Character scalar} value defining which assay data to
 #'   use. (Default: \code{"relabundance"})
@@ -167,6 +169,7 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
+            group = rank,
             rank = NULL,
             col.var = features,
             features = NULL,
@@ -187,12 +190,15 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        if(!.is_non_empty_string(rank) && !is.null(rank)){
-            stop("'rank' must be an non empty single character value or NULL.",
+        if(!.is_non_empty_string(group) && !is.null(group)){
+            stop("'group' must be an non empty single character value or NULL.",
                 call. = FALSE)
         }
-        if(!is.null(rank)){
-            .check_taxonomic_rank(rank, x)
+        if(!is.null(group)){
+            if(!(group %in% colnames(rowData(x)))){
+                stop("'group' must be a column from rowData .",
+                     call. = FALSE)
+            }
         }
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
@@ -206,12 +212,12 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         # Get the abundance data to be plotted. Agglomerate and apply relative
         # transformation if specified.
         abund_data <- .get_abundance_data(
-            x, rank, assay.type, order.row.by, ...)
-        # If rank was NULL, then the data was not agglomerated. The rank is
+            x, group, assay.type, order.row.by, ...)
+        # If group was NULL, then the data was not agglomerated. The group is
         # still used in coloring (passed to colour_by parameter in
         # .abund_plotter), which is why we adjust the value of it to apply
         # coloring in (NULL means that coloring is not applied).
-        rank <- ifelse(is.null(rank), "Feature", rank)
+        group <- ifelse(is.null(group), "Feature", group)
         # Order columns
         order_col_by <- .norm_order_sample_by(
             order.col.by, unique(abund_data$colour_by), x)
@@ -229,7 +235,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         }
         # Create the main plot
         plot_out <- .abund_plotter(abund_data,
-                                colour_by = rank,
+                                colour_by = group,
                                 layout = layout,
                                 ...)
         # Create the column metadata plot and create a list from plots
@@ -267,7 +273,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 #' @importFrom dplyr group_by summarize rename
 #' @importFrom mia meltSE
 .get_abundance_data <- function(
-        x, rank, assay.type, order_rank_by = "name", as.relative = use_relative,
+        x, group, assay.type, order_rank_by = "name", as.relative = use_relative,
         use_relative = FALSE, ...){
     # Input check
     if(!.is_a_bool(as.relative)){
@@ -276,8 +282,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     }
     #
     # Agglomerate data if user has specified
-    if( !is.null(rank) ){
-        x <- agglomerateByRank(x, rank = rank, ...)
+    if (!is.null(group) && group %in% taxonomyRanks(x)) {
+        x <- agglomerateByRank(x, group, ...)
+        # or factor that is specified by user
+    } else if (!is.null(group)) {
+        x <- agglomerateByVariable(x, by = "rows", f = group, ...)
     }
     # At this point, we can check how many rows there are to plot. In practice,
     # there is a limit how many rows we can plot. If there are too many, it is
@@ -288,7 +297,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     if( nrow(x) > max_num ){
         stop("The data contains more than ", max_num, " rows. The abundance ",
             "plot cannot be created. Consider subsetting/agglomeration. ",
-            "(Check 'rank' parameter)", call. = FALSE)
+            "(Check 'group' parameter)", call. = FALSE)
     }
     # If user wants to calculate relative abundances, apply relative transform
     # and use relative assay instead of the original assay in plotting.
