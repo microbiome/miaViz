@@ -194,11 +194,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             stop("'group' must be an non empty single character value or NULL.",
                 call. = FALSE)
         }
-        if(!is.null(group)){
-            if(!(group %in% colnames(rowData(x)))){
+        if(!is.null(group) && !(group %in% colnames(rowData(x)))){
                 stop("'group' must be a column from rowData .",
                      call. = FALSE)
-            }
         }
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
