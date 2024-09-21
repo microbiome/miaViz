@@ -2,7 +2,7 @@
 
 <!-- badges: start -->
 [![Platforms](http://bioconductor.org/shields/availability/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html#archives)
-[![rworkflows](https://github.com/microbiome/miaViz/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/miaViz/actions)
+[![rworkflows](https://github.com/microbiome/miaViz/workflows/rworkflows/badge.svg)](https://github.com/microbiome/miaViz/actions)
 [![Bioc-release](http://bioconductor.org/shields/build/release/bioc/miaViz.svg)](http://bioconductor.org/packages/release/bioc/html/miaViz.html)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/miaViz?branch=master)
