@@ -1,12 +1,12 @@
 # miaViz <img src="man/figures/mia_logo.png" align="right" width="120" />
 
 <!-- badges: start -->
-[![Platforms](http://bioconductor.org/shields/build/release/bioc/shields/availability/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html#archives)
-[![R-CMD-check-Bioc-devel](https://github.com/microbiome/miaViz/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/miaViz/actions)
+[![Platforms](http://bioconductor.org/shields/availability/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html#archives)
+[![rworkflows](https://github.com/microbiome/miaViz/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/miaViz/actions)
 [![Bioc-release](http://bioconductor.org/shields/build/release/bioc/miaViz.svg)](http://bioconductor.org/packages/release/bioc/html/miaViz.html)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/miaViz?branch=master)
-
+[![Dependencies](http://bioconductor.org//shields/dependencies/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html#since)
 <!-- badges: end -->
 
 ## Microbiome Analysis Plotting and Visualization
