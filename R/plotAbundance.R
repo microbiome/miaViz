@@ -90,9 +90,9 @@
 #' data(GlobalPatterns, package="mia")
 #' tse <- GlobalPatterns
 #' 
-#' ## If rank is set to NULL (default), agglomeration is not done. However, note
-#' ## that there is maximum number of rows that can be plotted. That is why
-#' ## we take sample from the data.
+#' # If rank is set to NULL (default), agglomeration is not done. However, note
+#' # that there is maximum number of rows that can be plotted. That is why
+#' # we take sample from the data.
 #' set.seed(26348)
 #' sample <- sample(rownames(tse), 20)
 #' tse_sub <- tse[sample, ]
@@ -100,12 +100,12 @@
 #' tse_sub <- transformAssay(tse_sub, method = "relabundance")
 #' plotAbundance(tse_sub, assay.type = "relabundance")
 #' 
-#' ## Plotting counts using the first taxonomic rank as default
+#' # Plotting counts using the first taxonomic rank as default
 #' plotAbundance(
 #'     tse, assay.type="counts", group = "Phylum") +
 #'     labs(y="Counts")
 #' 
-#' ## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
+#' # Using "Phylum" as rank. Apply relative transformation to "counts" assay.
 #' plotAbundance(
 #'     tse, assay.type="counts", group = "Phylum", add_legend = FALSE,
 #'     as.relative = TRUE)
@@ -113,16 +113,18 @@
 #' # Apply relative transform
 #' tse <- transformAssay(tse, method = "relabundance")
 #'   
-#' ## A feature from colData or taxon from chosen rank can be used for ordering
-#' ## samples.
-#' plotAbundance(tse, assay.type="relabundance", group = "Phylum",
-#'            order.col.by = "Bacteroidetes")
+#' # A feature from colData or taxon from chosen rank can be used for ordering
+#' # samples.
+#' plotAbundance(
+#'     tse, assay.type="relabundance", group = "Phylum",
+#'     order.col.by = "Bacteroidetes")
 #' 
-#' ## col.var from colData can be plotted together with abundance plot.
+#' # col.var from colData can be plotted together with abundance plot.
 #' # Returned object is a list that includes two plot; other visualizes
 #' ## abundance other col.var. 
-#' plot <- plotAbundance(tse, assay.type = "relabundance", group = "Phylum",
-#'                    col.var = "SampleType")
+#' plot <- plotAbundance(
+#'     tse, assay.type = "relabundance", group = "Phylum",
+#'     col.var = "SampleType")
 #' \donttest{
 #' # These two plots can be combined with wrap_plots function from patchwork
 #' # package
@@ -130,9 +132,10 @@
 #' wrap_plots(plot, ncol = 1)
 #' }
 #' 
-#' ## Same plot as above but showing sample IDs as labels for the x axis on the
-#' ## top plot
-#' plot[[1]] <- plotAbundance(tse, assay.type = "relabundance",
+#' # Same plot as above but showing sample IDs as labels for the x axis on the
+#' # top plot
+#' plot[[1]] <- plotAbundance(
+#'     tse, assay.type = "relabundance",
 #'     group = "Phylum", col.var = "SampleType", add.legend = FALSE,
 #'     add.x.text = TRUE)[[1]] +
 #'     theme(axis.text.x = element_text(angle = 90)) 
@@ -140,22 +143,23 @@
 #' wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
 #' }
 #' 
-#' ## Compositional barplot with top 5 taxa and samples sorted by
-#' ## "Bacteroidetes"
+#' # Compositional barplot with top 5 taxa and samples sorted by
+#' # "Bacteroidetes"
 #' 
 #' # Getting top taxa on a Phylum level
-#' tse <- transformAssay(tse, method="relabundance")
-#' tse_phylum <- agglomerateByRank(tse, group ="Phylum")
-#' top_taxa <- getTop(tse_phylum,top = 5, assay.type = "relabundance")
+#' tse <- transformAssay(tse, method = "relabundance")
+#' tse_phylum <- agglomerateByRank(tse, rank = "Phylum")
+#' top_taxa <- getTop(tse_phylum, top = 5, assay.type = "relabundance")
 #' 
 #' # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
-#' phylum_renamed <- lapply(rowData(tse)$Phylum,
-#'                        function(x){if (x %in% top_taxa) {x} else {"Other"}})
+#' phylum_renamed <- lapply(rowData(tse)$Phylum, function(x){
+#'     if (x %in% top_taxa) {x} else {"Other"}})
 #' rowData(tse)$Phylum <- as.character(phylum_renamed)
 #' 
 #' # Compositional barplot
-#' plotAbundance(tse, assay.type="relabundance", group = "Phylum",
-#'            order.row.by="abund", order.col.by = "Bacteroidetes")
+#' plotAbundance(
+#'     tse, assay.type="relabundance", group = "Phylum",
+#'     order.row.by="abund", order.col.by = "Bacteroidetes")
 NULL
 
 #' @rdname plotAbundance
