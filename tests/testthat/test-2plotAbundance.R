@@ -69,14 +69,14 @@ test_that("plot abundance", {
     plot <- plotAbundance(x[1:20, ], assay.type="counts")
     expect_s3_class(plot,"ggplot")
     expect_named(plot$data,c("colour_by","X","Y"))
-    plot <- plotAbundance(x, assay.type="counts", rank = "Phylum",
+    plot <- plotAbundance(x, assay.type="counts", group = "Phylum",
                           col.var = "SampleType",
                           order.col.by = "SampleType")
     expect_true(is.list(plot))
     expect_s3_class(plot[[1]],"ggplot")
     #
     rowData(x)$Salame <- sample(letters[1:5], nrow(x), replace=TRUE)
-    plot <- plotAbundance(x, assay.type="counts", rank = "Salame",
+    plot <- plotAbundance(x, assay.type="counts", group = "Salame",
                           col.var = "SampleType",
                           order.col.by = "SampleType")
     expect_true(is.list(plot))
