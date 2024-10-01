@@ -17,11 +17,6 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #'
-#' @param group \code{Character scalar}. Specifies the group for agglomeration.
-#' Must be a value from \code{colnames(rowData(x))}. (Default: \code{NULL})
-#'   
-#' @param rank Deprecated. Use \code{group} instead.
-#'
 #' @param assay.type \code{Character scalar} value defining which assay data to
 #' use. (Default: \code{"relabundance"})
 #'   
@@ -35,10 +30,10 @@
 #' @param features Deprecated. Use \code{col.var} instead.
 #'   
 #' @param order.row.by \code{Character scalar}. How to order abundance value:
-#' By name (\dQuote{name}) 
+#' By name (\code{"name"}) 
 #' for sorting the taxonomic labels alphabetically, by abundance
-#' (\dQuote{abund}) to sort by abundance values or by a reverse order of
-#' abundance values (\dQuote{revabund}).
+#' (\code{"abund"}) to sort by abundance values or by a reverse order of
+#' abundance values (\code{"revabund"}). (Default: \code{"name"})
 #' 
 #' @param order_rank_by Deprecated. Use \code{order.row.by} instead.  
 #'   
@@ -74,6 +69,10 @@
 #' 
 #' @param ... additional parameters for plotting.
 #' \itemize{
+#'   \item \code{group} \code{Character scalar}. Specifies the group for
+#'   agglomeration. Must be a value from \code{colnames(rowData(x))}. If
+#'   \code{NULL}, agglomeration is not applied. (Default: \code{NULL})
+#'   
 #'   \item \code{as.relative} \code{Character scalar}. Should the relative
 #'   values be calculated? (Default: \code{FALSE})
 #' }
@@ -181,8 +180,6 @@ setGeneric("plotAbundance", signature = c("x"),
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     function(x,
-            group = rank,
-            rank = NULL,
             col.var = features,
             features = NULL,
             order.row.by = order_rank_by,
@@ -202,13 +199,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        if(!.is_non_empty_string(group) && !is.null(group)){
-            stop("'group' must be an non empty single character value or NULL.",
-                call. = FALSE)
-        }
-        if(!is.null(group) && !(group %in% colnames(rowData(x)))){
-            stop("'group' must be a column from rowData .", call. = FALSE)
-        }
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar","point"))
         order.row.by <- match.arg(order.row.by, c("name","abund","revabund"))
@@ -219,13 +209,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         ########################### INPUT CHECK END ###########################
         # Get the abundance data to be plotted. Agglomerate and apply relative
         # transformation if specified.
-        abund_data <- .get_abundance_data(
-            x, group, assay.type, order.row.by, ...)
-        # If group was NULL, then the data was not agglomerated. The group is
-        # still used in coloring (passed to colour_by parameter in
-        # .abund_plotter), which is why we adjust the value of it to apply
-        # coloring in (NULL means that coloring is not applied).
-        group <- ifelse(is.null(group), "Feature", group)
+        abund_data <- .get_abundance_data(x, assay.type, order.row.by, ...)
+        group <- attr(abund_data, "group")
         # Order columns
         order_col_by <- .norm_order_sample_by(
             order.col.by, unique(abund_data$colour_by), x)
@@ -281,11 +266,16 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
 #' @importFrom dplyr group_by summarize rename
 #' @importFrom mia meltSE
 .get_abundance_data <- function(
-        x, group, assay.type, order_rank_by = "name",
+        x, assay.type, order_rank_by = "name", group = rank, rank = NULL,
         as.relative = use_relative, use_relative = FALSE, ...){
     # Input check
     if(!.is_a_bool(as.relative)){
         stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(is.null(group) || (
+        .is_non_empty_string(group) && group %in% colnames(rowData(x)) )) ){
+        stop("'group' must be specify a name of a column from rowData or ",
+            "NULL.", call. = FALSE)
     }
     #
     # Agglomerate data if user has specified
@@ -353,7 +343,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     # Apply the order
     data$colour_by <- factor(data$colour_by, lvl)
     data <- data[order(data$colour_by),]
-    
+    # Add group info to attributes
+    attr(data, "group") <- ifelse(!is.null(group), group, "Feature")
     return(data)
 }
 

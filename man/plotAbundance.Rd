@@ -9,8 +9,6 @@ plotAbundance(x, ...)
 
 \S4method{plotAbundance}{SummarizedExperiment}(
   x,
-  group = rank,
-  rank = NULL,
   col.var = features,
   features = NULL,
   order.row.by = order_rank_by,
@@ -35,16 +33,15 @@ object.}
 
 \item{...}{additional parameters for plotting.
 \itemize{
+\item \code{group} \code{Character scalar}. Specifies the group for
+agglomeration. Must be a value from \code{colnames(rowData(x))}. If
+\code{NULL}, agglomeration is not applied. (Default: \code{NULL})
+
 \item \code{as.relative} \code{Character scalar}. Should the relative
 values be calculated? (Default: \code{FALSE})
 }
 See \code{\link{mia-plot-args}} for more details i.e. call
 \code{help("mia-plot-args")}}
-
-\item{group}{\code{Character scalar}. Specifies the group for agglomeration.
-Must be a value from \code{colnames(rowData(x))}. (Default: \code{NULL})}
-
-\item{rank}{Deprecated. Use \code{group} instead.}
 
 \item{col.var}{\code{Character scalar}. Selects a column from
 \code{colData} to be plotted below the abundance plot.
@@ -54,10 +51,10 @@ character will be plotted as colour-code bar. (Default: \code{NULL})}
 \item{features}{Deprecated. Use \code{col.var} instead.}
 
 \item{order.row.by}{\code{Character scalar}. How to order abundance value:
-By name (\dQuote{name})
+By name (\code{"name"})
 for sorting the taxonomic labels alphabetically, by abundance
-(\dQuote{abund}) to sort by abundance values or by a reverse order of
-abundance values (\dQuote{revabund}).}
+(\code{"abund"}) to sort by abundance values or by a reverse order of
+abundance values (\code{"revabund"}). (Default: \code{"name"})}
 
 \item{order_rank_by}{Deprecated. Use \code{order.row.by} instead.}
 
