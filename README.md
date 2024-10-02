@@ -7,7 +7,7 @@
 [![Bioc-age](http://bioconductor.org/shields/years-in-bioc/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html#since)
 [![Codecov test
 coverage](https://codecov.io/gh/microbiome/miaViz/branch/devel/graph/badge.svg)](https://codecov.io/gh/microbiome/miaViz?branch=devel)
-[![Dependencies](http://bioconductor.org//shields/dependencies/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html#since)
+[![Dependencies](http://bioconductor.org//shields/dependencies/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html)
 <!-- badges: end -->
 
 ## Microbiome Analysis Plotting and Visualization
