@@ -1,13 +1,13 @@
 # miaViz <img src="man/figures/mia_logo.png" align="right" width="120" />
 
 <!-- badges: start -->
-
-[![R-CMD-check-Bioc-devel](https://github.com/microbiome/miaViz/workflows/R-CMD-check-bioc-devel/badge.svg)](https://github.com/microbiome/miaViz/actions)
-[![R-CMD-check-bioc](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml/badge.svg)](https://github.com/microbiome/mia/actions/workflows/check-bioc.yml)
+[![Platforms](http://bioconductor.org/shields/availability/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html)
+[![rworkflows](https://github.com/microbiome/miaViz/actions/workflows/rworkflows.yml/badge.svg?branch=devel)](https://github.com/microbiome/miaViz/actions)
 [![Bioc-release](http://bioconductor.org/shields/build/release/bioc/miaViz.svg)](http://bioconductor.org/packages/release/bioc/html/miaViz.html)
+[![Bioc-age](http://bioconductor.org/shields/years-in-bioc/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html)
 [![Codecov test
-coverage](https://codecov.io/gh/microbiome/miaViz/branch/master/graph/badge.svg)](https://codecov.io/gh/microbiome/miaViz?branch=master)
-
+coverage](https://codecov.io/gh/microbiome/miaViz/branch/devel/graph/badge.svg)](https://codecov.io/gh/microbiome/miaViz?branch=devel)
+[![Dependencies](http://bioconductor.org//shields/dependencies/release/miaViz.svg)](https://bioconductor.org/packages/release/bioc/html/miaViz.html)
 <!-- badges: end -->
 
 ## Microbiome Analysis Plotting and Visualization
