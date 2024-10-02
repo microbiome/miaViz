@@ -9,7 +9,6 @@ plotAbundance(x, ...)
 
 \S4method{plotAbundance}{SummarizedExperiment}(
   x,
-  rank = NULL,
   col.var = features,
   features = NULL,
   order.row.by = order_rank_by,
@@ -34,13 +33,15 @@ object.}
 
 \item{...}{additional parameters for plotting.
 \itemize{
-\item \code{as.relative} \code{Character scalar}. Should the relative values
-be calculated? (Default: \code{FALSE})
-}
-See \code{\link{mia-plot-args}} for more details i.e. call \code{help("mia-plot-args")}}
+\item \code{group} \code{Character scalar}. Specifies the group for
+agglomeration. Must be a value from \code{colnames(rowData(x))}. If
+\code{NULL}, agglomeration is not applied. (Default: \code{NULL})
 
-\item{rank}{\code{Character scalar}. Defines the taxonomic rank to
-use. Must be a value of \code{taxonomyRanks(x)}. (Default: \code{NULL})}
+\item \code{as.relative} \code{Character scalar}. Should the relative
+values be calculated? (Default: \code{FALSE})
+}
+See \code{\link{mia-plot-args}} for more details i.e. call
+\code{help("mia-plot-args")}}
 
 \item{col.var}{\code{Character scalar}. Selects a column from
 \code{colData} to be plotted below the abundance plot.
@@ -49,36 +50,43 @@ character will be plotted as colour-code bar. (Default: \code{NULL})}
 
 \item{features}{Deprecated. Use \code{col.var} instead.}
 
-\item{order.row.by}{\code{Character scalar}. How to order abundance value: By name (\dQuote{name})
-for sorting the taxonomic labels alphabetically, by abundance (\dQuote{abund}) to
-sort by abundance values or by a reverse order of abundance values (\dQuote{revabund}).}
+\item{order.row.by}{\code{Character scalar}. How to order abundance value:
+By name (\code{"name"})
+for sorting the taxonomic labels alphabetically, by abundance
+(\code{"abund"}) to sort by abundance values or by a reverse order of
+abundance values (\code{"revabund"}). (Default: \code{"name"})}
 
 \item{order_rank_by}{Deprecated. Use \code{order.row.by} instead.}
 
-\item{order.col.by}{\code{Character scalar}. from the chosen rank of abundance
-data or from \code{colData} to select values to order the abundance
+\item{order.col.by}{\code{Character scalar}. from the chosen rank of
+abundance data or from \code{colData} to select values to order the abundance
 plot by. (Default: \code{NULL})}
 
 \item{order_sample_by}{Deprecated. Use \code{order.col.by} instead.}
 
-\item{decreasing}{\code{Logical scalar}. If the \code{order.col.by} is defined and the
+\item{decreasing}{\code{Logical scalar}. If the \code{order.col.by}
+is defined and the
 values are numeric, should the values used to order in decreasing or
 increasing fashion? (Default: \code{FALSE})}
 
 \item{layout}{\code{Character scalar}. Either \dQuote{bar} or \dQuote{point}.}
 
-\item{one.facet}{\code{Logical scalar}. Should the plot be returned in on facet or split into
-different facet, one facet per different value detect in \code{rank}. If
+\item{one.facet}{\code{Logical scalar}. Should the plot be returned in on
+facet or split into
+different facet, one facet per different value detect in \code{group}. If
 \code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
 be disregarded. (Default: \code{TRUE})}
 
 \item{one_facet}{Deprecated. Use \code{one.facet} instead.}
 
-\item{ncol}{\code{Numeric scalar}. if \code{one.facet = FALSE}, \code{ncol} defines many
+\item{ncol}{\code{Numeric scalar}. if \code{one.facet = FALSE},
+\code{ncol} defines many
 columns should be for plotting the different facets. (Default: \code{2})}
 
-\item{scales}{\code{Character scalar}. Defines the behavior of the scales of each facet. Both values are
-passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"fixed"})}
+\item{scales}{\code{Character scalar}. Defines the behavior of the scales
+of each facet. Both values are
+passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
+(Default: \code{"fixed"})}
 
 \item{assay.type}{\code{Character scalar} value defining which assay data to
 use. (Default: \code{"relabundance"})}
@@ -91,23 +99,25 @@ a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two
 the plot.
 }
 \description{
-\code{plotAbundance} plots the abundance on a selected taxonomic rank.
-Since this probably makes sense only for relative abundance data, the
-assay used by default is expected to be in the slot \sQuote{relabundance}.
-If only \sQuote{counts} is present, the relative abundance is computed.
+\code{plotAbundance()} creates a barplot of feature abundances, typically
+used to visualize the relative abundance of features at a specific taxonomy
+rank.
 }
 \details{
-Subsetting to rows of interested and ordering of those is expected to be done
-outside of this functions, e.g. \code{x[1:2,]}. This will plot data of all
-col.var present.
+It is recommended to handle subsetting, agglomeration, and transformation
+outside this function. However, agglomeration and relative transformation
+can be applied using the \code{group} and \code{as.relative} parameters,
+respectively. If one of the \code{TAXONOMY_RANKS} is selected via
+\code{group}, \code{mia::agglomerateByRank()} is used, otherwise
+\code{agglomerateByVariable()} is applied.
 }
 \examples{
 data(GlobalPatterns, package="mia")
 tse <- GlobalPatterns
 
-## If rank is set to NULL (default), agglomeration is not done. However, note
-## that there is maximum number of rows that can be plotted. That is why
-## we take sample from the data.
+# If rank is set to NULL (default), agglomeration is not done. However, note
+# that there is maximum number of rows that can be plotted. That is why
+# we take sample from the data.
 set.seed(26348)
 sample <- sample(rownames(tse), 20)
 tse_sub <- tse[sample, ]
@@ -115,29 +125,31 @@ tse_sub <- tse[sample, ]
 tse_sub <- transformAssay(tse_sub, method = "relabundance")
 plotAbundance(tse_sub, assay.type = "relabundance")
 
-## Plotting counts using the first taxonomic rank as default
+# Plotting counts using the first taxonomic rank as default
 plotAbundance(
-    tse, assay.type="counts", rank = "Phylum") +
+    tse, assay.type="counts", group = "Phylum") +
     labs(y="Counts")
 
-## Using "Phylum" as rank. Apply relative transformation to "counts" assay.
+# Using "Phylum" as rank. Apply relative transformation to "counts" assay.
 plotAbundance(
-    tse, assay.type="counts", rank = "Phylum", add_legend = FALSE,
+    tse, assay.type="counts", group = "Phylum", add_legend = FALSE,
     as.relative = TRUE)
 
 # Apply relative transform
 tse <- transformAssay(tse, method = "relabundance")
   
-## A feature from colData or taxon from chosen rank can be used for ordering
-## samples.
-plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
-           order.col.by = "Bacteroidetes")
+# A feature from colData or taxon from chosen rank can be used for ordering
+# samples.
+plotAbundance(
+    tse, assay.type="relabundance", group = "Phylum",
+    order.col.by = "Bacteroidetes")
 
-## col.var from colData can be plotted together with abundance plot.
+# col.var from colData can be plotted together with abundance plot.
 # Returned object is a list that includes two plot; other visualizes
 ## abundance other col.var. 
-plot <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
-                   col.var = "SampleType")
+plot <- plotAbundance(
+    tse, assay.type = "relabundance", group = "Phylum",
+    col.var = "SampleType")
 \donttest{
 # These two plots can be combined with wrap_plots function from patchwork
 # package
@@ -145,30 +157,32 @@ library(patchwork)
 wrap_plots(plot, ncol = 1)
 }
 
-## Same plot as above but showing sample IDs as labels for the x axis on the
-## top plot
-plot[[1]] <- plotAbundance(tse, assay.type = "relabundance", rank = "Phylum",
-                           col.var = "SampleType", add.legend = FALSE,
-                           add.x.text = TRUE)[[1]] +
-                           theme(axis.text.x = element_text(angle = 90)) 
+# Same plot as above but showing sample IDs as labels for the x axis on the
+# top plot
+plot[[1]] <- plotAbundance(
+    tse, assay.type = "relabundance",
+    group = "Phylum", col.var = "SampleType", add.legend = FALSE,
+    add.x.text = TRUE)[[1]] +
+    theme(axis.text.x = element_text(angle = 90)) 
 \donttest{
 wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
 }
 
-## Compositional barplot with top 5 taxa and samples sorted by
-## "Bacteroidetes"
+# Compositional barplot with top 5 taxa and samples sorted by
+# "Bacteroidetes"
 
 # Getting top taxa on a Phylum level
-tse <- transformAssay(tse, method="relabundance")
-tse_phylum <- agglomerateByRank(tse, rank ="Phylum", onRankOnly=TRUE)
-top_taxa <- getTop(tse_phylum,top = 5, assay.type = "relabundance")
+tse <- transformAssay(tse, method = "relabundance")
+tse_phylum <- agglomerateByRank(tse, rank = "Phylum")
+top_taxa <- getTop(tse_phylum, top = 5, assay.type = "relabundance")
 
 # Renaming the "Phylum" rank to keep only top taxa and the rest to "Other"
-phylum_renamed <- lapply(rowData(tse)$Phylum,
-                       function(x){if (x \%in\% top_taxa) {x} else {"Other"}})
+phylum_renamed <- lapply(rowData(tse)$Phylum, function(x){
+    if (x \%in\% top_taxa) {x} else {"Other"}})
 rowData(tse)$Phylum <- as.character(phylum_renamed)
 
 # Compositional barplot
-plotAbundance(tse, assay.type="relabundance", rank = "Phylum",
-           order.row.by="abund", order.col.by = "Bacteroidetes")
+plotAbundance(
+    tse, assay.type="relabundance", group = "Phylum",
+    order.row.by="abund", order.col.by = "Bacteroidetes")
 }
