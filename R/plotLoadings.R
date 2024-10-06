@@ -28,6 +28,10 @@
 #'   \itemize{
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
 #'   Applicable when \code{layout="barplot"}. (Default: \code{10}))
+#'   
+#'   \item \code{absolute.scale}: ("barplot") \code{Logical scalar}. Specifies
+#'   whether a barplot should be visualized in absoltue scale.
+#'   (Default: \code{TRUE})
 #' }
 #' 
 #' @details
@@ -244,6 +248,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     }
     # Convert into data.frame
     res <- as.data.frame(res)
+    # Add column that shows the values in absolute scale, and another column
+    # showing sign
+    res[["Value_abs"]] <- abs(res[["Value"]])
+    res[["Sign"]] <- ifelse(
+        res[["Value"]] > 0, "+", ifelse(res[["Value"]] < 0, "-", ""))
     return(res)
 }
 
@@ -269,7 +278,12 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This functions plots a data.frame in barplot or heatmap layout.
 #' @importFrom tidytext scale_y_reordered reorder_within
 #' @importFrom ggplot2 geom_tile scale_fill_gradient2 geom_bar
-.plot_loadings <- function(df, layout, ...) {
+.plot_loadings <- function(df, layout, absolute.scale = TRUE, ...) {
+    #
+    if( !.is_a_bool(absolute.scale) ){
+        stop("'absolute.scale' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
     # Initialize a plot
     plot_out <- ggplot(df)
     # Either create a heatmap or barplt
@@ -286,7 +300,9 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 low = "darkslateblue", mid = "white", high = "darkred"
                 )
             
-    } else if( layout == "barplot" ){
+    } else if( layout == "barplot" && !absolute.scale ){
+        # This creates a barplot where values can be negative or positive
+        # (bars can be in negative and positive side)
         plot_out <- plot_out +
             # Create a bar plot. Create unique facets for each PC. Each PC can
             # have unique set of features. To reorder features by each facet,
@@ -294,9 +310,28 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             geom_bar(
                 mapping = aes(
                     x = Value, y = reorder_within(Feature, Value, PC)),
-                stat = "identity",
-                width = 0.8
+                stat = "identity"
                 ) +
+            scale_y_reordered() +
+            facet_wrap(~ PC, scales = "free") +
+            labs(x = "Value", y = "Feature") 
+        
+    } else if( layout == "barplot" && absolute.scale ){
+        # This creates a barplot where bars are in absolute scale and the sing
+        # is denoted with +/-
+        plot_out <- plot_out +
+            # Create bars with absolute scale
+            geom_bar(
+                mapping = aes(
+                    x = Value_abs, y = reorder_within(Feature, -Value_abs, PC)),
+                stat = "identity"
+            ) +
+            # Add sign that tells whether the value is + or -
+            geom_text(aes(
+                x = max(Value_abs) + max(Value_abs)*0.1,
+                y = reorder_within(Feature, Value_abs, PC),
+                label = Sign
+                )) +
             scale_y_reordered() +
             facet_wrap(~ PC, scales = "free") +
             labs(x = "Value", y = "Feature") 
