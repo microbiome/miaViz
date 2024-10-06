@@ -34,6 +34,10 @@ x.}
 \itemize{
 \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
 Applicable when \code{layout="barplot"}. (Default: \code{10}))
+
+\item \code{absolute.scale}: ("barplot") \code{Logical scalar}. Specifies
+whether a barplot should be visualized in absoltue scale.
+(Default: \code{TRUE})
 }}
 
 \item{dimred}{\code{Character scalar}.  Determines the reduced dimension to
