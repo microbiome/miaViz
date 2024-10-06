@@ -330,7 +330,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             geom_text(aes(
                 x = max(Value_abs) + max(Value_abs)*0.1,
                 y = reorder_within(Feature, Value_abs, PC),
-                label = Sign
+                label = Sign,
+                fontface = "bold"
                 )) +
             scale_y_reordered() +
             facet_wrap(~ PC, scales = "free") +
