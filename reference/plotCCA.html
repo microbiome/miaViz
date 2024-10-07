@@ -62,32 +62,7 @@ for supervised ordination of microbiome data.</p>
 <span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
-<span><span class="fu">plotRDA</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  <span class="va">dimred</span>,</span>
-<span>  add.ellipse <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  ellipse.alpha <span class="op">=</span> <span class="fl">0.2</span>,</span>
-<span>  ellipse.linewidth <span class="op">=</span> <span class="fl">0.1</span>,</span>
-<span>  ellipse.linetype <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  confidence.level <span class="op">=</span> <span class="fl">0.95</span>,</span>
-<span>  vec.size <span class="op">=</span> <span class="fl">0.5</span>,</span>
-<span>  vec.color <span class="op">=</span> <span class="va">vec.colour</span>,</span>
-<span>  vec.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span>  vec.linetype <span class="op">=</span> <span class="fl">1</span>,</span>
-<span>  arrow.size <span class="op">=</span> <span class="fl">0.25</span>,</span>
-<span>  label.color <span class="op">=</span> <span class="va">label.colour</span>,</span>
-<span>  label.colour <span class="op">=</span> <span class="st">"black"</span>,</span>
-<span>  label.size <span class="op">=</span> <span class="fl">4</span>,</span>
-<span>  vec.text <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  repel.labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  sep.group <span class="op">=</span> <span class="st">"—"</span>,</span>
-<span>  repl.underscore <span class="op">=</span> <span class="st">" "</span>,</span>
-<span>  add.significance <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  add.expl.var <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  add.vectors <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  parse.labels <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+<span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">dimred</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'matrix'</span></span>
 <span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
@@ -100,124 +75,62 @@ for supervised ordination of microbiome data.</p>
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-constructor.html" class="external-link">TreeSummarizedExperiment</a></code>
-or a matrix of weights. The latter is returned as output from <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></code>.</p></dd>
+or a matrix of weights. The latter is returned as output from
+<code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional parameters for plotting, inherited from
 <code><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></code>,
 <code><a href="https://ggplot2.tidyverse.org/reference/geom_text.html" class="external-link">geom_label</a></code> and
-<code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html" class="external-link">geom_label_repel</a></code>.</p></dd>
+<code><a href="https://ggrepel.slowkow.com/reference/geom_text_repel.html" class="external-link">geom_label_repel</a></code>.</p><ul><li><p><code>add.ellipse</code>: One of
+<code>c(TRUE, FALSE, "fill", "colour")</code>, indicating whether
+ellipses should be present, absent, filled or colored.
+(default: <code>ellipse.fill = TRUE</code>)</p></li>
+<li><p><code>ellipse.alpha</code>: <code>Numeric scalar</code>. Between 0 and 1.
+Adjusts the opacity of ellipses. (Default: <code>0.2</code>)</p></li>
+<li><p><code>ellipse.linewidth</code>: <code>Numeric scalar</code>. Specifies the size
+of ellipses. (Default: <code>0.1</code>)</p></li>
+<li><p><code>ellipse.linetype</code>: <code>Integer scalar</code>. Specifies the style
+of ellipses. (Default: <code>1</code>)</p></li>
+<li><p><code>confidence.level</code>: <code>Numeric scalar</code>. Between 0 and 1.
+Adjusts confidence level. (Default: <code>0.95</code>)</p></li>
+<li><p><code>add.vectors</code>: <code>Logical scalar</code>. Should vectors appear in
+the plot. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>vec.size</code>: <code>Numeric scalar</code>. Specifies the size of
+vectors. (Default: <code>0.5</code>)</p></li>
+<li><p><code>vec.colour</code>: <code>Character scalar</code>. Specifies the colour of
+vectors. (Default: <code>"black"</code>)</p></li>
+<li><p><code>vec.linetype</code>: <code>Integer scalar</code>. Specifies the style of
+vector lines. (Default: <code>1</code>)</p></li>
+<li><p><code>arrow.size</code>: <code>Numeric scalar</code>. Specifies the size of
+arrows. (Default: <code>arrow.size = 0.25</code>)</p></li>
+<li><p><code>label.size</code>: <code>Numeric scalar</code>. Specifies the size of text
+and labels. (Default: <code>4</code>)</p></li>
+<li><p><code>label.colour</code>: <code>Character scalar</code>. Specifies the colour of
+text and labels. (Default: <code>"black"</code>)</p></li>
+<li><p><code>sep.group</code>: <code>Character scalar</code>. Specifies the separator
+used in the labels. (Default: <code>"\U2014"</code>)</p></li>
+<li><p><code>repl.underscore</code>: <code>Character scalar</code>. Used to replace
+underscores in the labels. (Default: <code>" "</code>)</p></li>
+<li><p><code>vec.text</code>: <code>Logical scalar</code>. Should text instead of labels
+be used to label vectors. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>repel.labels</code>: <code>Logical scalar</code>. Should labels be
+repelled. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>parse.labels</code>: <code>Logical scalar</code>. Should labels be parsed.
+(Default: <code>TRUE</code>)</p></li>
+<li><p><code>add.significance</code>: <code>Logical scalar</code>. Should explained
+variance and p-value appear in the labels. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>add.expl.var</code>: <code>Logical scalar</code>. Should explained
+variance appear on the coordinate axes. (Default: <code>TRUE</code>)</p></li>
+</ul></dd>
 
 
 <dt id="arg-dimred">dimred<a class="anchor" aria-label="anchor" href="#arg-dimred"></a></dt>
-<dd><p><code>Character scalar</code> or <code>integer scalar</code>. Determines the reduced dimension to
+<dd><p><code>Character scalar</code> or <code>integer scalar</code>. Determines
+the reduced dimension to
 plot. This is the output of <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">addRDA</a></code> and resides in
 <code>reducedDim(tse, dimred)</code>.</p></dd>
-
-
-<dt id="arg-add-ellipse">add.ellipse<a class="anchor" aria-label="anchor" href="#arg-add-ellipse"></a></dt>
-<dd><p>One of <code>c(TRUE, FALSE, "fill", "colour", "color")</code>,
-indicating whether ellipses should be present, absent, filled or colored.
-(default: <code>ellipse.fill = TRUE</code>)</p></dd>
-
-
-<dt id="arg-ellipse-alpha">ellipse.alpha<a class="anchor" aria-label="anchor" href="#arg-ellipse-alpha"></a></dt>
-<dd><p><code>Numeric scalar</code>. Between 0 and 1. Adjusts the opacity of ellipses.
-(Default: <code>0.2</code>)</p></dd>
-
-
-<dt id="arg-ellipse-linewidth">ellipse.linewidth<a class="anchor" aria-label="anchor" href="#arg-ellipse-linewidth"></a></dt>
-<dd><p><code>Numeric scalar</code>. Specifies the size of ellipses.
-(Default: <code>0.1</code>)</p></dd>
-
-
-<dt id="arg-ellipse-linetype">ellipse.linetype<a class="anchor" aria-label="anchor" href="#arg-ellipse-linetype"></a></dt>
-<dd><p><code>Integer scalar</code>. Specifies the style of ellipses.
-(Default: <code>1</code>)</p></dd>
-
-
-<dt id="arg-confidence-level">confidence.level<a class="anchor" aria-label="anchor" href="#arg-confidence-level"></a></dt>
-<dd><p><code>Numeric scalar</code>. Between 0 and 1. Adjusts confidence level.
-(Default: <code>0.95</code>)</p></dd>
-
-
-<dt id="arg-vec-size">vec.size<a class="anchor" aria-label="anchor" href="#arg-vec-size"></a></dt>
-<dd><p><code>Numeric scalar</code>. Specifies the size of vectors.
-(Default: <code>0.5</code>)</p></dd>
-
-
-<dt id="arg-vec-color">vec.color<a class="anchor" aria-label="anchor" href="#arg-vec-color"></a></dt>
-<dd><p>Alias for <code>vec.colour</code>.</p></dd>
-
-
-<dt id="arg-vec-colour">vec.colour<a class="anchor" aria-label="anchor" href="#arg-vec-colour"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the colour of vectors.
-(Default: <code>"black"</code>)</p></dd>
-
-
-<dt id="arg-vec-linetype">vec.linetype<a class="anchor" aria-label="anchor" href="#arg-vec-linetype"></a></dt>
-<dd><p><code>Integer scalar</code>. Specifies the style of vector lines.
-(Default: <code>1</code>)</p></dd>
-
-
-<dt id="arg-arrow-size">arrow.size<a class="anchor" aria-label="anchor" href="#arg-arrow-size"></a></dt>
-<dd><p><code>Numeric scalar</code>. Specifies the size of arrows.
-(defaults: <code>arrow.size = 0.25</code>)</p></dd>
-
-
-<dt id="arg-label-color">label.color<a class="anchor" aria-label="anchor" href="#arg-label-color"></a></dt>
-<dd><p>Alias for <code>label.colour</code>.</p></dd>
-
-
-<dt id="arg-label-colour">label.colour<a class="anchor" aria-label="anchor" href="#arg-label-colour"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the colour of text and labels.
-(Default: <code>"black"</code>)</p></dd>
-
-
-<dt id="arg-label-size">label.size<a class="anchor" aria-label="anchor" href="#arg-label-size"></a></dt>
-<dd><p><code>Numeric scalar</code>. Specifies the size of text and labels.
-(Default: <code>4</code>)</p></dd>
-
-
-<dt id="arg-vec-text">vec.text<a class="anchor" aria-label="anchor" href="#arg-vec-text"></a></dt>
-<dd><p><code>Logical scalar</code>. Should text instead of labels be used to label vectors.
-(Default: <code>TRUE</code>)</p></dd>
-
-
-<dt id="arg-repel-labels">repel.labels<a class="anchor" aria-label="anchor" href="#arg-repel-labels"></a></dt>
-<dd><p><code>Logical scalar</code>. Should labels be repelled.
-(Default: <code>TRUE</code>)</p></dd>
-
-
-<dt id="arg-sep-group">sep.group<a class="anchor" aria-label="anchor" href="#arg-sep-group"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the separator used in the labels.
-(Default: <code>"\U2014"</code>)</p></dd>
-
-
-<dt id="arg-repl-underscore">repl.underscore<a class="anchor" aria-label="anchor" href="#arg-repl-underscore"></a></dt>
-<dd><p><code>Character scalar</code>. Used to replace underscores in the labels.
-(Default: <code>" "</code>)</p></dd>
-
-
-<dt id="arg-add-significance">add.significance<a class="anchor" aria-label="anchor" href="#arg-add-significance"></a></dt>
-<dd><p><code>Logical scalar</code>. Should explained variance and p-value
-appear in the labels. (Default: <code>TRUE</code>)</p></dd>
-
-
-<dt id="arg-add-expl-var">add.expl.var<a class="anchor" aria-label="anchor" href="#arg-add-expl-var"></a></dt>
-<dd><p><code>Logical scalar</code>. Should explained variance appear on the
-coordinate axes. (Default: <code>TRUE</code>)</p></dd>
-
-
-<dt id="arg-add-vectors">add.vectors<a class="anchor" aria-label="anchor" href="#arg-add-vectors"></a></dt>
-<dd><p><code>Logical scalar</code>. Should vectors appear in the plot.
-(Default: <code>TRUE</code>)</p></dd>
-
-
-<dt id="arg-parse-labels">parse.labels<a class="anchor" aria-label="anchor" href="#arg-parse-labels"></a></dt>
-<dd><p><code>Logical scalar</code>. Should labels be parsed.
-(Default: <code>TRUE</code>)</p></dd>
 
 </dl></div>
     <div id="value">
@@ -247,15 +160,16 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">enterotype</span></span></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Run RDA and store results into TreeSE</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">addRDA</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>              formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
-<span class="r-in"><span>              FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span></span>
-<span class="r-in"><span>              distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
-<span class="r-in"><span>              na.action <span class="op">=</span> <span class="va">na.exclude</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">addRDA</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
+<span class="r-in"><span>    FUN <span class="op">=</span> <span class="va">getDissimilarity</span>,</span></span>
+<span class="r-in"><span>    distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
+<span class="r-in"><span>    na.action <span class="op">=</span> <span class="va">na.exclude</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span>               </span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot coloured by variable</span></span></span>
-<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>,</span></span>
-<span class="r-in"><span>        colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`stat_ellipse()`).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
@@ -265,9 +179,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-plt img"><img src="plotCCA-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot with empty ellipses</span></span></span>
-<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>,</span></span>
-<span class="r-in"><span>        colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>,</span></span>
-<span class="r-in"><span>        add.ellipse <span class="op">=</span> <span class="st">"colour"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, add.ellipse <span class="op">=</span> <span class="st">"colour"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`stat_ellipse()`).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
@@ -277,9 +189,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-plt img"><img src="plotCCA-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot with text encased in labels</span></span></span>
-<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>,</span></span>
-<span class="r-in"><span>        colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>,</span></span>
-<span class="r-in"><span>        vec.text <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, vec.text <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`stat_ellipse()`).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
@@ -289,9 +199,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-plt img"><img src="plotCCA-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot without repelling text</span></span></span>
-<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>,</span></span>
-<span class="r-in"><span>        colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>,</span></span>
-<span class="r-in"><span>        repel.labels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, repel.labels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`stat_ellipse()`).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
@@ -301,9 +209,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-plt img"><img src="plotCCA-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot without vectors</span></span></span>
-<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>,</span></span>
-<span class="r-in"><span>        colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>,</span></span>
-<span class="r-in"><span>        add.vectors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, add.vectors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'add.vectors' is FALSE, so other arguments for vectors and labels will be disregarded.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`stat_ellipse()`).</span>
@@ -314,11 +220,13 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-plt img"><img src="plotCCA-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Calculate RDA as a separate object</span></span></span>
-<span class="r-in"><span><span class="va">rda_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></span><span class="op">(</span><span class="va">tse</span>,</span></span>
-<span class="r-in"><span>                  formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
-<span class="r-in"><span>                  FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>,</span></span>
-<span class="r-in"><span>                  distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
-<span class="r-in"><span>                  na.action <span class="op">=</span> <span class="va">na.exclude</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rda_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
+<span class="r-in"><span>    FUN <span class="op">=</span> <span class="va">getDissimilarity</span>,</span></span>
+<span class="r-in"><span>    distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
+<span class="r-in"><span>    na.action <span class="op">=</span> <span class="va">na.exclude</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot from RDA matrix</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">rda_mat</span><span class="op">)</span></span></span>
