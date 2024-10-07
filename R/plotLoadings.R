@@ -30,9 +30,9 @@
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
 #'   Applicable when \code{layout="barplot"}. (Default: \code{10}))
 #'   
-#'   \item \code{absolute.scale}: ("barplot") \code{Logical scalar}. Specifies
-#'   whether a barplot should be visualized in absoltue scale.
-#'   (Default: \code{TRUE})
+#'   \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
+#'   Specifies whether a barplot or a lollipop plot should be visualized in
+#'   absolute scale. (Default: \code{TRUE})
 #' }
 #' 
 #' @details
@@ -315,7 +315,6 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     return(plot_out)
 }
 
-
 # This functions creates a barplot or lollipop plot.
 .plot_bar_or_lollipop <- function(
         plot_out, df, layout, absolute.scale = TRUE, show.color = TRUE,
@@ -404,7 +403,6 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     
     return(plot_out)
 }
-
 
 # This function retrieves the data for tree + heatmap plotting. The output
 # is a list that includes tree and data.frame in wide format.
