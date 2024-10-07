@@ -227,7 +227,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # Get data for plotting
 #' @importFrom scater plotReducedDim retrieveCellInfo
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames
-#' @importFrom vegan scores
 .incorporate_rda_vis <- function(
         tse, dimred, ncomponents = 2,
         colour_by = color_by, color_by = colour.by,
@@ -403,7 +402,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # If user wants to add site scores
     centroids <- NULL
     if( add.centroids ){
-        centroids <- scores(rda, display = "cn") |> as.data.frame()
+        .require_package("vegan")
+        centroids <- vegan::scores(rda, display = "cn") |> as.data.frame()
         colnames(centroids) <- c("x", "y")
     }
     
