@@ -11,7 +11,8 @@
 #' plot.
 #'  
 #' @param layout \code{Character scalar}. Determines the layout of plot. Must be
-#' either \code{"barplot"} or \code{"heatmap"}. (Default: \code{"barplot"})
+#' either \code{"barplot"}, \code{"heatmap"}, or \code{"lollipop"}.
+#' (Default: \code{"barplot"})
 #'   
 #' @param ncomponents \code{Numeric scalar}. Number of components must be lower
 #' or equal to the number of components chosen in the reduction method.
@@ -29,9 +30,9 @@
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
 #'   Applicable when \code{layout="barplot"}. (Default: \code{10}))
 #'   
-#'   \item \code{absolute.scale}: ("barplot") \code{Logical scalar}. Specifies
-#'   whether a barplot should be visualized in absoltue scale.
-#'   (Default: \code{TRUE})
+#'   \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
+#'   Specifies whether a barplot or a lollipop plot should be visualized in
+#'   absolute scale. (Default: \code{TRUE})
 #' }
 #' 
 #' @details
@@ -203,7 +204,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This functions checks that loadings matrix is correct
 .check_loadings_matrix <- function(mat, layout, ncomponents, n = 10, ...) {
     # Check layout
-    if( !(.is_a_string(layout) && layout %in% c("barplot", "heatmap")) ){
+    if( !(.is_a_string(layout) && layout %in%
+            c("barplot", "heatmap", "lollipop")) ){
         stop("'layout' must be 'barplot' or 'heatmap',", call. = FALSE)
     }
     # Check n
@@ -232,7 +234,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Keep only the number of components needed
     df <- df[ , seq_len(ncomponents), drop = FALSE]
     # If the layout is barplot, choose top features for each component
-    if( layout %in% c("barplot") ){
+    if( layout %in% c("barplot", "lollipop") ){
         res <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
         # Combine to single data.frame
         res <- do.call(rbind, res)
@@ -248,11 +250,13 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     }
     # Convert into data.frame
     res <- as.data.frame(res)
-    # Add column that shows the values in absolute scale, and another column
-    # showing sign
-    res[["Value_abs"]] <- abs(res[["Value"]])
-    res[["Sign"]] <- ifelse(
-        res[["Value"]] > 0, "+", ifelse(res[["Value"]] < 0, "-", ""))
+    # Check that values are numeric. This is the first time we test that the
+    # columns were numeric. Now all the values from columns are in this column.
+    if( !is.numeric(res[["Value"]]) ){
+        stop("Values must be numeric.", call. = FALSE)
+    }
+    # Calculate max and min values along with maximum absolute value and sign
+    res <- .calculate_max_and_min_for_loadings(res)
     return(res)
 }
 
@@ -275,18 +279,43 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     return(df)
 }
 
+# This function calculates place for +/- sign in barplot/lollipop plot
+#' @importFrom dplyr %>% group_by mutate case_when ungroup
+.calculate_max_and_min_for_loadings <- function(df){
+    # Add column that shows the values in absolute scale, and another column
+    # showing sign
+    df[["Value_abs"]] <- abs(df[["Value"]])
+    df[["Sign"]] <- ifelse(
+        df[["Value"]] > 0, "+", ifelse(df[["Value"]] < 0, "-", ""))
+    # Add maximum values. This is used in scaling and placement of +/- sign
+    # in barplot and lollipop plot. In absolute scale, we use the maximum
+    # absolute value. In original scale, negative values gets minimum value
+    # and positive values maximum. These values are for each PC.
+    df <- df %>%
+        group_by(PC) %>%
+        mutate(
+            # Calculate max of abs(Value) and add 10%
+            max_scale_abs = max(abs(Value), na.rm = TRUE) +
+                0.1 * max(abs(Value), na.rm = TRUE),
+            # Calculate max_scale based on the sign of the Value
+            max_scale = case_when(
+                Value < 0 ~ min(Value, na.rm = TRUE) +
+                    0.1 * min(Value, na.rm = TRUE),
+                Value > 0 ~ max(Value, na.rm = TRUE) +
+                    0.1 * max(Value, na.rm = TRUE),
+                TRUE ~ NA_real_
+            )
+        ) %>%
+        ungroup()
+    return(df)
+}
+
 # This functions plots a data.frame in barplot or heatmap layout.
-#' @importFrom tidytext scale_y_reordered reorder_within
-#' @importFrom ggplot2 geom_tile scale_fill_gradient2 geom_bar
-.plot_loadings <- function(df, layout, absolute.scale = TRUE, ...) {
-    #
-    if( !.is_a_bool(absolute.scale) ){
-        stop("'absolute.scale' must be TRUE or FALSE.", call. = FALSE)
-    }
-    #
+#' @importFrom ggplot2 geom_tile scale_fill_gradient2
+.plot_loadings <- function(df, layout, ...) {
     # Initialize a plot
     plot_out <- ggplot(df)
-    # Either create a heatmap or barplt
+    # Either create a heatmap or barplot/lollipop
     if( layout == "heatmap" ){
         plot_out <- plot_out +
             # Create a heatmap
@@ -296,51 +325,107 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 ) +
             # Adjust color scale
             scale_fill_gradient2(
-                limits = c(-1, 1),
-                low = "darkslateblue", mid = "white", high = "darkred"
+                limits = c(-max(abs(df$Value)), max(abs(df$Value))),
+                low = "darkblue", mid = "white", high = "darkred"
                 )
             
-    } else if( layout == "barplot" && !absolute.scale ){
-        # This creates a barplot where values can be negative or positive
-        # (bars can be in negative and positive side)
-        plot_out <- plot_out +
-            # Create a bar plot. Create unique facets for each PC. Each PC can
-            # have unique set of features. To reorder features by each facet,
-            # we use reorder_within() and scale_y_reordered().
-            geom_bar(
-                mapping = aes(
-                    x = Value, y = reorder_within(Feature, Value, PC)),
-                stat = "identity"
-                ) +
-            scale_y_reordered() +
-            facet_wrap(~ PC, scales = "free") +
-            labs(x = "Value", y = "Feature") 
-        
-    } else if( layout == "barplot" && absolute.scale ){
-        # This creates a barplot where bars are in absolute scale and the sing
-        # is denoted with +/-
-        plot_out <- plot_out +
-            # Create bars with absolute scale
-            geom_bar(
-                mapping = aes(
-                    x = Value_abs, y = reorder_within(Feature, -Value_abs, PC)),
-                stat = "identity"
-            ) +
-            # Add sign that tells whether the value is + or -
-            geom_text(aes(
-                x = max(Value_abs) + max(Value_abs)*0.1,
-                y = reorder_within(Feature, Value_abs, PC),
-                label = Sign,
-                fontface = "bold"
-                )) +
-            scale_y_reordered() +
-            facet_wrap(~ PC, scales = "free") +
-            labs(x = "Value", y = "Feature") 
-        
+    } else if( layout %in% c("barplot", "lollipop") ){
+        plot_out <- .plot_bar_or_lollipop(plot_out, df, layout, ...)
     }
     # Adjust theme
     plot_out <- plot_out +
         theme_minimal()
+    return(plot_out)
+}
+
+# This functions creates a barplot or lollipop plot.
+#' @importFrom tidytext scale_y_reordered reorder_within
+#' @importFrom ggplot2 geom_bar geom_segment geom_point geom_text
+.plot_bar_or_lollipop <- function(
+        plot_out, df, layout, absolute.scale = TRUE, show.color = TRUE,
+        show.sign = FALSE, ...){
+    #
+    if( !.is_a_bool(absolute.scale) ){
+        stop("'absolute.scale' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    if( !.is_a_bool(show.color) ){
+        stop("'show.color' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    if( !.is_a_bool(show.sign) ){
+        stop("'show.sign' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # Set the variables to use for aesthetics
+    value_var <- if (absolute.scale) "Value_abs" else "Value"
+    # Set the y aesthetics with reorder_within, making sure 'df' is referenced
+    y_aes <- reorder_within(
+        df$Feature,
+        # Either get values in absolute scale or not
+        if(absolute.scale) -df$Value_abs else df$Value,
+        df$PC
+        )
+    
+    # Plot barplot or lollipop
+    if (layout == "barplot") {
+        # This creates a barplot
+        aesthetic <- aes(
+            x = !!sym(value_var),
+            y = y_aes,
+            # User can decide whether the bars are colored based on +/-
+            fill = if(show.color) Sign else NULL
+            )
+        plot_out <- plot_out + geom_bar(mapping = aesthetic, stat = "identity")
+    } else if (layout == "lollipop") {
+        # This creates a lollipop plot
+        plot_out <- plot_out +
+            # Add line
+            geom_segment(mapping = aes(
+                x = 0, xend = !!sym(value_var),
+                y = y_aes, yend = y_aes
+            )) +
+            # Add point at the end of the line to create "lollipop"
+            geom_point(mapping = aes(
+                x = !!sym(value_var),
+                y = y_aes,
+                # User can choose whether the point is colored based on sign
+                color = if (show.color) Sign else NULL
+            ))
+    }
+    
+    # Add sign labels if needed
+    if( show.sign ){
+        plot_out <- plot_out + geom_text(aes(
+            # This determines where the sign is placed, absolute scale or not
+            x = if (absolute.scale) max_scale_abs else max_scale,
+            y = y_aes,
+            label = Sign,
+            fontface = "bold"
+        ))
+    }
+    
+    # Customize the legend for Sign as "Effect"
+    if( show.color ) {
+        # Get correct function, barplot uses fill, lollipop color
+        scale_FUN <- if( layout == "barplot" ) scale_fill_manual else
+            scale_color_manual
+        # Currently the legend has title that shows the function call and the
+        # values shows + or -. Make the legend nicer.
+        plot_out <- plot_out +
+            scale_FUN(
+                name = "Effect", 
+                values = c("+" = "blue", "-" = "red"),
+                labels = c("+" = "positive", "-" = "negative")
+            )
+    }
+    
+    # Final wrangle, set facets and order the data
+    plot_out <- plot_out +
+        scale_y_reordered() +
+        facet_wrap(~PC, scales = "free") +
+        labs(x = "Value", y = "Feature")
+    
     return(plot_out)
 }
 

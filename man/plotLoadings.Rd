@@ -35,16 +35,17 @@ x.}
 \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
 Applicable when \code{layout="barplot"}. (Default: \code{10}))
 
-\item \code{absolute.scale}: ("barplot") \code{Logical scalar}. Specifies
-whether a barplot should be visualized in absoltue scale.
-(Default: \code{TRUE})
+\item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
+Specifies whether a barplot or a lollipop plot should be visualized in
+absolute scale. (Default: \code{TRUE})
 }}
 
 \item{dimred}{\code{Character scalar}.  Determines the reduced dimension to
 plot.}
 
 \item{layout}{\code{Character scalar}. Determines the layout of plot. Must be
-either \code{"barplot"} or \code{"heatmap"}. (Default: \code{"barplot"})}
+either \code{"barplot"}, \code{"heatmap"}, or \code{"lollipop"}.
+(Default: \code{"barplot"})}
 
 \item{ncomponents}{\code{Numeric scalar}. Number of components must be lower
 or equal to the number of components chosen in the reduction method.
