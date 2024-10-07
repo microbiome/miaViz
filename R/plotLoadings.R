@@ -292,8 +292,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 }
 
 # This functions plots a data.frame in barplot or heatmap layout.
-#' @importFrom tidytext scale_y_reordered reorder_within
-#' @importFrom ggplot2 geom_tile scale_fill_gradient2 geom_bar
+#' @importFrom ggplot2 geom_tile scale_fill_gradient2
 .plot_loadings <- function(df, layout, ...) {
     # Initialize a plot
     plot_out <- ggplot(df)
@@ -321,6 +320,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 }
 
 # This functions creates a barplot or lollipop plot.
+#' @importFrom tidytext scale_y_reordered reorder_within
+#' @importFrom ggplot2 geom_bar geom_segment geom_point geom_text
 .plot_bar_or_lollipop <- function(
         plot_out, df, layout, absolute.scale = TRUE, show.color = TRUE,
         show.sign = FALSE, ...){
