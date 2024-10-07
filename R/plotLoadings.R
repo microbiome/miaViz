@@ -255,20 +255,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     if( !is.numeric(res[["Value"]]) ){
         stop("Values must be numeric.", call. = FALSE)
     }
-    # Add column that shows the values in absolute scale, and another column
-    # showing sign
-    res[["Value_abs"]] <- abs(res[["Value"]])
-    res[["Sign"]] <- ifelse(
-        res[["Value"]] > 0, "+", ifelse(res[["Value"]] < 0, "-", ""))
-    # Add maximum values. This is used in scaling and placement of +/- sign
-    # in barplot and lollipop plot.
-    temp <- max(res[["Value_abs"]], na.rm = TRUE)
-    res[["max_scale_abs"]] <- temp + 0.1*temp
-    res[["max_scale"]] <- NA
-    temp <- min(res[["Value"]], na.rm = TRUE)
-    res[res[["Value"]]<0, "max_scale"] <- temp + 0.1*temp
-    temp <- max(res[["Value"]], na.rm = TRUE)
-    res[res[["Value"]]>0, "max_scale"] <- temp + 0.1*temp
+    # Calculate max and min values along with maximum absolute value and sign
+    res <- .calculate_max_and_min_for_loadings(res)
     return(res)
 }
 
@@ -291,6 +279,37 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     return(df)
 }
 
+# This function calculates place for +/- sign in barplot/lollipop plot
+#' @importFrom dplyr %>% group_by mutate case_when ungroup
+.calculate_max_and_min_for_loadings <- function(df){
+    # Add column that shows the values in absolute scale, and another column
+    # showing sign
+    df[["Value_abs"]] <- abs(df[["Value"]])
+    df[["Sign"]] <- ifelse(
+        df[["Value"]] > 0, "+", ifelse(df[["Value"]] < 0, "-", ""))
+    # Add maximum values. This is used in scaling and placement of +/- sign
+    # in barplot and lollipop plot. In absolute scale, we use the maximum
+    # absolute value. In original scale, negative values gets minimum value
+    # and positive values maximum. These values are for each PC.
+    df <- df %>%
+        group_by(PC) %>%
+        mutate(
+            # Calculate max of abs(Value) and add 10%
+            max_scale_abs = max(abs(Value), na.rm = TRUE) +
+                0.1 * max(abs(Value), na.rm = TRUE),
+            # Calculate max_scale based on the sign of the Value
+            max_scale = case_when(
+                Value < 0 ~ min(Value, na.rm = TRUE) +
+                    0.1 * min(Value, na.rm = TRUE),
+                Value > 0 ~ max(Value, na.rm = TRUE) +
+                    0.1 * max(Value, na.rm = TRUE),
+                TRUE ~ NA_real_
+            )
+        ) %>%
+        ungroup()
+    return(df)
+}
+
 # This functions plots a data.frame in barplot or heatmap layout.
 #' @importFrom ggplot2 geom_tile scale_fill_gradient2
 .plot_loadings <- function(df, layout, ...) {
@@ -306,8 +325,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 ) +
             # Adjust color scale
             scale_fill_gradient2(
-                limits = c(-1, 1),
-                low = "darkslateblue", mid = "white", high = "darkred"
+                limits = c(-max(abs(df$Value)), max(abs(df$Value))),
+                low = "darkblue", mid = "white", high = "darkred"
                 )
             
     } else if( layout %in% c("barplot", "lollipop") ){
