@@ -250,6 +250,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     }
     # Convert into data.frame
     res <- as.data.frame(res)
+    # Check that values are numeric. This is the first time we test that the
+    # columns were numeric. Now all the values from columns are in this column.
+    if( !is.numeric(res[["Value"]]) ){
+        stop("Values must be numeric.", call. = FALSE)
+    }
     # Add column that shows the values in absolute scale, and another column
     # showing sign
     res[["Value_abs"]] <- abs(res[["Value"]])
