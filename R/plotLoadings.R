@@ -187,7 +187,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 .get_loadings_matrix <- function(
         x, dimred, loadings.name = c("rotation", "loadings", "species"), ...){
     #
-    if( is.character(loadings.name) ){
+    if( !is.character(loadings.name) ){
         stop("'loadings.name' must be a character value.", call. = FALSE)
     }
     #

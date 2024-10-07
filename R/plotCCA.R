@@ -228,7 +228,18 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         add.significance = TRUE, add.expl.var = TRUE, add.ellipse = TRUE,
         add.vectors = TRUE, vec.lab = NULL,
         expl.var = expl_var, expl_var = NULL,
-        sep.group = "\U2014", repl.underscore = " ", ...){
+        sep.group = "\U2014", repl.underscore = " ",
+        # These parameters below are not used in this function. They are just
+        # catched so that they are not fed into scater::plotRecucedDim.
+        ellipse.alpha = 0.2, ellipse.linewidth = 0.1,
+        ellipse.linetype = 1, confidence.level = 0.95,
+        vec.size = 0.5, vec.color = vec.colour, vec.colour = "black",
+        vec.linetype = 1, arrow.size = 0.25, min.segment.length = 5,
+        label.color = label.colour, label.colour = "black", label.size = 4,
+        parse.labels = TRUE, vec.text = TRUE, repel.labels = TRUE,
+        position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
+        max.overlaps = 10, check_overlap = FALSE, 
+        ...){
     ###################### Input check ########################
     if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour")) ){
         stop("'add.ellipse' must be one of c(TRUE, FALSE, 'fill', ",
@@ -423,13 +434,14 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 .add_signif_to_vector_labels <- function(
         vector_label, var_names, signif_data, repl.underscore = " ", ...){
     # Replace underscores from significance data and variable names to match labels
-    rownames(signif_data) <- vapply(
-        rownames(signif_data), function(x) gsub("_", repl.underscore, x),
-        character(1L))
-    var_names <- vapply(
-        var_names, function(x) gsub("_", repl.underscore, x), character(1L))
+    rownames(signif_data) <- lapply(
+        rownames(signif_data), function(x) gsub("_", repl.underscore, x)
+        ) |> unlist()
+    var_names <- lapply(
+        var_names, function(x) gsub("_", repl.underscore, x)
+        ) |> unlist()
     # Loop through vector labels
-    vector_label <- vapply(vector_label, FUN = function(name){
+    vector_label <- lapply(vector_label, FUN = function(name){
         # Get the real variable name from sample metadata
         var_name <- var_names[ sapply(var_names, function(x) grepl(x, name)) ]
         # Add percentage how much this variable explains, and p-value
@@ -438,9 +450,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
                 nsmall = 1), "%, ", italic("P"), " = ",
             !!gsub("0\\.","\\.", format(round( signif_data[var_name, "Pr(>F)"],
                 3), nsmall = 3)), ")"))
-        
         return(new_name)
-    }, character(1L))
+    }) |> unlist()
     return(vector_label)
 }
 
