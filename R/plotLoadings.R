@@ -25,7 +25,7 @@
 #' (Default: \code{NULL})
 #'   
 #' @param ... additional parameters for plotting.
-#'   \itemize{
+#' \itemize{
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
 #'   Applicable when \code{layout="barplot"}. (Default: \code{10}))
 #'   
