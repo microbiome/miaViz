@@ -122,7 +122,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         }
         #
         # Get loadings matrix
-        mat <- .get_loadings_matrix(x, dimred)
+        mat <- .get_loadings_matrix(x, dimred, ...)
         if( add.tree && layout == "heatmap" ){
             # Create dataframe for tree plotting
             data_list <- .get_loadings_tree_data(mat, x, tree.name, row.var)
@@ -155,7 +155,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
             stop("'dimred' must be a string or an integer.", call. = FALSE)
         }
         # Get loadings matrix
-        mat <- .get_loadings_matrix(x, dimred)
+        mat <- .get_loadings_matrix(x, dimred, ...)
         # Utilize matrix method to create a plot
         p <- plotLoadings(
             mat, layout = layout, ncomponents = ncomponents, ...) 
@@ -184,13 +184,18 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function fetches loadings matrix from TreeSE object. The loadings
 # are fetched from attributes of reducedDim whcih means that the result must be
 # first calculated with standardized method.
-.get_loadings_matrix <- function(x, dimred, ...){
+.get_loadings_matrix <- function(
+        x, dimred, loadings.name = c("rotation", "loadings", "species"), ...){
+    #
+    if( is.character(loadings.name) ){
+        stop("'loadings.name' must be a character value.", call. = FALSE)
+    }
+    #
     # Get reducedDim
     reddim <- reducedDim(x, dimred)
     # Get loadings matrix.
     attr_names <- names(attributes(reddim))
-    loading_names <- c("rotation", "loadings")
-    attr_name <- attr_names[ attr_names %in% loading_names ]
+    attr_name <- attr_names[ attr_names %in% loadings.name ]
     if( length(attr_name) != 1 ) {
         stop("Loadings cannot be found.", call. = FALSE)
     }

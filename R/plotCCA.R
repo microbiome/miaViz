@@ -325,7 +325,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # If specified, get explained variance
     if( add.expl.var ){
         # Check if data is available
-        ind <- names(attributes(reduced_dim)) %in% c("rda", "cca")
+        ind <- names(attributes(reduced_dim)) %in% c("rda", "cca", "obj")
         # If it can be found
         if( any(ind) ){
             # Add explained variance
@@ -357,7 +357,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     vector_data <- NULL
     if( add.vectors ){
         # Check if data is available
-        ind <- names(attributes(reduced_dim)) %in% c("rda", "cca")
+        ind <- names(attributes(reduced_dim)) %in% c("rda", "cca", "obj")
         # If it can be found
         if( any(ind) ){
             # Get biplot from cca object
