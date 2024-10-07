@@ -343,10 +343,10 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Check if variable names can be found metadata
     all_var_found <- FALSE
     if( !is.null(vector_data) && length(variable_names) > 0 ){
-        all_var_found <- all(colSums(
-            unlist(lapply(rownames(vector_data), function(x)
-                unlist(lapply(variable_names, function(y) grepl(y, x))) ))
-            ) == 1)
+        all_var_found <- vapply(rownames(vector_data), function(x)
+            vapply(variable_names, function(y) grepl(y, x), logical(1L)),
+            logical(ncol(coldata)) )
+        all_var_found <- all( colSums(all_var_found) == 1)
     }
     
     # Get vector labels
