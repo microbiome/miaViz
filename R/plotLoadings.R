@@ -278,10 +278,20 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This functions plots a data.frame in barplot or heatmap layout.
 #' @importFrom tidytext scale_y_reordered reorder_within
 #' @importFrom ggplot2 geom_tile scale_fill_gradient2 geom_bar
-.plot_loadings <- function(df, layout, absolute.scale = TRUE, ...) {
+.plot_loadings <- function(
+        df, layout, absolute.scale = TRUE, show.color = TRUE, show.sign = FALSE,
+        ...) {
     #
     if( !.is_a_bool(absolute.scale) ){
         stop("'absolute.scale' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    if( !.is_a_bool(show.color) ){
+        stop("'show.color' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    if( !.is_a_bool(show.sign) ){
+        stop("'show.sign' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     # Initialize a plot
@@ -318,21 +328,36 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         
     } else if( layout == "barplot" && absolute.scale ){
         # This creates a barplot where bars are in absolute scale and the sing
-        # is denoted with +/-
+        # is denoted with +/- sign or color
+        
+        # Create an aesthetic based on whether to show sign with colors
+        if( show.color ){
+            aesthetic <- aes(
+                x = Value_abs,
+                y = reorder_within(Feature, -Value_abs, PC),
+                fill = Sign
+                )
+        } else{
+            aesthetic <- aes(
+                x = Value_abs, y = reorder_within(Feature, -Value_abs, PC))
+        }
+        # Create bars with absolute scale
         plot_out <- plot_out +
-            # Create bars with absolute scale
-            geom_bar(
-                mapping = aes(
-                    x = Value_abs, y = reorder_within(Feature, -Value_abs, PC)),
-                stat = "identity"
-            ) +
-            # Add sign that tells whether the value is + or -
-            geom_text(aes(
-                x = max(Value_abs) + max(Value_abs)*0.1,
-                y = reorder_within(Feature, Value_abs, PC),
-                label = Sign,
-                fontface = "bold"
-                )) +
+            
+            geom_bar(mapping = aesthetic, stat = "identity"
+            )
+        # Add sign that tells whether the value is + or -
+        if( show.sign ){
+            plot_out <- plot_out +
+                geom_text(aes(
+                    x = max(Value_abs) + max(Value_abs)*0.1,
+                    y = reorder_within(Feature, -Value_abs, PC),
+                    label = Sign,
+                    fontface = "bold"
+                ))
+        }
+        # Final wrangle, set facets and order the data
+        plot_out <- plot_out +
             scale_y_reordered() +
             facet_wrap(~ PC, scales = "free") +
             labs(x = "Value", y = "Feature") 
