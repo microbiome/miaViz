@@ -9,8 +9,8 @@ test_that("plot RDA/CCA", {
   expect_error(plotRDA(tse, "RDA"), "'dimred' must specify reducedDim.")
   
   # Run/calculate RDA
-  tse <- addRDA(tse, assay ~ patient_status + cohort)
-  rda <- getRDA(tse, assay ~ patient_status + cohort)
+  tse <- addRDA(tse, formula = assay ~ patient_status + cohort)
+  rda <- getRDA(tse, formula = assay ~ patient_status + cohort)
   
   # Minimal functionality
   expect_no_error(plotRDA(tse, "RDA"))
@@ -19,7 +19,7 @@ test_that("plot RDA/CCA", {
   expect_error(plotRDA(tse, "RDA", colour_by = "wrong colname"))
   expect_error(plotRDA(tse, "RDA", colour_by = "cohort", shape_by = "wrong colname"))
   expect_error(plotRDA(tse, "RDA", add.ellipse = "invalid value"),
-               "'add.ellipse' must be one of c(TRUE, FALSE, 'fill', 'color', 'colour').",
+               "'add.ellipse' must be one of c(TRUE, FALSE, 'fill', 'color').",
                fixed = TRUE)
   expect_error(plotRDA(tse, "RDA", add.significance = "invalid value"),
                "'add.significance' must be TRUE or FALSE.")

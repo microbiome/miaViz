@@ -17,110 +17,85 @@ plotCCA(x, ...)
 
 plotRDA(x, ...)
 
-\S4method{plotRDA}{SingleCellExperiment}(
-  x,
-  dimred,
-  add.ellipse = TRUE,
-  ellipse.alpha = 0.2,
-  ellipse.linewidth = 0.1,
-  ellipse.linetype = 1,
-  confidence.level = 0.95,
-  vec.size = 0.5,
-  vec.color = vec.colour,
-  vec.colour = "black",
-  vec.linetype = 1,
-  arrow.size = 0.25,
-  label.color = label.colour,
-  label.colour = "black",
-  label.size = 4,
-  vec.text = TRUE,
-  repel.labels = TRUE,
-  sep.group = "—",
-  repl.underscore = " ",
-  add.significance = TRUE,
-  add.expl.var = TRUE,
-  add.vectors = TRUE,
-  parse.labels = TRUE,
-  ...
-)
+\S4method{plotRDA}{SingleCellExperiment}(x, dimred, ...)
 
 \S4method{plotRDA}{matrix}(x, ...)
 }
 \arguments{
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-or a matrix of weights. The latter is returned as output from \code{\link[mia:runCCA]{getRDA}}.}
+or a matrix of weights. The latter is returned as output from
+\code{\link[mia:runCCA]{getRDA}}.}
 
 \item{...}{additional parameters for plotting, inherited from
 \code{\link[scater:plotReducedDim]{plotReducedDim}},
 \code{\link[ggplot2:geom_label]{geom_label}} and
-\code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.}
+\code{\link[ggrepel:geom_label_repel]{geom_label_repel}}.
+\itemize{
+\item \code{add.ellipse}: One of
+\code{c(TRUE, FALSE, "fill", "colour")}, indicating whether
+ellipses should be present, absent, filled or colored.
+(default: \code{ellipse.fill = TRUE})
 
-\item{dimred}{\code{Character scalar} or \code{integer scalar}. Determines the reduced dimension to
+\item \code{ellipse.alpha}: \code{Numeric scalar}. Between 0 and 1.
+Adjusts the opacity of ellipses. (Default: \code{0.2})
+
+\item \code{ellipse.linewidth}: \code{Numeric scalar}. Specifies the size
+of ellipses. (Default: \code{0.1})
+
+\item \code{ellipse.linetype}: \code{Integer scalar}. Specifies the style
+of ellipses. (Default: \code{1})
+
+\item \code{confidence.level}: \code{Numeric scalar}. Between 0 and 1.
+Adjusts confidence level. (Default: \code{0.95})
+
+\item \code{add.vectors}: \code{Logical scalar}. Should vectors appear in
+the plot. (Default: \code{TRUE})
+
+\item \code{vec.size}: \code{Numeric scalar}. Specifies the size of
+vectors. (Default: \code{0.5})
+
+\item \code{vec.colour}: \code{Character scalar}. Specifies the colour of
+vectors. (Default: \code{"black"})
+
+\item \code{vec.linetype}: \code{Integer scalar}. Specifies the style of
+vector lines. (Default: \code{1})
+
+\item \code{arrow.size}: \code{Numeric scalar}. Specifies the size of
+arrows. (Default: \code{arrow.size = 0.25})
+
+\item \code{label.size}: \code{Numeric scalar}. Specifies the size of text
+and labels. (Default: \code{4})
+
+\item \code{label.colour}: \code{Character scalar}. Specifies the colour of
+text and labels. (Default: \code{"black"})
+
+\item \code{sep.group}: \code{Character scalar}. Specifies the separator
+used in the labels. (Default: \code{"\U2014"})
+
+\item \code{repl.underscore}: \code{Character scalar}. Used to replace
+underscores in the labels. (Default: \code{" "})
+
+\item \code{vec.text}: \code{Logical scalar}. Should text instead of labels
+be used to label vectors. (Default: \code{TRUE})
+
+\item \code{repel.labels}: \code{Logical scalar}. Should labels be
+repelled. (Default: \code{TRUE})
+
+\item \code{parse.labels}: \code{Logical scalar}. Should labels be parsed.
+(Default: \code{TRUE})
+
+\item \code{add.significance}: \code{Logical scalar}. Should explained
+variance and p-value appear in the labels. (Default: \code{TRUE})
+
+\item \code{add.expl.var}: \code{Logical scalar}. Should explained
+variance appear on the coordinate axes. (Default: \code{TRUE})
+}}
+
+\item{dimred}{\code{Character scalar} or \code{integer scalar}. Determines
+the reduced dimension to
 plot. This is the output of \code{\link[mia:runCCA]{addRDA}} and resides in
 \code{reducedDim(tse, dimred)}.}
-
-\item{add.ellipse}{One of \code{c(TRUE, FALSE, "fill", "colour", "color")},
-indicating whether ellipses should be present, absent, filled or colored.
-(default: \code{ellipse.fill = TRUE})}
-
-\item{ellipse.alpha}{\code{Numeric scalar}. Between 0 and 1. Adjusts the opacity of ellipses.
-(Default: \code{0.2})}
-
-\item{ellipse.linewidth}{\code{Numeric scalar}. Specifies the size of ellipses.
-(Default: \code{0.1})}
-
-\item{ellipse.linetype}{\code{Integer scalar}. Specifies the style of ellipses.
-(Default: \code{1})}
-
-\item{confidence.level}{\code{Numeric scalar}. Between 0 and 1. Adjusts confidence level.
-(Default: \code{0.95})}
-
-\item{vec.size}{\code{Numeric scalar}. Specifies the size of vectors.
-(Default: \code{0.5})}
-
-\item{vec.color}{Alias for \code{vec.colour}.}
-
-\item{vec.colour}{\code{Character scalar}. Specifies the colour of vectors.
-(Default: \code{"black"})}
-
-\item{vec.linetype}{\code{Integer scalar}. Specifies the style of vector lines.
-(Default: \code{1})}
-
-\item{arrow.size}{\code{Numeric scalar}. Specifies the size of arrows.
-(defaults: \code{arrow.size = 0.25})}
-
-\item{label.color}{Alias for \code{label.colour}.}
-
-\item{label.colour}{\code{Character scalar}. Specifies the colour of text and labels.
-(Default: \code{"black"})}
-
-\item{label.size}{\code{Numeric scalar}. Specifies the size of text and labels.
-(Default: \code{4})}
-
-\item{vec.text}{\code{Logical scalar}. Should text instead of labels be used to label vectors.
-(Default: \code{TRUE})}
-
-\item{repel.labels}{\code{Logical scalar}. Should labels be repelled.
-(Default: \code{TRUE})}
-
-\item{sep.group}{\code{Character scalar}. Specifies the separator used in the labels.
-(Default: \code{"\U2014"})}
-
-\item{repl.underscore}{\code{Character scalar}. Used to replace underscores in the labels.
-(Default: \code{" "})}
-
-\item{add.significance}{\code{Logical scalar}. Should explained variance and p-value
-appear in the labels. (Default: \code{TRUE})}
-
-\item{add.expl.var}{\code{Logical scalar}. Should explained variance appear on the
-coordinate axes. (Default: \code{TRUE})}
-
-\item{add.vectors}{\code{Logical scalar}. Should vectors appear in the plot.
-(Default: \code{TRUE})}
-
-\item{parse.labels}{\code{Logical scalar}. Should labels be parsed.
-(Default: \code{TRUE})}
 }
 \value{
 A \code{ggplot2} object
@@ -150,42 +125,37 @@ data("enterotype", package = "mia")
 tse <- enterotype
  
 # Run RDA and store results into TreeSE
-tse <- addRDA(tse,
-              formula = assay ~ ClinicalStatus + Gender + Age,
-              FUN = vegan::vegdist,
-              distance = "bray",
-              na.action = na.exclude)
+tse <- addRDA(
+    tse,
+    formula = assay ~ ClinicalStatus + Gender + Age,
+    FUN = getDissimilarity,
+    distance = "bray",
+    na.action = na.exclude
+    )
                
 # Create RDA plot coloured by variable
-plotRDA(tse, "RDA",
-        colour.by = "ClinicalStatus")
+plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
  
 # Create RDA plot with empty ellipses
-plotRDA(tse, "RDA",
-        colour.by = "ClinicalStatus",
-        add.ellipse = "colour")
+plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.ellipse = "colour")
  
 # Create RDA plot with text encased in labels
-plotRDA(tse, "RDA",
-        colour.by = "ClinicalStatus",
-        vec.text = FALSE)
+plotRDA(tse, "RDA", colour.by = "ClinicalStatus", vec.text = FALSE)
  
 # Create RDA plot without repelling text
-plotRDA(tse, "RDA",
-        colour.by = "ClinicalStatus",
-        repel.labels = FALSE)
+plotRDA(tse, "RDA", colour.by = "ClinicalStatus", repel.labels = FALSE)
  
 # Create RDA plot without vectors
-plotRDA(tse, "RDA",
-        colour.by = "ClinicalStatus",
-        add.vectors = FALSE)
+plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.vectors = FALSE)
  
 # Calculate RDA as a separate object
-rda_mat <- getRDA(tse,
-                  formula = assay ~ ClinicalStatus + Gender + Age,
-                  FUN = vegan::vegdist,
-                  distance = "bray",
-                  na.action = na.exclude)
+rda_mat <- getRDA(
+    tse,
+    formula = assay ~ ClinicalStatus + Gender + Age,
+    FUN = getDissimilarity,
+    distance = "bray",
+    na.action = na.exclude
+    )
  
 # Create RDA plot from RDA matrix
 plotRDA(rda_mat)
