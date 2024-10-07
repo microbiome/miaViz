@@ -360,8 +360,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         plot_out <- plot_out +
             scale_y_reordered() +
             facet_wrap(~ PC, scales = "free") +
-            labs(x = "Value", y = "Feature") 
-        
+            labs(x = "Value", y = "Feature")
     }
     # Adjust theme
     plot_out <- plot_out +
