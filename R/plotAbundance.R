@@ -407,8 +407,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
             group_by(colour_by) %>%
             summarise(mean_abundance = mean(Y, na.rm = TRUE)) %>%
             # Either sort based on increasing or decreasing order
-            arrange(if (order.row.by == "abund") mean_abundance else
-                desc(mean_abundance)) %>%
+            arrange(if (order.row.by == "abund") desc(mean_abundance) else
+                mean_abundance) %>%
             distinct(colour_by) %>%
             pull(colour_by)
     }

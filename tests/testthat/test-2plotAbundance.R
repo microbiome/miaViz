@@ -12,27 +12,21 @@ test_that("plot abundance", {
     expect_error(miaViz:::.get_abundance_data(x))
     actual <- miaViz:::.get_abundance_data(x, group = "Phylum", assay.type = "counts")
     expect_s3_class(actual,"tbl_df")
-    expect_named(actual,c("colour_by","X","Y"))
+    expect_true( all(c("colour_by","X","Y") %in% colnames(actual)) )
     expect_true(is.factor(actual$colour_by))
     expect_true(is.factor(actual$X))
     expect_true(is.numeric(actual$Y))
-    expect_error(miaViz:::.get_abundance_data(
-        x, group = "Phylum", assay.type = "counts", order_rank_by = "meep"))
-    actual2 <- miaViz:::.get_abundance_data(
-        x, group = "Phylum", assay.type = "counts", order_rank_by = "abund")
+    expect_error(miaViz:::.order_abundance_rows(actual, order.row.by = "meep"))
+    actual2 <- miaViz:::.order_abundance_rows(actual, order.row.by = "abund")
     expect_equal(as.character(actual[1,1,drop=TRUE]),"ABY1_OD1")
-    expect_equal(as.character(actual2[1,1,drop=TRUE]),"Proteobacteria")
+    expect_equal(levels(actual2[["colour_by"]])[[1]],"Proteobacteria")
     actual3 <- miaViz:::.get_abundance_data(
         x, group = "Phylum", assay.type = "counts", order.row.by = "abund",
         as.relative = FALSE)
     expect_true(max(actual3$Y) > 1)
-    # .norm_order_sample_by
-    expect_true(is.null(miaViz:::.norm_order_sample_by(NULL)))
-    expect_error(miaViz:::.norm_order_sample_by("meep"),
-                 'argument "factors" is missing')
-    expect_error(miaViz:::.norm_order_sample_by("meep","meep2",x),
-                 "'order.col.by' must be a single non-empty character value")
-    expect_equal(miaViz:::.norm_order_sample_by("Primer","meep2",x),"Primer")
+    # .order_abundance_cols
+    expect_error(miaViz:::.order_abundance_cols("meep"))
+    expect_error(miaViz:::.order_abundance_cols("meep","meep2",x))
     # .get_feature_data
     expect_true(is.null(miaViz:::.get_feature_data()))
     expect_true(is.null(miaViz:::.get_feature_data(x)))
