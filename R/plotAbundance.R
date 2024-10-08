@@ -699,9 +699,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     }
     if( length(col.var) > 1L && facet.cols ){
         .require_package("ggh4x")
-        plot_out + ggh4x::facet_nested(
+        plot_out <- plot_out + ggh4x::facet_nested(
             formula(paste0("~", paste0(col.var, collapse = "+"))),
-            ncol = ncol,
             scales = scales)
     }
     # Create the column metadata plot and create a list from plots
