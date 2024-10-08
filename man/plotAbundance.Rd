@@ -9,20 +9,9 @@ plotAbundance(x, ...)
 
 \S4method{plotAbundance}{SummarizedExperiment}(
   x,
-  col.var = features,
-  features = NULL,
-  order.row.by = order_rank_by,
-  order_rank_by = c("name", "abund", "revabund"),
-  order.col.by = order_sample_by,
-  order_sample_by = NULL,
-  decreasing = TRUE,
-  layout = c("bar", "point"),
-  one.facet = one_facet,
-  one_facet = TRUE,
-  ncol = 2,
-  scales = "fixed",
   assay.type = assay_name,
   assay_name = "counts",
+  layout = c("bar", "point"),
   ...
 )
 }
@@ -33,65 +22,55 @@ object.}
 
 \item{...}{additional parameters for plotting.
 \itemize{
-\item \code{group} \code{Character scalar}. Specifies the group for
+\item \code{group}: \code{Character scalar}. Specifies the group for
 agglomeration. Must be a value from \code{colnames(rowData(x))}. If
 \code{NULL}, agglomeration is not applied. (Default: \code{NULL})
 
-\item \code{as.relative} \code{Character scalar}. Should the relative
+\item \code{as.relative}: \code{Character scalar}. Should the relative
 values be calculated? (Default: \code{FALSE})
+
+\item \code{col.var}: \code{Character scalar}. Selects a column from
+\code{colData} to be plotted below the abundance plot.
+Continuous numeric values will be plotted as point, whereas factors and
+character will be plotted as colour-code bar. (Default: \code{NULL})
+
+\item \code{order.row.by}: \code{Character scalar}. How to order abundance
+value. By name (\code{"name"}) for sorting the taxonomic labels
+alphabetically, by abundance (\code{"abund"}) to sort by abundance
+values or by a reverse order of
+abundance values (\code{"revabund"}). (Default: \code{"name"})
+
+\item \code{order.col.by}: \code{Character scalar}. from the chosen rank of
+abundance data or from \code{colData} to select values to order the
+abundance plot by. (Default: \code{NULL})
+
+\item \code{decreasing}: \code{Logical scalar}. If the \code{order.col.by}
+is defined and the values are numeric, should the values used to order in
+decreasing or increasing fashion? (Default: \code{FALSE})
+
+\item \code{facet.rows}: \code{Logical scalar}. Should the rows in the
+plot be spitted into facets? (Default: \code{FALSE})
+
+\item \code{facet.cols}: \code{Logical scalar}. Should the columns in the
+plot be spitted into facets? (Default: \code{FALSE})
+
+\item \code{ncol}: \code{Numeric scalar}. if facets are applied,
+\code{ncol} defines many columns should be for plotting the different
+facets. (Default: \code{2})
+
+\item \code{scales} \code{Character scalar}. Defines the behavior of the
+scales of each facet. The value is passed into
+\code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"fixed"})
 }
 See \code{\link{mia-plot-args}} for more details i.e. call
 \code{help("mia-plot-args")}}
-
-\item{col.var}{\code{Character scalar}. Selects a column from
-\code{colData} to be plotted below the abundance plot.
-Continuous numeric values will be plotted as point, whereas factors and
-character will be plotted as colour-code bar. (Default: \code{NULL})}
-
-\item{features}{Deprecated. Use \code{col.var} instead.}
-
-\item{order.row.by}{\code{Character scalar}. How to order abundance value:
-By name (\code{"name"})
-for sorting the taxonomic labels alphabetically, by abundance
-(\code{"abund"}) to sort by abundance values or by a reverse order of
-abundance values (\code{"revabund"}). (Default: \code{"name"})}
-
-\item{order_rank_by}{Deprecated. Use \code{order.row.by} instead.}
-
-\item{order.col.by}{\code{Character scalar}. from the chosen rank of
-abundance data or from \code{colData} to select values to order the abundance
-plot by. (Default: \code{NULL})}
-
-\item{order_sample_by}{Deprecated. Use \code{order.col.by} instead.}
-
-\item{decreasing}{\code{Logical scalar}. If the \code{order.col.by}
-is defined and the
-values are numeric, should the values used to order in decreasing or
-increasing fashion? (Default: \code{FALSE})}
-
-\item{layout}{\code{Character scalar}. Either \dQuote{bar} or \dQuote{point}.}
-
-\item{one.facet}{\code{Logical scalar}. Should the plot be returned in on
-facet or split into
-different facet, one facet per different value detect in \code{group}. If
-\code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
-be disregarded. (Default: \code{TRUE})}
-
-\item{one_facet}{Deprecated. Use \code{one.facet} instead.}
-
-\item{ncol}{\code{Numeric scalar}. if \code{one.facet = FALSE},
-\code{ncol} defines many
-columns should be for plotting the different facets. (Default: \code{2})}
-
-\item{scales}{\code{Character scalar}. Defines the behavior of the scales
-of each facet. Both values are
-passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
-(Default: \code{"fixed"})}
 
 \item{assay.type}{\code{Character scalar} value defining which assay data to
 use. (Default: \code{"relabundance"})}
 
 \item{assay_name}{Deprecate. Use \code{assay.type} instead.}
+
+\item{layout}{\code{Character scalar}. Either \dQuote{bar} or \dQuote{point}.}
 }
 \value{
 a \code{\link[ggplot2:ggplot]{ggplot}} object or list of two

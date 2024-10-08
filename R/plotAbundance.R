@@ -11,8 +11,6 @@
 #' \code{group}, \code{mia::agglomerateByRank()} is used, otherwise
 #' \code{agglomerateByVariable()} is applied.
 #'
-#' 
-#'
 #' @param x a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
@@ -21,60 +19,50 @@
 #' use. (Default: \code{"relabundance"})
 #'   
 #' @param assay_name Deprecate. Use \code{assay.type} instead.
-#'   
-#' @param col.var \code{Character scalar}. Selects a column from 
-#' \code{colData} to be plotted below the abundance plot.
-#' Continuous numeric values will be plotted as point, whereas factors and
-#' character will be plotted as colour-code bar. (Default: \code{NULL})
-#'   
-#' @param features Deprecated. Use \code{col.var} instead.
-#'   
-#' @param order.row.by \code{Character scalar}. How to order abundance value:
-#' By name (\code{"name"}) 
-#' for sorting the taxonomic labels alphabetically, by abundance
-#' (\code{"abund"}) to sort by abundance values or by a reverse order of
-#' abundance values (\code{"revabund"}). (Default: \code{"name"})
-#' 
-#' @param order_rank_by Deprecated. Use \code{order.row.by} instead.  
-#'   
-#' @param order.col.by \code{Character scalar}. from the chosen rank of
-#' abundance data or from \code{colData} to select values to order the abundance
-#' plot by. (Default: \code{NULL})
-#'   
-#' @param order_sample_by Deprecated. Use \code{order.col.by} instead.
-#'   
-#' @param decreasing \code{Logical scalar}. If the \code{order.col.by}
-#' is defined and the
-#' values are numeric, should the values used to order in decreasing or
-#' increasing fashion? (Default: \code{FALSE})
 #'
 #' @param layout \code{Character scalar}. Either \dQuote{bar} or \dQuote{point}.
 #' 
-#' @param one.facet \code{Logical scalar}. Should the plot be returned in on
-#' facet or split into 
-#' different facet, one facet per different value detect in \code{group}. If
-#' \code{col.var} or \code{order.col.by} is not \code{NULL}, this setting will
-#' be disregarded. (Default: \code{TRUE})
-#'   
-#' @param one_facet Deprecated. Use \code{one.facet} instead.
-#' 
-#' @param ncol \code{Numeric scalar}. if \code{one.facet = FALSE},
-#' \code{ncol} defines many 
-#' columns should be for plotting the different facets. (Default: \code{2})
-#'   
-#' @param scales \code{Character scalar}. Defines the behavior of the scales
-#' of each facet. Both values are 
-#' passed onto \code{\link[ggplot2:facet_wrap]{facet_wrap}}.
-#' (Default: \code{"fixed"})
-#' 
 #' @param ... additional parameters for plotting.
 #' \itemize{
-#'   \item \code{group} \code{Character scalar}. Specifies the group for
+#'   \item \code{group}: \code{Character scalar}. Specifies the group for
 #'   agglomeration. Must be a value from \code{colnames(rowData(x))}. If
 #'   \code{NULL}, agglomeration is not applied. (Default: \code{NULL})
 #'   
-#'   \item \code{as.relative} \code{Character scalar}. Should the relative
+#'   \item \code{as.relative}: \code{Character scalar}. Should the relative
 #'   values be calculated? (Default: \code{FALSE})
+#'   
+#'   \item \code{col.var}: \code{Character scalar}. Selects a column from 
+#'   \code{colData} to be plotted below the abundance plot.
+#'   Continuous numeric values will be plotted as point, whereas factors and
+#'   character will be plotted as colour-code bar. (Default: \code{NULL})
+#'   
+#'   \item \code{order.row.by}: \code{Character scalar}. How to order abundance
+#'   value. By name (\code{"name"}) for sorting the taxonomic labels
+#'   alphabetically, by abundance (\code{"abund"}) to sort by abundance
+#'   values or by a reverse order of
+#'   abundance values (\code{"revabund"}). (Default: \code{"name"})
+#'   
+#'   \item \code{order.col.by}: \code{Character scalar}. from the chosen rank of
+#'   abundance data or from \code{colData} to select values to order the
+#'   abundance plot by. (Default: \code{NULL})
+#'   
+#'   \item \code{decreasing}: \code{Logical scalar}. If the \code{order.col.by}
+#'   is defined and the values are numeric, should the values used to order in
+#'   decreasing or increasing fashion? (Default: \code{FALSE})
+#'   
+#'   \item \code{facet.rows}: \code{Logical scalar}. Should the rows in the
+#'   plot be spitted into facets? (Default: \code{FALSE})
+#'   
+#'   \item \code{facet.cols}: \code{Logical scalar}. Should the columns in the
+#'   plot be spitted into facets? (Default: \code{FALSE})
+#'   
+#'   \item \code{ncol}: \code{Numeric scalar}. if facets are applied,
+#'   \code{ncol} defines many columns should be for plotting the different
+#'   facets. (Default: \code{2})
+#'   
+#'   \item \code{scales} \code{Character scalar}. Defines the behavior of the
+#'   scales of each facet. The value is passed into
+#'   \code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"fixed"})
 #' }
 #' See \code{\link{mia-plot-args}} for more details i.e. call
 #' \code{help("mia-plot-args")}
@@ -259,6 +247,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 )
 
 ################################ HELP FUNCTIONS ################################
+################################################################################
+# Data handlers
+
 #' @importFrom mia meltSE
 .get_abundance_data <- function(
         x, assay.type, group = rank, rank = NULL,
@@ -481,123 +472,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     return(df)
 }
 
-.norm_order_sample_by <- function(order_sample_by, factors, x){
-    # If user did not specify the ordering, do nnothing
-    if(is.null(order_sample_by)){
-        return(order_sample_by)
-    }
-    # Chec that the parameter is string
-    msg <- paste0("'order.col.by' must be a single non-empty character value, ",
-                "either present in the abundance data as group variable or ",
-                "in the column data of 'x'. (The abundance data takes ",
-                "precedence)")
-    if(!.is_non_empty_string(order_sample_by)){
-        stop(msg, call. = FALSE)
-    }
-    #
-    # If the order variable is not found from the coloring values (samples can
-    # also be order based on abundance of certain taxon), check that the
-    # variable can be found from colData.
-    if(!(order_sample_by %in% factors)){
-        tmp <- .get_feature_data(x, order_sample_by, msg = msg)
-        order_sample_by <- tmp$name
-    }
-    return(order_sample_by)
-}
-
-# This funtion retrives data from colData without failing (if the variable
-# is not found)
-.get_feature_data <- function(x, by, msg = NULL){
-    # Get variable without failing
-    tmp <- try({retrieveCellInfo(x, by, search = "colData")}, silent = TRUE)
-    # Check if fetching was failed
-    if(is(tmp,"try-error")){
-        # If msg is not NULL, fail if variable is not found.
-        # Otherwise, give NULL.
-        if( !is.null(msg) ){
-            stop(msg, call. = FALSE)
-        } else{
-            tmp <- NULL
-        }
-    }
-    return(tmp)
-}
-
-.get_features_data <- function(features, order_sample_by, x){
-    # Get variable (this functions fetches data for both odering and feature
-    # plotting)
-    features <- unique(c(order_sample_by,features))
-    # Get values
-    features_data <- lapply(
-        features, .get_feature_data, x = x)
-    # Get those values that are found
-    non_empty <- !vapply(features_data, is.null, logical(1))
-    features_data <- features_data[non_empty]
-    if(length(features_data) == 0){
-        return(NULL)
-    }
-    # Get values and names and create data.frame from them
-    values <- lapply(features_data, "[[", "value")
-    names <- lapply(features_data, "[[", "name")
-    features_data <- data.frame(values)
-    colnames(features_data) <- names
-    # Add sample names to rows
-    if(!is.null(colnames(x))){
-        rownames(features_data) <- colnames(x)
-    } else {
-        rownames(features_data) <- paste0("Sample",seq_len(ncol(x)))
-    }
-    return(features_data)
-}
-
-#' @importFrom dplyr pull
-.order_abund_feature_data <- function(
-        abund_data, features_data, order_sample_by, decreasing = TRUE){
-    # If ordering was specified
-    if(!is.null(order_sample_by)){
-        # Get levels
-        lvl <- levels(abund_data$X)
-        # If user specified taxan to be used to order the data
-        if(is.null(features_data) || 
-                !(order_sample_by %in% colnames(features_data))){
-            # Presort by taxon value
-            lvl_tmp <- levels(abund_data$colour_by)
-            lvl_tmp <- c(
-                order_sample_by, lvl_tmp[!(lvl_tmp %in% order_sample_by)])
-            abund_data$colour_by <- factor(abund_data$colour_by, lvl_tmp)
-            # Get the abundance values from certain taxon
-            data <- abund_data[abund_data$colour_by %in% order_sample_by, ]
-            data <- data[["Y"]]
-        } else {
-            # Otherwise get the order from the variable
-            data <- features_data[[order_sample_by]]
-        }
-        # If the ordering value is factor, order based on alphabetical order.
-        # Order numeric values in increasing order.
-        if(is.factor(data)){
-            o <- order(data, decreasing = !decreasing)
-        } else {
-            o <- order(data, decreasing = decreasing)
-        }
-        # Reset lvls and reorder the data based on 
-        lvl <- lvl[o]
-        abund_data$X <- factor(abund_data$X, lvl)
-        abund_data <- abund_data[order(abund_data$colour_by, abund_data$X),]
-        # If the data includes also sample metadata to be plotted, reorder
-        # it also.
-        if(!is.null(features_data)){
-            o <- order(factor(rownames(features_data), lvl))
-            features_data <- features_data[o, , drop = FALSE]
-        }
-    }
-    res <- list(abund_data = abund_data, features_data = features_data)
-    return(res)
-}
-
-
 ################################################################################
-# abundance plotter
-
+# Abundance plotters
 
 #' @importFrom ggplot2 ggplot theme_classic geom_point geom_bar coord_flip
 #'   scale_y_continuous
@@ -670,6 +546,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     plot_out <- .flip_plot(plot_out, flipped, add_x_text)
     return(plot_out)
 }
+
 #' @importFrom dplyr select all_of distinct arrange select
 .abund_plotter_for_metadata <- function(
         plot_out, df, col.var = features, features = NULL,
