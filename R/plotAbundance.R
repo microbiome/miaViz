@@ -163,59 +163,59 @@
 NULL
 
 #' @rdname plotAbundance
-setGeneric("plotAbundance", signature = c("x"),
-        function(x, ...)
-            standardGeneric("plotAbundance"))
-
-.check_abund_plot_args <- function(one_facet = TRUE,
-                                ncol = 2){
-    if(!.is_a_bool(one_facet)){
-        stop("'one_facet' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if(!is.numeric(ncol) || as.integer(ncol) != ncol || ncol < 1){
-        stop("'ncol' must be an integer value above or equal to 1.",
-            call. = FALSE)
-    }
-}
+setGeneric("plotAbundance", signature = c("x"), function(x, ...)
+    standardGeneric("plotAbundance"))
 
 #' @rdname plotAbundance
-#' @importFrom scater plotExpression
 #' @importFrom ggplot2 facet_wrap
 #' @export
-setMethod("plotAbundance", signature = c("SummarizedExperiment"),
-    function(x,
-            col.var = features,
-            features = NULL,
-            order.row.by = order_rank_by,
-            order_rank_by = c("name","abund","revabund"),
-            order.col.by = order_sample_by,
-            order_sample_by = NULL,
-            decreasing = TRUE,
-            layout = c("bar","point"),
-            one.facet = one_facet,
-            one_facet = TRUE,
-            ncol = 2,
-            scales = "fixed",
-            assay.type = assay_name, assay_name = "counts",
-            ...){
+setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
+        x, assay.type = assay_name, assay_name = "counts",
+        layout = c("bar", "point"), ...){
         ############################# INPUT CHECK #############################
-        if(nrow(x) == 0L){
+        if( nrow(x) == 0L ){
             stop("No data to plot. nrow(x) == 0L.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
         .check_for_taxonomic_data_order(x)
-        layout <- match.arg(layout, c("bar","point"))
-        order.row.by <- match.arg(order.row.by, c("name","abund","revabund"))
-        .check_abund_plot_args(one_facet = one.facet, ncol = ncol)
-        if( !is.null(col.var) ){
-            col.var <- match.arg(col.var, colnames(colData(x)))
-        }
+        layout <- match.arg(layout, c("bar", "point"))
         ########################### INPUT CHECK END ###########################
         # Get the abundance data to be plotted. Agglomerate and apply relative
         # transformation if specified.
-        abund_data <- .get_abundance_data(x, assay.type, order.row.by, ...)
+        abund_data <- .get_abundance_data(x, assay.type, ...)
         group <- attr(abund_data, "group")
+        # If the data is paired, ensure that all time points have same sample
+        # set, i.e., each patient has all the time points.
+        abund_data <- .add_paired_samples(abund_data, ...)
+        # Order rows and columns
+        abund_data <- .order_abundance_rows(abund_data, ...)
+        abund_data <- .order_abundance_cols(abund_data, ...)
+        # Create the main plot
+        plot_out <- .abund_plotter(
+            abund_data, colour_by = group, layout = layout, ...)
+        # If user wants to incorporate sample information, add info as an own
+        # plot or use facets
+        plot_out <- .abund_plotter_for_metadata(plot_out, abund_data, ...)
+        return(plot_out)
+        # REFACTOR
+        # 1. get data, add paired samples if needed
+        # 2. determine order of data. Use the abund data.
+        # 2.2. order rows
+        # 2.3 order columns
+        # 3. create the main plot
+        #. 4. Add facets or feature plot (feature plot is done based on abund_data,
+        # just subset, it has only columns that is wanted to be plotted. They are
+        # just characters --> the order/levels of these characters hould match with order of X.)
+        
+        ## col.var can be multiple if facet.cols = TRUE
+        ## if paired = TRUE, col.var must be one and must be determined. Also order.col.by mus tbe set. (Does not make sense otherwise)
+        # if facet.rows && facet.cols, give error
+        # order.ank.by can also be a vector of same length as nrow()
+        # order.col.by can also be a vector of same length as ncol()
+
+        
         # Order columns
+        browser()
         order_col_by <- .norm_order_sample_by(
             order.col.by, unique(abund_data$colour_by), x)
         # Get additional column metadata to be plotted
@@ -230,56 +230,47 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
             abund_data <- order_out$abund_data
             features_data <- order_out$features_data
         }
+        abund_data[["X"]] <- factor(abund_data[["X"]], levels = unique(abund_data[order(abund_data$sample_type), "X"])[[1]])
         # Create the main plot
-        plot_out <- .abund_plotter(abund_data,
-                                colour_by = group,
-                                layout = layout,
-                                ...)
+        plot_out <- .abund_plotter(
+            abund_data, colour_by = group, layout = layout, ...)
+        browser()
+        # Whether to split the main plot to multiple facets. This is
+        # disabled if user wants to plot also column metadata.
+        if( facet.rows && is.null(features_data) ){
+            plot_out <- plot_out + 
+                facet_wrap(~colour_by, ncol = ncol, scales = scales)
+        }
+        if( facet.cols && !facet.rows && !is.null(col.var) ){
+            plot_out <- plot_out + 
+                facet_wrap(~facet_by, ncol = ncol, scales = scales)
+            .require_package("ggh4x")
+            plot_out + ggh4x::facet_nested(~ facet_by + ClinicalStatus, scales = scales)
+        }
         # Create the column metadata plot and create a list from plots
-        if(!is.null(features_data)){
+        if(!is.null(features_data) && !facet.cols && !facet.rows ){
             plot_feature_out <- .features_plotter(
                 features_data, order.col.by, ...)
             plot_out <- c(list(abundance = plot_out), plot_feature_out)
-        } else {
-            # Whether to split the main plot to multiple facets. This is
-            # disabled if user wants to plot also column metadata.
-            if (!one.facet) {
-                plot_out <- plot_out + 
-                    facet_wrap(~colour_by, ncol = ncol, scales = scales)
-            }
-        }
-        # Checks if the list is a ggplot object or regular list of ggplot
-        # objects
-        if( !is.ggplot(plot_out) ){
-            # If features is specified, then only abundance and features plots
-            # are returned as a list. If it is not, then only abundance plot is
-            # returned.
-            if( !is.null(col.var) ){
-                plot_out <- list(
-                    abundance = plot_out[["abundance"]], plot_out[[col.var]])
-                # Assigns the names back
-                names(plot_out) <- c("abundance", col.var)
-            } else{
-                plot_out <- plot_out[["abundance"]]
-            }
+            names(plot_out) <- c("abundance", col.var)
         }
         return(plot_out)
     }
 )
 
-#' @importFrom dplyr group_by summarize rename
+################################ HELP FUNCTIONS ################################
 #' @importFrom mia meltSE
 .get_abundance_data <- function(
-        x, assay.type, order_rank_by = "name", group = rank, rank = NULL,
+        x, assay.type, group = rank, rank = NULL,
         as.relative = use_relative, use_relative = FALSE, ...){
     # Input check
-    if(!.is_a_bool(as.relative)){
-        stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
-    }
     if( !(is.null(group) || (
         .is_non_empty_string(group) && group %in% colnames(rowData(x)) )) ){
         stop("'group' must be specify a name of a column from rowData or ",
             "NULL.", call. = FALSE)
+    }
+    if(!.is_a_bool(as.relative)){
+        stop("'as.relative' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     # Agglomerate data if user has specified
@@ -315,41 +306,163 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
         colnames(x) <- paste0("Sample", seq_len(ncol(x)))
     }
     # Melt TreeSE
-    data <- meltSE(
-        x, assay.type = assay.type, row.name = "colour_by", col.name = "X")
+    df <- meltSE(
+        x, assay.type = assay.type, row.name = "colour_by", col.name = "X",
+        add.col = TRUE)
     # Add correct column name for abundance values
-    colnames(data)[ colnames(data) == assay.type ] <- "Y"
-    # Reorder so that the order follows the order of sample names. The order is
-    # currently alphabetical.
-    data$X <- factor(data$X, levels = colnames(x))
-    # Order values
-    if( order_rank_by == "name" ){
-        # By default, factors follow alphabetical order. Order values, based
-        # on names i.e. alphabetical order.
-        lvl <- levels(data$colour_by)
-        lvl <- lvl[order(lvl)]
-    } else if( order_rank_by %in% c("abund","revabund") ){
-        # Control the order
-        decreasing <- ifelse(order_rank_by == "abund",TRUE,FALSE)
-        # Get values for each feature and sum them up
-        o <- data %>% 
-            select(!.data$X) %>%
-            group_by(.data$colour_by) %>% 
-            summarize(sum = sum(.data$Y))
-        # Order the data based on abundance. By default, feature that has
-        # highest library size comes first.
-        lvl <- o[order(o$sum, decreasing = decreasing), ] %>% 
-            pull(.data$colour_by) %>%
-            as.character()
-    } else {
-        stop(".")
-    }
-    # Apply the order
-    data$colour_by <- factor(data$colour_by, lvl)
-    data <- data[order(data$colour_by),]
+    colnames(df)[ colnames(df) == assay.type ] <- "Y"
     # Add group info to attributes
-    attr(data, "group") <- ifelse(!is.null(group), group, "Feature")
-    return(data)
+    attr(df, "group") <- ifelse(!is.null(group), group, "Feature")
+    return(df)
+}
+
+#' @importFrom dplyr %>% select distinct group_by mutate row_number ungroup
+#' @importFrom tidyr complete
+.add_paired_samples <- function(
+        df, paired = FALSE, order.col.by = order_sample_by,
+        order_sample_by = NULL, col.var = features, features = NULL, ...){
+    #
+    if(!.is_a_bool(paired)){
+        stop("'paired' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # When paired is specified, order.col.by must be a single variable name from
+    # colData
+    if( paired && !(.is_a_string(order.col.by) &&
+            order.col.by %in% colnames(df)) ){
+        stop("When 'paired=TRUE', 'order.col.by' must specify single ",
+            "variable from colData(x).", call. = FALSE)
+    }
+    # When paired is specified, also col.data must be a single variable name from
+    # colData
+    if( paired && !(.is_a_string(col.var) && col.var %in% colnames(df)) ){
+        stop("When 'paired=TRUE', 'col.var' must specify single ",
+             "variable from colData(x).", call. = FALSE)
+    }
+    #
+    # If the data is paired, and some data is missing from the repeated time
+    # points, add the samples as missing.
+    # Generate all combinations of sample_type and time_point
+    if( paired && !is.null(order.col.by) && !is.null(col.var) ){
+        # Get all the time point / patient combinations for each feature
+        complete_data <- df %>%
+            select(.data[[order.col.by]], .data[[col.var]], colour_by) %>%
+            distinct() %>%
+            complete(.data[[order.col.by]], .data[[col.var]], colour_by)
+        # Join with the original data, filling missing values with NA
+        df <- complete_data %>% 
+            dplyr::left_join(df, by = c(order.col.by, col.var, "colour_by"))
+        # Add arbitrary sample names for those samples that were added
+        df <- df %>%
+            group_by(colour_by) %>%
+            mutate(X = ifelse(is.na(as.character(X)),
+                paste0("added_", row_number()), as.character(X))) %>%
+            ungroup() %>%
+            mutate(X = factor(X)) 
+    }
+    return(df)
+}
+
+#' @importFrom dplyr %>% group_by summarise arrange desc distinct pull
+.order_abundance_rows <- function(
+        df, order.row.by = order_rank_by, order_rank_by = "name",
+        row.levels = NULL, order.col.by = order_sample_by,
+        order_sample_by = NULL, ...){
+    #
+    correct <- .is_a_string(order.row.by) && order.row.by %in%
+        c("name","abund","revabund")
+    if( !correct ){
+        stop("'order.row.by' must be 'name', 'abund' or 'revabund'.",
+            call. = FALSE)
+    }
+    if( !(is.null(row.levels) || is.character(row.levels)) ){
+        stop("'row.levels' must include all rows.", call. = FALSE)
+    }
+    # The ordering factor must be found from colData or be one of the rows
+    is_coldata <- .is_a_string(order.col.by) && order.col.by %in% colnames(df)
+    is_feat <- .is_a_string(order.col.by) && order.col.by %in% df$colour_by
+    if( !(is.null(order.col.by) || is_coldata || is_feat) ){
+        stop("'order.col.by' must be a variable from colData(x) or a name ",
+             "of a row.", call. = FALSE)
+    }
+    #
+    # If user specified levels to use, we get those levels and combine them with
+    # rownames so that user do not have to specify all names
+    if( !is.null(row.levels) ){
+        row.levels <- union(row.levels, as.character(df$colour_by))
+    }
+    # Order columns and rows alphabetically by default
+    if( is.null(row.levels) && order.row.by == "name" ){
+        row.levels <- sort(unique(unfactor(df$colour_by)))
+    }
+    # Get levels based on abundance
+    if( is.null(row.levels) && order.row.by %in% c("abund", "revabund") ){
+        row.levels <- df %>%
+            group_by(colour_by) %>%
+            summarise(mean_abundance = mean(Y, na.rm = TRUE)) %>%
+            # Either sort based on increasing or decreasing order
+            arrange(if (order.row.by == "abund") mean_abundance else
+                desc(mean_abundance)) %>%
+            distinct(colour_by) %>%
+            pull(colour_by)
+    }
+    # If user wants to order columns based on abundance of certain taxa, the
+    # taxa will be added on top of the figure
+    if( is_feat ){
+        row.levels <- unique(c(order.col.by, as.character(row.levels)))
+    }
+    # Apply the ordering
+    df$colour_by <- factor(df$colour_by, levels = row.levels)
+    return(df)
+}
+
+#' @importFrom dplyr %>% filter arrange desc distinct pull
+.order_abundance_cols <- function(
+        df, order.col.by = order_sample_by, order_sample_by = NULL,
+        col.levels = NULL, decreasing = TRUE, ...){
+    # The ordering factor must be found from colData or be one of the rows
+    is_coldata <- .is_a_string(order.col.by) && order.col.by %in% colnames(df)
+    is_feat <- .is_a_string(order.col.by) && order.col.by %in% df$colour_by
+    if( !(is.null(order.col.by) || is_coldata || is_feat) ){
+        stop("'order.col.by' must be a variable from colData(x) or a name ",
+            "of a row.", call. = FALSE)
+    }
+    if( !(is.null(col.levels) || is.character(col.levels)) ){
+        stop("col.levels' must include all columns.", call. = FALSE)
+    }
+    if( !.is_a_bool(decreasing) ){
+        stop("'decreasing' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If user specified levels to use, we get those levels and combine them with
+    # rownames so that user do not have to specify all names
+    if( !is.null(col.levels) ){
+        col.levels <- union(col.levels, as.character(df$X))
+    }
+    # If column from colData was specified, give the order of samples based on
+    # this variable
+    if( is.null(col.levels) && is_coldata ){
+        col.levels <- df %>%
+            arrange(if (decreasing) desc(.data[[order.col.by]]) else
+                .data[[order.col.by]]) %>%
+            distinct(X) %>%
+            pull(X)
+    }
+    # Filter for the specified feature, arrange the dataframe based on the
+    # specified column and direction, and then pull unique X values
+    if( is.null(col.levels) && is_feat ){
+        col.levels <- df %>%
+            filter(colour_by == order.col.by) %>%
+            arrange(if (decreasing) desc(Y) else Y) %>%
+            distinct(X) %>%
+            pull(X)
+    }
+    # If column ordering was not specified, order alphabetically
+    if( is.null(col.levels) ){
+        col.levels <- sort(unique(as.character(df$X)))
+    }
+    # Apply the ordering
+    df$X <- factor(df$X, levels = col.levels)
+    return(df)
 }
 
 .norm_order_sample_by <- function(order_sample_by, factors, x){
@@ -539,6 +652,74 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"),
     plot_out <- .add_legend(plot_out, add_legend)
     # Flip the plot if specified
     plot_out <- .flip_plot(plot_out, flipped, add_x_text)
+    return(plot_out)
+}
+
+.abund_plotter_for_metadata <- function(
+        plot_out, df, col.var = features, features = NULL,
+        facet.cols = FALSE, facet.rows = one.facet,
+        one.facet = one_facet, one_facet = FALSE, ncol = 2, scales = "fixed",
+        ...){
+    #
+    if( !(is.null(col.var) || (is.character(col.var) &&
+            all(col.var %in% colnames(df)))) ){
+        stop("'col.var' must specify columns from colData(x).", call. = FALSE)
+    }
+    if(!.is_a_bool(facet.cols)){
+        stop("'facet.cols' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if(!.is_a_bool(facet.rows)){
+        stop("'facet.rows' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(.is_an_integer(ncol) && ncol >= 1) ){
+        stop("'ncol' must be an integer value greater or equal to 1.",
+             call. = FALSE)
+    }
+    if( !(.is_a_string(scales) && scales %in%
+            c("fixed", "free", "free_x", "free_y")) ){
+        stop("'scales' must be 'fixed', 'free', 'free_x' or 'free_y.",
+            call. = FALSE)
+    }
+    #
+    # facet.rows is disabled if sample metadata is plotted
+    facet.rows <- if(!is.null(col.var)) FALSE else facet.rows
+    
+    # Whether to split the main plot to multiple facets. This is
+    # disabled if user wants to plot also column metadata.
+    if( facet.rows ){
+        plot_out <- plot_out + 
+            facet_wrap(~colour_by, ncol = ncol, scales = scales)
+    }
+    if( length(col.var) == 1L && facet.cols ){
+        plot_out <- plot_out + 
+            facet_wrap(
+                formula(paste0("~", paste0(col.var, collapse = "+"))),
+                ncol = ncol,
+                scales = scales)
+    }
+    if( length(col.var) > 1L && facet.cols ){
+        .require_package("ggh4x")
+        plot_out + ggh4x::facet_nested(
+            formula(paste0("~", paste0(col.var, collapse = "+"))),
+            ncol = ncol,
+            scales = scales)
+    }
+    # Create the column metadata plot and create a list from plots
+    if( !is.null(col.var) && !facet.cols ){
+        # Select only sample metadata. Get it in same order that the samples
+        # are. After this we have only col.var columns, and metadata includes
+        # as many rows as there are samples.
+        metadata <- df %>%
+            select(X, all_of(col.var)) %>%
+            distinct() %>%
+            arrange(X) %>%
+            select(-X)
+        # Create a plot
+        plot_feature_out <- .features_plotter(metadata, col.var, ...)
+        # Add the metadata plot to a list with main plot
+        plot_out <- c(list(abundance = plot_out), plot_feature_out)
+        names(plot_out) <- c("abundance", col.var)
+    }
     return(plot_out)
 }
 
