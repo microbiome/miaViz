@@ -316,7 +316,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     return(df)
 }
 
-#' @importFrom dplyr %>% select distinct group_by mutate row_number ungroup
+#' @importFrom dplyr %>% group_by summarize pull select distinct mutate
+#'     row_number ungroup
 #' @importFrom tidyr complete
 .add_paired_samples <- function(
         df, paired = FALSE, order.col.by = order_sample_by,
@@ -334,7 +335,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     }
     # When paired is specified, also col.data must be a single variable name from
     # colData
-    if( paired && !(.is_a_string(col.var) && col.var %in% colnames(df)) ){
+    if( paired && !(all(col.var %in% colnames(df))) ){
         stop("When 'paired=TRUE', 'col.var' must specify single ",
              "variable from colData(x).", call. = FALSE)
     }
@@ -343,21 +344,36 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     # points, add the samples as missing.
     # Generate all combinations of sample_type and time_point
     if( paired && !is.null(order.col.by) && !is.null(col.var) ){
+        # Calculate how many times each patient-time point pair is present.
+        # They must be only once (or none). If they are multiple times, the
+        # data is not correctly paired.
+        num_pairs <- df %>%
+            group_by(
+                across(all_of(col.var)), .data[[order.col.by]], colour_by) %>%
+            summarize(count = n(), .groups = "drop") %>%
+            pull(count)
+        if (any(num_pairs > 1)) {
+            stop("Data appears to contain multiple samples for some ",
+                "combinations of 'col.var' and 'order.col.by'. Ensure that ",
+                "each combination corresponds to a unique sample.",
+                call. = FALSE)
+        }
         # Get all the time point / patient combinations for each feature
-        complete_data <- df %>%
-            select(.data[[order.col.by]], .data[[col.var]], colour_by) %>%
+        sample_pairs <- df %>%
+            select(all_of(col.var), .data[[order.col.by]], colour_by) %>%
             distinct() %>%
-            complete(.data[[order.col.by]], .data[[col.var]], colour_by)
+            complete(!!!syms(col.var), .data[[order.col.by]], colour_by)
         # Join with the original data, filling missing values with NA
-        df <- complete_data %>% 
+        df <- sample_pairs %>%
             dplyr::left_join(df, by = c(order.col.by, col.var, "colour_by"))
-        # Add arbitrary sample names for those samples that were added
+        # Now we have a dataset that includes all patients for each timepoint.
+        # Add arbitrary sample names for those samples that were added.
         df <- df %>%
             group_by(colour_by) %>%
             mutate(X = ifelse(is.na(as.character(X)),
                 paste0("added_", row_number()), as.character(X))) %>%
             ungroup() %>%
-            mutate(X = factor(X)) 
+            mutate(X = factor(X))
     }
     return(df)
 }
@@ -557,7 +573,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
             data <- features_data[[order_sample_by]]
         }
         # If the ordering value is factor, order based on alphabetical order.
-        # Order numeric values in incerasing order.
+        # Order numeric values in increasing order.
         if(is.factor(data)){
             o <- order(data, decreasing = !decreasing)
         } else {
@@ -654,7 +670,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     plot_out <- .flip_plot(plot_out, flipped, add_x_text)
     return(plot_out)
 }
-
+#' @importFrom dplyr select all_of distinct arrange select
 .abund_plotter_for_metadata <- function(
         plot_out, df, col.var = features, features = NULL,
         facet.cols = FALSE, facet.rows = one.facet,
