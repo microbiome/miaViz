@@ -77,6 +77,12 @@
 #' 
 #'   \item \code{add.expl.var}: \code{Logical scalar}. Should explained
 #'   variance appear on the coordinate axes. (Default: \code{TRUE})
+#'   
+#'   \item \code{add.centroids}: \code{Logical scalar}. Should centroids
+#'   of variables be added. (Default: \code{FALSE})
+#'   
+#'   \item \code{add.species}: \code{Logical scalar}. Should species
+#'   scores be added. (Default: \code{FALSE})
 #' }
 #'
 #' 
@@ -229,6 +235,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         add.vectors = TRUE, vec.lab = NULL,
         expl.var = expl_var, expl_var = NULL,
         sep.group = "\U2014", repl.underscore = " ",
+        add.centroids = FALSE, add.species = FALSE,
         # These parameters below are not used in this function. They are just
         # catched so that they are not fed into scater::plotRecucedDim.
         ellipse.alpha = 0.2, ellipse.linewidth = 0.1,
@@ -265,6 +272,12 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     if ( !.is_a_string(repl.underscore) ) {
         stop("'repl.underscore' must be a string.", call. = FALSE)
     }
+    if( !.is_a_bool(add.centroids) ){
+        stop("'add.centroids' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(add.species) ){
+        stop("'add.species' must be TRUE or FALSE.", call. = FALSE)
+    }
     ###################### Input check end ####################
     # Get reducedDim
     reduced_dim <- reducedDim(tse, dimred)
@@ -276,21 +289,28 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Only 2 dimensions are supported currently
     ncomponents <- 2
     
-    # If specified, get explained variance
-    if( add.expl.var ){
+    # If user wants to add these, we have to get them from the actual RDA
+    # object. Check if it is found
+    if( add.expl.var || add.vectors || add.centroids || add.species ){
         # Check if data is available
         ind <- names(attributes(reduced_dim)) %in% c("rda", "cca", "obj")
         # If it can be found
         if( any(ind) ){
             # Add explained variance
             rda <- attributes(reduced_dim)[ind][[1]]
-            expl_var <- summary(rda)$concont$importance[2, ]*100
         } else{
             # If it cannot be found, give warning
-            warning(
-                paste("RDA/CCA object was not found. Please compute",
-                    "RDA/CCA by using addCCA or getCCA."), call. = FALSE)
+            warning("RDA/CCA object was not found. Please compute",
+                    "RDA/CCA by using addCCA or getCCA.", call. = FALSE)
+            # Disable these options if the object was not found
+            add.expl.var <- add.vectors  <- add.centroids <- add.species <-
+                FALSE
         }
+    }
+    
+    # If specified, get explained variance
+    if( add.expl.var ){
+        expl_var <- summary(rda)$concont$importance[2, ]*100
     }
     
     # Get scatter plot with plotReducedDim --> keep theme similar between
@@ -311,21 +331,9 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Get data for vectors
     vector_data <- NULL
     if( add.vectors ){
-        # Check if data is available
-        ind <- names(attributes(reduced_dim)) %in% c("rda", "cca", "obj")
-        # If it can be found
-        if( any(ind) ){
-            # Get biplot from cca object
-            rda <- attributes(reduced_dim)[ind][[1]]
-            vector_data <- rda$CCA$biplot
-            vector_data <- as.data.frame(vector_data)
-            vector_data[["group"]] <- rownames(vector_data)
-        } else{
-            # If it cannot be found, give warning
-            warning(
-                paste("RDA/CCA object was not found. Please compute RDA/CCA",
-                    "by using addCCA or getCCA."), call. = FALSE)
-        }
+        vector_data <- rda$CCA$biplot
+        vector_data <- as.data.frame(vector_data)
+        vector_data[["group"]] <- rownames(vector_data)
     }
     
     # Get variable names from sample metadata
@@ -334,15 +342,14 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Check if variable names can be found metadata
     all_var_found <- FALSE
     if( !is.null(vector_data) && length(variable_names) > 0 ){
-        all_var_found <- all(colSums(
-            sapply(rownames(vector_data), function(x)
-                sapply(variable_names, function(y) grepl(y, x)) )) == 1)
+        all_var_found <- vapply(rownames(vector_data), function(x)
+            vapply(variable_names, function(y) grepl(y, x), logical(1L)),
+            logical(ncol(coldata)) )
+        all_var_found <- all( colSums(all_var_found) == 1)
     }
     
     # Get vector labels
     if( !is.null(vector_data) ){
-        # Get those names that are present in data
-        
         # If user has not provided vector labels
         if( is.null(vec.lab) ){
             vector_label <- rownames(vector_data)
@@ -387,17 +394,32 @@ setMethod("plotRDA", signature = c(x = "matrix"),
             vector_data[["vector_label"]] <- vector_label
         } else{
             # If it cannot be found, give warning
-            warning(
-                paste("Significance data was not found. please compute",
-                    "CCA/RDA by using addCCA or getCCA."), call. = FALSE)
+            warning("Significance data was not found. please compute",
+                    "CCA/RDA by using addCCA or getCCA.", call. = FALSE)
         }
     }
     
+    # If user wants to add site scores
+    centroids <- NULL
+    if( add.centroids ){
+        .require_package("vegan")
+        centroids <- vegan::scores(rda, display = "cn") |> as.data.frame()
+        colnames(centroids) <- c("x", "y")
+    }
+    
+    # If user wants to add species scores
+    species_scores <- NULL
+    if( add.species ){
+        species_scores <- scores(rda, display = "species") |> as.data.frame()
+        colnames(species_scores) <- c("x", "y")
+    }
     # Create a list to return
     result <- list(
         plot = plot,
         ellipse_data = ellipse_data,
-        vector_data = vector_data
+        vector_data = vector_data,
+        centroids = centroids,
+        species_scores = species_scores
     )
     return(result)
 }
@@ -409,9 +431,10 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Get variable names from sample metadata
     var_names <- colnames(coldata)
     # Loop through vector labels
-    vector_label <- sapply(vector_label, FUN = function(name){
+    vector_label <- lapply(vector_label, FUN = function(name){
         # Get the real variable name from sample metadata
-        var_name <- var_names[ sapply(var_names, function(x) grepl(x, name)) ]
+        var_name <- var_names[
+            unlist(lapply(var_names, function(x) grepl(x, name))) ]
         # If the vector label includes also group name
         if( !name %in% var_names ){
             # Get the group name
@@ -426,14 +449,15 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         # Replace underscores with space
         new_name <- gsub("_", repl.underscore, new_name)
         return(new_name)
-    })
+    }) |> unlist()
     return(vector_label)
 }
 
 # This function adds significance info to vector labels
 .add_signif_to_vector_labels <- function(
         vector_label, var_names, signif_data, repl.underscore = " ", ...){
-    # Replace underscores from significance data and variable names to match labels
+    # Replace underscores from significance data and variable names to match
+    # labels
     rownames(signif_data) <- lapply(
         rownames(signif_data), function(x) gsub("_", repl.underscore, x)
         ) |> unlist()
@@ -443,7 +467,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Loop through vector labels
     vector_label <- lapply(vector_label, FUN = function(name){
         # Get the real variable name from sample metadata
-        var_name <- var_names[ sapply(var_names, function(x) grepl(x, name)) ]
+        var_name <- var_names[
+            unlist(lapply(var_names, function(x) grepl(x, name))) ]
         # Add percentage how much this variable explains, and p-value
         new_name <- expr(paste(!!name, " (",
             !!format(round(signif_data[var_name, "Explained variance"]*100, 1),
@@ -606,5 +631,23 @@ setMethod("plotRDA", signature = c(x = "matrix"),
             }
         }
     }
+    
+    # If user wants to add centroids
+    if( !is.null(plot_data[["centroids"]]) ){
+        plot <- plot +
+            geom_point(
+                plot_data[["centroids"]],
+                mapping = aes(x = x, y = y),
+                shape = 10, color = "blue")
+    }
+    
+    # If user wants to add species scores
+    if( !is.null(plot_data[["species_scores"]]) ){
+        plot <- plot + geom_point(
+            plot_data[["species_scores"]],
+            mapping = aes(x = x, y = y),
+            shape = 4, color = "red")
+    }
+    
     return(plot)
 }
