@@ -215,8 +215,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
             "the names.\nThe following names are not allowed: '",
             paste0(not_allowed, collapse = "', '"), "'", call. = FALSE)
     }
-    all_vars <- c(order.col.by, col.var)
-    if( sum(colnames(colData(x)) %in% all_vars) != length(all.vars) ){
+    all_vars <- unique(c(order.col.by, col.var))
+    if( sum(colnames(colData(x)) %in% all_vars) != length(all_vars) ){
         stop("colData(x) must have unique colnames.", call. = FALSE)
     }
     return(NULL)
