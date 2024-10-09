@@ -42,9 +42,19 @@
 #'   values or by a reverse order of
 #'   abundance values (\code{"revabund"}). (Default: \code{"name"})
 #'   
+#'   \item \code{row.levels}: \code{Character vector}. Specifies order of rows
+#'   in a plot. Can be combined with \code{order.row.by} to control order
+#'   of only certain rows. If \code{NULL}, ordering follows \code{order.row.by}.
+#'   (Default: \code{NULL})
+#'   
 #'   \item \code{order.col.by}: \code{Character scalar}. from the chosen rank of
 #'   abundance data or from \code{colData} to select values to order the
 #'   abundance plot by. (Default: \code{NULL})
+#'   
+#'   \item \code{col.levels}: \code{Character vector}. Specifies order of
+#'   columns in a plot. Can be combined with \code{order.col.by} to control
+#'   order of only certain columns. If \code{NULL}, ordering follows
+#'   \code{order.col.by}. (Default: \code{NULL})
 #'   
 #'   \item \code{decreasing}: \code{Logical scalar}. If the \code{order.col.by}
 #'   is defined and the values are numeric, should the values used to order in
@@ -117,19 +127,17 @@
 #' # These two plots can be combined with wrap_plots function from patchwork
 #' # package
 #' library(patchwork)
-#' wrap_plots(plot, ncol = 1)
+#' wrap_plots(plot, ncol = 1, heights = c(0.95, 0.05))
 #' }
 #' 
 #' # Same plot as above but showing sample IDs as labels for the x axis on the
-#' # top plot
-#' plot[[1]] <- plotAbundance(
+#' # top plot. Moreover, we use facets
+#' plot <- plotAbundance(
 #'     tse, assay.type = "relabundance",
 #'     group = "Phylum", col.var = "SampleType", add.legend = FALSE,
-#'     add.x.text = TRUE)[[1]] +
+#'     add.x.text = TRUE, facet.cols = TRUE, scales = "free_x") +
 #'     theme(axis.text.x = element_text(angle = 90)) 
-#' \donttest{
-#' wrap_plots(plot, ncol = 1, heights = c(0.8,0.2))
-#' }
+#' plot
 #' 
 #' # Compositional barplot with top 5 taxa and samples sorted by
 #' # "Bacteroidetes"
@@ -196,9 +204,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     if( !(.is_a_string(layout) && layout %in% c("bar", "point")) ){
         stop("'layout' must be 'bar' or 'point'.", call. = FALSE)
     }
-    if( !(is.null(order.col.by) || (.is_a_string(order.col.by) &&
-            order.col.by %in% colnames(colData(x)))) ){
-        stop("'order.col.by' must specify a column from colData(x).",
+    if( !(is.null(order.col.by) || .is_a_string(order.col.by) ) ){
+        stop("'order.col.by' must specify a single character value.",
             call. = FALSE)
     }
     if( !(is.null(col.var) || (is.character(col.var) &&
@@ -534,6 +541,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 # either as facets or unique plot. Moreover, the function has also functinality
 # to split rows to unique facets.
 #' @importFrom dplyr select all_of distinct arrange select
+#' @importFrom stats formula
 .abund_plotter_incorporate_metadata <- function(
         plot_out, df, col.var = features, features = NULL,
         facet.cols = FALSE, facet.rows = one.facet,
