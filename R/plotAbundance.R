@@ -167,6 +167,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         .check_assay_present(assay.type, x)
         .check_for_taxonomic_data_order(x)
         layout <- match.arg(layout, c("bar", "point"))
+        .input_check_for_abundance(x, assay.type, layout, ...)
         ########################### INPUT CHECK END ###########################
         # Get the abundance data to be plotted. Agglomerate and apply relative
         # transformation if specified.
