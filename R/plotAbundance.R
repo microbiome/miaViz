@@ -44,8 +44,8 @@
 #'   
 #'   \item \code{row.levels}: \code{Character vector}. Specifies order of rows
 #'   in a plot. Can be combined with \code{order.row.by} to control order
-#'   of only certain rows. If \code{NULL}, ordering follows \code{order.row.by}.
-#'   (Default: \code{NULL})
+#'   of only certain rows. If \code{NULL}, the order follows
+#'   \code{order.row.by}. (Default: \code{NULL})
 #'   
 #'   \item \code{order.col.by}: \code{Character scalar}. from the chosen rank of
 #'   abundance data or from \code{colData} to select values to order the
@@ -53,7 +53,7 @@
 #'   
 #'   \item \code{col.levels}: \code{Character vector}. Specifies order of
 #'   columns in a plot. Can be combined with \code{order.col.by} to control
-#'   order of only certain columns. If \code{NULL}, ordering follows
+#'   order of only certain columns. If \code{NULL}, the order follows
 #'   \code{order.col.by}. (Default: \code{NULL})
 #'   
 #'   \item \code{decreasing}: \code{Logical scalar}. If the \code{order.col.by}
