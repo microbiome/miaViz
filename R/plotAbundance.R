@@ -440,8 +440,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     # this variable
     if( is.null(col.levels) && is_coldata ){
         col.levels <- df %>%
-            arrange(if (decreasing) all_of(order.col.by) else
-                desc(all_of(order.col.by)) ) %>%
+            arrange(if (decreasing) .data[[order.col.by]] else
+                desc(.data[[order.col.by]]) ) %>%
             distinct(X) %>%
             pull(X)
     }
