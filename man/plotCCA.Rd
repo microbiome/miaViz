@@ -90,6 +90,12 @@ variance and p-value appear in the labels. (Default: \code{TRUE})
 
 \item \code{add.expl.var}: \code{Logical scalar}. Should explained
 variance appear on the coordinate axes. (Default: \code{TRUE})
+
+\item \code{add.centroids}: \code{Logical scalar}. Should centroids
+of variables be added. (Default: \code{FALSE})
+
+\item \code{add.species}: \code{Logical scalar}. Should species
+scores be added. (Default: \code{FALSE})
 }}
 
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. Determines
