@@ -160,7 +160,7 @@ setGeneric("plotAbundance", signature = c("x"), function(x, ...)
 setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         x, assay.type = assay_name, assay_name = "counts", layout = "bar", ...){
     #
-    .check_abundane_input(x, assay.type, layout, ...)
+    .check_abundance_input(x, assay.type, layout, ...)
     # Get the abundance data to be plotted. Agglomerate and apply relative
     # transformation if specified.
     abund_data <- .get_abundance_data(x, assay.type, ...)
@@ -185,7 +185,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 ################################################################################
 # Data handlers
 
-.check_abundane_input <- function(
+.check_abundance_input <- function(
         x, assay.type, layout, order.col.by = order_sample_by,
         order_sample_by = NULL, col.var = features, features = NULL, ...){
     #
@@ -201,8 +201,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         stop("'order.col.by' must specify a column from colData(x).",
             call. = FALSE)
     }
-    if( !(is.null(col.var) || (.is_a_string(col.var) &&
-            col.var %in% colnames(colData(x)))) ){
+    if( !(is.null(col.var) || (is.character(col.var) &&
+            all(col.var %in% colnames(colData(x))))) ){
         stop("'col.var' must specify a column from colData(x).",
             call. = FALSE)
     }
