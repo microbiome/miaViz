@@ -204,7 +204,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     if( !(is.null(col.var) || (.is_a_string(col.var) &&
             col.var %in% colnames(colData(x)))) ){
         stop("'col.var' must specify a column from colData(x).",
-             call. = FALSE)
+            call. = FALSE)
     }
     # Check that all the colnames are unique in colData. The functions assume
     # that columns have unique names. Moreover, the data must not have special
@@ -212,8 +212,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     not_allowed <- c("X", "Y", "colour_by", assay.type)
     if( any(colnames(colData(x)) %in% not_allowed) ){
         stop("colData(x) includes colnames that are not supported. Modify ",
-             "the names.\nThe following names are not allowed: '",
-             paste0(not_allowed, collapse = "', '"), "'", call. = FALSE)
+            "the names.\nThe following names are not allowed: '",
+            paste0(not_allowed, collapse = "', '"), "'", call. = FALSE)
     }
     all_vars <- c(order.col.by, col.var)
     if( sum(colnames(colData(x)) %in% all_vars) != length(all.vars) ){
@@ -308,7 +308,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     # from colData
     if( paired && !(all(col.var %in% colnames(df))) ){
         stop("When 'paired=TRUE', 'col.var' must specify single ",
-             "variable from colData(x).", call. = FALSE)
+            "variable from colData(x).", call. = FALSE)
     }
     #
     # If the data is paired, and some data is missing from the repeated time
@@ -371,7 +371,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     is_feat <- .is_a_string(order.col.by) && order.col.by %in% df$colour_by
     if( !(is.null(order.col.by) || is_coldata || is_feat) ){
         stop("'order.col.by' must be a variable from colData(x) or a name ",
-             "of a row.", call. = FALSE)
+            "of a row.", call. = FALSE)
     }
     #
     # If user specified levels to use, we get those levels and combine them with
@@ -552,11 +552,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     }
     if( sum(c(facet.rows, facet.cols)) == 2L ){
         stop("'Both 'facet.rows' and 'facet.cols' cannot be TRUE.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if( !(.is_an_integer(ncol) && ncol >= 1) ){
         stop("'ncol' must be an integer value greater or equal to 1.",
-             call. = FALSE)
+            call. = FALSE)
     }
     if( !(.is_a_string(scales) && scales %in%
             c("fixed", "free", "free_x", "free_y")) ){
