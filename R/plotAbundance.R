@@ -320,7 +320,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         # data is not correctly paired.
         num_pairs <- df %>%
             group_by(
-                across(all_of(col.var)), .data[[order.col.by]], colour_by) %>%
+                across(all_of(col.var)), all_of(order.col.by), colour_by) %>%
             summarize(count = n(), .groups = "drop") %>%
             pull(count)
         if (any(num_pairs > 1)) {
@@ -331,9 +331,9 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         }
         # Get all the time point / patient combinations for each feature
         sample_pairs <- df %>%
-            select(all_of(col.var), .data[[order.col.by]], colour_by) %>%
+            select(all_of(col.var), all_of(order.col.by), colour_by) %>%
             distinct() %>%
-            complete(!!!syms(col.var), .data[[order.col.by]], colour_by)
+            complete(!!!syms(col.var), all_of(order.col.by), colour_by)
         # Join with the original data, filling missing values with NA
         df <- sample_pairs %>%
             dplyr::left_join(df, by = c(order.col.by, col.var, "colour_by"))
@@ -433,8 +433,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     # this variable
     if( is.null(col.levels) && is_coldata ){
         col.levels <- df %>%
-            arrange(if (decreasing) .data[[order.col.by]] else
-                desc(.data[[order.col.by]]) ) %>%
+            arrange(if (decreasing) all_of(order.col.by) else
+                desc(all_of(order.col.by)) ) %>%
             distinct(X) %>%
             pull(X)
     }
@@ -485,7 +485,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         ...
         ){
     # Start plotting
-    plot_out <- ggplot(object, aes(x = .data[["X"]], y = .data[["Y"]])) +
+    plot_out <- ggplot(object, aes(x = X, y = Y)) +
         xlab(xlab) +
         ylab(ylab)
     # Either bar or point plot
@@ -673,7 +673,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     }
     # Start plotting
     plot_out <- ggplot(
-        feature_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
+        feature_data, aes(x = X, y = Y)) +
         labs(x = xlab, y = name)
     # If there is only one value, i.e., the variable to be plotted was factor
     if( length(unique(feature_data$Y)) == 1L ){
