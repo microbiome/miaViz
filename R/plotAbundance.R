@@ -327,7 +327,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         # data is not correctly paired.
         num_pairs <- df %>%
             group_by(
-                across(all_of(col.var)), all_of(order.col.by), colour_by) %>%
+                across(all_of(col.var)), .data[[order.col.by]], colour_by) %>%
             summarize(count = n(), .groups = "drop") %>%
             pull(count)
         if (any(num_pairs > 1)) {
@@ -340,7 +340,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         sample_pairs <- df %>%
             select(all_of(col.var), all_of(order.col.by), colour_by) %>%
             distinct() %>%
-            complete(!!!syms(col.var), all_of(order.col.by), colour_by)
+            complete(!!!syms(col.var), .data[[order.col.by]], colour_by)
         # Join with the original data, filling missing values with NA
         df <- sample_pairs %>%
             dplyr::left_join(df, by = c(order.col.by, col.var, "colour_by"))
