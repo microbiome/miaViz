@@ -546,6 +546,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 # to split rows to unique facets.
 #' @importFrom dplyr select all_of distinct arrange select
 #' @importFrom stats formula
+#' @importFrom ggh4x facet_nested
 .abund_plotter_incorporate_metadata <- function(
         plot_out, df, col.var = features, features = NULL,
         facet.cols = FALSE, facet.rows = one.facet,

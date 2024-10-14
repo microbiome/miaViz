@@ -33,44 +33,46 @@ Encoding: UTF-8
 LazyData: false
 Depends:
     R (>= 4.0),
-    SummarizedExperiment,
-    TreeSummarizedExperiment,
-    mia (>= 1.13.0),
     ggplot2,
-    ggraph (>= 2.0)
+    ggraph (>= 2.0),
+    mia (>= 1.13.0),
+    SummarizedExperiment,
+    TreeSummarizedExperiment
 Imports:
-    methods,
-    stats,
-    S4Vectors,
+    ape,
     BiocGenerics,
     BiocParallel,
     DelayedArray,
-    scater,
-    ggtree,
+    DirichletMultinomial,
+    dplyr,
+    ggh4x,
     ggnewscale,
-    viridis,
+    ggrepel,
+    ggplot2,
+    ggraph,
+    ggtree,
+    methods,
+    rlang,
+    scater,
+    S4Vectors,
+    SingleCellExperiment,
+    stats,
     tibble,
+    tidygraph,
+    tidyr,
     tidytext,
     tidytree,
-    tidygraph,
-    rlang,
-    purrr,
-    tidyr,
-    dplyr,
-    ape,
-    DirichletMultinomial,
-    ggrepel,
-    SingleCellExperiment
+    viridis
 Suggests:
-    knitr,
-    rmarkdown,
     BiocStyle,
-    testthat,
-    patchwork,
-    vegan,
     bluster,
+    circlize,
     ComplexHeatmap,
-    circlize
+    knitr,
+    patchwork,
+    rmarkdown,
+    testthat,
+    vegan
 Remotes:
     github::microbiome/miaTime
 Roxygen: list(markdown = TRUE)
