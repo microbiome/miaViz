@@ -223,7 +223,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
             paste0(not_allowed, collapse = "', '"), "'", call. = FALSE)
     }
     # Leave order.col.by out of the comparison, if it specifies a feature
-    order.col.by <- if(order.col.by %in% colnames(colData(x))) order.col.by else
+    order.col.by <- if( !is.null(order.col.by) && order.col.by %in% 
+                       colnames(colData(x))) order.col.by else
         NULL
     all_vars <- unique(c(order.col.by, col.var))
     if( sum(colnames(colData(x)) %in% all_vars) != length(all_vars) ){
