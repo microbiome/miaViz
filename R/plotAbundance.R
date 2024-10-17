@@ -589,7 +589,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     if( length(col.var) == 1L && facet.cols ){
         plot_out <- plot_out + 
             facet_wrap(
-                formula(paste0("~", paste0(col.var, collapse = "+"))),
+                formula(paste0("~ `", paste0(col.var, collapse = "+"), "`")),
                 ncol = ncol,
                 scales = scales)
     }
@@ -599,7 +599,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     if( length(col.var) > 1L && facet.cols ){
         .require_package("ggh4x")
         plot_out <- plot_out + ggh4x::facet_nested(
-            formula(paste0("~", paste0(col.var, collapse = "+"))),
+            formula(paste0("~ `", paste0(col.var, collapse = "+"), "`")),
             scales = scales)
     }
     # If user do not want to create facets from the sample metadata, create
