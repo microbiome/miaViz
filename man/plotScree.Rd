@@ -41,19 +41,24 @@ or a vector of eigenvalues.}
 the reduced dimension to plot. This is used when x is a SingleCellExperiment
 to extract the eigenvalues from \code{reducedDim(x, dimred)}.}
 
-\item{show.barplot}{\code{Logical}. Whether to show a barplot. Default is
-TRUE.}
+\item{show.barplot}{\code{Logical scalar}. Whether to show a barplot.
+(Default: \code{TRUE}).}
 
-\item{show.points}{\code{Logical}. Whether to show points. Default is TRUE.}
+\item{show.points}{\code{Logical scalar}. Whether to show points.
+(Default: \code{TRUE}).}
 
-\item{show.line}{\code{Logical}. Whether to show a line connecting points.
-Default is TRUE.}
+\item{show.line}{\code{Logical scalar}. Whether to show a line connecting points.
+(Default: \code{TRUE}).}
 
-\item{show.labels}{\code{Logical}. Whether to show labels for each point.
-Default is FALSE.}
+\item{show.labels}{\code{Logical scalar}. Whether to show labels for each point.
+(Default: \code{FALSE}).}
 
-\item{cumulative}{\code{Logical}. Whether to show cumulative explained
-variance. Default is FALSE.}
+\item{cumulative}{\code{Logical scalar}. Whether to show cumulative explained
+variance. (Default: \code{FALSE}).}
+
+\item{names}{\code{Character vector}. Optional names for the components
+that will be displayed on the x-axis. If not provided, the components
+are labeled sequentially as 1, 2, 3, etc.}
 }
 \value{
 A \code{ggplot2} object
@@ -96,6 +101,6 @@ tse <- addRDA(
     )
 
 # Plot scree plot
-plotScree(sce, "RDA")
+plotScree(tse, "RDA")
 
 }

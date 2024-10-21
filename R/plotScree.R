@@ -12,19 +12,24 @@
 #' the reduced dimension to plot. This is used when x is a SingleCellExperiment
 #' to extract the eigenvalues from \code{reducedDim(x, dimred)}.
 #' 
-#' @param show.barplot \code{Logical}. Whether to show a barplot. Default is 
-#' TRUE.
+#' @param show.barplot \code{Logical scalar}. Whether to show a barplot. 
+#' (Default: \code{TRUE}).
 #' 
-#' @param show.points \code{Logical}. Whether to show points. Default is TRUE.
+#' @param show.points \code{Logical scalar}. Whether to show points. 
+#' (Default: \code{TRUE}).
 #' 
-#' @param show.line \code{Logical}. Whether to show a line connecting points. 
-#' Default is TRUE.
+#' @param show.line \code{Logical scalar}. Whether to show a line connecting points. 
+#' (Default: \code{TRUE}).
 #' 
-#' @param show.labels \code{Logical}. Whether to show labels for each point. 
-#' Default is FALSE.
+#' @param show.labels \code{Logical scalar}. Whether to show labels for each point. 
+#' (Default: \code{FALSE}).
 #' 
-#' @param cumulative \code{Logical}. Whether to show cumulative explained 
-#' variance. Default is FALSE.
+#' @param cumulative \code{Logical scalar}. Whether to show cumulative explained 
+#' variance. (Default: \code{FALSE}).
+#' 
+#' @param names \code{Character vector}. Optional names for the components 
+#' that will be displayed on the x-axis. If not provided, the components 
+#' are labeled sequentially as 1, 2, 3, etc.
 #' 
 #' @param ... additional parameters for plotting
 #'
@@ -66,7 +71,7 @@
 #'     )
 #' 
 #' # Plot scree plot
-#' plotScree(sce, "RDA")
+#' plotScree(tse, "RDA")
 #' 
 NULL
 
