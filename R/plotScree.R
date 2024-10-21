@@ -87,7 +87,7 @@ setMethod("plotScree", signature = c(x = "SingleCellExperiment"),
             stop("'dimred' must specify a valid reducedDim.", call. = FALSE)
         }
         # Get reducedDim
-        reduced_dim <- reducedDim(tse, dimred)
+        reduced_dim <- reducedDim(x, dimred)
       
         # Extract eigenvalues
         # Check if data is available
