@@ -17,7 +17,17 @@ plotScree(x, ...)
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 or a vector of eigenvalues.}
 
-\item{...}{additional parameters for plotting}
+\item{...}{additional parameters for plotting
+\describe{
+\item{\code{show.barplot}}{Logical scalar. Whether to show a barplot.
+(Default: \code{TRUE}).}
+\item{\code{show.points}}{Logical scalar. Whether to show points.
+(Default: \code{TRUE}).}
+\item{\code{show.line}}{Logical scalar. Whether to show a line connecting
+points. (Default: \code{TRUE}).}
+\item{\code{show.labels}}{Logical scalar. Whether to show labels for each
+point. (Default: \code{FALSE}).}
+}}
 
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. Determines
 the reduced dimension to plot. This is used when x is a TreeSummarizedExperiment

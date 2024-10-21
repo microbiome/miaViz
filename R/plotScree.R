@@ -20,6 +20,16 @@
 #' are labeled sequentially as 1, 2, 3, etc.
 #' 
 #' @param ... additional parameters for plotting
+#' \describe{
+#'   \item{\code{show.barplot}}{Logical scalar. Whether to show a barplot. 
+#'   (Default: \code{TRUE}).}
+#'   \item{\code{show.points}}{Logical scalar. Whether to show points. 
+#'   (Default: \code{TRUE}).}
+#'   \item{\code{show.line}}{Logical scalar. Whether to show a line connecting 
+#'   points. (Default: \code{TRUE}).}
+#'   \item{\code{show.labels}}{Logical scalar. Whether to show labels for each 
+#'   point. (Default: \code{FALSE}).}
+#' }
 #'
 #' @details
 #' \code{plotScree} creates a scree plot or eigenvalues plot, which is useful
@@ -97,16 +107,13 @@ setMethod("plotScree", signature = c(x = "vector"),
         if (!is.numeric(x)) {
             stop("'x' must be a numeric vector.", call. = FALSE)
         }
+        plot_data <- .prepare_data(x, names, cumulative)
         # plot vector
-        .scree_plotter(x, names = names, cumulative = cumulative, ...)
+        .scree_plotter(plot_data, cumulative = cumulative, ...)
     }
 )
 
-.scree_plotter <- function(x, names = NULL, show.barplot = TRUE, 
-                           show.points = TRUE, 
-                           show.line = TRUE, show.labels = FALSE, 
-                           cumulative = FALSE, ...) {
-    # Create data frame
+.prepare_data <- function(x, names = NULL, cumulative = FALSE) {
     df <- data.frame(
         Component = if (!is.null(names)) names else seq_along(x),
         Eigenvalue = x
@@ -117,6 +124,13 @@ setMethod("plotScree", signature = c(x = "vector"),
         df$CumulativeProportion <- cumsum(df$Eigenvalue) / sum(df$Eigenvalue)
     }
     
+    return(df)
+}
+
+.scree_plotter <- function(df, show.barplot = TRUE, 
+                           show.points = TRUE, 
+                           show.line = TRUE, show.labels = FALSE, 
+                           cumulative = FALSE, ...) {
     # Create base plot
     p <- ggplot(df, aes(x = Component, y = if (cumulative) 
         CumulativeProportion else Eigenvalue))
