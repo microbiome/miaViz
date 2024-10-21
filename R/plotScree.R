@@ -86,10 +86,16 @@ setMethod("plotScree", signature = c(x = "SingleCellExperiment"),
         if (!dimred %in% reducedDimNames(x)) {
             stop("'dimred' must specify a valid reducedDim.", call. = FALSE)
         }
+        # Get reducedDim
+        reduced_dim <- reducedDim(tse, dimred)
       
         # Extract eigenvalues
-        eig <- attr(reducedDim(x, dimred), "eig")
-        if (is.null(eig)) {
+        # Check if data is available
+        ind <- names(attributes(reduced_dim)) %in% c("eig", "varExplained")
+        if( any(ind) ){
+            # Add explained variance
+            eig <- attributes(reduced_dim)[ind][[1]]
+        } else{
             stop("No eigenvalues found in the specified reducedDim.", 
                  call. = FALSE)
         }
