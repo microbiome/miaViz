@@ -8,50 +8,20 @@
 \usage{
 plotScree(x, ...)
 
-\S4method{plotScree}{SingleCellExperiment}(
-  x,
-  dimred,
-  show.barplot = TRUE,
-  show.points = TRUE,
-  show.line = TRUE,
-  show.labels = FALSE,
-  cumulative = FALSE,
-  ...
-)
+\S4method{plotScree}{SingleCellExperiment}(x, dimred, cumulative = FALSE, ...)
 
-\S4method{plotScree}{vector}(
-  x,
-  names = NULL,
-  show.barplot = TRUE,
-  show.points = TRUE,
-  show.line = TRUE,
-  show.labels = FALSE,
-  cumulative = FALSE,
-  ...
-)
+\S4method{plotScree}{vector}(x, names = NULL, cumulative = FALSE, ...)
 }
 \arguments{
 \item{x}{a
-\code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
+\code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 or a vector of eigenvalues.}
 
 \item{...}{additional parameters for plotting}
 
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. Determines
-the reduced dimension to plot. This is used when x is a SingleCellExperiment
+the reduced dimension to plot. This is used when x is a TreeSummarizedExperiment
 to extract the eigenvalues from \code{reducedDim(x, dimred)}.}
-
-\item{show.barplot}{\code{Logical scalar}. Whether to show a barplot.
-(Default: \code{TRUE}).}
-
-\item{show.points}{\code{Logical scalar}. Whether to show points.
-(Default: \code{TRUE}).}
-
-\item{show.line}{\code{Logical scalar}. Whether to show a line connecting points.
-(Default: \code{TRUE}).}
-
-\item{show.labels}{\code{Logical scalar}. Whether to show labels for each point.
-(Default: \code{FALSE}).}
 
 \item{cumulative}{\code{Logical scalar}. Whether to show cumulative explained
 variance. (Default: \code{FALSE}).}
@@ -65,14 +35,14 @@ A \code{ggplot2} object
 }
 \description{
 \code{plotScree} creates a scree plot or eigenvalues plot starting from a
-SingleCellExperiment object or a vector of eigenvalues. This visualization
+TreeSummarizedExperiment object or a vector of eigenvalues. This visualization
 shows how the eigenvalues decrease across components.
 }
 \details{
 \code{plotScree} creates a scree plot or eigenvalues plot, which is useful
 for visualizing the relative importance of components in dimensionality
 reduction techniques like PCA, RDA, or CCA. When the input is a
-SingleCellExperiment, the function extracts eigenvalues from the specified
+TreeSummarizedExperiment, the function extracts eigenvalues from the specified
 reduced dimension slot. When the input is a vector, it directly uses these
 values as eigenvalues.
 

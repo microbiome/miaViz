@@ -1,28 +1,16 @@
 #' Plot Scree Plot or Eigenvalues
 #'
 #' \code{plotScree} creates a scree plot or eigenvalues plot starting from a
-#' SingleCellExperiment object or a vector of eigenvalues. This visualization
+#' TreeSummarizedExperiment object or a vector of eigenvalues. This visualization
 #' shows how the eigenvalues decrease across components.
 #'
 #' @param x a
-#' \code{\link[SingleCellExperiment:SingleCellExperiment]{SingleCellExperiment}}
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
 #' or a vector of eigenvalues.
 #' 
 #' @param dimred \code{Character scalar} or \code{integer scalar}. Determines
-#' the reduced dimension to plot. This is used when x is a SingleCellExperiment
+#' the reduced dimension to plot. This is used when x is a TreeSummarizedExperiment
 #' to extract the eigenvalues from \code{reducedDim(x, dimred)}.
-#' 
-#' @param show.barplot \code{Logical scalar}. Whether to show a barplot. 
-#' (Default: \code{TRUE}).
-#' 
-#' @param show.points \code{Logical scalar}. Whether to show points. 
-#' (Default: \code{TRUE}).
-#' 
-#' @param show.line \code{Logical scalar}. Whether to show a line connecting points. 
-#' (Default: \code{TRUE}).
-#' 
-#' @param show.labels \code{Logical scalar}. Whether to show labels for each point. 
-#' (Default: \code{FALSE}).
 #' 
 #' @param cumulative \code{Logical scalar}. Whether to show cumulative explained 
 #' variance. (Default: \code{FALSE}).
@@ -37,7 +25,7 @@
 #' \code{plotScree} creates a scree plot or eigenvalues plot, which is useful
 #' for visualizing the relative importance of components in dimensionality
 #' reduction techniques like PCA, RDA, or CCA. When the input is a
-#' SingleCellExperiment, the function extracts eigenvalues from the specified
+#' TreeSummarizedExperiment, the function extracts eigenvalues from the specified
 #' reduced dimension slot. When the input is a vector, it directly uses these
 #' values as eigenvalues.
 #' 
@@ -83,8 +71,7 @@ setGeneric("plotScree", signature = c("x"),
 #' @rdname plotScree
 #' @export
 setMethod("plotScree", signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, show.barplot = TRUE, show.points = TRUE, 
-             show.line = TRUE, show.labels = FALSE, cumulative = FALSE, ...) {
+    function(x, dimred, cumulative = FALSE, ...) {
         # Check if dimred exists
         if (!dimred %in% reducedDimNames(x)) {
             stop("'dimred' must specify a valid reducedDim.", call. = FALSE)
@@ -98,59 +85,65 @@ setMethod("plotScree", signature = c(x = "SingleCellExperiment"),
         }
       
         # Call the vector method
-        plotScree(as.numeric(eig), names(eig), show.barplot = show.barplot, 
-                  show.points = show.points, show.line = show.line, 
-                  show.labels = show.labels, cumulative = cumulative, ...)
+        plotScree(as.numeric(eig), names(eig), cumulative = cumulative, ...)
     }
 )
 
 #' @rdname plotScree
 #' @export
 setMethod("plotScree", signature = c(x = "vector"),
-    function(x, names = NULL, show.barplot = TRUE, show.points = TRUE, 
-             show.line = TRUE, show.labels = FALSE, cumulative = FALSE, ...) {
+    function(x, names = NULL, cumulative = FALSE, ...) {
+        # Ensure 'x' is numeric
         if (!is.numeric(x)) {
             stop("'x' must be a numeric vector.", call. = FALSE)
         }
-        
-        # Create data frame
-        df <- data.frame(
-            Component = if (!is.null(names)) names else seq_along(x),
-            Eigenvalue = x
-        )
-      
-        # Calculate cumulative proportion if needed
-        if (cumulative) {
-            df$CumulativeProportion <- cumsum(df$Eigenvalue) / sum(df$Eigenvalue)
-        }
-      
-        # Create base plot
-        p <- ggplot(df, aes(x = Component, y = if (cumulative) 
-            CumulativeProportion else Eigenvalue))
-      
-        # Add layers based on user preferences
-        if (show.barplot) {
-            p <- p + geom_col(fill = "lightblue", color = "black")
-        }
-        if (show.points) {
-            p <- p + geom_point(size = 3)
-        }
-        if (show.line) {
-            p <- p + geom_line()
-        }
-        if (show.labels) {
-            p <- p + geom_text(aes(label = round(if (cumulative) 
-                CumulativeProportion else Eigenvalue, 2)), vjust = -0.5)
-        }
-      
-        # Customize appearance
-        p <- p + theme_minimal() +
-            labs(x = "Component", 
-                 y = if (cumulative) "Cumulative Proportion of Variance" 
-                 else "Eigenvalue",
-                 title = if (cumulative) "Cumulative Explained Variance" 
-                 else "Scree Plot")
-      
-        return(p)
+        # plot vector
+        .scree_plotter(x, names = names, cumulative = cumulative, ...)
     }
 )
+
+.scree_plotter <- function(x, names = NULL, show.barplot = TRUE, 
+                           show.points = TRUE, 
+                           show.line = TRUE, show.labels = FALSE, 
+                           cumulative = FALSE, ...) {
+    # Create data frame
+    df <- data.frame(
+        Component = if (!is.null(names)) names else seq_along(x),
+        Eigenvalue = x
+    )
+    
+    # Calculate cumulative proportion if needed
+    if (cumulative) {
+        df$CumulativeProportion <- cumsum(df$Eigenvalue) / sum(df$Eigenvalue)
+    }
+    
+    # Create base plot
+    p <- ggplot(df, aes(x = Component, y = if (cumulative) 
+        CumulativeProportion else Eigenvalue))
+    
+    # Add layers based on user preferences
+    if (show.barplot) {
+        p <- p + geom_col(fill = "lightblue", color = "black")
+    }
+    if (show.points) {
+        p <- p + geom_point(size = 3)
+    }
+    if (show.line) {
+        p <- p + geom_line()
+    }
+    if (show.labels) {
+        p <- p + geom_text(aes(label = round(if (cumulative) 
+            CumulativeProportion else Eigenvalue, 2)), 
+            vjust = -0.5)
+    }
+    
+    # Customize appearance
+    p <- p + theme_minimal() +
+        labs(x = "Component", 
+             y = if (cumulative) "Cumulative Proportion of Variance" 
+             else "Eigenvalue",
+             title = if (cumulative) "Cumulative Explained Variance" 
+             else "Scree Plot")
+    
+    return(p)
+}
