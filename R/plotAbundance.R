@@ -171,7 +171,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     .check_abundance_input(x, assay.type, layout, ...)
     # Get the abundance data to be plotted. Agglomerate and apply relative
     # transformation if specified.
-    abund_data <- .get_abundance_data(x, assay.type, layout, ...)
+    abund_data <- .get_abundance_data(x, assay.type, ...)
     group <- attr(abund_data, "group")
     # If the data is paired, ensure that all time points have same sample
     # set, i.e., each patient has all the time points.
@@ -237,7 +237,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 # agglomeration and transformation. The outut is a single tibble with all the
 # whole dataset for plotting. 
 .get_abundance_data <- function(
-        x, assay.type, layout, group = rank, rank = NULL,
+        x, assay.type, group = rank, rank = NULL,
         as.relative = use_relative, use_relative = FALSE, ...){
     # Input check
     if( !(is.null(group) || (
@@ -289,12 +289,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     colnames(df)[ colnames(df) == assay.type ] <- "Y"
     # Add group info to attributes
     attr(df, "group") <- ifelse(!is.null(group), group, "Feature")
-    # In the barplot, taxa with 0 abundance still have place holder (very thin
-    # strip). It might look like these taxa are present which is why we remove
-    # them completely here.
-    if( any(df[["Y"]] == 0) && layout == "bar" ){
-        df <- df[df[["Y"]] > 0, ] 
-    }
     return(df)
 }
 
@@ -595,7 +589,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     if( length(col.var) == 1L && facet.cols ){
         plot_out <- plot_out + 
             facet_wrap(
-                formula(paste0("~ `", paste0(col.var, collapse = "`+`"), "`")),
+                formula(paste0("~ `", paste0(col.var, collapse = "+"), "`")),
                 ncol = ncol,
                 scales = scales)
     }
@@ -605,7 +599,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     if( length(col.var) > 1L && facet.cols ){
         .require_package("ggh4x")
         plot_out <- plot_out + ggh4x::facet_nested(
-            formula(paste0("~ `", paste0(col.var, collapse = "`+`"), "`")),
+            formula(paste0("~ `", paste0(col.var, collapse = "+"), "`")),
             scales = scales)
     }
     # If user do not want to create facets from the sample metadata, create
