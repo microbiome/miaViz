@@ -289,6 +289,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     colnames(df)[ colnames(df) == assay.type ] <- "Y"
     # Add group info to attributes
     attr(df, "group") <- ifelse(!is.null(group), group, "Feature")
+    # In the barplot, taxa with 0 abundance still have place holder (very thin
+    # strip). It might look like these taxa are present which is why we remove
+    # them completely here.
+    df <- df[df[["Y"]] > 0, ]
     return(df)
 }
 
