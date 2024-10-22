@@ -56,20 +56,9 @@ rank.</p>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">plotAbundance</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
-<span>  col.var <span class="op">=</span> <span class="va">features</span>,</span>
-<span>  features <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  order.row.by <span class="op">=</span> <span class="va">order_rank_by</span>,</span>
-<span>  order_rank_by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"name"</span>, <span class="st">"abund"</span>, <span class="st">"revabund"</span><span class="op">)</span>,</span>
-<span>  order.col.by <span class="op">=</span> <span class="va">order_sample_by</span>,</span>
-<span>  order_sample_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  decreasing <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  layout <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"bar"</span>, <span class="st">"point"</span><span class="op">)</span>,</span>
-<span>  one.facet <span class="op">=</span> <span class="va">one_facet</span>,</span>
-<span>  one_facet <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  ncol <span class="op">=</span> <span class="fl">2</span>,</span>
-<span>  scales <span class="op">=</span> <span class="st">"fixed"</span>,</span>
 <span>  assay.type <span class="op">=</span> <span class="va">assay_name</span>,</span>
 <span>  assay_name <span class="op">=</span> <span class="st">"counts"</span>,</span>
+<span>  layout <span class="op">=</span> <span class="st">"bar"</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -85,82 +74,46 @@ object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional parameters for plotting.</p><ul><li><p><code>group</code> <code>Character scalar</code>. Specifies the group for
+<dd><p>additional parameters for plotting.</p><ul><li><p><code>group</code>: <code>Character scalar</code>. Specifies the group for
 agglomeration. Must be a value from <code>colnames(rowData(x))</code>. If
 <code>NULL</code>, agglomeration is not applied. (Default: <code>NULL</code>)</p></li>
-<li><p><code>as.relative</code> <code>Character scalar</code>. Should the relative
+<li><p><code>as.relative</code>: <code>Character scalar</code>. Should the relative
 values be calculated? (Default: <code>FALSE</code>)</p></li>
-</ul><p>See <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call
-<code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
-
-
-<dt id="arg-col-var">col.var<a class="anchor" aria-label="anchor" href="#arg-col-var"></a></dt>
-<dd><p><code>Character scalar</code>. Selects a column from
+<li><p><code>col.var</code>: <code>Character scalar</code>. Selects a column from
 <code>colData</code> to be plotted below the abundance plot.
 Continuous numeric values will be plotted as point, whereas factors and
-character will be plotted as colour-code bar. (Default: <code>NULL</code>)</p></dd>
-
-
-<dt id="arg-features">features<a class="anchor" aria-label="anchor" href="#arg-features"></a></dt>
-<dd><p>Deprecated. Use <code>col.var</code> instead.</p></dd>
-
-
-<dt id="arg-order-row-by">order.row.by<a class="anchor" aria-label="anchor" href="#arg-order-row-by"></a></dt>
-<dd><p><code>Character scalar</code>. How to order abundance value:
-By name (<code>"name"</code>)
-for sorting the taxonomic labels alphabetically, by abundance
-(<code>"abund"</code>) to sort by abundance values or by a reverse order of
-abundance values (<code>"revabund"</code>). (Default: <code>"name"</code>)</p></dd>
-
-
-<dt id="arg-order-rank-by">order_rank_by<a class="anchor" aria-label="anchor" href="#arg-order-rank-by"></a></dt>
-<dd><p>Deprecated. Use <code>order.row.by</code> instead.</p></dd>
-
-
-<dt id="arg-order-col-by">order.col.by<a class="anchor" aria-label="anchor" href="#arg-order-col-by"></a></dt>
-<dd><p><code>Character scalar</code>. from the chosen rank of
-abundance data or from <code>colData</code> to select values to order the abundance
-plot by. (Default: <code>NULL</code>)</p></dd>
-
-
-<dt id="arg-order-sample-by">order_sample_by<a class="anchor" aria-label="anchor" href="#arg-order-sample-by"></a></dt>
-<dd><p>Deprecated. Use <code>order.col.by</code> instead.</p></dd>
-
-
-<dt id="arg-decreasing">decreasing<a class="anchor" aria-label="anchor" href="#arg-decreasing"></a></dt>
-<dd><p><code>Logical scalar</code>. If the <code>order.col.by</code>
-is defined and the
-values are numeric, should the values used to order in decreasing or
-increasing fashion? (Default: <code>FALSE</code>)</p></dd>
-
-
-<dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
-<dd><p><code>Character scalar</code>. Either “bar” or “point”.</p></dd>
-
-
-<dt id="arg-one-facet">one.facet<a class="anchor" aria-label="anchor" href="#arg-one-facet"></a></dt>
-<dd><p><code>Logical scalar</code>. Should the plot be returned in on
-facet or split into
-different facet, one facet per different value detect in <code>group</code>. If
-<code>col.var</code> or <code>order.col.by</code> is not <code>NULL</code>, this setting will
-be disregarded. (Default: <code>TRUE</code>)</p></dd>
-
-
-<dt id="arg-one-facet">one_facet<a class="anchor" aria-label="anchor" href="#arg-one-facet"></a></dt>
-<dd><p>Deprecated. Use <code>one.facet</code> instead.</p></dd>
-
-
-<dt id="arg-ncol">ncol<a class="anchor" aria-label="anchor" href="#arg-ncol"></a></dt>
-<dd><p><code>Numeric scalar</code>. if <code>one.facet = FALSE</code>,
-<code>ncol</code> defines many
-columns should be for plotting the different facets. (Default: <code>2</code>)</p></dd>
-
-
-<dt id="arg-scales">scales<a class="anchor" aria-label="anchor" href="#arg-scales"></a></dt>
-<dd><p><code>Character scalar</code>. Defines the behavior of the scales
-of each facet. Both values are
-passed onto <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></code>.
-(Default: <code>"fixed"</code>)</p></dd>
+character will be plotted as colour-code bar. (Default: <code>NULL</code>)</p></li>
+<li><p><code>order.row.by</code>: <code>Character scalar</code>. How to order abundance
+value. By name (<code>"name"</code>) for sorting the taxonomic labels
+alphabetically, by abundance (<code>"abund"</code>) to sort by abundance
+values or by a reverse order of
+abundance values (<code>"revabund"</code>). (Default: <code>"name"</code>)</p></li>
+<li><p><code>row.levels</code>: <code>Character vector</code>. Specifies order of rows
+in a plot. Can be combined with <code>order.row.by</code> to control order
+of only certain rows. If <code>NULL</code>, the order follows
+<code>order.row.by</code>. (Default: <code>NULL</code>)</p></li>
+<li><p><code>order.col.by</code>: <code>Character scalar</code>. from the chosen rank of
+abundance data or from <code>colData</code> to select values to order the
+abundance plot by. (Default: <code>NULL</code>)</p></li>
+<li><p><code>col.levels</code>: <code>Character vector</code>. Specifies order of
+columns in a plot. Can be combined with <code>order.col.by</code> to control
+order of only certain columns. If <code>NULL</code>, the order follows
+<code>order.col.by</code>. (Default: <code>NULL</code>)</p></li>
+<li><p><code>decreasing</code>: <code>Logical scalar</code>. If the <code>order.col.by</code>
+is defined and the values are numeric, should the values used to order in
+decreasing or increasing fashion? (Default: <code>FALSE</code>)</p></li>
+<li><p><code>facet.rows</code>: <code>Logical scalar</code>. Should the rows in the
+plot be spitted into facets? (Default: <code>FALSE</code>)</p></li>
+<li><p><code>facet.cols</code>: <code>Logical scalar</code>. Should the columns in the
+plot be spitted into facets? (Default: <code>FALSE</code>)</p></li>
+<li><p><code>ncol</code>: <code>Numeric scalar</code>. if facets are applied,
+<code>ncol</code> defines many columns should be for plotting the different
+facets. (Default: <code>2</code>)</p></li>
+<li><p><code>scales</code> <code>Character scalar</code>. Defines the behavior of the
+scales of each facet. The value is passed into
+<code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">facet_wrap</a></code>. (Default: <code>"fixed"</code>)</p></li>
+</ul><p>See <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call
+<code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
@@ -170,6 +123,10 @@ use. (Default: <code>"relabundance"</code>)</p></dd>
 
 <dt id="arg-assay-name">assay_name<a class="anchor" aria-label="anchor" href="#arg-assay-name"></a></dt>
 <dd><p>Deprecate. Use <code>assay.type</code> instead.</p></dd>
+
+
+<dt id="arg-layout">layout<a class="anchor" aria-label="anchor" href="#arg-layout"></a></dt>
+<dd><p><code>Character scalar</code>. Either “bar” or “point”.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -236,21 +193,19 @@ respectively. If one of the <code>TAXONOMY_RANKS</code> is selected via
 <span class="r-in"><span><span class="co"># These two plots can be combined with wrap_plots function from patchwork</span></span></span>
 <span class="r-in"><span><span class="co"># package</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot</span>, ncol <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot</span>, ncol <span class="op">=</span> <span class="fl">1</span>, heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.95</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Same plot as above but showing sample IDs as labels for the x axis on the</span></span></span>
-<span class="r-in"><span><span class="co"># top plot</span></span></span>
-<span class="r-in"><span><span class="va">plot</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="co"># top plot. Moreover, we use facets</span></span></span>
+<span class="r-in"><span><span class="va">plot</span> <span class="op">&lt;-</span> <span class="fu">plotAbundance</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>    group <span class="op">=</span> <span class="st">"Phylum"</span>, col.var <span class="op">=</span> <span class="st">"SampleType"</span>, add.legend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>    add.x.text <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span> <span class="op">+</span></span></span>
+<span class="r-in"><span>    add.x.text <span class="op">=</span> <span class="cn">TRUE</span>, facet.cols <span class="op">=</span> <span class="cn">TRUE</span>, scales <span class="op">=</span> <span class="st">"free_x"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span> </span></span>
-<span class="r-in"><span><span class="co"># \donttest{</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot</span>, ncol <span class="op">=</span> <span class="fl">1</span>, heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.8</span>,<span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">plot</span></span></span>
 <span class="r-plt img"><img src="plotAbundance-6.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compositional barplot with top 5 taxa and samples sorted by</span></span></span>
 <span class="r-in"><span><span class="co"># "Bacteroidetes"</span></span></span>
