@@ -237,7 +237,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 # agglomeration and transformation. The outut is a single tibble with all the
 # whole dataset for plotting. 
 .get_abundance_data <- function(
-        x, assay.type, layout, group = rank, rank = NULL,
+        x, assay.type, layout = "bar", group = rank, rank = NULL,
         as.relative = use_relative, use_relative = FALSE, ...){
     # Input check
     if( !(is.null(group) || (
