@@ -10,7 +10,8 @@ test_that("plot abundance", {
     expect_error(miaViz:::.get_abundance_data(x, group = "Phylum"),
                  'argument "assay.type" is missing')
     expect_error(miaViz:::.get_abundance_data(x))
-    actual <- miaViz:::.get_abundance_data(x, group = "Phylum", assay.type = "counts")
+    actual <- miaViz:::.get_abundance_data(x, group = "Phylum",
+                                           layout = "bar", assay.type = "counts")
     expect_s3_class(actual,"tbl_df")
     expect_true( all(c("colour_by","X","Y") %in% colnames(actual)) )
     expect_true(is.factor(actual$colour_by))
@@ -21,9 +22,11 @@ test_that("plot abundance", {
     expect_equal(as.character(actual[1,1,drop=TRUE]),"ABY1_OD1")
     expect_equal(levels(actual2[["colour_by"]])[[1]],"Proteobacteria")
     actual3 <- miaViz:::.get_abundance_data(
-        x, group = "Phylum", assay.type = "counts", order.row.by = "abund",
+        x, group = "Phylum", assay.type = "counts",
+        layout = "bar",
+        order.row.by = "abund",
         as.relative = FALSE)
-    expect_true(max(actual3$Y) > 1)
+    expect_true(max(actual3$Y, na.rm = TRUE) > 1)
     # .order_abundance_cols
     expect_error(miaViz:::.order_abundance_cols("meep"))
     expect_error(miaViz:::.order_abundance_cols("meep","meep2",x))
@@ -64,7 +67,9 @@ test_that("plot abundance", {
     expect_equal(nrow(miaViz:::.add_paired_samples(empty_df)), 0)
     #
     # Test with correct input
-    actual <- miaViz:::.get_abundance_data(x, group = "Phylum", assay.type = "counts")
+    actual <- miaViz:::.get_abundance_data(x, group = "Phylum",
+                                           layout = "bar",
+                                           assay.type = "counts")
     expect_s3_class(actual, "tbl_df")
     expect_true(all(c("colour_by", "X", "Y") %in% colnames(actual)))
     # Test error when missing necessary arguments
@@ -76,7 +81,7 @@ test_that("plot abundance", {
     empty_x <- x[NULL, ]  # Empty dataset
     expect_error(miaViz:::.get_abundance_data(empty_x, group = "Phylum", assay.type = "counts"))
     # Test with correct input
-    df <- .get_abundance_data(x[1:20, ], "counts")
+    df <- .get_abundance_data(x[1:20, ], "counts", layout = "bar")
     actual <- miaViz:::.order_abundance_cols(df, order.col.by = "SampleType")
     expect_s3_class(actual, "tbl_df")
     # Test error for incorrect ordering variable
