@@ -19,7 +19,7 @@ rank."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathj
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.13.15</span>
       </span>
     </div>
 
@@ -159,18 +159,24 @@ respectively. If one of the <code>TAXONOMY_RANKS</code> is selected via
 <span class="r-in"><span><span class="co"># Apply relative transformation</span></span></span>
 <span class="r-in"><span><span class="va">tse_sub</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse_sub</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span><span class="va">tse_sub</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 411 rows containing missing values or values outside the scale range</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_bar()`).</span>
 <span class="r-plt img"><img src="plotAbundance-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting counts using the first taxonomic rank as default</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, group <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>y<span class="op">=</span><span class="st">"Counts"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 728 rows containing missing values or values outside the scale range</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_bar()`).</span>
 <span class="r-plt img"><img src="plotAbundance-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Using "Phylum" as rank. Apply relative transformation to "counts" assay.</span></span></span>
 <span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"counts"</span>, group <span class="op">=</span> <span class="st">"Phylum"</span>, add_legend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>    as.relative <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 728 rows containing missing values or values outside the scale range</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_bar()`).</span>
 <span class="r-plt img"><img src="plotAbundance-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Apply relative transform</span></span></span>
@@ -181,6 +187,8 @@ respectively. If one of the <code>TAXONOMY_RANKS</code> is selected via
 <span class="r-in"><span><span class="fu">plotAbundance</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, assay.type<span class="op">=</span><span class="st">"relabundance"</span>, group <span class="op">=</span> <span class="st">"Phylum"</span>,</span></span>
 <span class="r-in"><span>    order.col.by <span class="op">=</span> <span class="st">"Bacteroidetes"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 728 rows containing missing values or values outside the scale range</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_bar()`).</span>
 <span class="r-plt img"><img src="plotAbundance-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># col.var from colData can be plotted together with abundance plot.</span></span></span>
@@ -194,6 +202,8 @@ respectively. If one of the <code>TAXONOMY_RANKS</code> is selected via
 <span class="r-in"><span><span class="co"># package</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot</span>, ncol <span class="op">=</span> <span class="fl">1</span>, heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.95</span>, <span class="fl">0.05</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 728 rows containing missing values or values outside the scale range</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_bar()`).</span>
 <span class="r-plt img"><img src="plotAbundance-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
@@ -205,6 +215,8 @@ respectively. If one of the <code>TAXONOMY_RANKS</code> is selected via
 <span class="r-in"><span>    add.x.text <span class="op">=</span> <span class="cn">TRUE</span>, facet.cols <span class="op">=</span> <span class="cn">TRUE</span>, scales <span class="op">=</span> <span class="st">"free_x"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span> </span></span>
 <span class="r-in"><span><span class="va">plot</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 728 rows containing missing values or values outside the scale range</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_bar()`).</span>
 <span class="r-plt img"><img src="plotAbundance-6.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Compositional barplot with top 5 taxa and samples sorted by</span></span></span>
