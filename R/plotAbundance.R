@@ -171,7 +171,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     .check_abundance_input(x, assay.type, layout, ...)
     # Get the abundance data to be plotted. Agglomerate and apply relative
     # transformation if specified.
-    abund_data <- .get_abundance_data(x, assay.type, layout, ...)
+    abund_data <- .get_abundance_data(x, assay.type, ...)
     group <- attr(abund_data, "group")
     # If the data is paired, ensure that all time points have same sample
     # set, i.e., each patient has all the time points.
@@ -237,7 +237,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 # agglomeration and transformation. The outut is a single tibble with all the
 # whole dataset for plotting.
 .get_abundance_data <- function(
-        x, assay.type, layout, group = rank, rank = NULL,
+        x, assay.type, group = rank, rank = NULL,
         as.relative = use_relative, use_relative = FALSE, ...){
     # Input check
     if( !(is.null(group) || (
@@ -289,13 +289,6 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     colnames(df)[ colnames(df) == assay.type ] <- "Y"
     # Add group info to attributes
     attr(df, "group") <- ifelse(!is.null(group), group, "Feature")
-    # If there are taxa with zero-abudance, those taxa will have "place-holder"
-    # in the barplot. These are thin strips that look like that there are
-    # abundance even though the value would still be 0. That is why zeroes are
-    # replaced with NA.
-    if( any(df[["Y"]] == 0) && layout == "bar" ){
-        df[df[["Y"]] == 0, "Y"] <- NA
-    }
     return(df)
 }
 
@@ -502,8 +495,13 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         use_relative = FALSE,
         ...
         ){
-    # Start plotting
-    plot_out <- ggplot(object, aes(x = X, y = Y)) +
+    # Start plotting. From barplot, we exclude 0 values. As we use borders by
+    # default, 0 values get also borders which looks like they have also
+    # abundance.
+    plot_out <- ggplot(object, aes(
+        x = X,
+        y = ifelse(Y == 0 & layout == "bar", NA, Y)
+        )) +
         xlab(xlab) +
         ylab(ylab)
     # Either bar or point plot
