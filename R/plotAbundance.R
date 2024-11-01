@@ -298,7 +298,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 # are not aligned correctly (samples from certain patient are below each other).
 # This function ensures that all the time points have all the patients so that
 # comparison is possible.
-#' @importFrom dplyr %>% group_by summarize pull select distinct mutate
+#' @importFrom dplyr group_by summarize pull select distinct mutate
 #'     row_number ungroup
 #' @importFrom tidyr complete
 .add_paired_samples <- function(
@@ -329,10 +329,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         # Calculate how many times each patient-time point pair is present.
         # They must be only once (or none). If they are multiple times, the
         # data is not correctly paired.
-        num_pairs <- df %>%
+        num_pairs <- df |>
             group_by(
-                across(all_of(col.var)), .data[[order.col.by]], colour_by) %>%
-            summarize(count = n(), .groups = "drop") %>%
+                across(all_of(col.var)), .data[[order.col.by]], colour_by) |>
+            summarize(count = n(), .groups = "drop") |>
             pull(count)
         if (any(num_pairs > 1)) {
             stop("Data appears to contain multiple samples for some ",
@@ -341,20 +341,20 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
                 call. = FALSE)
         }
         # Get all the time point / patient combinations for each feature
-        sample_pairs <- df %>%
-            select(all_of(col.var), all_of(order.col.by), colour_by) %>%
-            distinct() %>%
+        sample_pairs <- df |>
+            select(all_of(col.var), all_of(order.col.by), colour_by) |>
+            distinct() |>
             complete(!!!syms(col.var), .data[[order.col.by]], colour_by)
         # Join with the original data, filling missing values with NA
-        df <- sample_pairs %>%
+        df <- sample_pairs |>
             dplyr::left_join(df, by = c(order.col.by, col.var, "colour_by"))
         # Now we have a dataset that includes all patients for each timepoint.
         # Add arbitrary sample names for those samples that were added.
-        df <- df %>%
-            group_by(colour_by) %>%
+        df <- df |>
+            group_by(colour_by) |>
             mutate(X = ifelse(is.na(as.character(X)),
-                paste0("added_", row_number()), as.character(X))) %>%
-            ungroup() %>%
+                paste0("added_", row_number()), as.character(X))) |>
+            ungroup() |>
             mutate(X = factor(X))
     }
     return(df)
@@ -362,7 +362,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 
 # This function modifies factor of rows/features to follow the user-specified
 # order.
-#' @importFrom dplyr %>% group_by summarise arrange desc distinct pull
+#' @importFrom dplyr group_by summarise arrange desc distinct pull
 .order_abundance_rows <- function(
         df, order.row.by = order_rank_by, order_rank_by = "name",
         row.levels = NULL, order.col.by = order_sample_by,
@@ -396,13 +396,13 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     }
     # Get levels based on abundance
     if( is.null(row.levels) && order.row.by %in% c("abund", "revabund") ){
-        row.levels <- df %>%
-            group_by(colour_by) %>%
-            summarise(mean_abundance = mean(Y, na.rm = TRUE)) %>%
+        row.levels <- df |>
+            group_by(colour_by) |>
+            summarise(mean_abundance = mean(Y, na.rm = TRUE)) |>
             # Either sort based on increasing or decreasing order
             arrange(if (order.row.by == "abund") desc(mean_abundance) else
-                mean_abundance) %>%
-            distinct(colour_by) %>%
+                mean_abundance) |>
+            distinct(colour_by) |>
             pull(colour_by)
     }
     # If user wants to order columns based on abundance of certain taxa, the
@@ -417,7 +417,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 
 # This function modifies factor of columns/samples to follow the user-specified
 # order.
-#' @importFrom dplyr %>% filter arrange desc distinct pull
+#' @importFrom dplyr filter arrange desc distinct pull
 .order_abundance_cols <- function(
         df, order.col.by = order_sample_by, order_sample_by = NULL,
         col.levels = NULL, decreasing = TRUE, ...){
@@ -443,19 +443,19 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     # If column from colData was specified, give the order of samples based on
     # this variable
     if( is.null(col.levels) && is_coldata ){
-        col.levels <- df %>%
+        col.levels <- df |>
             arrange(if (decreasing) .data[[order.col.by]] else
-                desc(.data[[order.col.by]]) ) %>%
-            distinct(X) %>%
+                desc(.data[[order.col.by]]) ) |>
+            distinct(X) |>
             pull(X)
     }
     # Filter for the specified feature, arrange the dataframe based on the
     # specified column and direction, and then pull unique X values
     if( is.null(col.levels) && is_feat ){
-        col.levels <- df %>%
-            filter(colour_by == order.col.by) %>%
-            arrange(if (decreasing) desc(Y) else Y) %>%
-            distinct(X) %>%
+        col.levels <- df |>
+            filter(colour_by == order.col.by) |>
+            arrange(if (decreasing) desc(Y) else Y) |>
+            distinct(X) |>
             pull(X)
     }
     # If column ordering was not specified, order alphabetically
@@ -613,10 +613,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         # Select only sample metadata. Get it in same order that the samples
         # are. After this we have only col.var columns, and metadata includes
         # as many rows as there are samples.
-        metadata <- df %>%
-            select(X, all_of(col.var)) %>%
-            distinct() %>%
-            arrange(X) %>%
+        metadata <- df |>
+            select(X, all_of(col.var)) |>
+            distinct() |>
+            arrange(X) |>
             select(-X)
         # Create a plot from metadata variables
         plot_feature_out <- .features_plotter(metadata, col.var, ...)
