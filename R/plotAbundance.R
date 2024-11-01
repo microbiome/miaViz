@@ -131,7 +131,7 @@
 #' }
 #'
 #' # Same plot as above but showing sample IDs as labels for the x axis on the
-#' # top plot. Moreover, we use facets
+#' # top plot. Moreover, we use facets.
 #' plot <- plotAbundance(
 #'     tse, assay.type = "relabundance",
 #'     group = "Phylum", col.var = "SampleType", add.legend = FALSE,

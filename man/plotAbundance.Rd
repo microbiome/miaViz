@@ -126,7 +126,7 @@ plotAbundance(
 
 # Apply relative transform
 tse <- transformAssay(tse, method = "relabundance")
-  
+
 # A feature from colData or taxon from chosen rank can be used for ordering
 # samples.
 plotAbundance(
@@ -135,7 +135,7 @@ plotAbundance(
 
 # col.var from colData can be plotted together with abundance plot.
 # Returned object is a list that includes two plot; other visualizes
-## abundance other col.var. 
+## abundance other col.var.
 plot <- plotAbundance(
     tse, assay.type = "relabundance", group = "Phylum",
     col.var = "SampleType")
@@ -147,12 +147,12 @@ wrap_plots(plot, ncol = 1, heights = c(0.95, 0.05))
 }
 
 # Same plot as above but showing sample IDs as labels for the x axis on the
-# top plot. Moreover, we use facets
+# top plot. Moreover, we use facets.
 plot <- plotAbundance(
     tse, assay.type = "relabundance",
     group = "Phylum", col.var = "SampleType", add.legend = FALSE,
     add.x.text = TRUE, facet.cols = TRUE, scales = "free_x") +
-    theme(axis.text.x = element_text(angle = 90)) 
+    theme(axis.text.x = element_text(angle = 90))
 plot
 
 # Compositional barplot with top 5 taxa and samples sorted by
