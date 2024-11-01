@@ -224,8 +224,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     }
     # Leave order.col.by out of the comparison, if it specifies a feature
     order.col.by <- if( !is.null(order.col.by) && order.col.by %in%
-                       colnames(colData(x))) order.col.by else
-        NULL
+        colnames(colData(x))) order.col.by else NULL
     all_vars <- unique(c(order.col.by, col.var))
     if( sum(colnames(colData(x)) %in% all_vars) != length(all_vars) ){
         stop("colData(x) must have unique colnames.", call. = FALSE)
@@ -369,7 +368,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         order_sample_by = NULL, ...){
     #
     correct <- .is_a_string(order.row.by) && order.row.by %in%
-        c("name","abund","revabund")
+        c("name", "abund", "revabund")
     if( !correct ){
         stop("'order.row.by' must be 'name', 'abund' or 'revabund'.",
             call. = FALSE)
@@ -592,11 +591,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
     # Whether to facet the plot so that columns are facetted based on sample
     # metadata. This is for single metadata variable.
     if( length(col.var) == 1L && facet.cols ){
-        plot_out <- plot_out +
-            facet_wrap(
-                formula(paste0("~ `", paste0(col.var, collapse = "` + `"), "`")),
-                ncol = ncol,
-                scales = scales)
+        plot_out <- plot_out + facet_wrap(
+            formula(paste0("~ `", paste0(col.var, collapse = "` + `"),"`")),
+            ncol = ncol,
+            scales = scales)
     }
     # This is also for facetting based on sample metadata, however, this allows
     # user to facet columns based on multiple sample metadata variables, e.g.
