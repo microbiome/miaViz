@@ -329,11 +329,16 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     }
     
     # Get data for vectors
+    # There must be at least two constrained axis to plot vectors. If there are
+    # not, give warning.
     vector_data <- NULL
-    if( add.vectors ){
+    if( add.vectors && ncol(rda$CCA$biplot) > 1 ){
         vector_data <- rda$CCA$biplot
         vector_data <- as.data.frame(vector_data)
         vector_data[["group"]] <- rownames(vector_data)
+    } else if( add.vectors ){
+        warning("Model contains only one constrained axis. Vectors cannot ",
+            "be added.", call. = FALSE)
     }
     
     # Get variable names from sample metadata
