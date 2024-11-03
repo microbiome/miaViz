@@ -33,3 +33,6 @@ Changes in version 1.13.x
 + plotAbundance: enable plotting without agglomeration
 + Change parameter naming convention from parameter_name to parameter.name
 + Added plotLoadings function
+
+Changes in version 1.15.x
++ plotAbundance: Improved visualization of sample metadata
