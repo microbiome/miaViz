@@ -12,9 +12,6 @@
 #' to extract the eigenvalues from \code{reducedDim(x, dimred)}.
 #' @param cumulative \code{Logical scalar}. Whether to show cumulative explained 
 #' variance. (Default: \code{FALSE}).
-#' @param names \code{Character vector}. Optional names for the components 
-#' that will be displayed on the x-axis. If not provided, the components 
-#' are labeled sequentially as 1, 2, 3, etc.
 #' @param ... additional parameters for plotting
 #' \describe{
 #'   \item{\code{show.barplot}}{Logical scalar. Whether to show a barplot. 

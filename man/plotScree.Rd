@@ -35,10 +35,6 @@ to extract the eigenvalues from \code{reducedDim(x, dimred)}.}
 
 \item{cumulative}{\code{Logical scalar}. Whether to show cumulative explained
 variance. (Default: \code{FALSE}).}
-
-\item{names}{\code{Character vector}. Optional names for the components
-that will be displayed on the x-axis. If not provided, the components
-are labeled sequentially as 1, 2, 3, etc.}
 }
 \value{
 A \code{ggplot2} object
