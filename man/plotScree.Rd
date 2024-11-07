@@ -10,7 +10,7 @@ plotScree(x, ...)
 
 \S4method{plotScree}{SingleCellExperiment}(x, dimred, cumulative = FALSE, ...)
 
-\S4method{plotScree}{vector}(x, names = NULL, cumulative = FALSE, ...)
+\S4method{plotScree}{vector}(x, cumulative = FALSE, ...)
 }
 \arguments{
 \item{x}{a
