@@ -93,7 +93,7 @@ setMethod("plotScree", signature = c(x = "SingleCellExperiment"),
         }
         eig <- attributes(reduced_dim)[ind][[1]]
         # Call the vector method
-        result <- plotScree(as.numeric(eig), names(eig), cumulative = cumulative, ...)
+        result <- plotScree(as.numeric(eig), cumulative = cumulative, ...)
         return(result)
     }
 )
@@ -109,15 +109,19 @@ setMethod("plotScree", signature = c(x = "vector"),
             warning("NA values found in eigenvalues; 
                     they will be omitted from the plot.")
         }
-        plot_data <- .prepare_data(x, cumulative)
+        plot_data <- .prepare_data(x, cumulative, ...)
         # plot vector
-        result <- .scree_plotter(plot_data, cumulative = cumulative, ...)
+        result <- .scree_plotter(plot_data, cumulative, ...)
         return(result)
     }
 )
-.prepare_data <- function(x, cumulative = FALSE) {
+.prepare_data <- function(x, cumulative = FALSE, indices = NULL, ...) {
     # drop NA values in eigenvalues
     x <- x[!is.na(x)]
+    # Subset eigenvalues based on indices (if provided)
+    if (!is.null(indices)) {
+      x <- x[indices]
+    }
     df <- data.frame(
         component = if (!is.null(names(x))) names(x) else seq_along(x),
         Eigenvalue = x
@@ -128,12 +132,13 @@ setMethod("plotScree", signature = c(x = "vector"),
     }
     return(df)
 }
-.scree_plotter <- function(df, show.barplot = TRUE, 
+.scree_plotter <- function(df, cumulative = FALSE,
+                           show.barplot = TRUE, 
                            show.points = TRUE, 
-                           show.line = TRUE, show.labels = FALSE, 
-                           cumulative = FALSE, ...) {
+                           show.line = TRUE, 
+                           show.labels = FALSE, ...) {
     # Create base plot
-    p <- ggplot(df, aes(x = Component, y = if (cumulative) 
+    p <- ggplot(df, aes(x = component, y = if (cumulative) 
         CumulativeProportion else Eigenvalue))
     # Add layers based on user preferences
     if (show.barplot) {
