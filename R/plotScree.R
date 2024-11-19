@@ -1,29 +1,14 @@
-#' Plot Scree Plot or Eigenvalues
-#'
+#' @name
+#' plotScree
+#' 
+#' @title
+#' Create a scree plot
+#' 
+#' @description 
 #' \code{plotScree} creates a scree plot or eigenvalues plot starting from a
 #' TreeSummarizedExperiment object or a vector of eigenvalues. This visualization
 #' shows how the eigenvalues decrease across components.
-#'
-#' @param x a
-#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-#' or a vector of eigenvalues.
-#' @param dimred \code{Character scalar} or \code{integer scalar}. Determines
-#' the reduced dimension to plot. This is used when x is a TreeSummarizedExperiment
-#' to extract the eigenvalues from \code{reducedDim(x, dimred)}.
-#' @param cumulative \code{Logical scalar}. Whether to show cumulative explained 
-#' variance. (Default: \code{FALSE}).
-#' @param ... additional parameters for plotting
-#' \describe{
-#'   \item{\code{show.barplot}}{Logical scalar. Whether to show a barplot. 
-#'   (Default: \code{TRUE}).}
-#'   \item{\code{show.points}}{Logical scalar. Whether to show points. 
-#'   (Default: \code{TRUE}).}
-#'   \item{\code{show.line}}{Logical scalar. Whether to show a line connecting 
-#'   points. (Default: \code{TRUE}).}
-#'   \item{\code{show.labels}}{Logical scalar. Whether to show labels for each 
-#'   point. (Default: \code{FALSE}).}
-#' }
-#'
+#' 
 #' @details
 #' \code{plotScree} creates a scree plot or eigenvalues plot, which is useful
 #' for visualizing the relative importance of components in dimensionality
@@ -40,29 +25,42 @@
 #' 
 #' @return 
 #' A \code{ggplot2} object 
-#'
-#' @name plotScree
+#' 
+#' @param x a
+#' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
+#' or a vector of eigenvalues.
+#' @param dimred \code{Character scalar} or \code{integer scalar}. Determines
+#' the reduced dimension to plot. This is used when x is a TreeSummarizedExperiment
+#' to extract the eigenvalues from \code{reducedDim(x, dimred)}.
+#' @param cumulative \code{Logical scalar}. Whether to show cumulative explained 
+#' variance. (Default: \code{FALSE}).
+#' @param ... additional parameters for plotting
+#' \itemize{
+#'   \item \code{show.barplot}: \code{Logical scalar}. Whether to show a
+#'   barplot. (Default: \code{TRUE})
+#'   
+#'   \item \code{show.points}: \code{Logical scalar}. Whether to show a
+#'   points. (Default: \code{TRUE})
+#'   
+#'   \item \code{show.line}: \code{Logical scalar}. Whether to show a
+#'   line. (Default: \code{TRUE})
+#'   
+#'   \item \code{show.labels}: \code{Logical scalar}. Whether to show a
+#'   labels for each point. (Default: \code{FALSE})
+#' }
 #'
 #' @examples
-#' # Load necessary libraries
-#' library(ggplot2)
 #' 
-#' # Load dataset
 #' library(miaViz)
+#' library(scater)
 #' data("enterotype", package = "mia")
 #' tse <- enterotype
 #'  
-#' # Run RDA and store results into TreeSE
-#' tse <- addRDA(
-#'     tse,
-#'     formula = assay ~ ClinicalStatus + Gender + Age,
-#'     FUN = getDissimilarity,
-#'     distance = "bray",
-#'     na.action = na.exclude
-#'     )
+#' # Run  PCA and store results into TreeSE
+#' tse <- runPCA(tse, assay.type = "counts")
 #' 
 #' # Plot scree plot
-#' plotScree(tse, "RDA")
+#' plotScree(tse, "PCA")
 #' 
 NULL
 
@@ -74,88 +72,155 @@ setGeneric("plotScree", signature = c("x"),
 #' @rdname plotScree
 #' @export
 setMethod("plotScree", signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, cumulative = FALSE, ...) {
-        # Check if dimred exists
-        if (!dimred %in% reducedDimNames(x)) {
-            stop("'dimred' must specify a valid reducedDim.", call. = FALSE)
-        }
-        # Get reducedDim
-        reduced_dim <- reducedDim(x, dimred)
-        # Extract eigenvalues
-        # Check if data is available
-        ind <- names(attributes(reduced_dim)) %in% c("eig", "varExplained")
-        if( !any(ind) ){
-          stop("No eigenvalues found in the specified reducedDim.", 
-               call. = FALSE)
-        }
-        eig <- attributes(reduced_dim)[ind][[1]]
-        # Call the vector method
-        result <- plotScree(as.numeric(eig), cumulative = cumulative, ...)
-        return(result)
+    function(x, dimred, ...){
+        eig <- .get_eigenvalues(x, dimred, ...)
+        p <- plotScree(eig, ...)
+        return(p)
     }
 )
+
 #' @rdname plotScree
 #' @export
-setMethod("plotScree", signature = c(x = "vector"),
-    function(x, cumulative = FALSE, ...) {
-        # Ensure 'x' is numeric
-        if (!is.numeric(x)) {
-            stop("'x' must be a numeric vector.", call. = FALSE)
+setMethod("plotScree", signature = c(x = "ANY"),
+    function(x, ...){
+        # Check that the the values are in correct format
+        is_correct <- length(x) > 0L &&
+            ((is.vector(x) && is.numeric(x)) || is(x, "eigenvals"))
+        if( !is_correct ){
+            stop("Eigenvalues must be either numeric vector or class ",
+                "'eigenvals'.", call. = FALSE)
         }
-        if (anyNA(x)) {
-            warning("NA values found in eigenvalues; 
-                    they will be omitted from the plot.")
-        }
-        plot_data <- .prepare_data(x, cumulative, ...)
-        # plot vector
-        result <- .scree_plotter(plot_data, cumulative, ...)
-        return(result)
+        # Prepare data for plotting
+        plot_data <- .prepare_data(x, ...)
+        # Create a plot
+        p <- .scree_plotter(plot_data, ...)
+        return(p)
     }
 )
-.prepare_data <- function(x, cumulative = FALSE, indices = NULL, ...) {
-    # drop NA values in eigenvalues
-    x <- x[!is.na(x)]
-    # Subset eigenvalues based on indices (if provided)
-    if (!is.null(indices)) {
-      x <- x[indices]
+
+################################ HELP FUNCTIONS ################################
+
+# This function retrieves the eigenvalues from reducedDim. The ordination must
+# be calculated with 
+.get_eigenvalues <- function(
+        x, dimred, eig.name = c("eig", "varExplained"), ...){
+    # Get reducedDim
+    if( !((.is_a_string(dimred) && dimred %in% reducedDimNames(x)) ||
+          (.is_an_integer(dimred) && dimred > 0 &&
+           dimred <= length(reducedDims(x)))) ){
+        stop("'dimred' must specify a valid reducedDim.", call. = FALSE)
     }
-    df <- data.frame(
-        component = if (!is.null(names(x))) names(x) else seq_along(x),
-        Eigenvalue = x
-    )
-    # Calculate cumulative proportion if needed
-    if (cumulative) {
-        df$CumulativeProportion <- cumsum(df$Eigenvalue) / sum(df$Eigenvalue)
+    reduced_dim <- reducedDim(x, dimred)
+    # Get eigenvalues
+    eig.name <- eig.name[ eig.name %in% names(attributes(reduced_dim)) ]
+    if( length(eig.name) != 1L ){
+        stop("'eig.name' must specify a name of attributes from ",
+            "reducedDim(x, dimred).", call. = FALSE)
+    }
+    eig <- attributes(reduced_dim)[[ eig.name ]]
+    return(eig)
+}
+
+# This function creates a data.frame from the input vector. The output is ready
+# for plotter.
+.prepare_data <- function(x, add.proportion = TRUE, add.cumulative = FALSE, n = NULL, show.names = FALSE, ...){
+    # Input check
+    if( !.is_a_bool(add.cumulative) ){
+        stop("'add.cumulative' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(is.null(n) || .is_an_integer(n) ) ){
+        stop("'n' must be NULL or integer.", call. = FALSE)
+    }
+    if( !.is_a_bool(show.names) ){
+        stop("'show.names' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # Create a data.frame
+    df <- data.frame(value = x)
+    df[["pc"]] <- factor(rownames(df), levels = unique(rownames(df)))
+    df[["type"]] <- "proportion"
+    
+    # Add to same df. New col8umn that shos if poportional or cumualtive.
+    # Calculate cumulative proportion
+    df_cum <- df
+    df_cum[["value"]] <- cumsum(df_cum[["value"]]) / sum(df_cum[["value"]], na.rm = TRUE)
+    df_cum[["type"]] <- "cumulative"
+    df <- rbind(df, df_cum)
+    
+    
+    if( !add.proportion ){
+        df <- df[df[["type"]] != "proportion", ]
+    }
+    if( !add.cumulative ){
+        df <- df[df[["type"]] != "cumulative", ]
+    }
+    
+    # If user has specified, take only n first eigenvalues
+    if( !is.null(n) ){
+        n <- levels(df[["pc"]])[ seq_len(n) ]
+        df <- df[ df[["pc"]] %in% n,  ]
+    }
+    # Replace names with numbers
+    if( !show.names ){
+        df[["pc"]] <- as.integer(df[["pc"]])
     }
     return(df)
 }
-.scree_plotter <- function(df, cumulative = FALSE,
-                           show.barplot = TRUE, 
-                           show.points = TRUE, 
-                           show.line = TRUE, 
-                           show.labels = FALSE, ...) {
+
+# This function creates a scree plot. The input is data.frame that includes
+# 2 columns: one for eigenvalues and other for principal component name.
+.scree_plotter <- function(
+        df, show.points = TRUE, show.line = TRUE, show.barplot = FALSE,
+        show.labels = FALSE, ...){
+    
+    if( length(unique(df[["type"]])) > 1L && !(show.labels || show.barplot) ){
+        ind <- df[["type"]] == "cumulative"
+        df[ind, "value"] <- df[ind, "value"] * max(df[!ind, "value"]) # Scale
+    }
+    
+    
     # Create base plot
-    p <- ggplot(df, aes(x = component, y = if (cumulative) 
-        CumulativeProportion else Eigenvalue))
-    # Add layers based on user preferences
-    if (show.barplot) {
-        p <- p + geom_col(fill = "lightblue", color = "black")
+    p <- ggplot(df, aes(
+        x = pc,
+        y = value,
+        group = type,
+        colour = if( length(unique(.data[["type"]])) > 1L &&
+                     !(show.labels || show.barplot) ) type
+        ))
+    
+    if( show.points ){
+        p <- p + geom_point()
     }
-    if (show.points) {
-        p <- p + geom_point(size = 3)
-    }
-    if (show.line) {
+    if( show.line ){
         p <- p + geom_line()
     }
-    if (show.labels) {
-        p <- p + geom_text(aes(label = round(if (cumulative) 
-            CumulativeProportion else Eigenvalue, 2)), 
-            vjust = -0.5)
+    if( show.barplot ){
+        p <- p + geom_col(width = 0.5)
     }
-    # Customize appearance
-    p <- p + theme_minimal() +
-      labs(x = "PC", 
-           y = if (cumulative) "Cumulative Proportion of Variance" 
-           else "Eigenvalue")
+    if( show.labels ){
+        p <- p + geom_label(aes(label = round(value, 2)))
+    }
+    
+    if( length(unique(df[["type"]])) > 1L && (show.labels || show.barplot) ){
+        p <- p + facet_grid(rows = vars(type), scales = "free_y")
+    }
+    
+    if( length(unique(df[["type"]])) > 1L && !(show.labels || show.barplot) ){
+        p <- p + scale_y_continuous(
+            name = "Proportion",
+            sec.axis = sec_axis(
+                ~ . / max(df[["value"]]), name = "Cumulative proportion"))
+    }
+    
+    if( length(unique(df[["type"]])) == 1L ){
+        p <- p + labs(x = "PC", y = "Eigenvalue")
+    }
+    if( is.numeric(df[["pc"]]) ){
+        p <- p +
+            scale_x_continuous(breaks = scales::pretty_breaks())
+    }
+    
+    p <- p + theme_classic() +
+        theme(legend.position = "none")
     return(p)
 }

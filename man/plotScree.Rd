@@ -3,14 +3,14 @@
 \name{plotScree}
 \alias{plotScree}
 \alias{plotScree,SingleCellExperiment-method}
-\alias{plotScree,vector-method}
-\title{Plot Scree Plot or Eigenvalues}
+\alias{plotScree,ANY-method}
+\title{Create a scree plot}
 \usage{
 plotScree(x, ...)
 
-\S4method{plotScree}{SingleCellExperiment}(x, dimred, cumulative = FALSE, ...)
+\S4method{plotScree}{SingleCellExperiment}(x, dimred, ...)
 
-\S4method{plotScree}{vector}(x, cumulative = FALSE, ...)
+\S4method{plotScree}{ANY}(x, cumulative = FALSE, ...)
 }
 \arguments{
 \item{x}{a
@@ -18,15 +18,18 @@ plotScree(x, ...)
 or a vector of eigenvalues.}
 
 \item{...}{additional parameters for plotting
-\describe{
-\item{\code{show.barplot}}{Logical scalar. Whether to show a barplot.
-(Default: \code{TRUE}).}
-\item{\code{show.points}}{Logical scalar. Whether to show points.
-(Default: \code{TRUE}).}
-\item{\code{show.line}}{Logical scalar. Whether to show a line connecting
-points. (Default: \code{TRUE}).}
-\item{\code{show.labels}}{Logical scalar. Whether to show labels for each
-point. (Default: \code{FALSE}).}
+\itemize{
+\item \code{show.barplot}: \code{Logical scalar}. Whether to show a
+barplot. (Default: \code{TRUE})
+
+\item \code{show.points}: \code{Logical scalar}. Whether to show a
+points. (Default: \code{TRUE})
+
+\item \code{show.line}: \code{Logical scalar}. Whether to show a
+line. (Default: \code{TRUE})
+
+\item \code{show.labels}: \code{Logical scalar}. Whether to show a
+labels for each point. (Default: \code{FALSE})
 }}
 
 \item{dimred}{\code{Character scalar} or \code{integer scalar}. Determines
@@ -59,10 +62,7 @@ An option to show cumulative explained variance is also available by setting
 \code{cumulative = TRUE}.
 }
 \examples{
-# Load necessary libraries
-library(ggplot2)
 
-# Load dataset
 library(miaViz)
 data("enterotype", package = "mia")
 tse <- enterotype
