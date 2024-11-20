@@ -36,3 +36,4 @@ Changes in version 1.13.x
 
 Changes in version 1.15.x
 + plotAbundance: Improved visualization of sample metadata
++ plotScree: Method for creating scree plots
