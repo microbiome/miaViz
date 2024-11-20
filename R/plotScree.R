@@ -123,8 +123,13 @@ setMethod("plotScree", signature = c(x = "ANY"),
 
 # This function creates a data.frame from the input vector. The output is ready
 # for plotter.
-.prepare_data <- function(x, add.proportion = TRUE, add.cumulative = FALSE, n = NULL, show.names = FALSE, ...){
+.prepare_data <- function(
+        x, add.proportion = TRUE, add.cumulative = FALSE, n = NULL,
+        show.names = FALSE, ...){
     # Input check
+    if( !.is_a_bool(add.proportion) ){
+        stop("'add.proportion' must be TRUE or FALSE.", call. = FALSE)
+    }
     if( !.is_a_bool(add.cumulative) ){
         stop("'add.cumulative' must be TRUE or FALSE.", call. = FALSE)
     }
@@ -135,32 +140,30 @@ setMethod("plotScree", signature = c(x = "ANY"),
         stop("'show.names' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    # Create a data.frame
+    # Create a data.frame with eigenvalues
     df <- data.frame(value = x)
     df[["pc"]] <- factor(rownames(df), levels = unique(rownames(df)))
     df[["type"]] <- "proportion"
-    
-    # Add to same df. New col8umn that shos if poportional or cumualtive.
     # Calculate cumulative proportion
     df_cum <- df
-    df_cum[["value"]] <- cumsum(df_cum[["value"]]) / sum(df_cum[["value"]], na.rm = TRUE)
+    df_cum[["value"]] <- cumsum(df_cum[["value"]]) /
+        sum(df_cum[["value"]], na.rm = TRUE)
     df_cum[["type"]] <- "cumulative"
     df <- rbind(df, df_cum)
     
-    
+    # Based on user preference, keep proportion or/and cumulative values 
     if( !add.proportion ){
         df <- df[df[["type"]] != "proportion", ]
     }
     if( !add.cumulative ){
         df <- df[df[["type"]] != "cumulative", ]
     }
-    
     # If user has specified, take only n first eigenvalues
     if( !is.null(n) ){
         n <- levels(df[["pc"]])[ seq_len(n) ]
         df <- df[ df[["pc"]] %in% n,  ]
     }
-    # Replace names with numbers
+    # Replace names with integers
     if( !show.names ){
         df[["pc"]] <- as.integer(df[["pc"]])
     }
@@ -172,22 +175,36 @@ setMethod("plotScree", signature = c(x = "ANY"),
 .scree_plotter <- function(
         df, show.points = TRUE, show.line = TRUE, show.barplot = FALSE,
         show.labels = FALSE, ...){
-    
+    # Input check
+    if( !.is_a_bool(show.points) ){
+        stop("'show.points' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(show.line) ){
+        stop("'show.line' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(show.barplot) ){
+        stop("'show.barplot' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(show.labels) ){
+        stop("'show.labels' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    # If user wants to add proportion and cumulative values to same plot, we
+    # scale cumulative values into same scale as proportion.
     if( length(unique(df[["type"]])) > 1L && !(show.labels || show.barplot) ){
         ind <- df[["type"]] == "cumulative"
         df[ind, "value"] <- df[ind, "value"] * max(df[!ind, "value"]) # Scale
     }
-    
     
     # Create base plot
     p <- ggplot(df, aes(
         x = pc,
         y = value,
         group = type,
-        colour = if( length(unique(.data[["type"]])) > 1L &&
-                     !(show.labels || show.barplot) ) type
+        colour = if(length(unique(.data[["type"]])) > 1L &&
+            !(show.labels || show.barplot) ) type
         ))
-    
+    # Add layers based on user preference
     if( show.points ){
         p <- p + geom_point()
     }
@@ -201,25 +218,32 @@ setMethod("plotScree", signature = c(x = "ANY"),
         p <- p + geom_label(aes(label = round(value, 2)))
     }
     
+    # If user wants to add barplots or labels with both cumulative and
+    # propotion values, the plot is splitted into two facets. Otherwise the
+    # the plot would be too messy to read.
     if( length(unique(df[["type"]])) > 1L && (show.labels || show.barplot) ){
         p <- p + facet_grid(rows = vars(type), scales = "free_y")
     }
-    
+    # If user wants to plot both cumulative and proportion, but with points
+    # and lines only, we can add tem to same plot. Now the plot has two y-axis;
+    # proportion at left and cumulative at right
     if( length(unique(df[["type"]])) > 1L && !(show.labels || show.barplot) ){
         p <- p + scale_y_continuous(
             name = "Proportion",
             sec.axis = sec_axis(
                 ~ . / max(df[["value"]]), name = "Cumulative proportion"))
     }
-    
+    # Adjust labels in a case where either proportion or cumulative was plotted
     if( length(unique(df[["type"]])) == 1L ){
         p <- p + labs(x = "PC", y = "Eigenvalue")
     }
+    # Adjust the x-axis to display a subset of evenly spaced values for
+    # improved readability
     if( is.numeric(df[["pc"]]) ){
         p <- p +
             scale_x_continuous(breaks = scales::pretty_breaks())
     }
-    
+    # Adjust theme and remove legend
     p <- p + theme_classic() +
         theme(legend.position = "none")
     return(p)
