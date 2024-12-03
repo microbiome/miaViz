@@ -49,8 +49,10 @@ of ellipses. (Default: \code{1})
 \item \code{confidence.level}: \code{Numeric scalar}. Between 0 and 1.
 Adjusts confidence level. (Default: \code{0.95})
 
-\item \code{add.vectors}: \code{Logical scalar}. Should vectors appear in
-the plot. (Default: \code{TRUE})
+\item \code{add.vectors}: \code{Logical scalar} or \code{character vector}.
+If boolean, should vectors appear in the plot. If character,
+selects vectors that are showed. The matching is done with regular
+expression. (Default: \code{TRUE})
 
 \item \code{vec.size}: \code{Numeric scalar}. Specifies the size of
 vectors. (Default: \code{0.5})
