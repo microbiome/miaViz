@@ -78,7 +78,7 @@
 #'   variance and p-value appear in the labels. (Default: \code{TRUE})
 #' 
 #'   \item \code{add.expl.var}: \code{Logical scalar}. Should explained
-#'   variance appear on the coordinate axes. (Default: \code{TRUE})
+#'   variance appear on the coordinate axes. (Default: \code{FALSE})
 #'   
 #'   \item \code{add.centroids}: \code{Logical scalar}. Should centroids
 #'   of variables be added. (Default: \code{FALSE})
@@ -185,7 +185,6 @@ setGeneric("plotRDA", signature = c("x"),
 #' @aliases plotCCA
 #' @export
 #' @importFrom SingleCellExperiment reducedDim reducedDimNames
-#' @importFrom stringr str_extract
 setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
     function(x, dimred, ...){
         ###################### Input check ########################
@@ -203,8 +202,13 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
         }
         # The data can include constrained and unconstrained axis. Get only
         # the constrained ones, i.e., first set of axis.
-        comp_num <- as.numeric(str_extract(colnames(reduced_dim), "\\d+"))
+        comp_num <- as.numeric(gsub("\\D", "", colnames(reduced_dim)))
         constrained_index <- which( cumsum(comp_num == 1) <= 1 )
+        # If there were problems, it might be that the names are just arbitrary.
+        # Then take all the columns.
+        if( length(constrained_index) == 0L ){
+            constrained_index <- seq_len(ncol(reduced_dim))
+        }
         # Create an argument list. Only 2 dimensions are supported currently.
         args <- c(list(
             tse = x, dimred = dimred, reduced_dim = reduced_dim,
@@ -304,7 +308,9 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     #
     # There must be at least two constrained axis to plot vectors. If there are
     # not, give warning.
-    if( add.vectors && length(constrained_index) <= 1 ){
+    if( (.is_a_bool(add.vectors) && !add.vectors) &&
+            length(constrained_index) <= 1 ){
+            add.vectors <- FALSE
         warning("Model contains only one constrained axis. Vectors cannot ",
                 "be added.", call. = FALSE)
     }
@@ -497,7 +503,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 #' @importFrom scater plotReducedDim
 .create_rda_baseplot <- function(
         tse, dimred, reduced_dim, constrained_index, ncomponents = 2L,
-        add.expl.var = TRUE, expl.var = expl_var, expl_var = NULL,
+        add.expl.var = FALSE, expl.var = expl_var, expl_var = NULL,
         colour_by = color_by, color_by = colour.by,
         colour.by = color.by, color.by = NULL, ...){
     #
@@ -566,9 +572,15 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 
 # This function adds ellipse visualization.
 .rda_plotter_ellipse <- function(
-        plot, plot_data, ellipse.alpha = 0.2, ellipse.linewidth = 0.1,
-        ellipse.linetype = 1, confidence.level = 0.95, ...){
+        plot, plot_data, add.ellipse = TRUE, ellipse.alpha = 0.2,
+        ellipse.linewidth = 0.1, ellipse.linetype = 1, confidence.level = 0.95,
+        ...){
     #
+    if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour") &&
+            length(add.ellipse) == 1L ) ){
+        stop("'add.ellipse' must be one of c(TRUE, FALSE, 'fill', ",
+            "'color').", call. = FALSE)
+    }
     if( !.are_whole_numbers(ellipse.linetype) ){
         stop("'vec.linetype' must be a whole number.", call. = FALSE)
     }
