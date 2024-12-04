@@ -194,7 +194,7 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
         }
         ###################### Input check end ####################
         # Get reducedDim
-        reduced_dim <- reducedDim(tse, dimred)
+        reduced_dim <- reducedDim(x, dimred)
         # Check that there are at least 2 coordinates
         if( ncol(reduced_dim) < 2 ){
             stop("reducedDim specified by 'dimred' must have at least 2 ",
