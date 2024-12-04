@@ -200,19 +200,11 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
             stop("reducedDim specified by 'dimred' must have at least 2 ",
                 "columns.", call. = FALSE)
         }
-        # The data can include constrained and unconstrained axis. Get only
-        # the constrained ones, i.e., first set of axis.
-        comp_num <- as.numeric(gsub("\\D", "", colnames(reduced_dim)))
-        constrained_index <- which( cumsum(comp_num == 1) <= 1 )
-        # If there were problems, it might be that the names are just arbitrary.
-        # Then take all the columns.
-        if( length(constrained_index) == 0L ){
-            constrained_index <- seq_len(ncol(reduced_dim))
-        }
+        # Subset by taking only constrained axes
+        reduced_dim <- .subset_constrained_rda(reduced_dim)
         # Create an argument list. Only 2 dimensions are supported currently.
         args <- c(list(
-            tse = x, dimred = dimred, reduced_dim = reduced_dim,
-            constrained_index = constrained_index),
+            tse = x, dimred = dimred, reduced_dim = reduced_dim),
             list(...))
         args[["ncomponents"]] <- 2L
         # Get data for plotting
@@ -255,12 +247,40 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     return(object)
 }
 
+# The data can include constrained and unconstrained axes. This function subsets
+# the data so that it includes only constrained axes.
+.subset_constrained_rda <- function(reduced_dim){
+    # Get only the indices of constrained ones, i.e., first set of axes.
+    # The colnames are in format, constrained_axis1, ca2, ca3..., unconstrained
+    # axis1, uca2, ...
+    comp_num <- as.numeric(gsub("\\D", "", colnames(reduced_dim)))
+    ind <- which( cumsum(comp_num == 1) <= 1 )
+    # If there were problems, it might be that the names are just arbitrary.
+    # Then take all the columns.
+    if( !(length(ind) > 0L && all(diff(ind) == 1L)) ){
+        ind <- seq_len(ncol(reduced_dim))
+    }
+    # Preserve attributes
+    attributes <- attributes(reduced_dim)
+    attributes <- attributes[ !names(attributes) %in% c("dim", "dimnames") ]
+    # Subset the data so that it includes only constrained axes
+    reduced_dim <- reduced_dim[ , ind, drop = FALSE]
+    if( "biplot" %in% names(attributes) ){
+        attributes[["biplot"]] <- attributes[["biplot"]][ , ind, drop = FALSE]
+    }
+    if( "eig" %in% names(attributes) ){
+        attributes[["eig"]] <- attributes[["eig"]][ind]
+    }
+    # Add attributes back
+    attributes(reduced_dim) <- c(attributes(reduced_dim), attributes)
+    return(reduced_dim)
+}
+
 # This function retrieves optional data that is used for creating an ellipses.
 #' @importFrom scater retrieveCellInfo
 .get_rda_ellipse_data <- function(
-        tse, reduced_dim, add.ellipse = TRUE,
-        colour_by = color_by, color_by = colour.by,
-        colour.by = color.by, color.by = NULL, ...){
+        tse, reduced_dim, add.ellipse = TRUE, colour_by = color_by,
+        color_by = colour.by, colour.by = color.by, color.by = NULL, ...){
     #
     if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour") &&
             length(add.ellipse) == 1L ) ){
@@ -287,9 +307,9 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # This function retrieves data for creating vectors. Moreover, it wrangles the
 # vector data and controls what information is added to vector text or labels.
 .get_rda_vector_data <- function(
-        tse, reduced_dim, constrained_index, add.vectors = TRUE,
-        add.significance = TRUE, vec.lab = NULL, sep.group = "\U2014",
-        repl.underscore = " ", ...){
+        tse, reduced_dim, add.vectors = TRUE, add.significance = TRUE,
+        vec.lab = NULL, sep.group = "\U2014", repl.underscore = " ",
+        ignore.case = FALSE, ...){
     #
     if( !( .is_a_bool(add.vectors) || is.character(add.vectors)) ){
         stop("'add.vectors must be TRUE or FALSE or character vector.",
@@ -305,6 +325,9 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     if ( !.is_a_string(repl.underscore) ) {
         stop("'repl.underscore' must be a string.", call. = FALSE)
     }
+    if( !.is_a_bool(ignore.case) ){
+        stop("'ignore.case' must be TRUE or FALSE.", call. = FALSE)
+    }
     if( add.significance && (.is_a_bool(add.vectors) && !add.vectors) ){
         # If it cannot be found, give warning
         warning("'add.vectors' is FALSE, so other arguments for vectors and ",
@@ -313,9 +336,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     #
     # There must be at least two constrained axis to plot vectors. If there are
     # not, give warning.
-    if( (.is_a_bool(add.vectors) && !add.vectors) &&
-            length(constrained_index) <= 1 ){
-            add.vectors <- FALSE
+    if( ncol(reduced_dim) <= 1 ){
+        add.vectors <- FALSE
         warning("Model contains only one constrained axis. Vectors cannot ",
                 "be added.", call. = FALSE)
     }
@@ -323,10 +345,24 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     vector_data <- if(!(.is_a_bool(add.vectors) && !add.vectors))
         .get_rda_attribute(reduced_dim, "biplot")
     if( !is.null(vector_data) ){
-        vector_data <- vector_data[, constrained_index, drop = FALSE]
         vector_data <- as.data.frame(vector_data)
         vector_data[["group"]] <- rownames(vector_data)
         vector_data[["vector_label"]] <- rownames(vector_data)
+        # Subset vectors; show only specified ones, if add.vectors specifies the
+        # covariate names. The matching is done with regular expression so that
+        # user can specify for instance the whole covariate easily (covariate
+        # names and group values are merged in biplot).
+        if( is.character(add.vectors) ){
+            add.vectors <- paste0(add.vectors, collapse = "|")
+            keep <- vapply(rownames(vector_data), function(x)
+                grepl(add.vectors, x, perl = TRUE, ignore.case = ignore.case),
+                logical(1L))
+            vector_data <- vector_data[keep, ]
+        }
+        # If all vectors were removed, give NULL
+        if( nrow(vector_data) == 0L ){
+            vector_data <- NULL
+        }
     }
     
     # Get sample metadata. Check if all biplot covariate names can be found
@@ -375,20 +411,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
                 "CCA/RDA by using add* function.", call. = FALSE)
     }
     
-    # Subset vectors; show only specified ones, if add.vectors specifies the
-    # covariate names. The matching is done with regular expression so that user
-    # can specify for instance the whole covariate easily (covariate names and
-    # group values are merged in biplot).
-    if( is.character(add.vectors) ){
-        add.vectors <- paste0(add.vectors, collapse = "|")
-        keep <- vapply(rownames(vector_data), function(x)
-            grepl(add.vectors, x, perl = TRUE), logical(1L))
-        vector_data <- vector_data[keep, ]
-        # If all vectors were removed, give NULL
-        if( nrow(vector_data) == 0L ){
-            vector_data <- NULL
-        }
-    }
     return(vector_data)
 }
 
@@ -508,7 +530,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # ordination plots.
 #' @importFrom scater plotReducedDim
 .create_rda_baseplot <- function(
-        tse, dimred, reduced_dim, constrained_index, ncomponents = 2L,
+        tse, dimred, reduced_dim, ncomponents = 2L,
         add.expl.var = FALSE, expl.var = expl_var, expl_var = NULL,
         colour_by = color_by, color_by = colour.by,
         colour.by = color.by, color.by = NULL, ...){
@@ -533,8 +555,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # If specified, get explained variance
     if( add.expl.var && !is.null(expl.var) ){
         eigen_vals <- attr(reduced_dim, "eig")
-        # Get only eigenvalues of constrained components
-        eigen_vals <- eigen_vals[ constrained_index ]
         # Convert to explained variance and take only first two components
         expl_var <- eigen_vals / sum(eigen_vals)
         expl_var <- expl_var[seq_len(ncomponents)]*100
@@ -553,7 +573,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         "vec.linetype", "arrow.size", "min.segment.length", "label.color",
         "label.colour", "label.size", "parse.labels", "vec.text",
         "repel.labels", "position", "nudge_x", "nudge_y", "direction",
-        "max.overlaps", "check_overlap")
+        "max.overlaps", "check_overlap", "ignore.case")
     args <- args[ !remove ]
     # Get scatter plot with plotReducedDim --> keep theme similar between
     # ordination methods
