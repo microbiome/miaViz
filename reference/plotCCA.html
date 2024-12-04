@@ -19,7 +19,7 @@ for supervised ordination of microbiome data."><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.4</span>
       </span>
     </div>
 
@@ -95,8 +95,10 @@ of ellipses. (Default: <code>0.1</code>)</p></li>
 of ellipses. (Default: <code>1</code>)</p></li>
 <li><p><code>confidence.level</code>: <code>Numeric scalar</code>. Between 0 and 1.
 Adjusts confidence level. (Default: <code>0.95</code>)</p></li>
-<li><p><code>add.vectors</code>: <code>Logical scalar</code>. Should vectors appear in
-the plot. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>add.vectors</code>: <code>Logical scalar</code> or <code>character vector</code>.
+If boolean, should vectors appear in the plot. If character,
+selects vectors that are showed. The matching is done with regular
+expression. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>vec.size</code>: <code>Numeric scalar</code>. Specifies the size of
 vectors. (Default: <code>0.5</code>)</p></li>
 <li><p><code>vec.colour</code>: <code>Character scalar</code>. Specifies the colour of
@@ -122,7 +124,7 @@ repelled. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>add.significance</code>: <code>Logical scalar</code>. Should explained
 variance and p-value appear in the labels. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>add.expl.var</code>: <code>Logical scalar</code>. Should explained
-variance appear on the coordinate axes. (Default: <code>TRUE</code>)</p></li>
+variance appear on the coordinate axes. (Default: <code>FALSE</code>)</p></li>
 <li><p><code>add.centroids</code>: <code>Logical scalar</code>. Should centroids
 of variables be added. (Default: <code>FALSE</code>)</p></li>
 <li><p><code>add.species</code>: <code>Logical scalar</code>. Should species
@@ -234,6 +236,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-in"><span> </span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot from RDA matrix</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">rda_mat</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Significance data was not found. please computeCCA/RDA by using add* function.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing missing values or values outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_point()`).</span>
 <span class="r-plt img"><img src="plotCCA-6.png" alt="" width="3000" height="2100"></span>
