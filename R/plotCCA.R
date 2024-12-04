@@ -305,6 +305,11 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     if ( !.is_a_string(repl.underscore) ) {
         stop("'repl.underscore' must be a string.", call. = FALSE)
     }
+    if( add.significance && (.is_a_bool(add.vectors) && !add.vectors) ){
+        # If it cannot be found, give warning
+        warning("'add.vectors' is FALSE, so other arguments for vectors and ",
+                "labels will be disregarded.", call. = FALSE)
+    }
     #
     # There must be at least two constrained axis to plot vectors. If there are
     # not, give warning.
@@ -363,7 +368,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
             vector_data[["vector_label"]], variable_names, signif_data,
             repl.underscore)
     }
-    if( add.significance && is.null(signif_data) ){
+    if( add.significance && is.null(signif_data) &&
+            !(.is_a_bool(add.vectors) && !add.vectors) ){
         # If it cannot be found, give warning
         warning("Significance data was not found. please compute",
                 "CCA/RDA by using add* function.", call. = FALSE)
