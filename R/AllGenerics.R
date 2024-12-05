@@ -118,15 +118,15 @@ setGeneric("rowTreeData<-", signature = c("x"),
 
 #' @rdname treeData
 setGeneric("colTreeData<-", signature = c("x"),
-     function(x, tree.name = tree_name, tree_name = "phylo", value)
-     standardGeneric("colTreeData<-"))
+    function(x, tree.name = tree_name, tree_name = "phylo", value)
+    standardGeneric("colTreeData<-"))
 
 #' @rdname treeData
 setGeneric("combineTreeData", signature = c("x"),
-     function(x, other.fields = other_fields, other_fields = list())
-     standardGeneric("combineTreeData"))
+    function(x, other.fields = other_fields, other_fields = list())
+    standardGeneric("combineTreeData"))
 
 #' @rdname treeData
 setGeneric("combineTreeData", signature = c("x"),
-     function(x, other.fields = other_fields, other_fields = list())
-     standardGeneric("combineTreeData"))
+    function(x, other.fields = other_fields, other_fields = list())
+    standardGeneric("combineTreeData"))

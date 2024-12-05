@@ -29,6 +29,13 @@ setMethod("plotTaxaPrevalence", signature = c(x = "ANY"), function(x, ...){
 #' @rdname deprecate
 #' @aliases plotRowPrevalence
 #' @export
+setGeneric("plotFeaturePrevalence", signature = c("x"),
+    function(x, ...)
+    standardGeneric("plotFeaturePrevalence"))
+
+#' @rdname deprecate
+#' @aliases plotRowPrevalence
+#' @export
 setMethod("plotFeaturePrevalence", signature = c(x = "ANY"), function(x, ...){
     .Deprecated(
         old ="plotFeaturePrevalence", new = "plotRowPrevalence",
@@ -37,10 +44,3 @@ setMethod("plotFeaturePrevalence", signature = c(x = "ANY"), function(x, ...){
     plotRowPrevalence(x, ...)
     }
 )
-
-#' @rdname deprecate
-#' @aliases plotRowPrevalence
-#' @export
-setGeneric("plotFeaturePrevalence", signature = c("x"),
-    function(x, ...)
-    standardGeneric("plotFeaturePrevalence"))
