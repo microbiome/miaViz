@@ -41,7 +41,8 @@
 #' separate to the plotting, and can be applied to any kind of ordinated data
 #' which can be valuable depending on the use case.
 #' 
-#' [Rajaram & Oono (2010) NeatMap - non-clustering heat map alternatives in R](https://doi.org/10.1186/1471-2105-11-45) outlines this in more detail.
+#' [Rajaram & Oono (2010) NeatMap - non-clustering heat map alternatives in R](https://doi.org/10.1186/1471-2105-11-45)
+#' outlines this in more detail.
 #' 
 #' @name getNeatOrder
 #' 

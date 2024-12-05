@@ -7,8 +7,8 @@
 #' returns a heatmap. 
 #' 
 #' @param x a
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#'   object.
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' object.
 #'   
 #' @param rank,... additional arguments
 #' \itemize{
@@ -36,49 +36,56 @@
 #'   
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'   
-#' @param colour.by \code{Character scalar}. Specification of a feature to colour points by, see the 
-#'   \code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})
+#' @param colour.by \code{Character scalar}. Specification of a feature to
+#' colour points by, see the \code{by} argument in
+#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#' possible values. Only used with \code{layout = "point"}.
+#' (Default: \code{NULL})
 #'   
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
 #'   
-#' @param shape.by \code{Character scalar}. Specification of a feature to shape points by, see the 
-#'   \code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})
+#' @param shape.by \code{Character scalar}. Specification of a feature to shape
+#' points by, see the \code{by} argument in
+#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#' possible values. Only used with \code{layout = "point"}.
+#' (Default: \code{NULL})
 #'
 #' @param shape_by Deprecated. Use \code{shape.by} instead.   
 #'   
-#' @param size.by \code{Character scalar}. Specification of a feature to size points by, see the 
-#'   \code{by} argument in \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#'   possible values. Only used with \code{layout = "point"}. (Default: \code{NULL})
+#' @param size.by \code{Character scalar}. Specification of a feature to size
+#' points by, see the \code{by} argument in
+#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#' possible values. Only used with \code{layout = "point"}.
+#' (Default: \code{NULL})
 #'   
 #' @param size_by Deprecated. Use \code{size.by} instead.
 #'   
-#' @param facet.by \code{Character scalar}. Taxonomic rank to facet the plot by. 
+#' @param facet.by \code{Character scalar}. Taxonomic rank to facet the plot by.
 #' Value must be of \code{taxonomyRanks(x)}
 #' Argument can only be used in function plotPrevalentAbundance. 
 #' 
 #' @param facet_by Deprecated. Use \code{facet.by} instead.
 #' 
-#' @param show.label \code{Logical scalar}, \code{character scalar} or \code{integer vector} 
-#'   for selecting labels from the rownames of \code{x}. If \code{rank} is not 
-#'   \code{NULL} the rownames might change. (Default: \code{NULL})
+#' @param show.label \code{Logical scalar}, \code{character scalar} or
+#' \code{integer vector} for selecting labels from the rownames of \code{x}.
+#' If \code{rank} is not \code{NULL} the rownames might change.
+#' (Default: \code{NULL})
 #'   
 #' @param label Deprecated. Use \code{show.label} instead.
 #'
-#' @param detection \code{Numeric scalar}. Detection thresholds for absence/presence. Either an
-#'   absolutes value compared directly to the values of \code{x} or a relative
-#'   value between 0 and 1, if \code{TRUE}. 
+#' @param detection \code{Numeric scalar}. Detection thresholds for
+#' absence/presence. Either an absolutes value compared directly to the values
+#' of \code{x} or a relative value between 0 and 1, if \code{TRUE}. 
 #' 
 #' @param detections Deprecated. Use \code{detection} instead.
 #'   
-#' @param prevalence \code{Numeric scalar}. Prevalence thresholds (in 0 to 1). The
-#'   required prevalence is strictly greater by default. To include the
-#'   limit, set \code{include.lowest} to \code{TRUE}.
+#' @param prevalence \code{Numeric scalar}. Prevalence thresholds (in 0 to 1).
+#' The required prevalence is strictly greater by default. To include the
+#' limit, set \code{include.lowest} to \code{TRUE}.
 #' 
 #' @param prevalences Deprecated. Use \code{prevalence} instead.
 #'
-#' @param min.prevalence \code{Numeric scalar}. Applied as a threshold for 
+#' @param min.prevalence \code{Numeric scalar}. Applied as a threshold for
 #'   plotting. The threshold is applied per row and column.
 #'   (Default: \code{0})
 #'   
@@ -89,15 +96,15 @@
 #'   object specifying whether the UniFrac calculation should be parallelized.
 #' 
 #' @details 
-#' Agglomeration on different taxonomic levels is available through the 
-#' \code{rank} argument. 
+#' Agglomeration on different taxonomic levels is available through the
+#' \code{rank} argument.
 #' 
-#' To exclude certain taxa, preprocess \code{x} to your liking, for example 
-#' with subsetting via \code{getPrevalent} or 
+#' To exclude certain taxa, preprocess \code{x} to your liking, for example
+#' with subsetting via \code{getPrevalent} or
 #' \code{agglomerateByPrevalence}.
 #' 
 #' @return 
-#' A \code{ggplot2} object or \code{plotly} object, if more than one 
+#' A \code{ggplot2} object or \code{plotly} object, if more than one
 #' \code{prevalence} was defined.
 #' 
 #' @seealso 
@@ -146,7 +153,7 @@ NULL
 #' @rdname plotPrevalence
 #' @export
 setGeneric("plotPrevalence", signature = c("x"),
-           function(x, ...) standardGeneric("plotPrevalence"))
+    function(x, ...) standardGeneric("plotPrevalence"))
 
 #' @rdname plotPrevalence
 #' @export
@@ -164,9 +171,9 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
             stop("'detection' must be numeric values.", call. = FALSE)
         }
         if(!all(.is_numeric_string(prevalence)) || any(prevalence < 0) ||
-           any(prevalence > 1)){
+                any(prevalence > 1)){
             stop("'prevalence' must be numeric values between 0 and 1.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         .check_assay_present(assay.type, x)
         #
@@ -249,7 +256,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @rdname plotPrevalence
 #' @export
 setGeneric("plotPrevalentAbundance", signature = c("x"),
-           function(x, ...) standardGeneric("plotPrevalentAbundance"))
+    function(x, ...) standardGeneric("plotPrevalentAbundance"))
 
 #' @rdname plotPrevalence
 #' @export
@@ -408,7 +415,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @aliases plotTaxaPrevalence
 #' @export
 setGeneric("plotRowPrevalence", signature = c("x"),
-           function(x, ...) standardGeneric("plotRowPrevalence"))
+    function(x, ...) standardGeneric("plotRowPrevalence"))
 
 #' @rdname plotPrevalence
 #' @export
@@ -430,7 +437,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         
         if(length(min.prevalence) != 1 || !.is_numeric_string(min.prevalence)){
             stop("'min.prevalence' must be single numeric values.",
-                 call. = FALSE)
+                call. = FALSE)
         }
         #
         # Agglomerate data if specified
@@ -477,7 +484,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
     }
     if(as_relative && (any(detections < 0) || any(detections > 1))){
         stop("If 'as_relative' == TRUE, detection' must be numeric ",
-             "values between 0 and 1.", call. = FALSE)
+            "values between 0 and 1.", call. = FALSE)
     }
     if( !.is_an_integer(ndetection) ){
         stop("'ndetection' must be a single integer value.", call. = FALSE)
@@ -523,7 +530,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
     # If there are no data to plot anymro e after subsetting, give error.
     if(any(dim(ans) == 0)){
         stop("No data left after apply threshold 'min_prevalence'.",
-             call. = FALSE)
+            call. = FALSE)
     }
     # Get the taxa order, the most abundant taxa comes first
     lvls <- rownames(ans)[order(rowSums(ans))]
@@ -531,9 +538,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
     ans[["ID"]] <- rownames(x)[rowSums(f) != 0]
     # Convert the table to long format
     ans <- ans %>%
-        pivot_longer(!ID, 
-                     names_to = "detection",
-                     values_to = "prevalence")
+        pivot_longer(!ID, names_to = "detection", values_to = "prevalence")
     colnames(ans) <- c("Y","X","colour_by")
     # Round values
     ans$X <- round(as.numeric(ans$X),4) * 100
@@ -648,32 +653,36 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
 #' @aliases plotRowPrevalence
 #' @export
 setGeneric("plotTaxaPrevalence", signature = c("x"),
-           function(x, ...) 
-             standardGeneric("plotTaxaPrevalence"))
+    function(x, ...) standardGeneric("plotTaxaPrevalence"))
 
 #' @rdname plotPrevalence
 #' @aliases plotRowPrevalence
 #' @export
 setMethod("plotTaxaPrevalence", signature = c(x = "ANY"),
-          function(x, ...){
-            .Deprecated(old ="plotTaxaPrevalence", new = "plotRowPrevalence", msg = "The 'plotTaxaPrevalence' function is deprecated. Use 'plotRowPrevalence' instead.")
-            plotRowPrevalence(x, ...)
-          }
+    function(x, ...){
+        .Deprecated(
+        old ="plotTaxaPrevalence", new = "plotRowPrevalence",
+        msg = paste0("The 'plotTaxaPrevalence' function is ",
+            "deprecated. Use 'plotRowPrevalence' instead."))
+        plotRowPrevalence(x, ...)
+    }
 )
 
 #' @rdname plotPrevalence
 #' @aliases plotRowPrevalence
 #' @export
 setGeneric("plotFeaturePrevalence", signature = c("x"),
-           function(x, ...) 
-               standardGeneric("plotFeaturePrevalence"))
+    function(x, ...) standardGeneric("plotFeaturePrevalence"))
 
 #' @rdname plotPrevalence
 #' @aliases plotRowPrevalence
 #' @export
 setMethod("plotFeaturePrevalence", signature = c(x = "ANY"),
-          function(x, ...){
-              .Deprecated(old ="plotFeaturePrevalence", new = "plotRowPrevalence", msg = "The 'plotFeaturePrevalence' function is deprecated. Use 'plotRowPrevalence' instead.")
-              plotRowPrevalence(x, ...)
-          }
+    function(x, ...){
+        .Deprecated(
+            old ="plotFeaturePrevalence", new = "plotRowPrevalence",
+            msg = paste0("The 'plotFeaturePrevalence' function is ",
+                "deprecated. Use 'plotRowPrevalence' instead."))
+            plotRowPrevalence(x, ...)
+        }
 )
