@@ -1,92 +1,86 @@
-#' Plot feature loadings for TreeSummarizedExperiment 
+#' Plot feature loadings for TreeSummarizedExperiment
 #' objects or feature loadings numeric matrix.
 #'
 #' This function is used after performing a reduction method. If \code{TreeSE}
 #' is given it retrieves the feature loadings matrix to plot values.
 #' A tree from \code{rowTree} can be added to heatmap layout.
-#' 
+#'
 #' @inheritParams plotTree
-#' 
+#'
 #' @param dimred \code{Character scalar}.  Determines the reduced dimension to
 #' plot.
-#'  
+#'
 #' @param layout \code{Character scalar}. Determines the layout of plot. Must be
 #' either \code{"barplot"}, \code{"heatmap"}, or \code{"lollipop"}.
 #' (Default: \code{"barplot"})
-#'   
+#'
 #' @param ncomponents \code{Numeric scalar}. Number of components must be lower
 #' or equal to the number of components chosen in the reduction method.
 #' (Default: \code{5})
-#' 
+#'
 #' @param add.tree \code{Logical scalar}. Whether to add tree to heatmap layout.
 #' (Default: \code{FALSE})
-#' 
+#'
 #' @param row.var \code{NULL} or \code{Character scalar}. Specifies a
 #' variable from \code{rowData} to plot with tree heatmap layout.
 #' (Default: \code{NULL})
-#'   
+#'
 #' @param ... additional parameters for plotting.
 #' \itemize{
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
 #'   Applicable when \code{layout="barplot"}. (Default: \code{10}))
-#'   
+#'
 #'   \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
 #'   Specifies whether a barplot or a lollipop plot should be visualized in
 #'   absolute scale. (Default: \code{TRUE})
 #' }
-#' 
+#'
 #' @details
-#' 
+#'
 #' These method visualize feature loadings of dimension reduction results.
 #' Inspired by the \code{plotASVcircular} method using \code{phyloseq}.
 #' \code{TreeSummarizedExperiment} object is expected to have
 #' content in \code{reducedDim} slot calculated with standardized methods from
 #' \code{mia} or \code{scater} package.
-#' 
-#' @return 
+#'
+#' @return
 #' A \code{ggplot2} object.
 #'
 #' @name plotLoadings
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' library(mia)
 #' library(scater)
 #' data("GlobalPatterns", package = "mia")
 #' tse <- GlobalPatterns
-#' 
+#'
 #' # Calculate PCA
 #' tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
 #' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
-#' 
+#'
 #' #' # Plotting feature loadings with tree
 #' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
-#' 
+#'
 #' # Plotting matrix as a barplot
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
 #' plotLoadings(loadings_matrix)
-#' 
+#'
 #' # Plotting more features but less components
 #' plotLoadings(tse, dimred = "PCA", ncomponents = 2, n = 12)
-#' 
+#'
 #' # Plotting matrix as heatmap without tree
 #' plotLoadings(loadings_matrix, layout = "heatmap")
-#' 
+#'
 #' # Plot with less components
 #' plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)
-#' 
+#'
 NULL
 
 #' @rdname plotLoadings
-setGeneric("plotLoadings", signature = c("x"),
-    function(x, ...) 
-        standardGeneric("plotLoadings"))
-
-
-#' @rdname plotLoadings
-#' @export 
+#' @export
 setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
     function(
         x, dimred, layout = "barplot", ncomponents = 5, tree.name = "phylo",
@@ -108,7 +102,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         }
         # Check that tree.name. If user wants to add tree, the tree name must
         # specify a tree
-        if(add.tree && !(.is_a_string(tree.name) && 
+        if(add.tree && !(.is_a_string(tree.name) &&
         tree.name %in% rowTreeNames(x)) ){
             stop(
                 "'tree.name' must be a string specifying a rowTree.",
@@ -134,14 +128,14 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         } else {
             # Utilize matrix method to create a plot
             p <- plotLoadings(
-                mat, layout = layout, ncomponents = ncomponents, ...) 
+                mat, layout = layout, ncomponents = ncomponents, ...)
         }
     return(p)
     }
 )
 
 #' @rdname plotLoadings
-#' @export 
+#' @export
 setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     function(x, dimred, layout = "barplot", ncomponents = 5, ...){
         # Check that there are reducedDim
@@ -159,13 +153,13 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
         mat <- .get_loadings_matrix(x, dimred, ...)
         # Utilize matrix method to create a plot
         p <- plotLoadings(
-            mat, layout = layout, ncomponents = ncomponents, ...) 
+            mat, layout = layout, ncomponents = ncomponents, ...)
         return(p)
     }
 )
 
 #' @rdname plotLoadings
-#' @export 
+#' @export
 setMethod("plotLoadings", signature = c(x = "matrix"),
     function(x, layout = "barplot", ncomponents = 5, ...) {
         # Input check
@@ -231,7 +225,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 
 # This function manipulates the loadings data into correct format. The output
 # is data.frame in long format directly usable for ggplot.
-#' @importFrom tibble rownames_to_column 
+#' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
 .get_loadings_plot_data <- function(df, layout, ncomponents, n = 10, ...) {
     # Transform into a dataframe
@@ -249,8 +243,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         res <- df %>%
             rownames_to_column(var = "Feature") %>%
             pivot_longer(
-                cols = components, 
-                names_to = "PC", 
+                cols = components,
+                names_to = "PC",
                 values_to = "Value")
     }
     # Convert into data.frame
@@ -266,7 +260,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 }
 
 # This function subsets the data so that it selects top features that have the
-# greatest loadings for single component. 
+# greatest loadings for single component.
 .process_component <- function(i, df, n) {
     # Get order of loadings based on absolute value
     ind <- order(-abs(df[[i]]))
@@ -333,7 +327,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 limits = c(-max(abs(df$Value)), max(abs(df$Value))),
                 low = "darkblue", mid = "white", high = "darkred"
                 )
-            
+
     } else if( layout %in% c("barplot", "lollipop") ){
         plot_out <- .plot_bar_or_lollipop(plot_out, df, layout, ...)
     }
@@ -371,7 +365,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         if(absolute.scale) -df$Value_abs else df$Value,
         df$PC
         )
-    
+
     # Plot barplot or lollipop
     if (layout == "barplot") {
         # This creates a barplot
@@ -398,7 +392,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 color = if (show.color) Sign else NULL
             ))
     }
-    
+
     # Add sign labels if needed
     if( show.sign ){
         plot_out <- plot_out + geom_text(aes(
@@ -409,7 +403,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             fontface = "bold"
         ))
     }
-    
+
     # Customize the legend for Sign as "Effect"
     if( show.color ) {
         # Get correct function, barplot uses fill, lollipop color
@@ -419,18 +413,18 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         # values shows + or -. Make the legend nicer.
         plot_out <- plot_out +
             scale_FUN(
-                name = "Effect", 
+                name = "Effect",
                 values = c("+" = "blue", "-" = "red"),
                 labels = c("+" = "positive", "-" = "negative")
             )
     }
-    
+
     # Final wrangle, set facets and order the data
     plot_out <- plot_out +
         scale_y_reordered() +
         facet_wrap(~PC, scales = "free") +
         labs(x = "Value", y = "Feature")
-    
+
     return(plot_out)
 }
 

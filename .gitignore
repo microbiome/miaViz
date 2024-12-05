@@ -10,4 +10,4 @@ renv/
 renv.lock
 .Rprofile
 .idea
-
+.Rproj

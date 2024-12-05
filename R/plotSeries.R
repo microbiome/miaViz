@@ -9,40 +9,40 @@
 #' @param assay.type \code{Character scalar}. selecting the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #' plotted. (Default: \code{"counts"})
-#'   
+#'
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
 #'
 #' @param x \code{Character scalar}. selecting the column from
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} that
 #' will specify values of x-axis.
-#'  
+#'
 #' @param y \code{Character scalar}. Selects the taxa from
 #'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
 #'   This parameter specifies taxa whose abundances will be plotted.
-#'  
-#' @param rank \code{Character scalar}. A taxonomic rank, that is used 
-#'   to agglomerate the data. Must be a value of \code{taxonomicRanks()} 
+#'
+#' @param rank \code{Character scalar}. A taxonomic rank, that is used
+#'   to agglomerate the data. Must be a value of \code{taxonomicRanks()}
 #'   function. (Default: \code{NULL})
-#'  
+#'
 #' @param colour.by \code{Character scalar}. A taxonomic rank, that is used to
 #' color plot. Must be a value of \code{taxonomicRanks()} function.
 #' (Default: \code{NULL})
-#'   
+#'
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
-#' 
+#'
 #' @param linetype.by \code{Character scalar}. A taxonomic rank, that
 #' is used to divide taxa to different line types. Must be a value of
 #' \code{taxonomicRanks()} function. (Default: \code{NULL})
-#'   
+#'
 #' @param linetype_by Deprecated. Use \code{linetype.by} instead.
-#' 
+#'
 #' @param size.by \code{Character scalar}. A taxonomic rank, that is
 #' used to divide taxa to different line size types. Must be a value of
 #' \code{taxonomicRanks()} function. (Default: \code{NULL})
-#'   
+#'
 #' @param size_by Deprecated. Use \code{size.by} instead.
-#'   
-#' @param ... additional parameters for plotting. See 
+#'
+#' @param ... additional parameters for plotting. See
 #' \code{\link{mia-plot-args}} for more details i.e. call
 #' \code{help("mia-plot-args")}
 #'
@@ -50,8 +50,8 @@
 #' This function creates series plot, where x-axis includes e.g. time points,
 #' and y-axis abundances of selected taxa.
 #'
-#' @return 
-#' A \code{ggplot2} object 
+#' @return
+#' A \code{ggplot2} object
 #'
 #' @name plotSeries
 #'
@@ -64,55 +64,36 @@
 #' library("miaTime")
 #' data(SilvermanAGutData)
 #' object <- SilvermanAGutData
-#' 
+#'
 #' # Plots 2 most abundant taxa, which are colored by their family
 #' plotSeries(object,
 #'            x = "DAY_ORDER",
 #'            y = getTop(object, 2),
 #'            colour.by = "Family")
-#' 
+#'
 #' # Counts relative abundances
 #' object <- transformAssay(object, method = "relabundance")
-#' 
+#'
 #' # Selects taxa
 #' taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
-#' 
+#'
 #' # Plots relative abundances of phylums
 #' plotSeries(object[taxa,],
-#'            x = "DAY_ORDER", 
+#'            x = "DAY_ORDER",
 #'            colour.by = "Family",
 #'            linetype.by = "Phylum",
 #'            assay.type = "relabundance")
-#' 
+#'
 #' # In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used
 #' # to group taxa.
 #' plotSeries(object,
-#'            x = "DAY_ORDER", 
-#'            y = getTop(object, 5), 
+#'            x = "DAY_ORDER",
+#'            y = getTop(object, 5),
 #'            colour.by = "Family",
 #'            size.by = "Phylum",
 #'            assay.type = "counts")
 #' }
 NULL
-
-#' @rdname plotSeries
-#' @export
-setGeneric("plotSeries", signature = c("object"),
-    function(
-        object,
-        x,
-        y = NULL,
-        rank = NULL,
-        colour.by = colour_by,
-        colour_by = NULL,
-        size.by = size_by,
-        size_by = NULL,
-        linetype.by = linetype_by,
-        linetype_by = NULL,
-        assay.type = assay_name, assay_name = "counts",
-        ...)
-    standardGeneric("plotSeries"))
-
 
 #' @rdname plotSeries
 #' @importFrom SummarizedExperiment colData rowData assay
@@ -146,7 +127,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         if( !is.null(rank) ){
             # Check rank
             .check_taxonomic_rank(rank, object)
-            
+
             # Agglomerates the object
             object <- agglomerateByRank(object, rank = rank)
         }
@@ -176,7 +157,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         ylab <- paste0(assay.type)
         # Create the plot
         p <- .series_plotter(
-            plot_data, 
+            plot_data,
             xlab = xlab,
             ylab = ylab,
             colour_by = colour.by,
@@ -206,7 +187,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     colnames(rowData(object))[ match(row_vars, colnames(rowData(object))) ] <-
         names(row_vars)
     row_vars <- names(row_vars)
-    
+
     # Melt SE object. If value is not found from rowData/colData, user get
     # informative error message.
     plot_data <- meltSE(
@@ -298,7 +279,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     if(!is.null(plot_data$sd)){
         plot_out <- .resolve_plot_colours(
             plot_out, plot_data$colour_by, colour_by, fill = TRUE)
-    } 
+    }
     # add additional guides
     plot_out <- .add_extra_line_guide(plot_out, linetype_by, size_by)
     # To choose if legend is kept, and its position

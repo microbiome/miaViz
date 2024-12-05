@@ -1,144 +1,144 @@
 #' Plot prevalence information
-#' 
-#' \code{plotPrevalence} and \code{plotRowPrevalence} visualize prevalence 
+#'
+#' \code{plotPrevalence} and \code{plotRowPrevalence} visualize prevalence
 #' information.
-#' 
+#'
 #' Whereas \code{plotPrevalence} produces a line plot, \code{plotRowPrevalence}
-#' returns a heatmap. 
-#' 
+#' returns a heatmap.
+#'
 #' @param x a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
-#'   
+#'
 #' @param rank,... additional arguments
 #' \itemize{
 #'   \item as.relative \code{Logical scalar}. Should the relative values
-#'   be calculated? (Default: \code{FALSE}) 
-#'   
+#'   be calculated? (Default: \code{FALSE})
+#'
 #'   \item ndetection \code{Integer scalar}. Determines the number of breaks
 #'   calculated detection thresholds when \code{detection=NULL}. When
 #'   \code{TRUE},  \code{as_relative} is then also regarded as \code{TRUE}.
 #'   (Default: \code{20})
-#'   
+#'
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to
 #'     \code{\link[=agglomerate-methods]{agglomerateByRank}}. See
 #'     \code{\link[=agglomerate-methods]{?agglomerateByRank}} for more details.
 #'   }
-#'   
-#'   \item{additional arguments for plotting. See 
+#'
+#'   \item{additional arguments for plotting. See
 #'   \code{\link{mia-plot-args}} for more details i.e. call
 #'   \code{help("mia-plot-args")}}
 #' }
-#' 
-#'   
+#'
+#'
 #' @param assay.type \code{Character scalar}. Defines which assay data to
 #'   use. (Default: \code{"relabundance"})
-#'   
+#'
 #' @param assay_name Deprecated. Use \code{assay.type} instead.
-#'   
+#'
 #' @param colour.by \code{Character scalar}. Specification of a feature to
 #' colour points by, see the \code{by} argument in
-#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
-#' possible values. Only used with \code{layout = "point"}.
-#' (Default: \code{NULL})
-#'   
-#' @param colour_by Deprecated. Use \code{colour.by} instead.
-#'   
-#' @param shape.by \code{Character scalar}. Specification of a feature to shape
-#' points by, see the \code{by} argument in
-#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 #' possible values. Only used with \code{layout = "point"}.
 #' (Default: \code{NULL})
 #'
-#' @param shape_by Deprecated. Use \code{shape.by} instead.   
-#'   
-#' @param size.by \code{Character scalar}. Specification of a feature to size
+#' @param colour_by Deprecated. Use \code{colour.by} instead.
+#'
+#' @param shape.by \code{Character scalar}. Specification of a feature to shape
 #' points by, see the \code{by} argument in
-#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for 
+#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
 #' possible values. Only used with \code{layout = "point"}.
 #' (Default: \code{NULL})
-#'   
+#'
+#' @param shape_by Deprecated. Use \code{shape.by} instead.
+#'
+#' @param size.by \code{Character scalar}. Specification of a feature to size
+#' points by, see the \code{by} argument in
+#' \code{\link[scater:retrieveFeatureInfo]{?retrieveFeatureInfo}} for
+#' possible values. Only used with \code{layout = "point"}.
+#' (Default: \code{NULL})
+#'
 #' @param size_by Deprecated. Use \code{size.by} instead.
-#'   
+#'
 #' @param facet.by \code{Character scalar}. Taxonomic rank to facet the plot by.
 #' Value must be of \code{taxonomyRanks(x)}
-#' Argument can only be used in function plotPrevalentAbundance. 
-#' 
+#' Argument can only be used in function plotPrevalentAbundance.
+#'
 #' @param facet_by Deprecated. Use \code{facet.by} instead.
-#' 
+#'
 #' @param show.label \code{Logical scalar}, \code{character scalar} or
 #' \code{integer vector} for selecting labels from the rownames of \code{x}.
 #' If \code{rank} is not \code{NULL} the rownames might change.
 #' (Default: \code{NULL})
-#'   
+#'
 #' @param label Deprecated. Use \code{show.label} instead.
 #'
 #' @param detection \code{Numeric scalar}. Detection thresholds for
 #' absence/presence. Either an absolutes value compared directly to the values
-#' of \code{x} or a relative value between 0 and 1, if \code{TRUE}. 
-#' 
+#' of \code{x} or a relative value between 0 and 1, if \code{TRUE}.
+#'
 #' @param detections Deprecated. Use \code{detection} instead.
-#'   
+#'
 #' @param prevalence \code{Numeric scalar}. Prevalence thresholds (in 0 to 1).
 #' The required prevalence is strictly greater by default. To include the
 #' limit, set \code{include.lowest} to \code{TRUE}.
-#' 
+#'
 #' @param prevalences Deprecated. Use \code{prevalence} instead.
 #'
 #' @param min.prevalence \code{Numeric scalar}. Applied as a threshold for
 #'   plotting. The threshold is applied per row and column.
 #'   (Default: \code{0})
-#'   
+#'
 #' @param min_prevalence Deprecated. Use \code{min.prevalence} instead.
-#' 
+#'
 #' @param BPPARAM A
 #'   \code{\link[BiocParallel:BiocParallelParam-class]{BiocParallelParam}}
 #'   object specifying whether the UniFrac calculation should be parallelized.
-#' 
-#' @details 
+#'
+#' @details
 #' Agglomeration on different taxonomic levels is available through the
 #' \code{rank} argument.
-#' 
+#'
 #' To exclude certain taxa, preprocess \code{x} to your liking, for example
 #' with subsetting via \code{getPrevalent} or
 #' \code{agglomerateByPrevalence}.
-#' 
-#' @return 
+#'
+#' @return
 #' A \code{ggplot2} object or \code{plotly} object, if more than one
 #' \code{prevalence} was defined.
-#' 
-#' @seealso 
+#'
+#' @seealso
 #' \code{\link[mia:getPrevalence]{getPrevalence}},
 #' \code{\link[mia:getPrevalence]{agglomerateByPrevalence}},
 #' \code{\link[mia:agglomerate-methods]{agglomerateByRank}}
-#' 
+#'
 #' @name plotPrevalence
-#' 
-#' @examples 
+#'
+#' @examples
 #' data(GlobalPatterns, package = "mia")
-#' 
+#'
 #' # Apply relative transformation
 #' GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
-#' 
+#'
 #' # plotting N of prevalence exceeding taxa on the Phylum level
 #' plotPrevalence(GlobalPatterns, rank = "Phylum")
 #' plotPrevalence(GlobalPatterns, rank = "Phylum") + scale_x_log10()
-#' 
+#'
 #' # plotting prevalence per taxa for different detection thresholds as heatmap
 #' plotRowPrevalence(GlobalPatterns, rank = "Phylum")
-#' 
-#' # by default a continuous scale is used for different detection levels, 
+#'
+#' # by default a continuous scale is used for different detection levels,
 #' # but this can be adjusted
 #' plotRowPrevalence(
 #'     GlobalPatterns, rank = "Phylum", assay.type = "relabundance",
 #'     detection = c(0, 0.001, 0.01, 0.1, 0.2))
-#'                    
+#'
 #' # point layout for plotRowPrevalence can be used to visualize by additional
 #' # information
 #' plotPrevalentAbundance(
 #'     GlobalPatterns, rank = "Family", colour.by = "Phylum") +
 #'     scale_x_log10()
-#' 
+#'
 #' # When using function plotPrevalentAbundace, it is possible to create facets
 #' # with 'facet.by'.
 #' plotPrevalentAbundance(
@@ -149,11 +149,6 @@ NULL
 
 ################################################################################
 # plotPrevalence
-
-#' @rdname plotPrevalence
-#' @export
-setGeneric("plotPrevalence", signature = c("x"),
-    function(x, ...) standardGeneric("plotPrevalence"))
 
 #' @rdname plotPrevalence
 #' @export
@@ -186,7 +181,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
             x, assay.type, detection, prevalence, BPPARAM, ...)
         plot_data$colour_by <- plot_data$colour_by * 100
         # Plot the data
-        p <- .prevalence_plotter(plot_data, 
+        p <- .prevalence_plotter(plot_data,
                             layout = "line",
                             ylab = "N",
                             colour_by = "Prevalence [%]",
@@ -255,11 +250,6 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
 
 #' @rdname plotPrevalence
 #' @export
-setGeneric("plotPrevalentAbundance", signature = c("x"),
-    function(x, ...) standardGeneric("plotPrevalentAbundance"))
-
-#' @rdname plotPrevalence
-#' @export
 setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     function(
             x,
@@ -278,7 +268,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         # input check
         .check_assay_present(assay.type, x)
 
-        # Check facet.by It is FALSE by default, but user can specify it, but 
+        # Check facet.by It is FALSE by default, but user can specify it, but
         # the value must be in taxonomyRanks.
         if(!(is.null(facet.by) || facet.by %in% taxonomyRanks(x))){
             stop("'facet.by' must be in taxonomyRanks.",  call. = FALSE)
@@ -310,7 +300,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         ylab <- paste0(
             "Prevalence (", ifelse(is.null(rank), "Features", rank), ") [%]")
         # Plot the data
-        plot <- .prevalence_plotter(plot_data, 
+        plot <- .prevalence_plotter(plot_data,
                             layout = "point",
                             ylab = ylab,
                             colour_by = colour_by,
@@ -320,7 +310,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         # If facet.by is not NULL, user has specified it. Adds the facets to
         # the plot.
         if(!is.null(facet.by)){
-            plot <- plot + 
+            plot <- plot +
                 # Create facets
                 facet_wrap(vars(!!sym("facet_by")))
         }
@@ -412,12 +402,6 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 # plotRowPrevalence
 
 #' @rdname plotPrevalence
-#' @aliases plotTaxaPrevalence
-#' @export
-setGeneric("plotRowPrevalence", signature = c("x"),
-    function(x, ...) standardGeneric("plotRowPrevalence"))
-
-#' @rdname plotPrevalence
 #' @export
 setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
     function(
@@ -434,7 +418,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
             stop("'detection' must be numeric values.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
-        
+
         if(length(min.prevalence) != 1 || !.is_numeric_string(min.prevalence)){
             stop("'min.prevalence' must be single numeric values.",
                 call. = FALSE)
@@ -451,7 +435,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         ylab <- ifelse(is.null(rank), "Features", rank)
         colour_by <- "Prevalence [%]"
         # Plot the data
-        p <- .prevalence_plotter(plot_data, 
+        p <- .prevalence_plotter(plot_data,
                             layout = "heatmap",
                             ylab = ylab,
                             colour_by = colour_by,
@@ -590,7 +574,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         line_args <- .get_line_args(
             colour_by = colour_by, linetype_by = NULL, size_by = NULL,
             alpha = line_alpha, linetype = line_type, linewidth = line_size)
-        # Add grouping. Otherwise, the line does not follow the same value as 
+        # Add grouping. Otherwise, the line does not follow the same value as
         # colouring.
         point_args$args$mapping$group <- sym("colour_by")
         line_args$args$mapping$group <- sym("colour_by")
@@ -629,10 +613,10 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         # Add scale. If numeric, add continuous scaling, if discrete, add
         # discrete scaling.
         if(is.factor(plot_data$X)){
-            plot_out <- plot_out + 
+            plot_out <- plot_out +
                 scale_x_discrete(expand = c(0,0))
         } else {
-            plot_out <- plot_out + 
+            plot_out <- plot_out +
                 scale_x_continuous(expand = c(0,0), n.breaks = 7L)
         }
     } else {
@@ -648,41 +632,3 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         plot_out, flipped, add_x_text = TRUE, angle_x_text = FALSE)
     return(plot_out)
 }
-
-#' @rdname plotPrevalence
-#' @aliases plotRowPrevalence
-#' @export
-setGeneric("plotTaxaPrevalence", signature = c("x"),
-    function(x, ...) standardGeneric("plotTaxaPrevalence"))
-
-#' @rdname plotPrevalence
-#' @aliases plotRowPrevalence
-#' @export
-setMethod("plotTaxaPrevalence", signature = c(x = "ANY"),
-    function(x, ...){
-        .Deprecated(
-        old ="plotTaxaPrevalence", new = "plotRowPrevalence",
-        msg = paste0("The 'plotTaxaPrevalence' function is ",
-            "deprecated. Use 'plotRowPrevalence' instead."))
-        plotRowPrevalence(x, ...)
-    }
-)
-
-#' @rdname plotPrevalence
-#' @aliases plotRowPrevalence
-#' @export
-setGeneric("plotFeaturePrevalence", signature = c("x"),
-    function(x, ...) standardGeneric("plotFeaturePrevalence"))
-
-#' @rdname plotPrevalence
-#' @aliases plotRowPrevalence
-#' @export
-setMethod("plotFeaturePrevalence", signature = c(x = "ANY"),
-    function(x, ...){
-        .Deprecated(
-            old ="plotFeaturePrevalence", new = "plotRowPrevalence",
-            msg = paste0("The 'plotFeaturePrevalence' function is ",
-                "deprecated. Use 'plotRowPrevalence' instead."))
-            plotRowPrevalence(x, ...)
-        }
-)

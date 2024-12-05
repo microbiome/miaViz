@@ -159,10 +159,6 @@
 NULL
 
 #' @rdname plotAbundance
-setGeneric("plotAbundance", signature = c("x"), function(x, ...)
-    standardGeneric("plotAbundance"))
-
-#' @rdname plotAbundance
 #' @importFrom ggplot2 facet_wrap
 #' @export
 setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(

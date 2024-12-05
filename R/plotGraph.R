@@ -1,21 +1,21 @@
 #' Plotting igraph objects with information from a \code{SummarizedExperiment}
-#' 
+#'
 #' \code{plotGraph} plots an \code{igraph} object with additional information
 #' matched from a \code{SummarizedExperiment} object for the nodes only.
 #' Information on the edges have to provided manually.
 #'
 #' @param x,y a graph object and a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object or just a 
+#' object or just a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
 #' For the latter object a graph object must be stored in
 #' \code{metadata(x)$name}.
-#'   
+#'
 #' @param name \code{Character scalar}. If \code{x} is a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' the key for subsetting the \code{metadata(x)} to a graph object.
 #' (Default: \code{"graph"})
-#' 
+#'
 #' @param show.label \code{Logical scalar}, \code{integer vector} or
 #' \code{character vector}
 #' If a \code{logical} scalar is given, should tip labels be plotted
@@ -27,82 +27,82 @@
 #' case of a \code{character} vector only values corresponding to actual
 #' labels will be plotted and if no labels are provided no labels will be
 #' shown. (Default: \code{FALSE})
-#'   
+#'
 #' @param show_label Deprecated. Use \code{show.label} instead.
-#' 
-#' @param add.legend \code{Logical scalar}. Should legends be plotted? 
+#'
+#' @param add.legend \code{Logical scalar}. Should legends be plotted?
 #'   (Default: \code{TRUE})
-#'   
+#'
 #' @param add_legend Deprecated. Use \code{add.legend} instead.
-#'   
-#' @param layout \code{Character scalar}. Layout for the plotted graph. See 
+#'
+#' @param layout \code{Character scalar}. Layout for the plotted graph. See
 #'   \code{\link[ggraph:ggraph]{ggraph}} for details. (Default: \code{"kk"})
-#'   
+#'
 #' @param edge.type \code{Character scalar}. Type of edge plotted on the graph.
 #' See \code{\link[ggraph:geom_edge_fan]{geom_edge_fan}} for details and other
 #' available geoms. (Default: \code{"fan"})
-#' 
+#'
 #' @param edge_type Deprecated. Use \code{edge.type} instead.
-#'   
+#'
 #' @param edge.colour.by \code{Character scalar}. Specification of an edge
 #' metadata field to use for setting colours of the edges.
 #' (Default: \code{NULL})
-#'   
+#'
 #' @param edge_colour_by Deprecated. Use \code{edge.colour.by} instead.
-#'   
+#'
 #' @param edge.width.by \code{Character scalar}. Specification of an edge
 #' metadata
 #' field to use for setting width of the edges. (Default: \code{NULL})
-#'   
+#'
 #' @param edge_width_by Deprecated. Use \code{edge.width.by} instead.
-#' 
+#'
 #' @param colour.by \code{Character scalar}. Specification of a column metadata
 #' field or a feature to colour graph nodes by, see the by argument in
 #' \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 #' values. (Default: \code{NULL})
-#'   
+#'
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
-#'   
+#'
 #' @param shape.by \code{Character scalar}. Specification of a column metadata
 #'   field or a feature to shape graph nodes by, see the by argument in
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 #'   values. (Default: \code{NULL})
-#'   
+#'
 #' @param shape_by Deprecated. Use \code{shape.by} instead.
-#'   
+#'
 #' @param size.by \code{Character scalar}. Specification of a column metadata
 #'   field or a feature to size graph nodes by, see the by argument in
 #'   \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
 #'   values. (Default: \code{NULL})
-#'   
+#'
 #' @param size_by Deprecated. Use \code{size.by} instead.
-#'   
+#'
 #' @param assay.type \code{Character scalar}. or \code{integer scalar}.
 #' Specifies which assay to obtain expression values from, for use in point
 #' aesthetics - see the \code{exprs_values} argument in
 #' \code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
 #' (Default: \code{"counts"})
-#' 
+#'
 #' @param by_exprs_values Deprecated. Use \code{assay.type} instead.
-#'  
+#'
 #' @param other.fields Additional fields to include in the node information
 #'   without plotting them.
-#'   
+#'
 #' @param other_fields Deprecated. Use \code{other.fields} instead.
-#'   
+#'
 #' @param ... additional arguments for plotting. See
 #' \code{\link{mia-plot-args}} for more details i.e. call
 #' \code{help("mia-plot-args")}
-#' 
+#'
 #' @details
 #' Internally \code{tidygraph} and \code{ggraph} are used. Therefore, all
 #' graph types which can be converted by \code{tidygraph::as_tbl_graph} can
 #' be used.
-#' 
+#'
 #' @return a \code{\link{ggtree}} plot
-#' 
+#'
 #' @name plotGraph
-#' 
+#'
 #' @examples
 #' \donttest{
 #' # data setup
@@ -112,12 +112,12 @@
 #' data(row_graph)
 #' data(row_graph_order)
 #' metadata(GlobalPatterns)$col_graph <- col_graph
-#' 
+#'
 #' genus <- agglomerateByRank(GlobalPatterns,"Genus",na.rm=TRUE)
 #' metadata(genus)$row_graph <- row_graph
 #' order <- agglomerateByRank(genus,"Order",na.rm=TRUE)
 #' metadata(order)$row_graph <- row_graph_order
-#' 
+#'
 #' # plot a graph independently
 #' plotColGraph(col_graph,
 #'              genus,
@@ -125,22 +125,22 @@
 #'              edge.colour.by = "weight",
 #'              edge.width.by = "weight",
 #'              show.label = TRUE)
-#' 
+#'
 #' # plot the graph stored in the object
 #' plotColGraph(genus,
 #'              name = "col_graph",
 #'              colour.by = "SampleType",
 #'              edge.colour.by = "weight",
 #'              edge.width.by = "weight")
-#'              
-#' 
+#'
+#'
 #' # plot a graph independently
 #' plotRowGraph(row_graph,
 #'              genus,
 #'              colour.by = "Kingdom",
 #'              edge.colour.by = "weight",
 #'              edge.width.by = "weight")
-#' 
+#'
 #' # plot the graph stored in the object
 #' plotRowGraph(genus,
 #'              name = "row_graph",
@@ -148,31 +148,31 @@
 #'              edge.colour.by = "weight",
 #'              edge.width.by = "weight")
 #'
-#'                            
+#'
 #' # plot a graph independently
 #' plotRowGraph(row_graph_order,
 #'              order,
 #'              colour.by = "Kingdom",
 #'              edge.colour.by = "weight",
 #'              edge.width.by = "weight")
-#' 
+#'
 #' # plot the graph stored in the object and include some labels
 #' plotRowGraph(order,
 #'              name = "row_graph",
 #'              colour.by = "Phylum",
 #'              edge.colour.by = "weight",
-#'              edge.width.by = "weight", 
+#'              edge.width.by = "weight",
 #'              show.label = c("Sulfolobales","Spirochaetales",
 #'                             "Verrucomicrobiales"))
-#'                             
+#'
 #' # labels can also be included via selecting specific rownames of x/y
 #' plotRowGraph(order,
 #'              name = "row_graph",
 #'              colour.by = "Phylum",
 #'              edge.colour.by = "weight",
-#'              edge.width.by = "weight", 
+#'              edge.width.by = "weight",
 #'              show.label = c(1,10,50))
-#'              
+#'
 #' # labels can also be included via a logical vector, which has the same length
 #' # as nodes are present
 #' label_select <- rep(FALSE,nrow(order))
@@ -186,19 +186,9 @@
 #' }
 NULL
 
-#' @rdname plotGraph
-#' @export
-setGeneric("plotColGraph", signature = c("x","y"),
-    function(x, y, ...) standardGeneric("plotColGraph"))
-
-#' @rdname plotGraph
-#' @export
-setGeneric("plotRowGraph", signature = c("x","y"),
-    function(x, y, ...) standardGeneric("plotRowGraph"))
-
 .check_graph_plot_switches <- function(show_label, add_legend){
     if(!.is_a_bool(show_label)){
-        if( (!is.logical(show_label) && !is.character(show_label) && 
+        if( (!is.logical(show_label) && !is.character(show_label) &&
             !is.numeric(show_label)) ||
             is.null(show_label)){
             stop("'show_label' must be either TRUE or FALSE or logical, ",
@@ -410,13 +400,13 @@ setMethod("plotRowGraph",
             activate("nodes") %>%
             mutate(label = .data$name)
     }
-    
+
     if(!is.logical(show_label) || length(show_label) > 1L) {
-        data <- graph_data %>% 
+        data <- graph_data %>%
             activate("nodes") %>%
             as_tibble()
         if(is.character(show_label) && length(show_label) == nrow(data)) {
-            graph_data <- graph_data %>% 
+            graph_data <- graph_data %>%
                 activate("nodes") %>%
                 mutate(label = show_label)
             show_label <- TRUE
@@ -445,7 +435,7 @@ setMethod("plotRowGraph",
                 stop("If 'show_label' is logical, it must have the length as ",
                     "nodes are in the graph.", call. = FALSE)
             }
-            graph_data <- graph_data %>% 
+            graph_data <- graph_data %>%
                 activate("nodes") %>%
                 mutate(label = ifelse(show_label, label, NA_character_))
             show_label <- TRUE
@@ -461,9 +451,9 @@ setMethod("plotRowGraph",
 
 #' @importFrom tidygraph activate as_tibble
 .colnames_tbl_graph <- function(graph_data, type){
-    graph_data %>% 
-        activate(!!sym(type)) %>% 
-        as_tibble() %>% 
+    graph_data %>%
+        activate(!!sym(type)) %>%
+        as_tibble() %>%
         colnames()
 }
 
@@ -475,7 +465,7 @@ setMethod("plotRowGraph",
                 "Data will not be added.",
                 call. = FALSE)
     }
-    graph_data %>% 
+    graph_data %>%
         activate(!!sym(type)) %>%
         mutate(!!sym(data$name) := data$value)
 }
@@ -519,7 +509,7 @@ setMethod("plotRowGraph",
                     assign(var_name, .get_new_var_name_value(
                         get(var_name), variables[f][i]))
                     # rename columns by their usage
-                    graph_data %>% 
+                    graph_data %>%
                         activate("nodes") %>%
                         dplyr::rename(!!sym(var_name) := variables[f][i])
                 }
@@ -527,7 +517,7 @@ setMethod("plotRowGraph",
             }
         }
         if(length(variables) > 0L){
-            dim_graph_nodes <- graph_data %>% 
+            dim_graph_nodes <- graph_data %>%
                 activate("nodes") %>%
                 as_tibble() %>%
                 dim()
@@ -576,7 +566,7 @@ setMethod("plotRowGraph",
             assign(var_name, .get_new_var_name_value(
                 get(var_name), variables[i]))
             # rename columns by their usage
-            graph_data <- graph_data %>% 
+            graph_data <- graph_data %>%
                 activate("edges") %>%
                 mutate(!!sym(var_name) := !!sym(unname(variables[i])))
         }
@@ -680,7 +670,7 @@ setMethod("plotRowGraph",
             fill = point_out$fill,
             na.translate = FALSE)
     }
-    
+
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
     # add theme
@@ -700,7 +690,7 @@ setMethod("plotRowGraph",
         label_data <- plot_out$data %>% drop_na(label)
         plot_out <- plot_out +
             geom_node_label(
-                mapping = aes(label = .data[["label"]]), 
+                mapping = aes(label = .data[["label"]]),
                 data = label_data,
                 repel = TRUE,
                 max.overlaps = 100)
@@ -709,6 +699,6 @@ setMethod("plotRowGraph",
 }
 
 .theme_plotGraph <- function(plot){
-    plot + 
+    plot +
         theme_graph(base_family = "", background = NA)
 }

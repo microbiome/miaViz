@@ -223,15 +223,6 @@
 NULL
 
 #' @rdname plotTree
-setGeneric("plotRowTree", signature = c("x"),
-    function(x, ...)
-    standardGeneric("plotRowTree"))
-#' @rdname plotTree
-setGeneric("plotColTree", signature = c("x"),
-    function(x, ...)
-    standardGeneric("plotColTree"))
-
-#' @rdname plotTree
 #' @export
 setMethod("plotColTree", signature = c(x = "TreeSummarizedExperiment"),
     function(x,

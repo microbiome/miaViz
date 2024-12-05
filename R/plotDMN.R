@@ -2,10 +2,10 @@
 #'
 #' To plot DMN fits generated with `mia` use \code{plotDMNFit}.
 #'
-#' @param x a 
+#' @param x a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object contain the DMN data in \code{metadata}.
-#'   
+#'
 #' @param type \code{Character scalar}. The type of measure for access the
 #' goodness of fit. One of \sQuote{laplace}, \sQuote{AIC} or \sQuote{BIC}.
 #'
@@ -26,24 +26,18 @@
 #' @examples
 #' library(mia)
 #' library(bluster)
-#' 
+#'
 #' # Get dataset
 #' data("peerj13075", package = "mia")
 #' tse <- peerj13075
-#' 
+#'
 #' # Cluster the samples
 #' tse <- addCluster(tse, DmmParam(k = 1:4), name = "DMM", full = TRUE)
-#' 
+#'
 #' # Plot the fit
 #' plotDMNFit(tse, name = "DMM", type = "laplace")
-#' 
+#'
 NULL
-
-#' @rdname plotDMN
-#' @export
-setGeneric("plotDMNFit", signature = "x",
-    function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
-    standardGeneric("plotDMNFit"))
 
 #' @rdname plotDMN
 #' @importFrom DirichletMultinomial mixture
@@ -55,7 +49,7 @@ setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
         if (!is.null(metadata(x)[[name]]$dmm)) {
             dmn <- metadata(x)[[name]]$dmm
         } else {
-            .Deprecated(old="getDMN", new="addCluster", 
+            .Deprecated(old="getDMN", new="addCluster",
                 paste0(
                     "Now runDMN and calculateDMN are deprecated. Use ",
                     "addCluster with DMMParam parameter and full ",

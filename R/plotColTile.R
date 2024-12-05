@@ -1,50 +1,40 @@
 #' Plot factor data as tiles
-#' 
+#'
 #' Relative relations of two grouping can be visualized by plotting tiles with
-#' relative sizes. \code{plotColTile} and \code{plotRowTile} can be used for 
+#' relative sizes. \code{plotColTile} and \code{plotRowTile} can be used for
 #' this.
-#' 
+#'
 #' @param object a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
-#' 
+#'
 #' @param x \code{Character scalar}. Specifies the column-level metadata field
 #' to show on the x-axis.
-#'   Alternatively, an \link{AsIs} vector or data.frame, see 
+#'   Alternatively, an \link{AsIs} vector or data.frame, see
 #'   \code{?\link{retrieveFeatureInfo}} or \code{?\link{retrieveCellInfo}}. Must
 #'   result in a returned \code{character} or \code{factor} vector.
-#'   
+#'
 #' @param y \code{Character scalar}. Specifies the column-level metadata to
 #' show on the y-axis.
-#'   Alternatively, an \link{AsIs} vector or data.frame, see 
+#'   Alternatively, an \link{AsIs} vector or data.frame, see
 #'   \code{?\link{retrieveFeatureInfo}} or \code{?\link{retrieveCellInfo}}. Must
 #'   result in a returned \code{character} or \code{factor} vector.
-#'  
-#' @param ... additional arguments for plotting. See 
+#'
+#' @param ... additional arguments for plotting. See
 #' \code{\link{mia-plot-args}} for more details i.e. call
 #' \code{help("mia-plot-args")}
-#' 
-#' @return 
-#' A \code{ggplot2} object or \code{plotly} object, if more than one 
+#'
+#' @return
+#' A \code{ggplot2} object or \code{plotly} object, if more than one
 #' \code{prevalences} was defined.
-#' 
+#'
 #' @name plotColTile
-#' 
+#'
 #' @examples
 #' data(GlobalPatterns)
 #' se <- GlobalPatterns
 #' plotColTile(se,"SampleType","Primer")
 NULL
-
-#' @rdname plotColTile
-#' @export
-setGeneric("plotColTile", signature = c("object"),
-    function(object, x, y, ...) standardGeneric("plotColTile"))
-#' @rdname plotColTile
-#' @export
-setGeneric("plotRowTile", signature = c("object"),
-    function(object, x, y, ...) standardGeneric("plotRowTile"))
-
 
 #' @rdname plotColTile
 #' @export
@@ -102,8 +92,8 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
         type,
         "row" = "rowData",
         "column" = "colData")
-    x_group <- data %>% 
-        group_by(.data$X) %>% 
+    x_group <- data %>%
+        group_by(.data$X) %>%
         summarise(group_n = n()) %>%
         mutate(
             group_freq = .data$group_n/sum(.data$group_n),
@@ -134,9 +124,9 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
 }
 
 .get_xcoord_mid <- function(data){
-    data %>% 
+    data %>%
         ungroup() %>%
-        select(.data$X, .data$x, .data$xmin) %>% 
+        select(.data$X, .data$x, .data$xmin) %>%
         unique() %>%
         mutate(xmid = .data$xmin + (.data$x - .data$xmin)/2 )
 }
@@ -161,7 +151,7 @@ setMethod("plotRowTile", signature = c("SummarizedExperiment"),
     rect_args$args$mapping$ymin <- sym("ymin")
     rect_args$args$mapping$ymax <- sym("y")
     # start plotting
-    plot_out <- ggplot(data) 
+    plot_out <- ggplot(data)
     plot_out <- plot_out +
         do.call(geom_rect,rect_args$args)
     # add scales

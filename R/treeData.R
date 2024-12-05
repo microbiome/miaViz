@@ -47,36 +47,6 @@
 #' combineTreeData(rowTree(GlobalPatterns), td)
 NULL
 
-#' @rdname treeData
-setGeneric("rowTreeData", signature = c("x"),
-    function(x, ...)
-    standardGeneric("rowTreeData"))
-
-#' @rdname treeData
-setGeneric("colTreeData", signature = c("x"),
-    function(x, ...)
-    standardGeneric("colTreeData"))
-
-#' @rdname treeData
-setGeneric("rowTreeData<-", signature = c("x"),
-    function(x, tree.name = tree_name, tree_name = "phylo", value)
-    standardGeneric("rowTreeData<-"))
-
-#' @rdname treeData
-setGeneric("colTreeData<-", signature = c("x"),
-    function(x, tree.name = tree_name, tree_name = "phylo", value)
-    standardGeneric("colTreeData<-"))
-
-#' @rdname treeData
-setGeneric("combineTreeData", signature = c("x"),
-    function(x, other.fields = other_fields, other_fields = list())
-    standardGeneric("combineTreeData"))
-
-#' @rdname treeData
-setGeneric("combineTreeData", signature = c("x"),
-    function(x, other.fields = other_fields, other_fields = list())
-    standardGeneric("combineTreeData"))
-
 #' @importFrom tidytree as_tibble
 .get_tree_data <- function(tree){
     tree %>%
