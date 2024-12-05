@@ -16,8 +16,8 @@ bibliography: references.bib
 
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
+    collapse = TRUE,
+    comment = "#>"
 )
 knitr::opts_chunk$set(dev = "png", dev.args = list(type = "cairo-png")) 
 ```
@@ -50,15 +50,16 @@ In contrast to other fields of sequencing based fields of research for which
 expression of genes is usually studied, microbiome research uses the more 
 term ~Abundance~ to described the numeric data measured and analyzed.
 Technically, especially in context of `SummarizedExperiment` objects, there is
-no difference. Therefore `plotExpression` can be used to plot `Abundance` data of a particular feature.
+no difference. Therefore `plotExpression` can be used to plot `Abundance` data
+of a particular feature.
 
 ```{r}
-plotExpression(GlobalPatterns, 
-              features = "549322", assay.type = "counts")
+plotExpression(GlobalPatterns, features = "549322", assay.type = "counts")
 ```
 
-On the other hand, plotAbundance can be used to plot abundance by  `rank`. A bar plot is returned showing the relative abundance within each sample for a given `rank`. At the same
-time the `features` argument can be set to `NULL` (default). 
+On the other hand, plotAbundance can be used to plot abundance by  `rank`. A bar
+plot is returned showing the relative abundance within each sample for a given
+`rank`. At the same time the `features` argument can be set to `NULL` (default).
 
 ```{r}
 GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
@@ -80,14 +81,14 @@ plotAbundance(GlobalPatterns_king, assay.type = "relabundance")
 With subsetting to selected features the plot can be fine tuned.
 
 ```{r}
-prev_phylum <- getPrevalent(GlobalPatterns, rank = "Phylum",
-                                detection = 0.01, onRankOnly = TRUE)
+prev_phylum <- getPrevalent(GlobalPatterns, rank = "Phylum", detection = 0.01)
 ```
 
 ```{r}
-plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
-              rank = "Phylum",
-              assay.type = "relabundance")
+plotAbundance(
+    GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
+    rank = "Phylum",
+    assay.type = "relabundance")
 ```
 
 The `features` argument is reused for plotting data along the different samples.
@@ -97,15 +98,16 @@ the result is a list, which can combined using external tools, for example
 
 ```{r}
 library(patchwork)
-plots <- plotAbundance(GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
-                       features = "SampleType",
-                       rank = "Phylum",
-                       assay.type = "relabundance")
-plots$abundance / plots$SampleType +
-     plot_layout(heights = c(9, 1))
+plots <- plotAbundance(
+    GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
+    features = "SampleType",
+    rank = "Phylum",
+    assay.type = "relabundance")
+plots$abundance / plots$SampleType + plot_layout(heights = c(9, 1))
 ```
 
-Further example about composition barplot can be found at Orchestrating Microbiome Analysis [@OMA].
+Further example about composition barplot can be found at Orchestrating
+Microbiome Analysis [@OMA].
 
 # Prevalence plotting
 
@@ -117,16 +119,15 @@ To visualize prevalence within the dataset, two functions are available,
 visualizes the prevalence of samples across abundance thresholds.
 
 ```{r}
-plotFeaturePrevalence(GlobalPatterns, rank = "Phylum",
-                   detections = c(0, 0.001, 0.01, 0.1, 0.2))
+plotFeaturePrevalence(
+    GlobalPatterns, rank = "Phylum", detections = c(0, 0.001, 0.01, 0.1, 0.2))
 ```
 
 `plotPrevalenceAbundance` plot the prevalence depending on the mean relative 
 abundance on the chosen taxonomic level.
 
 ```{r}
-plotPrevalentAbundance(GlobalPatterns, rank = "Family",
-                       colour_by = "Phylum") +
+plotPrevalentAbundance(GlobalPatterns, rank = "Family", colour_by = "Phylum") +
     scale_x_log10()
 ```
 
@@ -136,10 +137,10 @@ different abundance thresholds. Abundance steps can be adjusted using the
 `prevalences` argument.
 
 ```{r}
-plotPrevalence(GlobalPatterns,
-               rank = "Phylum",
-               detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
-               prevalences = seq(0.1, 1, 0.1))
+plotPrevalence(
+    GlobalPatterns, rank = "Phylum",
+    detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
+    prevalences = seq(0.1, 1, 0.1))
 ```
 
 # Tree plotting
@@ -155,17 +156,20 @@ by mean abundance on the genus level.
 library(scater)
 library(mia)
 ```
+
 ```{r}
 altExp(GlobalPatterns,"Genus") <- agglomerateByRank(GlobalPatterns,"Genus")
-altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(altExp(GlobalPatterns,"Genus"))
-rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
-    log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
-rowData(altExp(GlobalPatterns,"Genus"))$detected <- 
-    rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
-top_taxa <- getTop(altExp(GlobalPatterns,"Genus"),
-                       method="mean",
-                       top=100L,
-                       assay.type="counts")
+altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(
+    altExp(GlobalPatterns,"Genus"))
+rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- log(
+    rowData(altExp(GlobalPatterns,"Genus"))$mean)
+rowData(altExp(GlobalPatterns,"Genus"))$detected <- rowData(
+    altExp(GlobalPatterns,"Genus"))$detected / 100
+top_taxa <- getTop(
+    altExp(GlobalPatterns,"Genus"),
+    method="mean",
+    top=100L,
+    assay.type="counts")
 ```
 
 Colour, size and shape of tree tips and nodes can be decorated based on data
@@ -177,19 +181,18 @@ Data will be matched via the `node` or `label` argument depending on which was
 provided. `label` takes precedent.
 
 ```{r plot1, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size)"}
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
-            tip_colour_by = "log_mean",
-            tip_size_by = "detected")
+plotRowTree(
+    altExp(GlobalPatterns,"Genus")[top_taxa,], tip_colour_by = "log_mean",
+    tip_size_by = "detected")
 ```
 
 Tip and node labels can be shown as well. Setting `show_label = TRUE` shows the
 tip labels only ...
 
 ```{r plot2, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Tip labels of the tree are shown as well."}
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
-            tip_colour_by = "log_mean",
-            tip_size_by = "detected",
-            show_label = TRUE)
+plotRowTree(
+    altExp(GlobalPatterns,"Genus")[top_taxa,],
+    tip_colour_by = "log_mean", tip_size_by = "detected", show_label = TRUE)
 ```
 
 ... whereas node labels can be selectively shown by providing a named logical
@@ -200,19 +203,21 @@ layout.
 
 ```{r plot3, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown."}
 labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
-            tip_colour_by = "log_mean",
-            tip_size_by = "detected",
-            show_label = labels,
-            layout="rectangular")
+plotRowTree(
+    altExp(GlobalPatterns,"Genus")[top_taxa,],
+    tip_colour_by = "log_mean",
+    tip_size_by = "detected",
+    show_label = labels,
+    layout="rectangular")
 ```
 
 Information can also be visualized on the edges of the tree plot.
 
 ```{r plot4, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and edges labeled Kingdom (colour) and prevalence (size)"}
-plotRowTree(altExp(GlobalPatterns,"Genus")[top_taxa,],
-            edge_colour_by = "Phylum",
-            tip_colour_by = "log_mean")
+plotRowTree(
+    altExp(GlobalPatterns,"Genus")[top_taxa,],
+    edge_colour_by = "Phylum",
+    tip_colour_by = "log_mean")
 ```
 
 # Graph plotting
@@ -235,12 +240,13 @@ rownames with the node names of the graph. Using this link the graph plot
 can incorporate data from the `SummarizedExperiment`.
 
 ```{r}
-plotColGraph(col_graph,
-             altExp(GlobalPatterns,"Genus"),
-             colour_by = "SampleType",
-             edge_colour_by = "weight",
-             edge_width_by = "weight",
-             show_label = TRUE)
+plotColGraph(
+    col_graph,
+    altExp(GlobalPatterns,"Genus"),
+    colour_by = "SampleType",
+    edge_colour_by = "weight",
+    edge_width_by = "weight",
+    show_label = TRUE)
 ```
 
 As mentioned the graph data can be provided from the `metadata` of the 
@@ -253,12 +259,13 @@ metadata(altExp(GlobalPatterns,"Genus"))$graph <- col_graph
 This produces the same plot as shown above.
 
 ```{r include=FALSE}
-plotColGraph(altExp(GlobalPatterns,"Genus"),
-             name = "graph",
-             colour_by = "SampleType",
-             edge_colour_by = "weight",
-             edge_width_by = "weight",
-             show_label = TRUE)
+plotColGraph(
+    altExp(GlobalPatterns,"Genus"),
+    name = "graph",
+    colour_by = "SampleType",
+    edge_colour_by = "weight",
+    edge_width_by = "weight",
+    show_label = TRUE)
 ```
 
 # Plotting of serial data
@@ -283,34 +290,38 @@ The `x` argument is used to reference data from the `colData` to use as
 descriptor for ordering the data. The `y` argument selects the feature to show.
 Since plotting a lot of features is not advised a maximum of 20 features can 
 plotted at the same time.
- 
+
 ```{r, eval=FALSE}
-plotSeries(tse,
-           x = "DAY_ORDER",
-           y = taxa,
-           colour_by = "Family")
+plotSeries(
+    tse,
+    x = "DAY_ORDER",
+    y = taxa,
+    colour_by = "Family")
 ```
+
 If replicated data is present, data is automatically used for calculation of the
 `mean` and `sd` and plotted as a range. Data from different assays can be used
 for plotting via the `assay.type`.
 
 ```{r, eval=FALSE}
-plotSeries(tse[taxa,],
-           x = "DAY_ORDER",
-           colour_by = "Family",
-           linetype_by = "Phylum",
-           assay.type = "relabundance")
+plotSeries(
+    tse[taxa,],
+    x = "DAY_ORDER",
+    colour_by = "Family",
+    linetype_by = "Phylum",
+    assay.type = "relabundance")
 ```
 
 Additional variables can be used to modify line type aesthetics.
 
 ```{r, eval=FALSE}
-plotSeries(tse,
-           x = "DAY_ORDER",
-           y = getTop(tse, 5),
-           colour_by = "Family",
-           linetype_by = "Phylum",
-           assay.type = "counts")
+plotSeries(
+    tse,
+    x = "DAY_ORDER",
+    y = getTop(tse, 5),
+    colour_by = "Family",
+    linetype_by = "Phylum",
+    assay.type = "counts")
 ```
 
 # Plotting factor data
@@ -322,16 +333,17 @@ two functions are available for the purpose; `plotColTile` and `plotRowTile`.
 data(GlobalPatterns, package="mia")
 se <- GlobalPatterns
 plotColTile(se,"SampleType","Primer") +
-  theme(axis.text.x.top = element_text(angle = 45, hjust = 0))
+    theme(axis.text.x.top = element_text(angle = 45, hjust = 0))
 ```
 
 # DMN fit plotting
 
 Searching for groups that are similar to each other among the samples, could be
 approached with the Dirichlet Multinomial Mixtures [@DMM].
-After using `runDMN` from the `mia` package, several k values as a number of clusters 
-are used to observe the best fit (see also `getDMN` and `getBestDMNFit`).
-To visualize the fit using e.g. "laplace" as a measure of goodness of fit:
+After using `runDMN` from the `mia` package, several k values as a number of
+clusters  are used to observe the best fit (see also `getDMN` and
+`getBestDMNFit`). To visualize the fit using e.g. "laplace" as a measure of
+goodness of fit:
 
 ```{r}
 data(dmn_se, package = "mia")
@@ -351,8 +363,9 @@ data(hitchip1006, package = "miaTime")
 tse <- hitchip1006
 tse <- transformAssay(tse, method = "relabundance")
 ## Ordination with PCoA with Bray-Curtis dissimilarity
-tse <- runMDS(tse, FUN = vegan::vegdist, method = "bray", name = "PCoA_BC",
-              assay.type = "relabundance", na.rm = TRUE)
+tse <- runMDS(
+    tse, FUN = getDissimilarity, method = "bray", name = "PCoA_BC",
+    assay.type = "relabundance", na.rm = TRUE)
 # plot
 p <- plotReducedDim(tse, dimred = "PCoA_BC")
 p
@@ -375,13 +388,15 @@ Lets look at all trajectories having two time points in the data:
 
 ```{r, eval=FALSE}
 # plot
-p + geom_path(aes(x=X1, y=X2, group=subject), 
-              arrow=arrow(length = unit(0.1, "inches")),
-              # combining ordination data and metadata then selecting the subjects
-              # Note, scuttle::makePerCellDF could also be used for the purpose.
-              data = subset(data.frame(reducedDim(tse), colData(tse)),
-                            subject %in% selected.subjects) %>% arrange(time))+
-    labs(title = "All trajectories with two time points")+
+p + geom_path(
+    aes(x=X1, y=X2, group=subject), 
+    arrow=arrow(length = unit(0.1, "inches")),
+    # combining ordination data and metadata then selecting the subjects
+    # Note, scuttle::makePerCellDF could also be used for the purpose.
+    data = subset(
+        data.frame(reducedDim(tse), colData(tse)),
+        subject %in% selected.subjects) %>% arrange(time)) +
+    labs(title = "All trajectories with two time points") +
     theme(plot.title = element_text(hjust = 0.5))
 ```
 
@@ -392,23 +407,25 @@ library(miaTime)
 # calculating step wise divergence based on the microbial profiles
 tse <- getStepwiseDivergence(tse, group = "subject", time_field = "time")
 # retrieving the top 10% divergent subjects having two time points
-top.selected.subjects <- subset(data.frame(reducedDim(tse), colData(tse)),
-                            subject %in% selected.subjects) %>% 
+top.selected.subjects <- subset(
+    data.frame(reducedDim(tse), colData(tse)),
+    subject %in% selected.subjects) %>% 
     top_frac(0.1, time_divergence) %>% select(subject) %>% .[[1]]
 # plot
-p + geom_path(aes(x=X1, y=X2,
-                  color=time_divergence, group=subject),
-              # the data is sorted in descending order in terms of time
-              # since geom_path will use the first occurring observation
-              # to color the corresponding segment. Without the sorting
-              # geom_path will pick up NA values (corresponding to initial time
-              # points); breaking the example.
-              data = subset(data.frame(reducedDim(tse), colData(tse)),
-                            subject %in% top.selected.subjects) %>% 
-                  arrange(desc(time)),
-              # arrow end is reversed, due to the earlier sorting.
-              arrow=arrow(length = unit(0.1, "inches"), ends = "first"))+
-    labs(title = "Top 10%  divergent trajectories from time point one to two")+
+p + geom_path(
+    aes(x=X1, y=X2, color=time_divergence, group=subject),
+    # the data is sorted in descending order in terms of time
+    # since geom_path will use the first occurring observation
+    # to color the corresponding segment. Without the sorting
+    # geom_path will pick up NA values (corresponding to initial time
+    # points); breaking the example.
+    data = subset(
+        data.frame(reducedDim(tse), colData(tse)),
+        subject %in% top.selected.subjects) %>% 
+    arrange(desc(time)),
+    # arrow end is reversed, due to the earlier sorting.
+    arrow=arrow(length = unit(0.1, "inches"), ends = "first")) +
+    labs(title = "Top 10%  divergent trajectories from time point one to two") +
     scale_color_gradient2(low="white", high="red")+
     theme(plot.title = element_text(hjust = 0.5))
 ```
@@ -420,18 +437,21 @@ Plotting an example of the trajectory with the maximum total divergence:
 selected.subject <- data.frame(reducedDim(tse), colData(tse)) %>%
     group_by(subject) %>% 
     summarise(total_divergence = sum(time_divergence, na.rm = TRUE)) %>%
-    filter(total_divergence==max(total_divergence)) %>% select(subject) %>% .[[1]]
+    filter(total_divergence==max(total_divergence)) %>% select(subject) %>%
+    .[[1]]
 # plot
-p +  geom_path(aes(x=X1, y=X2, group=subject),
-              data = subset(data.frame(reducedDim(tse), colData(tse)),
-                            subject %in% selected.subject) %>% arrange(time),
-              arrow=arrow(length = unit(0.1, "inches")))+
-    labs(title = "Longest trajectory by divergence")+
+p +  geom_path(
+    aes(x=X1, y=X2, group=subject),
+    data = subset(
+        data.frame(reducedDim(tse), colData(tse)),
+        subject %in% selected.subject) %>% arrange(time),
+    arrow=arrow(length = unit(0.1, "inches"))) +
+    labs(title = "Longest trajectory by divergence") +
     theme(plot.title = element_text(hjust = 0.5))
 ```
 
-
-More examples and materials are available at Orchestrating Microbiome Analysis [@OMA].
+More examples and materials are available at Orchestrating Microbiome Analysis
+[@OMA].
 
 # Session info
 
