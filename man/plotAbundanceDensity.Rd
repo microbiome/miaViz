@@ -123,7 +123,8 @@ data("peerj13075", package = "mia")
 tse <- peerj13075
 
 # Plots the abundances of 25 most abundant taxa. Jitter plot is the default
-option. plotAbundanceDensity(tse, assay.type = "counts")
+# option.
+plotAbundanceDensity(tse, assay.type = "counts")
 
 # Counts relative abundances
 tse <- transformAssay(tse, method = "relabundance")
