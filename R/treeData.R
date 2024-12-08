@@ -111,8 +111,8 @@ setReplaceMethod("colTreeData", signature = c(x = "TreeSummarizedExperiment"),
             stop("'colTree(x, tree.name)' is NULL.", call. = FALSE)
         }
         # this is just temporary solution since phylo does not support data
-        colTree(x, whichTree = tree.name) <- tidytree::as.phylo(
-            combineTreeData(tree, value))
+        tree <- tidytree::as.phylo(combineTreeData(tree, value))
+        x@colTree[[tree.name]] <- tree
         return(x)
     }
 )
@@ -133,8 +133,8 @@ setReplaceMethod("rowTreeData", signature = c(x = "TreeSummarizedExperiment"),
             stop("'rowTree(x)' is NULL.", call. = FALSE)
         }
         # this is just temporary solution since phylo does not support data
-        rowTree(x, whichTree = tree.name) <- tidytree::as.phylo(
-            combineTreeData(tree, value))
+        tree <- tidytree::as.phylo(combineTreeData(tree, value))
+        x@rowTree[[tree.name]] <- tree
         return(x)
     }
 )
