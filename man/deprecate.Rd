@@ -3,7 +3,6 @@
 \name{deprecate}
 \alias{deprecate}
 \alias{plotTaxaPrevalence}
-\alias{plotRowPrevalence}
 \alias{plotTaxaPrevalence,ANY-method}
 \alias{plotFeaturePrevalence}
 \alias{plotFeaturePrevalence,ANY-method}
