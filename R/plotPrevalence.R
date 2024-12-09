@@ -462,6 +462,8 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         BPPARAM = BiocParallel::SerialParam(), as.relative = as_relative,
         as_relative = FALSE,
         ndetection = 20, ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    ID <- NULL
     # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)

@@ -2,7 +2,6 @@
 % Please edit documentation in R/AllGenerics.R, R/plotPrevalence.R
 \name{plotRowPrevalence}
 \alias{plotRowPrevalence}
-\alias{plotTaxaPrevalence}
 \alias{plotPrevalentAbundance}
 \alias{plotPrevalence}
 \alias{plotPrevalence,SummarizedExperiment-method}

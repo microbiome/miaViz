@@ -81,6 +81,7 @@ NULL
 
 #' @rdname plotLoadings
 #' @export
+#' @importFrom SingleCellExperiment reducedDims
 setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
     function(
         x, dimred, layout = "barplot", ncomponents = 5, tree.name = "phylo",
@@ -136,6 +137,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @rdname plotLoadings
 #' @export
+#' @importFrom SingleCellExperiment reducedDims
 setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
     function(x, dimred, layout = "barplot", ncomponents = 5, ...){
         # Check that there are reducedDim
@@ -281,6 +283,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function calculates place for +/- sign in barplot/lollipop plot
 #' @importFrom dplyr %>% group_by mutate case_when ungroup
 .calculate_max_and_min_for_loadings <- function(df){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    Value <- PC <- NULL
     # Add column that shows the values in absolute scale, and another column
     # showing sign
     df[["Value_abs"]] <- abs(df[["Value"]])
@@ -312,6 +316,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This functions plots a data.frame in barplot or heatmap layout.
 #' @importFrom ggplot2 geom_tile scale_fill_gradient2
 .plot_loadings <- function(df, layout, ...) {
+    # To disable "no visible binding for global variable" message in cmdcheck
+    PC <- Feature <- Value <- NULL
     # Initialize a plot
     plot_out <- ggplot(df)
     # Either create a heatmap or barplot/lollipop
@@ -343,6 +349,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 .plot_bar_or_lollipop <- function(
         plot_out, df, layout, absolute.scale = TRUE, show.color = TRUE,
         show.sign = FALSE, ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    Sign <- max_scale_abs <- max_scale <- NULL
     #
     if( !.is_a_bool(absolute.scale) ){
         stop("'absolute.scale' must be TRUE or FALSE.", call. = FALSE)

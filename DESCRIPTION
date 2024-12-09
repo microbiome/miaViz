@@ -47,8 +47,6 @@ Imports:
     dplyr,
     ggnewscale,
     ggrepel,
-    ggplot2,
-    ggraph,
     ggtree,
     methods,
     rlang,

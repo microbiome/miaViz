@@ -225,6 +225,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 
 # Construct TreeSE from matrix to pass it to downstream functions. It is useful
 # for instance if get* functios was used instead of add*.
+#' @importFrom S4Vectors SimpleList
 .rda2tse <- function(object) {
     # Convert rda/cca object to TreeSE
     object <- TreeSummarizedExperiment(
@@ -437,6 +438,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # This function adds significance info to vector labels
 .add_signif_to_vector_labels <- function(
         vector_label, var_names, signif_data, repl.underscore = " ", ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    italic <- NULL
     # Replace underscores from significance data and variable names to match
     # labels
     rownames(signif_data) <- lapply(
@@ -546,7 +549,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         # Convert to explained variance and take only first two components
         expl_var <- eigen_vals / sum(eigen_vals)
         expl_var <- expl_var[seq_len(ncomponents)]*100
-        expl_var <- summary(rda)$concont$importance*100
     }
     # Create argument list
     args <- c(list(object = tse, dimred = dimred, ncomponents = ncomponents,
@@ -589,6 +591,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         plot, plot_data, add.ellipse = TRUE, ellipse.alpha = 0.2,
         ellipse.linewidth = 0.1, ellipse.linetype = 1, confidence.level = 0.95,
         ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    color <- NULL
     #
     if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour") &&
             length(add.ellipse) == 1L ) ){
@@ -725,6 +729,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 
 # This function adds centroids or species layer to the plot.
 .rda_plotter_centroids_or_species <- function(plot, plot_data, type){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    x <- y <- NULL
     data <- plot_data[[type]]
     if( !is.null(data) ){
         plot <- plot + geom_point(

@@ -175,8 +175,11 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 #' @importFrom dplyr group_by summarize ungroup
 #' @importFrom stats sd
 #' @importFrom mia meltSE
+#' @importFrom SummarizedExperiment rowData<-
 .get_series_data <- function(
         object, assay.type, x, colour.by, size.by, linetype.by){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    Y <- NULL
     # Get variables that can be found from rowData
     row_vars <- c(
         colour_by = colour.by, size_by = size.by, linetype_by = linetype.by)

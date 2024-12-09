@@ -125,6 +125,7 @@ setMethod("plotScree", signature = c(x = "ANY"),
 # This function retrieves the eigenvalues from reducedDim. The ordination must
 # be calculated with dedicaded function in mia or scater so that the eigenvalues
 # are stored in correct place.
+#' @importFrom SingleCellExperiment reducedDim
 .get_eigenvalues <- function(
         x, dimred, eig.name = c("eig", "varExplained"), ...){
     # Get reducedDim
@@ -199,6 +200,8 @@ setMethod("plotScree", signature = c(x = "ANY"),
 .scree_plotter <- function(
         df, show.points = TRUE, show.line = TRUE, show.barplot = FALSE,
         show.labels = FALSE, ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    x <- y <- type <- NULL
     # Input check
     if( !.is_a_bool(show.points) ){
         stop("'show.points' must be TRUE or FALSE.", call. = FALSE)
