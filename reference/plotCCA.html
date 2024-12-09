@@ -19,7 +19,7 @@ for supervised ordination of microbiome data."><!-- mathjax --><script src="http
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.5</span>
       </span>
     </div>
 
@@ -30,7 +30,13 @@ for supervised ordination of microbiome data."><!-- mathjax --><script src="http
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/microbiome/miaViz/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -40,7 +46,7 @@ for supervised ordination of microbiome data."><!-- mathjax --><script src="http
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot RDA or CCA object</h1>
-
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/fix_bioccheck/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/fix_bioccheck/R/plotCCA.R" class="external-link"><code>R/plotCCA.R</code></a></small>
     <div class="hidden name"><code>plotCCA.Rd</code></div>
     </div>
 
@@ -53,13 +59,13 @@ for supervised ordination of microbiome data.</p>
     <div id="ref-usage">
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
+<span></span>
 <span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
 <span><span class="fu">plotCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">dimred</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'matrix'</span></span>
 <span><span class="fu">plotCCA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SingleCellExperiment'</span></span>
 <span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">x</span>, <span class="va">dimred</span>, <span class="va">...</span><span class="op">)</span></span>
@@ -161,10 +167,10 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load dataset</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">miaViz</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/miaViz" class="external-link">miaViz</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"enterotype"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">enterotype</span></span></span>
-<span class="r-in"><span> </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run RDA and store results into TreeSE</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">addRDA</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>,</span></span>
@@ -173,7 +179,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-in"><span>    distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
 <span class="r-in"><span>    na.action <span class="op">=</span> <span class="va">na.exclude</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
-<span class="r-in"><span>               </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot coloured by variable</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
@@ -183,7 +189,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing missing values or values outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_point()`).</span>
 <span class="r-plt img"><img src="plotCCA-1.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span> </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot with empty ellipses</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, add.ellipse <span class="op">=</span> <span class="st">"colour"</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
@@ -193,7 +199,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing missing values or values outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_point()`).</span>
 <span class="r-plt img"><img src="plotCCA-2.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span> </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot with text encased in labels</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, vec.text <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
@@ -203,7 +209,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing missing values or values outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_point()`).</span>
 <span class="r-plt img"><img src="plotCCA-3.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span> </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot without repelling text</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, repel.labels <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing non-finite outside the scale range</span>
@@ -213,7 +219,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing missing values or values outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_point()`).</span>
 <span class="r-plt img"><img src="plotCCA-4.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span> </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot without vectors</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, add.vectors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>'add.vectors' is FALSE, so other arguments for vectors and labels will be disregarded.</span>
@@ -224,7 +230,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 243 rows containing missing values or values outside the scale range</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_point()`).</span>
 <span class="r-plt img"><img src="plotCCA-5.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span> </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate RDA as a separate object</span></span></span>
 <span class="r-in"><span><span class="va">rda_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>,</span></span>
@@ -233,7 +239,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-in"><span>    distance <span class="op">=</span> <span class="st">"bray"</span>,</span></span>
 <span class="r-in"><span>    na.action <span class="op">=</span> <span class="va">na.exclude</span></span></span>
 <span class="r-in"><span>    <span class="op">)</span></span></span>
-<span class="r-in"><span> </span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Create RDA plot from RDA matrix</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">rda_mat</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Significance data was not found. please computeCCA/RDA by using add* function.</span>

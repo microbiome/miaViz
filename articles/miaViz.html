@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.5</span>
       </span>
     </div>
 
@@ -46,7 +46,14 @@
   <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
-<ul class="nav navbar-nav navbar-right"></ul>
+<ul class="nav navbar-nav navbar-right">
+<li>
+  <a href="https://github.com/microbiome/miaViz/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul>
 </div>
 <!--/.nav-collapse -->
   </div>
@@ -62,7 +69,7 @@
       <h1 data-toc-skip>miaViz</h1>
             
       
-
+      <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/fix_bioccheck/vignettes/miaViz.Rmd" class="external-link"><code>vignettes/miaViz.Rmd</code></a></small>
       <div class="hidden name"><code>miaViz.Rmd</code></div>
 
     </div>
@@ -86,7 +93,7 @@ function from <code>BiocManager</code> and load <code>miaViz</code>.</p>
 <span>    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"BiocManager"</span><span class="op">)</span></span>
 <span><span class="fu">BiocManager</span><span class="fu">::</span><span class="fu"><a href="https://bioconductor.github.io/BiocManager/reference/install.html" class="external-link">install</a></span><span class="op">(</span><span class="st">"miaViz"</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">miaViz</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/miaViz" class="external-link">miaViz</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -101,8 +108,7 @@ measured and analyzed. Technically, especially in context of
 Therefore <code>plotExpression</code> can be used to plot
 <code>Abundance</code> data of a particular feature.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotExpression.html" class="external-link">plotExpression</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, </span>
-<span>              features <span class="op">=</span> <span class="st">"549322"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotExpression.html" class="external-link">plotExpression</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, features <span class="op">=</span> <span class="st">"549322"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-2-1.png" width="3000"></p>
 <p>On the other hand, plotAbundance can be used to plot abundance by
 <code>rank</code>. A bar plot is returned showing the relative abundance
@@ -124,12 +130,12 @@ plotting.</p>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-5-1.png" width="3000"></p>
 <p>With subsetting to selected features the plot can be fine tuned.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">prev_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/getPrevalence.html" class="external-link">getPrevalent</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>                                detection <span class="op">=</span> <span class="fl">0.01</span>, onRankOnly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">prev_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/getPrevalence.html" class="external-link">getPrevalent</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, detection <span class="op">=</span> <span class="fl">0.01</span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">prev_phylum</span><span class="op">]</span>,</span>
-<span>              rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>              assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span></span>
+<span>    <span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">prev_phylum</span><span class="op">]</span>,</span>
+<span>    rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 101 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_bar()`).</span></span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-7-1.png" width="3000"></p>
@@ -139,12 +145,12 @@ plotted along the samples. In this case the result is a list, which can
 combined using external tools, for example <code>patchwork</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://patchwork.data-imaginist.com" class="external-link">patchwork</a></span><span class="op">)</span></span>
-<span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">prev_phylum</span><span class="op">]</span>,</span>
-<span>                       features <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
-<span>                       rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>                       assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
-<span><span class="va">plots</span><span class="op">$</span><span class="va">abundance</span> <span class="op">/</span> <span class="va">plots</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">+</span></span>
-<span>     <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/plotAbundance.html">plotAbundance</a></span><span class="op">(</span></span>
+<span>    <span class="va">GlobalPatterns</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">GlobalPatterns</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">prev_phylum</span><span class="op">]</span>,</span>
+<span>    features <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
+<span>    rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
+<span><span class="va">plots</span><span class="op">$</span><span class="va">abundance</span> <span class="op">/</span> <span class="va">plots</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">+</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>heights <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">9</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning: Removed 101 rows containing missing values or values outside the scale range</span></span>
 <span><span class="co">#&gt; (`geom_bar()`).</span></span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-8-1.png" width="3000"></p>
@@ -163,8 +169,8 @@ available, <code>plotFeaturePrevalence</code>,
 plot, which visualizes the prevalence of samples across abundance
 thresholds.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPrevalence.html">plotFeaturePrevalence</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>                   detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/deprecate.html">plotFeaturePrevalence</a></span><span class="op">(</span></span>
+<span>    <span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in plotFeaturePrevalence(GlobalPatterns, rank = "Phylum", detections =</span></span>
 <span><span class="co">#&gt; c(0, : The 'plotFeaturePrevalence' function is deprecated. Use</span></span>
 <span><span class="co">#&gt; 'plotRowPrevalence' instead.</span></span></code></pre></div>
@@ -172,8 +178,7 @@ thresholds.</p>
 <p><code>plotPrevalenceAbundance</code> plot the prevalence depending on
 the mean relative abundance on the chosen taxonomic level.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPrevalence.html">plotPrevalentAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>,</span>
-<span>                       colour_by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPrevalence.html">plotPrevalentAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>, colour_by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-10-1.png" width="3000"></p>
 <p><code>plotPrevalence</code> plot the number of samples and their
@@ -182,10 +187,10 @@ adjusted using the <code>detections</code> argument, whereas the
 analyzed prevalence steps is set using the <code>prevalences</code>
 argument.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPrevalence.html">plotPrevalence</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,</span>
-<span>               rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>               detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span>,</span>
-<span>               prevalences <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPrevalence.html">plotPrevalence</a></span><span class="op">(</span></span>
+<span>    <span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>    detections <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span><span class="op">/</span><span class="fl">100</span>,</span>
+<span>    prevalences <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">1</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-11-1.png" width="3000"></p>
 </div>
 <div class="section level2">
@@ -201,15 +206,17 @@ as judged by mean abundance on the genus level.</p>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/mia" class="external-link">mia</a></span><span class="op">)</span></span></code></pre></div>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerFeatureQC</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">log_mean</span> <span class="op">&lt;-</span></span>
-<span>    <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;-</span> </span>
-<span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">/</span> <span class="fl">100</span></span>
-<span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,</span>
-<span>                       method<span class="op">=</span><span class="st">"mean"</span>,</span>
-<span>                       top<span class="op">=</span><span class="fl">100L</span>,</span>
-<span>                       assay.type<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerFeatureQC</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">log_mean</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">log</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">mean</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">/</span> <span class="fl">100</span></span>
+<span><span class="va">top_taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,</span>
+<span>    method<span class="op">=</span><span class="st">"mean"</span>,</span>
+<span>    top<span class="op">=</span><span class="fl">100L</span>,</span>
+<span>    assay.type<span class="op">=</span><span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
 <p>Colour, size and shape of tree tips and nodes can be decorated based
 on data present in the <code>SE</code> object or by providing additional
 information via the <code>other_fields</code> argument. Note that
@@ -219,9 +226,9 @@ currently information for nodes have to be provided via the
 argument depending on which was provided. <code>label</code> takes
 precedent.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
-<span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span>
-<span>            tip_size_by <span class="op">=</span> <span class="st">"detected"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>, tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span>
+<span>    tip_size_by <span class="op">=</span> <span class="st">"detected"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="miaViz_files/figure-html/plot1-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size)" width="3000"><p class="caption">
 Tree plot using ggtree with tip labels decorated by mean abundance
@@ -231,10 +238,9 @@ Tree plot using ggtree with tip labels decorated by mean abundance
 <p>Tip and node labels can be shown as well. Setting
 <code>show_label = TRUE</code> shows the tip labels only …</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
-<span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span>
-<span>            tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,</span>
-<span>            show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
+<span>    tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>, tip_size_by <span class="op">=</span> <span class="st">"detected"</span>, show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="miaViz_files/figure-html/plot2-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Tip labels of the tree are shown as well." width="3000"><p class="caption">
 Tree plot using ggtree with tip labels decorated by mean abundance
@@ -248,11 +254,12 @@ logical vector to <code>show_label</code>.</p>
 labels in a rectangular layout.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Genus:Providencia"</span>, <span class="st">"Genus:Morganella"</span>, <span class="st">"0.961.60"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
-<span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span>
-<span>            tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,</span>
-<span>            show_label <span class="op">=</span> <span class="va">labels</span>,</span>
-<span>            layout<span class="op">=</span><span class="st">"rectangular"</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
+<span>    tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span>,</span>
+<span>    tip_size_by <span class="op">=</span> <span class="st">"detected"</span>,</span>
+<span>    show_label <span class="op">=</span> <span class="va">labels</span>,</span>
+<span>    layout<span class="op">=</span><span class="st">"rectangular"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="miaViz_files/figure-html/plot3-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Selected node and tip labels are shown." width="3000"><p class="caption">
 Tree plot using ggtree with tip labels decorated by mean abundance
@@ -261,9 +268,10 @@ Tree plot using ggtree with tip labels decorated by mean abundance
 </div>
 <p>Information can also be visualized on the edges of the tree plot.</p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
-<span>            edge_colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>            tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
+<span>    edge_colour_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>    tip_colour_by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></code></pre></div>
 <div class="figure">
 <img src="miaViz_files/figure-html/plot4-1.png" alt="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and edges labeled Kingdom (colour) and prevalence (size)" width="3000"><p class="caption">
 Tree plot using ggtree with tip labels decorated by mean abundance
@@ -290,12 +298,13 @@ overlapping rownames with the node names of the graph. Using this link
 the graph plot can incorporate data from the
 <code>SummarizedExperiment</code>.</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotGraph.html">plotColGraph</a></span><span class="op">(</span><span class="va">col_graph</span>,</span>
-<span>             <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,</span>
-<span>             colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
-<span>             edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span>             edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
-<span>             show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotGraph.html">plotColGraph</a></span><span class="op">(</span></span>
+<span>    <span class="va">col_graph</span>,</span>
+<span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,</span>
+<span>    colour_by <span class="op">=</span> <span class="st">"SampleType"</span>,</span>
+<span>    edge_colour_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
+<span>    edge_width_by <span class="op">=</span> <span class="st">"weight"</span>,</span>
+<span>    show_label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; This graph was created by an old(er) igraph version.</span></span>
 <span><span class="co">#&gt; <span style="color: #00BBBB;">ℹ</span> Call `igraph::upgrade_graph()` on it to use with the current igraph version.</span></span>
 <span><span class="co">#&gt; For now we convert it on the fly...</span></span></code></pre></div>
@@ -327,28 +336,31 @@ ordering the data. The <code>y</code> argument selects the feature to
 show. Since plotting a lot of features is not advised a maximum of 20
 features can plotted at the same time.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span>,</span>
-<span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>           y <span class="op">=</span> <span class="va">taxa</span>,</span>
-<span>           colour_by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    y <span class="op">=</span> <span class="va">taxa</span>,</span>
+<span>    colour_by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></code></pre></div>
 <p>If replicated data is present, data is automatically used for
 calculation of the <code>mean</code> and <code>sd</code> and plotted as
 a range. Data from different assays can be used for plotting via the
 <code>assay.type</code>.</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span><span class="op">[</span><span class="va">taxa</span>,<span class="op">]</span>,</span>
-<span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
-<span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>           assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse</span><span class="op">[</span><span class="va">taxa</span>,<span class="op">]</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
+<span>    linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
 <p>Additional variables can be used to modify line type aesthetics.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span><span class="va">tse</span>,</span>
-<span>           x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>           y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>           colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
-<span>           linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
-<span>           assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summaries.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
+<span>    linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>    assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="plotting-factor-data">Plotting factor data<a class="anchor" aria-label="anchor" href="#plotting-factor-data"></a>
@@ -360,7 +372,7 @@ factor data, two functions are available for the purpose;
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span>
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span>
 <span><span class="fu"><a href="../reference/plotColTile.html">plotColTile</a></span><span class="op">(</span><span class="va">se</span>,<span class="st">"SampleType"</span>,<span class="st">"Primer"</span><span class="op">)</span> <span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x.top <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x.top <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p><img src="miaViz_files/figure-html/unnamed-chunk-23-1.png" width="3000"></p>
 </div>
 <div class="section level2">
@@ -395,8 +407,9 @@ the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">hitchip1006</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
 <span><span class="co">## Ordination with PCoA with Bray-Curtis dissimilarity</span></span>
-<span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">runMDS</a></span><span class="op">(</span><span class="va">tse</span>, FUN <span class="op">=</span> <span class="fu">vegan</span><span class="fu">::</span><span class="va"><a href="https://rdrr.io/pkg/vegan/man/vegdist.html" class="external-link">vegdist</a></span>, method <span class="op">=</span> <span class="st">"bray"</span>, name <span class="op">=</span> <span class="st">"PCoA_BC"</span>,</span>
-<span>              assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/runMDS.html" class="external-link">runMDS</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse</span>, FUN <span class="op">=</span> <span class="va">getDissimilarity</span>, method <span class="op">=</span> <span class="st">"bray"</span>, name <span class="op">=</span> <span class="st">"PCoA_BC"</span>,</span>
+<span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># plot</span></span>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>, dimred <span class="op">=</span> <span class="st">"PCoA_BC"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span></code></pre></div>
@@ -413,13 +426,15 @@ the fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <p>Lets look at all trajectories having two time points in the data:</p>
 <div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot</span></span>
-<span><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">X1</span>, y<span class="op">=</span><span class="va">X2</span>, group<span class="op">=</span><span class="va">subject</span><span class="op">)</span>, </span>
-<span>              arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>              <span class="co"># combining ordination data and metadata then selecting the subjects</span></span>
-<span>              <span class="co"># Note, scuttle::makePerCellDF could also be used for the purpose.</span></span>
-<span>              data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                            <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"All trajectories with two time points"</span><span class="op">)</span><span class="op">+</span></span>
+<span><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">X1</span>, y<span class="op">=</span><span class="va">X2</span>, group<span class="op">=</span><span class="va">subject</span><span class="op">)</span>, </span>
+<span>    arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="co"># combining ordination data and metadata then selecting the subjects</span></span>
+<span>    <span class="co"># Note, scuttle::makePerCellDF could also be used for the purpose.</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"All trajectories with two time points"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Filtering the two time point trajectories by divergence and
 displaying top 10%:</p>
@@ -428,23 +443,25 @@ displaying top 10%:</p>
 <span><span class="co"># calculating step wise divergence based on the microbial profiles</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu">getStepwiseDivergence</span><span class="op">(</span><span class="va">tse</span>, group <span class="op">=</span> <span class="st">"subject"</span>, time_field <span class="op">=</span> <span class="st">"time"</span><span class="op">)</span></span>
 <span><span class="co"># retrieving the top 10% divergent subjects having two time points</span></span>
-<span><span class="va">top.selected.subjects</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                            <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span><span class="va">top.selected.subjects</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/top_n.html" class="external-link">top_frac</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="va">time_divergence</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subject</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">.</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co"># plot</span></span>
-<span><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">X1</span>, y<span class="op">=</span><span class="va">X2</span>,</span>
-<span>                  color<span class="op">=</span><span class="va">time_divergence</span>, group<span class="op">=</span><span class="va">subject</span><span class="op">)</span>,</span>
-<span>              <span class="co"># the data is sorted in descending order in terms of time</span></span>
-<span>              <span class="co"># since geom_path will use the first occurring observation</span></span>
-<span>              <span class="co"># to color the corresponding segment. Without the sorting</span></span>
-<span>              <span class="co"># geom_path will pick up NA values (corresponding to initial time</span></span>
-<span>              <span class="co"># points); breaking the example.</span></span>
-<span>              data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                            <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top.selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
-<span>                  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>              <span class="co"># arrow end is reversed, due to the earlier sorting.</span></span>
-<span>              arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span>, ends <span class="op">=</span> <span class="st">"first"</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Top 10%  divergent trajectories from time point one to two"</span><span class="op">)</span><span class="op">+</span></span>
+<span><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">X1</span>, y<span class="op">=</span><span class="va">X2</span>, color<span class="op">=</span><span class="va">time_divergence</span>, group<span class="op">=</span><span class="va">subject</span><span class="op">)</span>,</span>
+<span>    <span class="co"># the data is sorted in descending order in terms of time</span></span>
+<span>    <span class="co"># since geom_path will use the first occurring observation</span></span>
+<span>    <span class="co"># to color the corresponding segment. Without the sorting</span></span>
+<span>    <span class="co"># geom_path will pick up NA values (corresponding to initial time</span></span>
+<span>    <span class="co"># points); breaking the example.</span></span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top.selected.subjects</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html" class="external-link">desc</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>    <span class="co"># arrow end is reversed, due to the earlier sorting.</span></span>
+<span>    arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span>, ends <span class="op">=</span> <span class="st">"first"</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Top 10%  divergent trajectories from time point one to two"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_gradient.html" class="external-link">scale_color_gradient2</a></span><span class="op">(</span>low<span class="op">=</span><span class="st">"white"</span>, high<span class="op">=</span><span class="st">"red"</span><span class="op">)</span><span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Plotting an example of the trajectory with the maximum total
@@ -454,13 +471,16 @@ divergence:</p>
 <span><span class="va">selected.subject</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">subject</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html" class="external-link">summarise</a></span><span class="op">(</span>total_divergence <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">time_divergence</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">total_divergence</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">total_divergence</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subject</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="va">.</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
+<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html" class="external-link">filter</a></span><span class="op">(</span><span class="va">total_divergence</span><span class="op">==</span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="va">total_divergence</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html" class="external-link">select</a></span><span class="op">(</span><span class="va">subject</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span>    <span class="va">.</span><span class="op">[[</span><span class="fl">1</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="co"># plot</span></span>
-<span><span class="va">p</span> <span class="op">+</span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">X1</span>, y<span class="op">=</span><span class="va">X2</span>, group<span class="op">=</span><span class="va">subject</span><span class="op">)</span>,</span>
-<span>              data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
-<span>                            <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subject</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>,</span>
-<span>              arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">+</span></span>
-<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Longest trajectory by divergence"</span><span class="op">)</span><span class="op">+</span></span>
+<span><span class="va">p</span> <span class="op">+</span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">X1</span>, y<span class="op">=</span><span class="va">X2</span>, group<span class="op">=</span><span class="va">subject</span><span class="op">)</span>,</span>
+<span>    data <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span></span>
+<span>        <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>        <span class="va">subject</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">selected.subject</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">time</span><span class="op">)</span>,</span>
+<span>    arrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/grid/arrow.html" class="external-link">arrow</a></span><span class="op">(</span>length <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="st">"inches"</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="st">"Longest trajectory by divergence"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>More examples and materials are available at Orchestrating Microbiome
 Analysis <span class="citation">(Lahti, Shetty, and Ernst
@@ -471,7 +491,7 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 </h2>
 <div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; R Under development (unstable) (2024-11-27 r87386)</span></span>
+<span><span class="co">#&gt; R Under development (unstable) (2024-12-04 r87420)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">#&gt; Running under: Ubuntu 24.04.1 LTS</span></span>
 <span><span class="co">#&gt; </span></span>
@@ -496,13 +516,13 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
 <span><span class="co">#&gt;  [1] patchwork_1.3.0                 scater_1.35.0                  </span></span>
-<span><span class="co">#&gt;  [3] scuttle_1.17.0                  miaViz_1.15.4                  </span></span>
+<span><span class="co">#&gt;  [3] scuttle_1.17.0                  miaViz_1.15.5                  </span></span>
 <span><span class="co">#&gt;  [5] mia_1.15.6                      TreeSummarizedExperiment_2.15.0</span></span>
 <span><span class="co">#&gt;  [7] Biostrings_2.75.1               XVector_0.47.0                 </span></span>
 <span><span class="co">#&gt;  [9] SingleCellExperiment_1.29.1     MultiAssayExperiment_1.33.1    </span></span>
 <span><span class="co">#&gt; [11] SummarizedExperiment_1.37.0     Biobase_2.67.0                 </span></span>
 <span><span class="co">#&gt; [13] GenomicRanges_1.59.1            GenomeInfoDb_1.43.2            </span></span>
-<span><span class="co">#&gt; [15] IRanges_2.41.1                  S4Vectors_0.45.2               </span></span>
+<span><span class="co">#&gt; [15] IRanges_2.41.2                  S4Vectors_0.45.2               </span></span>
 <span><span class="co">#&gt; [17] BiocGenerics_0.53.3             generics_0.1.3                 </span></span>
 <span><span class="co">#&gt; [19] MatrixGenerics_1.19.0           matrixStats_1.4.1              </span></span>
 <span><span class="co">#&gt; [21] ggraph_2.2.1                    ggplot2_3.5.1                  </span></span>
@@ -546,10 +566,10 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt;  [69] boot_1.3-31                 bluster_1.17.0             </span></span>
 <span><span class="co">#&gt;  [71] fansi_1.0.6                 digest_0.6.37              </span></span>
 <span><span class="co">#&gt;  [73] rsvd_1.0.5                  R6_2.5.1                   </span></span>
-<span><span class="co">#&gt;  [75] gridGraphics_0.5-1          textshaping_0.4.0          </span></span>
+<span><span class="co">#&gt;  [75] gridGraphics_0.5-1          textshaping_0.4.1          </span></span>
 <span><span class="co">#&gt;  [77] colorspace_2.1-1            lpSolve_5.6.22             </span></span>
 <span><span class="co">#&gt;  [79] utf8_1.2.4                  tidyr_1.3.1                </span></span>
-<span><span class="co">#&gt;  [81] data.table_1.16.2           DECIPHER_3.3.1             </span></span>
+<span><span class="co">#&gt;  [81] data.table_1.16.4           DECIPHER_3.3.1             </span></span>
 <span><span class="co">#&gt;  [83] graphlayouts_1.2.1          httr_1.4.7                 </span></span>
 <span><span class="co">#&gt;  [85] htmlwidgets_1.6.4           S4Arrays_1.7.1             </span></span>
 <span><span class="co">#&gt;  [87] pkgconfig_2.0.3             gtable_0.3.6               </span></span>
@@ -564,7 +584,7 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt; [105] foreign_0.8-87              desc_1.4.3                 </span></span>
 <span><span class="co">#&gt; [107] pillar_1.9.0                grid_4.5.0                 </span></span>
 <span><span class="co">#&gt; [109] vctrs_0.6.5                 slam_0.1-55                </span></span>
-<span><span class="co">#&gt; [111] BiocSingular_1.23.0         beachmat_2.23.2            </span></span>
+<span><span class="co">#&gt; [111] BiocSingular_1.23.0         beachmat_2.23.4            </span></span>
 <span><span class="co">#&gt; [113] cluster_2.1.6               beeswarm_0.4.0             </span></span>
 <span><span class="co">#&gt; [115] htmlTable_2.4.3             evaluate_1.0.1             </span></span>
 <span><span class="co">#&gt; [117] mvtnorm_1.3-2               cli_3.6.3                  </span></span>
@@ -576,7 +596,7 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt; [129] viridisLite_0.4.2           BiocParallel_1.41.0        </span></span>
 <span><span class="co">#&gt; [131] munsell_0.5.1               lazyeval_0.2.2             </span></span>
 <span><span class="co">#&gt; [133] Matrix_1.7-1                sparseMatrixStats_1.19.0   </span></span>
-<span><span class="co">#&gt; [135] igraph_2.1.1                memoise_2.0.1              </span></span>
+<span><span class="co">#&gt; [135] igraph_2.1.2                memoise_2.0.1              </span></span>
 <span><span class="co">#&gt; [137] RcppParallel_5.1.9          bslib_0.8.0                </span></span>
 <span><span class="co">#&gt; [139] ggtree_3.15.0               ape_5.8</span></span></code></pre></div>
 </div>

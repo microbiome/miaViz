@@ -31,7 +31,7 @@ data's intrinsic structure as captured by the ordination process."><!-- mathjax 
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.4</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.5</span>
       </span>
     </div>
 
@@ -42,7 +42,13 @@ data's intrinsic structure as captured by the ordination process."><!-- mathjax 
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
-      </ul><ul class="nav navbar-nav navbar-right"></ul></div><!--/.nav-collapse -->
+      </ul><ul class="nav navbar-nav navbar-right"><li>
+  <a href="https://github.com/microbiome/miaViz/" class="external-link">
+    <span class="fab fa-github fa-lg"></span>
+
+  </a>
+</li>
+      </ul></div><!--/.nav-collapse -->
   </div><!--/.container -->
 </div><!--/.navbar -->
 
@@ -52,7 +58,7 @@ data's intrinsic structure as captured by the ordination process."><!-- mathjax 
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Sorting by radial theta angle</h1>
-
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/fix_bioccheck/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/fix_bioccheck/R/getNeatOrder.R" class="external-link"><code>R/getNeatOrder.R</code></a></small>
     <div class="hidden name"><code>getNeatOrder.Rd</code></div>
     </div>
 
@@ -115,7 +121,8 @@ this radial theta angle ordering, though only by using an  MDS ordination.</p>
 <p>That being said, the <code>getNeatOrder</code> function is more modular and
 separate to the plotting, and can be applied to any kind of ordinated data
 which can be valuable depending on the use case.</p>
-<p><a href="https://doi.org/10.1186/1471-2105-11-45" class="external-link">Rajaram &amp; Oono (2010) NeatMap - non-clustering heat map alternatives in R</a> outlines this in more detail.</p>
+<p><a href="https://doi.org/10.1186/1471-2105-11-45" class="external-link">Rajaram &amp; Oono (2010) NeatMap - non-clustering heat map alternatives in R</a>
+outlines this in more detail.</p>
     </div>
 
     <div id="ref-examples">
@@ -197,10 +204,10 @@ which can be valuable depending on the use case.</p>
 <span class="r-in"><span>              cluster_columns <span class="op">=</span> <span class="cn">FALSE</span>,  <span class="co"># Do not cluster columns</span></span></span>
 <span class="r-in"><span>              show_row_dend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>              show_column_dend <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>              row_names_gp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>              column_names_gp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>              heatmap_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">20</span>, <span class="st">"cm"</span><span class="op">)</span>,  </span></span>
-<span class="r-in"><span>              heatmap_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">15</span>, <span class="st">"cm"</span><span class="op">)</span>  </span></span>
+<span class="r-in"><span>              row_names_gp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              column_names_gp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/gpar.html" class="external-link">gpar</a></span><span class="op">(</span>fontsize <span class="op">=</span> <span class="fl">6</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              heatmap_width <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">20</span>, <span class="st">"cm"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>              heatmap_height <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grid/unit.html" class="external-link">unit</a></span><span class="op">(</span><span class="fl">15</span>, <span class="st">"cm"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
