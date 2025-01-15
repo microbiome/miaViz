@@ -175,23 +175,23 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
         .check_assay_present(assay.type, x)
         # Checks n
         if( !(length(n)==1 && is.numeric(n) && n%%1==0 && n>0) ){
-        stop("'n' must be a positive integer.", call. = FALSE)
+            stop("'n' must be a positive integer.", call. = FALSE)
         }
         # Checks colour.by
         if( !is.null(colour.by) && !.is_a_string(colour.by)){
-        stop("'colour.by' must be a single character value.", call. = FALSE)
+            stop("'colour.by' must be a single character value.", call. = FALSE)
         }
         # Checks shape.by
         if( !is.null(shape.by) && !.is_a_string(shape.by)){
-        stop("'shape.by' must be a single character value.", call. = FALSE)
+            stop("'shape.by' must be a single character value.", call. = FALSE)
         }
         # Checks shape.by
         if( !is.null(shape.by) && !.is_a_string(shape.by)){
-        stop("'shape.by' must be a single character value.", call. = FALSE)
+            stop("'shape.by' must be a single character value.", call. = FALSE)
         }
         # Checks decreasing
         if( !is.na(decreasing) && !.is_a_bool(decreasing)){
-        stop("'decreasing' must be TRUE, FALSE or NA.", call. = FALSE)
+            stop("'decreasing' must be TRUE, FALSE or NA.", call. = FALSE)
         }
         ########################### Input Check end ############################
         # Gets data that will be plotted. Gets a list

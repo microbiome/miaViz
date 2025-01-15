@@ -544,7 +544,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     }
     #
     # If specified, get explained variance
-    if( add.expl.var && !is.null(expl.var) ){
+    if( add.expl.var && is.null(expl.var) ){
         eigen_vals <- attr(reduced_dim, "eig")
         # Convert to explained variance and take only first two components
         expl_var <- eigen_vals / sum(eigen_vals)

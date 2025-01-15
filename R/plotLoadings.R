@@ -333,7 +333,6 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
                 limits = c(-max(abs(df$Value)), max(abs(df$Value))),
                 low = "darkblue", mid = "white", high = "darkred"
                 )
-
     } else if( layout %in% c("barplot", "lollipop") ){
         plot_out <- .plot_bar_or_lollipop(plot_out, df, layout, ...)
     }
