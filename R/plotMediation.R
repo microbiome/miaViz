@@ -12,11 +12,14 @@
 #' \code{\link[mia:getMediation]{addMediation}} or
 #' \code{\link[mia:getMediation]{getMediation}}, respectively.
 #'
-#' @param med.name \code{Character scalar} value defining which mediation data
+#' @param name \code{Character scalar} value defining which mediation data
 #' to use. (Default: \code{"mediation"})
 #'
-#' @param add.signif \code{Logical scalar}. Should the p-values in the plot be
-#' displayed? (Default: \code{FALSE})
+#' @param layout \code{character scalar} Determines the layout of plot. Must be
+#' either "heatmap" or "forest". (Default: \code{"heatmap"})
+#'
+#' @param signif.threshold \code{Numeric scalar or list}. Displays significance
+#'   as stars on a heatmap layout. (Default: \code{c(0.001, 0.01, 0.05)})
 #'
 #' @details
 #' \code{plotMediation} creates a heatmap starting from the
@@ -25,7 +28,7 @@
 #' Either a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' or a data.frame object is supported as input. When the input is a
 #' SummarizedExperiment, this should contain the output of addMediation
-#' in the metadata slot and the argument \code{med.name} needs to be defined.
+#' in the metadata slot and the argument \code{name} needs to be defined.
 #' When the input is a data.frame, this should be returned as output from
 #' getMediation.
 #'
@@ -61,65 +64,103 @@
 #'                     control.value = "CentralEurope",
 #'                     boot = TRUE, sims = 100,
 #'                     p.adj.method = "fdr")
-
-#' plotMediation(tse, "assay_mediation")
+#'
+#' # Visualise results as heatmap with custom significance thresholds
+#' plotMediation(tse, "assay_mediation", signif.threshold = c(0.01, 0.05))
+#' 
+#' # Visualise results as forest plot
+#' plotMediation(tse, "assay_mediation", layout = "forest")
 #'
 #'@name plotMediation
 
 #' @rdname plotMediation
 #' @export
-setGeneric("plotMediation", function(x, ...) standardGeneric("plotMediation"))
-
-#' @rdname plotMediation
-#' @export
-#' @importFrom ComplexHeatmap Heatmap
+#' @importFrom tidyr pivot_longer pivot_wider
 setMethod("plotMediation", signature = c(x = "data.frame"),
 
-    function(x, add.signif = TRUE) {
+    function(x, layout = "heatmap", signif.threshold = c(0.001, 0.01, 0.05)) {
       
-        coef_mat <-  as.matrix(x[ , c("ACME_estimate", "ADE_estimate")])
+        df <- x %>%
+            pivot_longer(cols = -Mediator, names_to = c("Condition", "Metric"),
+                names_sep = "_") %>%
+            pivot_wider(names_from = Metric, values_from = value)
       
-        rownames(coef_mat) <- x[["Mediator"]]
-        colnames(coef_mat) <- gsub("_estimate", "", colnames(coef_mat))
-      
-        if( add.signif ){
+        df <- .add_signif_threshold(df, signif.threshold)
         
-            p_mat <-  as.matrix(x[ , c("ACME_pval", "ADE_pval")])
-        
-            cell_fun <- function(j, i, k, y, w, h, fill) {
-                if(p_mat[i, j] < 0.001) {
-                    grid.text("***", k, y)
-                } else if(p_mat[i, j] < 0.01) {
-                    grid.text("**", k, y)
-                } else if(p_mat[i, j] < 0.05) {
-                    grid.text("*", k, y)
-                }
-            }
-        
-        } else {
-            cell_fun <- NULL
+        if( layout == "heatmap" ){
+            p <- .plot_med_heatmap(df)
+        }else if( layout == "forest" ){
+            p <- .plot_med_forest(df)
         }
-      
-        p <- Heatmap(coef_mat, name = "Effect",
-            cluster_rows = FALSE, cluster_columns = FALSE,
-            row_names_side = "left", column_names_side = "top",
-            column_names_rot = 0, rect_gp = gpar(col = "white", lwd = 2),
-            cell_fun = cell_fun)
       
         return(p)
     }
 )
-
 
 #' @rdname plotMediation
 #' @export
 setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
           
-    function(x, med.name = "mediation", add.signif = TRUE){
+    function(x, name = "mediation", layout = "heatmap",
+        signif.threshold = c(0.001, 0.01, 0.05)){
     
-        med_df <- metadata(x)[[med.name]]
-        p <- plotMediation(med_df, add.signif)
+        med_df <- metadata(x)[[name]]
+        p <- plotMediation(med_df, layout, signif.threshold)
         
         return(p)
     }
 )
+
+.add_signif_threshold <- function(df, signif_threshold) {
+  
+  df[["pval_symbol"]] <- ""
+  
+  for( i in seq_len(length(signif_threshold)) ){
+      alpha <- rev(signif_threshold)[[i]]
+      df[df[["pval"]] < alpha, "pval_symbol"] <- strrep("*", i)
+  }
+  
+  return(df)
+}
+
+#' @importFrom ggplot2 ggplot
+.plot_med_forest <- function(df) {
+    
+    df[["Condition"]] <- factor(df[["Condition"]],
+        levels = rev(unique(df[["Condition"]])))
+  
+    p <- ggplot(df, aes(x = estimate, y = Condition)) +
+        geom_point(size = 3) +
+        geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0) +
+        geom_vline(xintercept = 0, linetype = "dashed", colour = "red") +
+        facet_wrap(. ~ Mediator) +
+        labs(x = "Estimate") +
+        theme_bw() +
+        theme(axis.text.y = element_text(size = 12),
+            axis.title.y = element_blank())
+    
+    return(p)
+}
+
+#' @importFrom ggplot2 ggplot
+.plot_med_heatmap <- function(df) {
+  
+    df[["Mediator"]] <- factor(df[["Mediator"]],
+        levels = rev(unique(df[["Mediator"]])))
+  
+    effect_max <- max(abs(min(df[["estimate"]])), abs(max(df[["estimate"]])))
+    effect_floor <- floor(10 * effect_max)
+
+    p <- ggplot(df, aes(x = Condition, y = Mediator, fill = estimate)) +
+        geom_tile(color = "white", lwd = 1.5, linetype = 1) +
+        scale_fill_gradientn(colours = c("blue", "white", "red"),
+            breaks = seq(-effect_floor, effect_floor) / 10,
+            limits = c(-effect_max, effect_max), name = "Effect") +
+        scale_x_discrete(position = "top") +
+        geom_text(aes(label = pval_symbol)) +
+        theme_minimal() +
+        theme(axis.text.x = element_text(size = 12),
+            axis.title = element_blank())
+    
+    return(p)
+}
