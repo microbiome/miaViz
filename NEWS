@@ -38,3 +38,4 @@ Changes in version 1.15.x
 + plotAbundance: Improved visualization of sample metadata
 + plotScree: Method for creating scree plots
 + plotRDA: Now it is possible to add only specified vectors
++ plotMediation: Method to visualise results of mediation analysis

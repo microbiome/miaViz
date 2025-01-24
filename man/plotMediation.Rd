@@ -33,7 +33,7 @@ as stars on a heatmap layout. (Default: \code{c(0.001, 0.01, 0.05)})}
 to use. (Default: \code{"mediation"})}
 }
 \value{
-a \code{\link[ComplexHeatmap:Heatmap-class]{Heatmap}} object
+A \code{ggplot2} object.
 }
 \description{
 \code{plotMediation()} generates a heatmap from the results of mediation
@@ -54,6 +54,7 @@ When the input is a data.frame, this should be returned as output from
 getMediation.
 }
 \examples{
+\dontrun{
 library(mia)
 library(scater)
 
@@ -88,5 +89,6 @@ plotMediation(tse, "assay_mediation", signif.threshold = c(0.01, 0.05))
 
 # Visualise results as forest plot
 plotMediation(tse, "assay_mediation", layout = "forest")
+}
 
 }

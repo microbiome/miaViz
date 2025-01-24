@@ -33,9 +33,10 @@
 #' getMediation.
 #'
 #' @return
-#' a \code{\link[ComplexHeatmap:Heatmap-class]{Heatmap}} object
+#' A \code{ggplot2} object.
 #'
 #' @examples
+#' \dontrun{
 #' library(mia)
 #' library(scater)
 #'
@@ -70,6 +71,7 @@
 #' 
 #' # Visualise results as forest plot
 #' plotMediation(tse, "assay_mediation", layout = "forest")
+#'}
 #'
 #'@name plotMediation
 
@@ -77,8 +79,18 @@
 #' @export
 #' @importFrom tidyr pivot_longer pivot_wider
 setMethod("plotMediation", signature = c(x = "data.frame"),
-
     function(x, layout = "heatmap", signif.threshold = c(0.001, 0.01, 0.05)) {
+      
+        ###################### Input check ########################
+        # Check layout
+        if( !layout %in% c("heatmap", "forest") ){
+            stop("'layout' must be either 'heatmap' or 'forest'.", call. = FALSE)
+        }
+        # Check signif.threshold
+        if( !all(unlist(lapply(signif.threshold, .is_a_numeric))) ){
+            stop("'signif.threshold' must be a numeric scalar or array.", call. = FALSE)
+        }
+        ###################### Input check end ####################
       
         df <- x %>%
             pivot_longer(cols = -Mediator, names_to = c("Condition", "Metric"),
@@ -99,10 +111,17 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
 
 #' @rdname plotMediation
 #' @export
+#' @importFrom S4Vectors metadata
 setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
-          
     function(x, name = "mediation", layout = "heatmap",
         signif.threshold = c(0.001, 0.01, 0.05)){
+      
+        ###################### Input check ########################
+        # Check metadata name
+        if( !name %in% names(metadata(x)) ){
+            stop("'name' must be in names(metadata(x)).", call. = FALSE)
+        }
+        ###################### Input check end ####################
     
         med_df <- metadata(x)[[name]]
         p <- plotMediation(med_df, layout, signif.threshold)
@@ -112,14 +131,19 @@ setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
 )
 
 .add_signif_threshold <- function(df, signif_threshold) {
-  
+  # Add column placeholder
   df[["pval_symbol"]] <- ""
-  
-  for( i in seq_len(length(signif_threshold)) ){
-      alpha <- rev(signif_threshold)[[i]]
+  # Sort thresholds
+  sorted_threshold <- sort(signif_threshold)
+  # Send warning if thresholds are not ordered
+  if( !all(signif_threshold == sorted_threshold) ){
+      warning("'signif.threshold' was sorted in increasing order.", call. = FALSE)
+  }
+  # Add star symbol for each threshold
+  for( i in seq_len(length(sorted_threshold)) ){
+      alpha <- rev(sorted_threshold)[[i]]
       df[df[["pval"]] < alpha, "pval_symbol"] <- strrep("*", i)
   }
-  
   return(df)
 }
 
