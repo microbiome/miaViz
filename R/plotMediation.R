@@ -78,6 +78,7 @@
 #' @rdname plotMediation
 #' @export
 #' @importFrom tidyr pivot_longer pivot_wider
+#' @importFrom dplyr rename_with
 setMethod("plotMediation", signature = c(x = "data.frame"),
     function(x, layout = "heatmap", signif.threshold = c(0.001, 0.01, 0.05)) {
       
@@ -93,8 +94,9 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
         ###################### Input check end ####################
       
         df <- x %>%
-            pivot_longer(cols = -Mediator, names_to = c("Condition", "Metric"),
-                names_sep = "_") %>%
+            rename_with(~ paste0(.x, "_estimate"), c(acme, ade, total)) %>%
+            pivot_longer(cols = -mediator, names_to = c("Condition", "Metric"),
+                names_sep = "_", names_prefix = "hi") %>%
             pivot_wider(names_from = Metric, values_from = value)
       
         df <- .add_signif_threshold(df, signif.threshold)
@@ -157,8 +159,8 @@ setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
         geom_point(size = 3) +
         geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0) +
         geom_vline(xintercept = 0, linetype = "dashed", colour = "red") +
-        facet_wrap(. ~ Mediator) +
-        labs(x = "Estimate") +
+        facet_wrap(. ~ mediator) +
+        labs(x = "estimate") +
         theme_bw() +
         theme(axis.text.y = element_text(size = 12),
             axis.title.y = element_blank())
@@ -169,13 +171,13 @@ setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
 #' @importFrom ggplot2 ggplot
 .plot_med_heatmap <- function(df) {
   
-    df[["Mediator"]] <- factor(df[["Mediator"]],
-        levels = rev(unique(df[["Mediator"]])))
+    df[["mediator"]] <- factor(df[["mediator"]],
+        levels = rev(unique(df[["mediator"]])))
   
     effect_max <- max(abs(min(df[["estimate"]])), abs(max(df[["estimate"]])))
     effect_floor <- floor(10 * effect_max)
 
-    p <- ggplot(df, aes(x = Condition, y = Mediator, fill = estimate)) +
+    p <- ggplot(df, aes(x = Condition, y = mediator, fill = estimate)) +
         geom_tile(color = "white", lwd = 1.5, linetype = 1) +
         scale_fill_gradientn(colours = c("blue", "white", "red"),
             breaks = seq(-effect_floor, effect_floor) / 10,
