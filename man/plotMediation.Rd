@@ -2,6 +2,7 @@
 % Please edit documentation in R/AllGenerics.R, R/plotMediation.R
 \name{plotMediation}
 \alias{plotMediation}
+\alias{plotMediation,data.frame-method}
 \alias{plotMediation,SummarizedExperiment-method}
 \title{Visualize mediation}
 \usage{
@@ -22,6 +23,8 @@ plotMediation(x, ...)
 object or a data.frame, returned as output from
 \code{\link[mia:getMediation]{addMediation}} or
 \code{\link[mia:getMediation]{getMediation}}, respectively.}
+
+\item{...}{description}
 
 \item{layout}{\code{character scalar} Determines the layout of plot. Must be
 either "heatmap" or "forest". (Default: \code{"heatmap"})}
@@ -73,7 +76,7 @@ tse <- transformAssay(tse,
                       pseudocount = 1)
 
 # Analyse mediated effect of nationality on BMI via clr-transformed features
-# 100 permutations were done to speed up execution, but ~1000 are recommended     
+# 100 permutations were done to speed up execution, but ~1000 are recommended
 tse <- addMediation(tse, name = "assay_mediation",
                     outcome = "bmi_group",
                     treatment = "nationality",

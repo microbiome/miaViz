@@ -19,7 +19,9 @@
 #' either "heatmap" or "forest". (Default: \code{"heatmap"})
 #'
 #' @param signif.threshold \code{Numeric scalar or list}. Displays significance
-#'   as stars on a heatmap layout. (Default: \code{c(0.001, 0.01, 0.05)})
+#' as stars on a heatmap layout. (Default: \code{c(0.001, 0.01, 0.05)})
+#'
+#' @param ... description
 #'
 #' @details
 #' \code{plotMediation} creates a heatmap starting from the
@@ -43,7 +45,7 @@
 #' # Load dataset
 #' data(hitchip1006, package = "miaTime")
 #' tse <- hitchip1006
-#' 
+#'
 #' # Agglomerate features by family (merely to speed up execution)
 #' tse <- agglomerateByRank(tse, rank = "Phylum")
 #' # Convert BMI variable to numeric
@@ -55,7 +57,7 @@
 #'                       pseudocount = 1)
 #'
 #' # Analyse mediated effect of nationality on BMI via clr-transformed features
-#' # 100 permutations were done to speed up execution, but ~1000 are recommended     
+#' # 100 permutations were done to speed up execution, but ~1000 are recommended
 #' tse <- addMediation(tse, name = "assay_mediation",
 #'                     outcome = "bmi_group",
 #'                     treatment = "nationality",
@@ -68,12 +70,13 @@
 #'
 #' # Visualise results as heatmap with custom significance thresholds
 #' plotMediation(tse, "assay_mediation", signif.threshold = c(0.01, 0.05))
-#' 
+#'
 #' # Visualise results as forest plot
 #' plotMediation(tse, "assay_mediation", layout = "forest")
 #'}
 #'
-#'@name plotMediation
+#' @name plotMediation
+NULL
 
 #' @rdname plotMediation
 #' @export
@@ -81,7 +84,7 @@
 #' @importFrom dplyr rename_with
 setMethod("plotMediation", signature = c(x = "data.frame"),
     function(x, layout = "heatmap", signif.threshold = c(0.001, 0.01, 0.05)) {
-      
+
         ###################### Input check ########################
         # Check layout
         if( !layout %in% c("heatmap", "forest") ){
@@ -92,21 +95,21 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
             stop("'signif.threshold' must be a numeric scalar or array.", call. = FALSE)
         }
         ###################### Input check end ####################
-      
+
         df <- x %>%
             rename_with(~ paste0(.x, "_estimate"), c(acme, ade, total)) %>%
             pivot_longer(cols = -mediator, names_to = c("Condition", "Metric"),
                 names_sep = "_", names_prefix = "hi") %>%
             pivot_wider(names_from = Metric, values_from = value)
-      
+
         df <- .add_signif_threshold(df, signif.threshold)
-        
+
         if( layout == "heatmap" ){
             p <- .plot_med_heatmap(df)
         }else if( layout == "forest" ){
             p <- .plot_med_forest(df)
         }
-      
+
         return(p)
     }
 )
@@ -117,17 +120,17 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
 setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
     function(x, name = "mediation", layout = "heatmap",
         signif.threshold = c(0.001, 0.01, 0.05)){
-      
+
         ###################### Input check ########################
         # Check metadata name
         if( !name %in% names(metadata(x)) ){
             stop("'name' must be in names(metadata(x)).", call. = FALSE)
         }
         ###################### Input check end ####################
-    
+
         med_df <- metadata(x)[[name]]
         p <- plotMediation(med_df, layout, signif.threshold)
-        
+
         return(p)
     }
 )
@@ -151,10 +154,10 @@ setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
 
 #' @importFrom ggplot2 ggplot
 .plot_med_forest <- function(df) {
-    
+
     df[["Condition"]] <- factor(df[["Condition"]],
         levels = rev(unique(df[["Condition"]])))
-  
+
     p <- ggplot(df, aes(x = estimate, y = Condition)) +
         geom_point(size = 3) +
         geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0) +
@@ -164,16 +167,16 @@ setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
         theme_bw() +
         theme(axis.text.y = element_text(size = 12),
             axis.title.y = element_blank())
-    
+
     return(p)
 }
 
 #' @importFrom ggplot2 ggplot
 .plot_med_heatmap <- function(df) {
-  
+
     df[["mediator"]] <- factor(df[["mediator"]],
         levels = rev(unique(df[["mediator"]])))
-  
+
     effect_max <- max(abs(min(df[["estimate"]])), abs(max(df[["estimate"]])))
     effect_floor <- floor(10 * effect_max)
 
@@ -187,6 +190,6 @@ setMethod("plotMediation", signature = c(x = "SummarizedExperiment"),
         theme_minimal() +
         theme(axis.text.x = element_text(size = 12),
             axis.title = element_blank())
-    
+
     return(p)
 }
