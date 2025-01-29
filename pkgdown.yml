@@ -1,6 +1,6 @@
-pandoc: 3.6.1
+pandoc: 3.6.2
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles:
   miaViz: miaViz.html
-last_built: 2025-01-15T16:09Z
+last_built: 2025-01-29T14:40Z
