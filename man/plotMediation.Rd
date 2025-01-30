@@ -2,54 +2,54 @@
 % Please edit documentation in R/AllGenerics.R, R/plotMediation.R
 \name{plotMediation}
 \alias{plotMediation}
-\alias{plotMediation,data.frame-method}
 \alias{plotMediation,SummarizedExperiment-method}
+\alias{plotMediation,data.frame-method}
 \title{Visualize mediation}
 \usage{
 plotMediation(x, ...)
 
-\S4method{plotMediation}{data.frame}(x, layout = "heatmap", signif.threshold = c(0.001, 0.01, 0.05))
+\S4method{plotMediation}{SummarizedExperiment}(x, name = "mediation", ...)
 
-\S4method{plotMediation}{SummarizedExperiment}(
-  x,
-  name = "mediation",
-  layout = "heatmap",
-  signif.threshold = c(0.001, 0.01, 0.05)
-)
+\S4method{plotMediation}{data.frame}(x, layout = "heatmap", ...)
 }
 \arguments{
 \item{x}{a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-object or a data.frame, returned as output from
+object or a \code{data.frame}, returned as output from
 \code{\link[mia:getMediation]{addMediation}} or
 \code{\link[mia:getMediation]{getMediation}}, respectively.}
 
-\item{...}{description}
-
-\item{layout}{\code{character scalar} Determines the layout of plot. Must be
-either "heatmap" or "forest". (Default: \code{"heatmap"})}
-
-\item{signif.threshold}{\code{Numeric scalar or list}. Displays significance
-as stars on a heatmap layout. (Default: \code{c(0.001, 0.01, 0.05)})}
+\item{...}{Additional parameters for plotting.
+\itemize{
+\item \code{add.significance}: \code{Character scalar}. Controls how
+p-values are displayed in the heatmap. Options include \code{"symbol"}
+(p-values displayed as symbols), \code{"numeric"} (p-values displayed as
+numeric values) and \code{NULL} (p-values not displayed).
+(Default: \code{"symbol"})
+}}
 
 \item{name}{\code{Character scalar} value defining which mediation data
 to use. (Default: \code{"mediation"})}
+
+\item{layout}{\code{Character scalar} Determines the layout of plot. Must be
+either "heatmap" or "forest". (Default: \code{"heatmap"})}
 }
 \value{
 A \code{ggplot2} object.
 }
 \description{
 \code{plotMediation()} generates a heatmap from the results of mediation
-analysis produced with \code{mia:getMediation()} or \code{mia:addMediation()}.
-It displays effect size and significance of the Actual Causal Mediation
-Effect (ACME) and the Actual Direct Effect (ADE) for each mediator included
-in the object \code{x}.
+analysis produced with \code{mia:getMediation()} or
+\code{mia:addMediation()}. It displays effect size and significance of the
+Actual Causal Mediation Effect (ACME) and the Actual Direct Effect (ADE) for
+each mediator included in the object \code{x}.
 }
 \details{
 \code{plotMediation} creates a heatmap starting from the
 output of the \code{\link[mia:getMediation]{mediation}} functions, which are
 mia wrappers for the basic \code{\link[mediation:mediate]{mediate}} function.
-Either a \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+Either a
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 or a data.frame object is supported as input. When the input is a
 SummarizedExperiment, this should contain the output of addMediation
 in the metadata slot and the argument \code{name} needs to be defined.
@@ -68,27 +68,27 @@ tse <- hitchip1006
 # Agglomerate features by family (merely to speed up execution)
 tse <- agglomerateByRank(tse, rank = "Phylum")
 # Convert BMI variable to numeric
-tse$bmi_group <- as.numeric(tse$bmi_group)
+tse[["bmi_group"]] <- as.numeric(tse[["bmi_group"]])
 
 # Apply clr transformation to counts assay
-tse <- transformAssay(tse,
-                      method = "clr",
-                      pseudocount = 1)
+tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 
 # Analyse mediated effect of nationality on BMI via clr-transformed features
 # 100 permutations were done to speed up execution, but ~1000 are recommended
-tse <- addMediation(tse, name = "assay_mediation",
-                    outcome = "bmi_group",
-                    treatment = "nationality",
-                    assay.type = "clr",
-                    covariates = c("sex", "age"),
-                    treat.value = "Scandinavia",
-                    control.value = "CentralEurope",
-                    boot = TRUE, sims = 100,
-                    p.adj.method = "fdr")
+tse <- addMediation(
+    tse, name = "assay_mediation",
+    outcome = "bmi_group",
+    treatment = "nationality",
+    assay.type = "clr",
+    covariates = c("sex", "age"),
+    treat.value = "Scandinavia",
+    control.value = "CentralEurope",
+    boot = TRUE, sims = 100,
+    p.adj.method = "fdr"
+    )
 
-# Visualise results as heatmap with custom significance thresholds
-plotMediation(tse, "assay_mediation", signif.threshold = c(0.01, 0.05))
+# Visualise results as heatmap
+plotMediation(tse, "assay_mediation")
 
 # Visualise results as forest plot
 plotMediation(tse, "assay_mediation", layout = "forest")

@@ -11,15 +11,14 @@ test_that("plot mediation", {
         mediator = "diversity", covariates = c("sex", "age"),
         treat.value = "Scandinavia", control.value = "CentralEurope",
         boot = TRUE, sims = 100)
-  
+
     ### 1). TEST error messages ###
     expect_error(plotMediation(tse, "wrong_name"),
         "'name' must be in names(metadata(x)).", fixed = TRUE)
     expect_error(plotMediation(tse, layout = "barplot"),
         "'layout' must be either 'heatmap' or 'forest'.", fixed = TRUE)
-    expect_error(plotMediation(tse, signif.threshold = c("0.01", "0.05")),
-        "'signif.threshold' must be a numeric scalar or array.", fixed = TRUE)
-    
+    expect_error(plotMediation(tse, add.significance = "0.01"))
+
     ### 2). TEST plot layers ###
     df <- metadata(tse)[["mediation"]]
     p_heatmap <- plotMediation(df, layout = "heatmap")
@@ -32,9 +31,9 @@ test_that("plot mediation", {
     expect_true(all(heatmap_data[[2]][["label"]] == "***"))
     # Check forest plot
     expect_true(all(forest_data[[2]][["xmin"]] ==
-        df[c("ACME_lower", "ADE_lower", "Total_lower")]))
+        df[c("acme_lower", "ade_lower", "total_lower")]))
     expect_true(all(forest_data[[2]][["xmax"]] ==
-        df[c("ACME_upper", "ADE_upper", "Total_upper")]))
+        df[c("acme_upper", "ade_upper", "total_upper")]))
     expect_true(all(forest_data[[2]][["x"]] ==
-        df[c("ACME_estimate", "ADE_estimate", "Total_estimate")]))
+        df[c("acme", "ade", "total")]))
 })
