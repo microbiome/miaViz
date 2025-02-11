@@ -421,7 +421,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         plot_out <- plot_out +
             scale_FUN(
                 name = "Effect",
-                values = c("+" = "blue", "-" = "red"),
+                values = c("+" = "red", "-" = "blue"),
                 labels = c("+" = "positive", "-" = "negative")
             )
     }
