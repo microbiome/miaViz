@@ -62,7 +62,12 @@
 #' plotHistogram(tse, col.var = "shannon", layout = "density")
 #'
 #' @seealso
-#' \code{\link[=plotAbundanceDensity]{plotAbundanceDensity}}
+#' \itemize{
+#'   \item \code{\link[=plotAbundanceDensity]{plotAbundanceDensity}}
+#'   \item \code{\link[scater:plotExpression]{scater::plotExpression}}
+#'   \item \code{\link[scater:plotRowData]{scater::plotRowData}}
+#'   \item \code{\link[scater:plotColData]{scater::plotColData}}
+#' }
 #'
 NULL
 
