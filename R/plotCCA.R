@@ -354,16 +354,19 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         }
     }
 
+    # Some variables might have merged names, i.e., the group and variable
+    # name might be merged. Get the original variable names and
+    # groups.
+    if( !is.null(vector_data) ){
+        vector_data <- .get_variable_mapping_from_coldata(tse, vector_data)
+    }
+    vars_found <- all(c("var", "levels") %in% colnames(vector_data))
     # Make the vector labels tidier. For instance, covriate name and value
     # are separated. This applies only when labels were not provided by user.
-    if( !is.null(vector_data) && is.null(vec.lab) ){
-        # Some variables might have merged names, i.e., the group and variable
-        # name might be merged. Get what was the original variable name and
-        # group.
-        vector_data <- .get_variable_mapping_from_coldata(tse, vector_data)
+    if( !is.null(vector_data) && is.null(vec.lab) && vars_found ){
         # Make labels more tidy
         vector_data <- .tidy_vector_labels(
-            vector_data, colData(tse), sep.group = sep.group,
+            vector_data, sep.group = sep.group,
             repl.underscore = repl.underscore)
     }
     # Add vector labels provodied by user
@@ -378,7 +381,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     }
 
     # Add significance information to the labels
-    signif_data <- if( add.significance && !is.null(vector_data))
+    signif_data <- if( add.significance && !is.null(vector_data) && vars_found )
         .get_rda_attribute(reduced_dim, "significance")
     if( !is.null(signif_data) ){
         signif_data <- signif_data[[1L]] |> as.data.frame()
@@ -400,7 +403,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # character i.e., groups, they get variable names that tell the variable and
 # group. This function matches those modified names with the original data.
 .get_variable_mapping_from_coldata <- function(tse, vector_data, ...){
-    # Loop over each variable in colData. Get all thye possible values that they
+    # Loop over each variable in colData. Get all the possible values that they
     # can get in RDA/CCA methods.
     name_map <- lapply(colnames(colData(tse)), function(col){
         # If the value is factor, get all possible values
@@ -418,13 +421,14 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     name_map <- do.call(rbind, name_map)
     # Check that all variables can be found from colData
     if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
-        stop("All variables in RDA/CCA rsults must be present in colData(x).",
-            call. = FALSE)
+        warning("All variables in RDA/CCA rsults must be present in ",
+            "colData(x).", call. = FALSE)
+    } else{
+        # Add group names to vector data
+        name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
+        name_map <- name_map[, seq_len(2)]
+        vector_data <- cbind(vector_data, name_map)
     }
-    # Add group names to vector data
-    name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
-    name_map <- name_map[, seq_len(2)]
-    vector_data <- cbind(vector_data, name_map)
     return(vector_data)
 }
 
@@ -433,8 +437,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # just combined, i.e., we do not know if "group" is the group name or is it
 # "groupName" when the name in biplot is "groupNameValue".
 # Replace also underscores with space.
-.tidy_vector_labels <- function(
-        vector_data, coldata, sep.group, repl.underscore, ...){
+.tidy_vector_labels <- function(vector_data, sep.group, repl.underscore, ...){
     # Store old labels
     vector_data[["old_label"]] <- vector_data[["vector_label"]]
     # Get those variables that are numeric. We know that because they do not
@@ -465,7 +468,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 
     # Create new labels with significance information
     vector_data[["old_label_signif"]] <- vector_data[["vector_label"]]
-    labs <- vector_data[["vector_label"]]
     labs <- lapply(seq_len(nrow(vector_data)), function(i){
         lab <- vector_data[i, "vector_label"]
         expl_var <- round(vector_data[i, "Explained variance"]*100, 1)
@@ -476,7 +478,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
             !!gsub("0\\.","\\.", format( p_value, nsmall = 3)), ")") |> expr()
         return(temp)
         }
-    )
+    ) |> unlist()
     vector_data[["vector_label"]] <- labs
     return(vector_data)
 }
