@@ -1,49 +1,62 @@
 #' Plot Series
 #'
-#' This function plots series data.
+#' This function plots time series data.
 #'
-#' @param object a
+#' @param x a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #'
-#' @param assay.type \code{Character scalar}. selecting the
+#' @param assay.type \code{Character scalar}. Specifies the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 #' plotted. (Default: \code{"counts"})
 #'
-#' @param assay_name Deprecated. Use \code{assay.type} instead.
-#'
-#' @param x \code{Character scalar}. selecting the column from
-#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} that
+#' @param time.col \code{Character scalar}. selecting the column from
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}} that
 #' will specify values of x-axis.
 #'
-#' @param y \code{Character scalar}. Selects the taxa from
-#'   \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
-#'   This parameter specifies taxa whose abundances will be plotted.
+#' @param features \code{Character scalar}. Selects the taxa from
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
+#' This parameter specifies taxa whose abundances will be plotted.
 #'
-#' @param rank \code{Character scalar}. A taxonomic rank, that is used
-#'   to agglomerate the data. Must be a value of \code{taxonomicRanks()}
-#'   function. (Default: \code{NULL})
+#' @param group \code{Character scalar}. Specifies a sample grouping. Must be
+#' value from
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}}. If
+#' \code{NULL}, grouping is not applied. (Default: \code{NULL})
 #'
-#' @param colour.by \code{Character scalar}. A taxonomic rank, that is used to
-#' color plot. Must be a value of \code{taxonomicRanks()} function.
-#' (Default: \code{NULL})
+#' @param ... additional parameters for plotting.
+#' \itemize{
+#'   \item \code{rank} \code{Character scalar}. A taxonomic rank, that is used
+#'   to agglomerate the data. (Default: \code{NULL})
 #'
-#' @param colour_by Deprecated. Use \code{colour.by} instead.
+#'   \item \code{colour.by} \code{Character scalar}. A column name from
+#'   \code{rowData(x)} or \code{colData(x)}, that is used to divide observations
+#'   to different colors. If \code{NULL}, this is not applied.
+#'   (Default: \code{NULL})
 #'
-#' @param linetype.by \code{Character scalar}. A taxonomic rank, that
-#' is used to divide taxa to different line types. Must be a value of
-#' \code{taxonomicRanks()} function. (Default: \code{NULL})
+#'   \item \code{linetype.by} \code{Character scalar}. A column name from
+#'   \code{rowData(x)} or \code{colData(x)}, that is used to divide observations
+#'   to different line types. If \code{NULL}, this is not applied.
+#'   (Default: \code{NULL})
 #'
-#' @param linetype_by Deprecated. Use \code{linetype.by} instead.
+#'   \item \code{size.by}: \code{Character scalar}. A column name from
+#'   \code{rowData(x)} or \code{colData(x)}, that is used to divide observations
+#'   to different size types. If \code{NULL}, this is not applied.
+#'   (Default: \code{NULL})
 #'
-#' @param size.by \code{Character scalar}. A taxonomic rank, that is
-#' used to divide taxa to different line size types. Must be a value of
-#' \code{taxonomicRanks()} function. (Default: \code{NULL})
+#'   \item \code{facet.cols}: \code{Logical scalar}. Should the sample groups
+#'   specified by \code{group} be spitted into facets? If \code{group} is
+#'   specified and \code{facet.cols = FALSE}, features are facetted instead.
+#'   (Default: \code{FALSE})
 #'
-#' @param size_by Deprecated. Use \code{size.by} instead.
+#'   \item \code{ncol}: \code{Numeric scalar}. if facets are applied,
+#'   \code{ncol} defines many columns should be for plotting the different
+#'   facets. (Default: \code{1L})
 #'
-#' @param ... additional parameters for plotting. See
-#' \code{\link{mia-plot-args}} for more details i.e. call
+#'   \item \code{scales} \code{Character scalar}. Defines the behavior of the
+#'   scales of each facet. The value is passed into
+#'   \code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"fixed"})
+#' }
+#' See \code{\link{mia-plot-args}} for more details i.e. call
 #' \code{help("mia-plot-args")}
 #'
 #' @details
@@ -55,43 +68,60 @@
 #'
 #' @name plotSeries
 #'
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-#'
 #' @examples
 #' \dontrun{
 #' library(mia)
 #' # Load data from miaTime package
 #' library("miaTime")
 #' data(SilvermanAGutData)
-#' object <- SilvermanAGutData
+#' tse <- SilvermanAGutData
 #'
 #' # Plots 2 most abundant taxa, which are colored by their family
-#' plotSeries(object,
-#'            x = "DAY_ORDER",
-#'            y = getTop(object, 2),
-#'            colour.by = "Family")
+#' plotSeries(
+#'     tse,
+#'     time.col = "DAY_ORDER",
+#'     features = getTop(tse, 2),
+#'     colour.by = "Family"
+#' )
 #'
 #' # Counts relative abundances
-#' object <- transformAssay(object, method = "relabundance")
+#' tse <- transformAssay(tse, method = "relabundance")
 #'
 #' # Selects taxa
 #' taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
 #'
 #' # Plots relative abundances of phylums
-#' plotSeries(object[taxa,],
-#'            x = "DAY_ORDER",
-#'            colour.by = "Family",
-#'            linetype.by = "Phylum",
-#'            assay.type = "relabundance")
+#' plotSeries(
+#'     tse[taxa,],
+#'     time.col = "DAY_ORDER",
+#'     colour.by = "Family",
+#'     linetype.by = "Phylum",
+#'     sssay.type = "relabundance"
+#' )
 #'
 #' # In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used
 #' # to group taxa.
-#' plotSeries(object,
-#'            x = "DAY_ORDER",
-#'            y = getTop(object, 5),
-#'            colour.by = "Family",
-#'            size.by = "Phylum",
-#'            assay.type = "counts")
+#' plotSeries(
+#'     tse,
+#'     time.col = "DAY_ORDER",
+#'     features = getTop(tse, 5),
+#'     colour.by = "Family",
+#'     size.by = "Phylum",
+#'     assay.type = "counts"
+#' )
+#'
+#' # If the data includes multiple systems, e.g., patients or bioreactors,
+#' # one can pot each system separately
+#' plotSeries(
+#'     tse,
+#'     time.col = "DAY_ORDER",
+#'     assay.type = "relabundance",
+#'     features = getTop(tse, 5),
+#'     group = "Vessel",
+#'     linetype.by = "Pre_Post_Challenge",
+#'     scales = "free"
+#' )
+#'
 #' }
 NULL
 
@@ -100,70 +130,52 @@ NULL
 #' @importFrom mia meltSE
 #' @importFrom stats sd
 #' @export
-setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
+setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     function(
-        object,
         x,
-        y = NULL,
-        rank = NULL,
-        colour.by = colour_by,
-        colour_by = NULL,
-        size.by = size_by,
-        size_by = NULL,
-        linetype.by = linetype_by,
-        linetype_by = NULL,
-        assay.type = assay_name, assay_name = "counts",
+        time.col,
+        assay.type = "counts",
+        features = NULL,
+        group = NULL,
         ...){
         ###################### Input check #######################
         # Checks assay.type
-        .check_assay_present(assay.type, object)
+        .check_assay_present(assay.type, x)
         # Checks X
-        if( !.is_a_string(x) ||
-            !(x %in% names(colData(object))) ){
-            stop("'x' must be a name of column of colData(object)",
+        if( !(.is_a_string(time.col) && time.col %in% names(colData(x))) ){
+            stop("'time.col' must be a name of column of colData(x)",
                 call. = FALSE)
         }
-        # If rank is not null, data will be agglomerated by rank
-        if( !is.null(rank) ){
-            # Check rank
-            .check_taxonomic_rank(rank, object)
-
-            # Agglomerates the object
-            object <- agglomerateByRank(object, rank = rank)
+        # Agglomerate data if specified
+        x <- .merge_features(x, ...)
+        # Checks features
+        if( !(is.null(features) || (is.character(features) &&
+                all(features %in% rownames(x)))) ){
+            stop("'y' must be in rownames(x). \n If 'rank' was used, ",
+                "check that 'y' matches agglomerated data.", call. = FALSE)
         }
-        # Checks Y
-        # If Y is not null, user has specified it
-        if (!is.null(y)){
-            if(!is.character(y) || !all( y %in% rownames(object))){
-                stop("'y' must be in rownames(x). \n If 'rank' was used, ",
-                    "check that 'y' matches agglomerated data.", call. = FALSE)
-            }
-            # Select taxa that user has specified
-            object <- object[y,]
+        # Select taxa that user has specified
+        if (!is.null(features)){
+            x <- x[features,]
+        }
+        # Checks group
+        if( !(is.null(group) ||
+                (.is_a_string(group) && group %in% names(colData(x)))) ){
+            stop("'group' must be a name of column of colData(x)",
+                call. = FALSE)
         }
         # Gets warning or error if too many taxa are selected. Too many taxa
         # cannot be plotted since otherwise the plot is too crowded.
-        if( length(rownames(object)) > 20 ){
+        if( length(rownames(x)) > 20 ){
             stop("Over 20 taxa selected. 20 or under allowed.", call. = FALSE)
-        } else if ( length(rownames(object)) > 10 ){
+        } else if ( length(rownames(x)) > 10 ){
             warning("Over 10 taxa selected.", call. = FALSE)
         }
         ###################### Input check end ####################
         # Get the data
-        plot_data <- .get_series_data(
-            object, assay.type, x, colour.by, size.by, linetype.by)
-        # Adjust labels
-        xlab <- paste0(x)
-        ylab <- paste0(assay.type)
+        args <- .get_series_data(x, assay.type, time.col, group, ...)
         # Create the plot
-        p <- .series_plotter(
-            plot_data,
-            xlab = xlab,
-            ylab = ylab,
-            colour_by = colour.by,
-            linetype_by = linetype.by,
-            size_by = size.by,
-            ...)
+        p <- do.call(.series_plotter, args)
         return(p)
     }
 )
@@ -172,55 +184,116 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
 
 # This function fetches data from SE object. It outputs data in a format that
 # can directly be plotted with .series_plotter().
-#' @importFrom dplyr group_by summarize ungroup
+#' @importFrom dplyr group_by mutate ungroup
 #' @importFrom stats sd
 #' @importFrom mia meltSE
 #' @importFrom SummarizedExperiment rowData<-
 .get_series_data <- function(
-        object, assay.type, x, colour.by, size.by, linetype.by){
+        x, assay.type, time.col, group,
+        colour.by = color.by, color.by = colour_by, colour_by = color_by,
+        color_by = NULL,
+        size.by = size_by, size_by = NULL,
+        linetype.by = linetype_by, linetype_by = NULL,
+        facet.cols = FALSE,
+        ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     Y <- NULL
-    # Get variables that can be found from rowData
-    row_vars <- c(
+
+    # Check that the styling parameters can be found from rowData or colData
+    col_names <- colData(x) |> colnames()
+    row_names <- rowData(x) |> colnames()
+    if( !(is.null(colour.by) || (.is_a_string(colour.by) &&
+            colour.by %in% c(row_names, col_names)) ) ){
+        stop("'colour.by' must be a string from rowData(x) or colData(x).",
+            call. = FALSE)
+    }
+    if( !(is.null(size.by) || (.is_a_string(size.by) &&
+            size.by %in% c(row_names, col_names)) ) ){
+        stop("'size.by' must be a string from rowData(x) or colData(x).",
+            call. = FALSE)
+    }
+    if( !(is.null(linetype.by) || (.is_a_string(linetype.by) &&
+            linetype.by %in% c(row_names, col_names)) ) ){
+        stop("'linetype.by' must be a string from rowData(x) or colData(x).",
+            call. = FALSE)
+    }
+    # Check that facet.cols is boolean value
+    if( !.is_a_bool(facet.cols) ){
+        stop("'facet.cols' must be TRUE or FALSE.", call. = FALSE)
+    }
+
+    # Check where these parametrs can be found
+    cols <- c(
         colour_by = colour.by, size_by = size.by, linetype_by = linetype.by)
-    # Rename rowData columns. If we do not do this, this might cause
-    # problems in melting step if "x" is named equally to colour.by, size.by or
-    # linetype.by. Duplicate colnames get suffix, and variable names are not
-    # then detected correctly.
-    colnames(rowData(object))[ match(row_vars, colnames(rowData(object))) ] <-
-        names(row_vars)
-    row_vars <- names(row_vars)
+    ind <- match(cols, col_names)
+    col_vars <- setNames(col_names[ind], names(cols)) |> na.omit()
+    ind <- match(cols, row_names)
+    row_vars <- setNames(row_names[ind], names(cols)) |> na.omit()
 
     # Melt SE object. If value is not found from rowData/colData, user get
     # informative error message.
     plot_data <- meltSE(
-        object, assay.type = assay.type,
+        x, assay.type = assay.type,
         row.name = "feature",
         add.row = row_vars,
-        add.col = x)
-    # Rename abundance value and timepoint columns
-    colnames(plot_data)[ colnames(plot_data) == assay.type ] <- "Y"
-    colnames(plot_data)[ colnames(plot_data) == x ] <- "X"
-    # If time point replicates are present calculate sd and mean for each
+        add.col = c(time.col, group, col_vars)
+    )
+
+    # If time point replicates are present, calculate sd and mean for each
     # timepoint
-    if( anyDuplicated(plot_data[["X"]]) ){
-        # Step 1: Summarize the data
-        summary_data <- plot_data %>%
-            group_by(!!sym("X"), !!sym("feature")) %>%
-            summarize(
-                sd = sd(.data[["Y"]], na.rm = TRUE),
-                Y = mean(.data[["Y"]], na.rm = TRUE)
-            ) %>%
+    cols <- setNames(c("feature", time.col, group), c("feature", "X", group))
+    if( anyDuplicated(plot_data[, cols, drop = FALSE]) ){
+        # Summarize the data to mean and sd
+        plot_data <- plot_data |>
+            group_by(across(all_of(cols))) |>
+            mutate(
+                !!assay.type := mean(.data[[assay.type]], na.rm = TRUE),
+                sd = sd(.data[[assay.type]], na.rm = TRUE),
+            ) |>
             ungroup()
-        # Step 2: Join the summarized data back to the original data
-        plot_data <- plot_data %>%
-            select(-Y) %>%
-            dplyr::left_join(
-                summary_data, by = c("X" = "X", "feature" = "feature"))
     }
-    return(plot_data)
+
+    # Select only certain columns and remove duplicates
+    cols <- c(cols, Y = assay.type, sd = "sd", row_vars, col_vars)
+    cols <- cols[ cols %in% colnames(plot_data) ]
+    plot_data <- plot_data[, cols, drop = FALSE]
+    plot_data <- plot_data[!duplicated(plot_data), , drop = FALSE]
+    # Rename columns to harmonize input of plotter function
+    colnames(plot_data) <- names(cols)
+
+    # If user did not specify coloring, different features are colored by
+    # default. If grouping was specified, we color features (if we facet by
+    # groups) or groups (if we facet by features).
+    if( is.null(colour.by) && (is.null(group) ||
+            (!is.null(group) && facet.cols)) ){
+        colour.by <- "feature"
+        plot_data[["colour_by"]] <-  plot_data[[colour.by]]
+    } else if( is.null(colour.by) && !is.null(group) && !facet.cols ){
+        colour.by <- group
+        plot_data[["colour_by"]] <-  as.factor( plot_data[[colour.by]] )
+    }
+    # If grouping was specified, user can specify if facetting is applied to
+    # features or sample group
+    if( !is.null(group) && facet.cols ){
+        plot_data[["facet_by"]] <-  as.factor( plot_data[[group]] )
+    } else if( !is.null(group) && !facet.cols ){
+        plot_data[["facet_by"]] <-  plot_data[["feature"]]
+    }
+
+    # Create an argument list to feed to plotter
+    args <- list(
+        plot_data = plot_data,
+        colour_by = colour.by,
+        linetype_by = linetype.by,
+        size_by = size.by,
+        xlab = as.character(time.col),
+        ylab = as.character(assay.type)
+    )
+    args <- c(args, list(...))
+    return(args)
 }
 
+# This function gets time series data as an input and creates a plot from it.
 .series_plotter <- function(
         plot_data,
         xlab,
@@ -239,22 +312,30 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         line_width_range = line.width.range,
         line.width.range =  c(0.5,3),
         ribbon_alpha = ribbon.alpha,
-        ribbon.alpha = 0.3){
-    # fall back for feature grouping
-    if(is.null(colour_by)){
-        colour_by <- "feature"
-        plot_data$colour_by <-  plot_data$feature
+        ribbon.alpha = 0.3,
+        ncol = 1L,
+        scales = "fixed",
+        ...){
+    #
+    if( !.is_an_integer(ncol) ){
+        stop("'ncol' must be an integer.", call. = FALSE)
     }
-    # Creates a "draft" of a plot
+    if( !.is_a_string(scales) ){
+        stop("'scales' must be an integer.", call. = FALSE)
+    }
+    #
+    # Initialize a plot a plot
     plot_out <- ggplot(plot_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)
+
     # if sd column is present add a ribbon
-    if(!is.null(plot_data$sd)){
+    if(!is.null(plot_data[["sd"]])){
         ribbon_args <- .get_ribbon_args(
             colour_by = colour_by, alpha = ribbon_alpha)
         plot_out <- plot_out +
             do.call(geom_ribbon, ribbon_args$args)
     }
+
     # Fetches arguments for geom_line
     line_args <- .get_line_args(
         colour_by = colour_by,
@@ -267,7 +348,7 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
     plot_out <- plot_out +
         do.call(geom_line, line_args$args)
     # apply line_width_range
-    if (!is.null(size_by)) {
+    if( !is.null(size_by) ){
         if(is.numeric(plot_data$size_by)){
             SIZEFUN <- scale_size_continuous
         } else {
@@ -276,20 +357,30 @@ setMethod("plotSeries", signature = c(object = "SummarizedExperiment"),
         plot_out <- plot_out +
             SIZEFUN(range = line_width_range)
     }
+
     # Resolves the colours
     plot_out <- .resolve_plot_colours(
         plot_out, plot_data$colour_by, colour_by, fill = FALSE)
-    if(!is.null(plot_data$sd)){
+    if( !is.null(plot_data[["sd"]]) ){
         plot_out <- .resolve_plot_colours(
             plot_out, plot_data$colour_by, colour_by, fill = TRUE)
     }
+
+    # If facetting is specified
+    if( "facet_by" %in% colnames(plot_data) ){
+        plot_out <- plot_out +
+            facet_wrap(~facet_by, ncol = ncol, scales = scales)
+    }
+
     # add additional guides
     plot_out <- .add_extra_line_guide(plot_out, linetype_by, size_by)
     # To choose if legend is kept, and its position
     plot_out <- .add_legend(plot_out, add_legend)
+    # Set a theme
     plot_out <- plot_out +
         theme_classic()
-    plot_out
+
+    return(plot_out)
 }
 
 .add_extra_line_guide <- function(plot_out, linetype_by, size_by) {

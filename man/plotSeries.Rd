@@ -5,74 +5,80 @@
 \alias{plotSeries,SummarizedExperiment-method}
 \title{Plot Series}
 \usage{
-plotSeries(object, ...)
+plotSeries(x, ...)
 
 \S4method{plotSeries}{SummarizedExperiment}(
-  object,
   x,
-  y = NULL,
-  rank = NULL,
-  colour.by = colour_by,
-  colour_by = NULL,
-  size.by = size_by,
-  size_by = NULL,
-  linetype.by = linetype_by,
-  linetype_by = NULL,
-  assay.type = assay_name,
-  assay_name = "counts",
+  time.col,
+  assay.type = "counts",
+  features = NULL,
+  group = NULL,
   ...
 )
 }
 \arguments{
-\item{object}{a
+\item{x}{a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{...}{additional parameters for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call
+\item{...}{additional parameters for plotting.
+\itemize{
+\item \code{rank} \code{Character scalar}. A taxonomic rank, that is used
+to agglomerate the data. (Default: \code{NULL})
+
+\item \code{colour.by} \code{Character scalar}. A column name from
+\code{rowData(x)} or \code{colData(x)}, that is used to divide observations
+to different colors. If \code{NULL}, this is not applied.
+(Default: \code{NULL})
+
+\item \code{linetype.by} \code{Character scalar}. A column name from
+\code{rowData(x)} or \code{colData(x)}, that is used to divide observations
+to different line types. If \code{NULL}, this is not applied.
+(Default: \code{NULL})
+
+\item \code{size.by}: \code{Character scalar}. A column name from
+\code{rowData(x)} or \code{colData(x)}, that is used to divide observations
+to different size types. If \code{NULL}, this is not applied.
+(Default: \code{NULL})
+
+\item \code{facet.cols}: \code{Logical scalar}. Should the sample groups
+specified by \code{group} be spitted into facets? If \code{group} is
+specified and \code{facet.cols = FALSE}, features are facetted instead.
+(Default: \code{FALSE})
+
+\item \code{ncol}: \code{Numeric scalar}. if facets are applied,
+\code{ncol} defines many columns should be for plotting the different
+facets. (Default: \code{1L})
+
+\item \code{scales} \code{Character scalar}. Defines the behavior of the
+scales of each facet. The value is passed into
+\code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"fixed"})
+}
+See \code{\link{mia-plot-args}} for more details i.e. call
 \code{help("mia-plot-args")}}
 
-\item{x}{\code{Character scalar}. selecting the column from
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{ColData}} that
+\item{time.col}{\code{Character scalar}. selecting the column from
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}} that
 will specify values of x-axis.}
 
-\item{y}{\code{Character scalar}. Selects the taxa from
-\code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
-This parameter specifies taxa whose abundances will be plotted.}
-
-\item{rank}{\code{Character scalar}. A taxonomic rank, that is used
-to agglomerate the data. Must be a value of \code{taxonomicRanks()}
-function. (Default: \code{NULL})}
-
-\item{colour.by}{\code{Character scalar}. A taxonomic rank, that is used to
-color plot. Must be a value of \code{taxonomicRanks()} function.
-(Default: \code{NULL})}
-
-\item{colour_by}{Deprecated. Use \code{colour.by} instead.}
-
-\item{size.by}{\code{Character scalar}. A taxonomic rank, that is
-used to divide taxa to different line size types. Must be a value of
-\code{taxonomicRanks()} function. (Default: \code{NULL})}
-
-\item{size_by}{Deprecated. Use \code{size.by} instead.}
-
-\item{linetype.by}{\code{Character scalar}. A taxonomic rank, that
-is used to divide taxa to different line types. Must be a value of
-\code{taxonomicRanks()} function. (Default: \code{NULL})}
-
-\item{linetype_by}{Deprecated. Use \code{linetype.by} instead.}
-
-\item{assay.type}{\code{Character scalar}. selecting the
+\item{assay.type}{\code{Character scalar}. Specifies the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
 plotted. (Default: \code{"counts"})}
 
-\item{assay_name}{Deprecated. Use \code{assay.type} instead.}
+\item{features}{\code{Character scalar}. Selects the taxa from
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
+This parameter specifies taxa whose abundances will be plotted.}
+
+\item{group}{\code{Character scalar}. Specifies a sample grouping. Must be
+value from
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}}. If
+\code{NULL}, grouping is not applied. (Default: \code{NULL})}
 }
 \value{
 A \code{ggplot2} object
 }
 \description{
-This function plots series data.
+This function plots time series data.
 }
 \details{
 This function creates series plot, where x-axis includes e.g. time points,
@@ -84,37 +90,53 @@ library(mia)
 # Load data from miaTime package
 library("miaTime")
 data(SilvermanAGutData)
-object <- SilvermanAGutData
+tse <- SilvermanAGutData
 
 # Plots 2 most abundant taxa, which are colored by their family
-plotSeries(object,
-           x = "DAY_ORDER",
-           y = getTop(object, 2),
-           colour.by = "Family")
+plotSeries(
+    tse,
+    time.col = "DAY_ORDER",
+    features = getTop(tse, 2),
+    colour.by = "Family"
+)
 
 # Counts relative abundances
-object <- transformAssay(object, method = "relabundance")
+tse <- transformAssay(tse, method = "relabundance")
 
 # Selects taxa
 taxa <- c("seq_1", "seq_2", "seq_3", "seq_4", "seq_5")
 
 # Plots relative abundances of phylums
-plotSeries(object[taxa,],
-           x = "DAY_ORDER",
-           colour.by = "Family",
-           linetype.by = "Phylum",
-           assay.type = "relabundance")
+plotSeries(
+    tse[taxa,],
+    time.col = "DAY_ORDER",
+    colour.by = "Family",
+    linetype.by = "Phylum",
+    sssay.type = "relabundance"
+)
 
 # In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used
 # to group taxa.
-plotSeries(object,
-           x = "DAY_ORDER",
-           y = getTop(object, 5),
-           colour.by = "Family",
-           size.by = "Phylum",
-           assay.type = "counts")
+plotSeries(
+    tse,
+    time.col = "DAY_ORDER",
+    features = getTop(tse, 5),
+    colour.by = "Family",
+    size.by = "Phylum",
+    assay.type = "counts"
+)
+
+# If the data includes multiple systems, e.g., patients or bioreactors,
+# one can pot each system separately
+plotSeries(
+    tse,
+    time.col = "DAY_ORDER",
+    assay.type = "relabundance",
+    features = getTop(tse, 5),
+    group = "Vessel",
+    linetype.by = "Pre_Post_Challenge",
+    scales = "free"
+)
+
 }
-}
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
 }

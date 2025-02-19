@@ -294,8 +294,8 @@ plotted at the same time.
 ```{r, eval=FALSE}
 plotSeries(
     tse,
-    x = "DAY_ORDER",
-    y = taxa,
+    time.col = "DAY_ORDER",
+    features = taxa,
     colour_by = "Family")
 ```
 
@@ -306,7 +306,7 @@ for plotting via the `assay.type`.
 ```{r, eval=FALSE}
 plotSeries(
     tse[taxa,],
-    x = "DAY_ORDER",
+    time.col = "DAY_ORDER",
     colour_by = "Family",
     linetype_by = "Phylum",
     assay.type = "relabundance")
@@ -317,8 +317,8 @@ Additional variables can be used to modify line type aesthetics.
 ```{r, eval=FALSE}
 plotSeries(
     tse,
-    x = "DAY_ORDER",
-    y = getTop(tse, 5),
+    time.col = "DAY_ORDER",
+    yfeatures= getTop(tse, 5),
     colour_by = "Family",
     linetype_by = "Phylum",
     assay.type = "counts")

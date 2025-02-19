@@ -93,8 +93,8 @@ setGeneric("plotScree", signature = c("x"),
 
 #' @rdname plotSeries
 #' @export
-setGeneric("plotSeries", signature = c("object"),
-    function(object, ...)
+setGeneric("plotSeries", signature = c("x"),
+    function(x, ...)
     standardGeneric("plotSeries"))
 
 #' @rdname plotTree
