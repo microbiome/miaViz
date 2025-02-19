@@ -61,7 +61,8 @@
 #'
 #' @details
 #' This function creates series plot, where x-axis includes e.g. time points,
-#' and y-axis abundances of selected taxa.
+#' and y-axis abundances of selected taxa. If there are multiple observations
+#' for single system and time point, mean and standard deviation is plotted.
 #'
 #' @return
 #' A \code{ggplot2} object
