@@ -69,7 +69,7 @@
       <h1 data-toc-skip>miaViz</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/vignettes/miaViz.Rmd" class="external-link"><code>vignettes/miaViz.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/plotseries/vignettes/miaViz.Rmd" class="external-link"><code>vignettes/miaViz.Rmd</code></a></small>
       <div class="hidden name"><code>miaViz.Rmd</code></div>
 
     </div>
@@ -338,8 +338,8 @@ features can plotted at the same time.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
-<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>    y <span class="op">=</span> <span class="va">taxa</span>,</span>
+<span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    features <span class="op">=</span> <span class="va">taxa</span>,</span>
 <span>    colour_by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></code></pre></div>
 <p>If replicated data is present, data is automatically used for
 calculation of the <code>mean</code> and <code>sd</code> and plotted as
@@ -348,7 +348,7 @@ a range. Data from different assays can be used for plotting via the
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span><span class="op">[</span><span class="va">taxa</span>,<span class="op">]</span>,</span>
-<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
 <span>    colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>    linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
@@ -356,8 +356,8 @@ a range. Data from different assays can be used for plotting via the
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
-<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    yfeatures<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>    colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>    linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
