@@ -156,7 +156,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
                 "check that 'y' matches agglomerated data.", call. = FALSE)
         }
         # Select taxa that user has specified
-        if (!is.null(features)){
+        if (!is.null(features) ){
             x <- x[features,]
         }
         # Checks group
@@ -223,7 +223,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
         stop("'facet.cols' must be TRUE or FALSE.", call. = FALSE)
     }
 
-    # Check where these parametrs can be found
+    # Check from where these parameters can be found
     cols <- c(
         colour_by = colour.by, size_by = size.by, linetype_by = linetype.by)
     ind <- match(cols, col_names)
@@ -231,8 +231,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     ind <- match(cols, row_names)
     row_vars <- setNames(row_names[ind], names(cols)) |> na.omit()
 
-    # Melt SE object. If value is not found from rowData/colData, user get
-    # informative error message.
+    # Melt SE object
     plot_data <- meltSE(
         x, assay.type = assay.type,
         row.name = "feature",
@@ -337,7 +336,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
             do.call(geom_ribbon, ribbon_args$args)
     }
 
-    # Fetches arguments for geom_line
+    # Fetches arguments for geom_line to plot mean
     line_args <- .get_line_args(
         colour_by = colour_by,
         linetype_by = linetype_by,
@@ -367,7 +366,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
             plot_out, plot_data$colour_by, colour_by, fill = TRUE)
     }
 
-    # If facetting is specified
+    # If facetting is specified, create separate panels
     if( "facet_by" %in% colnames(plot_data) ){
         plot_out <- plot_out +
             facet_wrap(~facet_by, ncol = ncol, scales = scales)
@@ -384,6 +383,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     return(plot_out)
 }
 
+# This function ensures that we add legends for styling parameters.
 .add_extra_line_guide <- function(plot_out, linetype_by, size_by) {
     guide_args <- list()
     if (!is.null(linetype_by)) {
