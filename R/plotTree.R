@@ -1119,9 +1119,10 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         label_font_size = label.font.size,
         label.font.size = 3,
         highlight_font_size = highlight.font.size,
-        highlight.font.size = 3){
+        highlight.font.size = 3,
+        ...){
     # start plotting
-    plot_out <- ggtree(object, ladderize = !order_tree, layout = layout)
+    plot_out <- ggtree(object, ladderize = !order_tree, layout = layout, ...)
     # add highlights
     plot_out <- .plot_tree_plot_highlights(
         plot_out, layout, show_highlights, show_highlight_label, abbr_label,
