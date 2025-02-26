@@ -39,3 +39,4 @@ Changes in version 1.15.x
 + plotScree: Method for creating scree plots
 + plotRDA: Now it is possible to add only specified vectors
 + plotMediation: Method to visualise results of mediation analysis
++ plotRDA: Fix error that occurred when variable names were similar
