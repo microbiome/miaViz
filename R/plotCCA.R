@@ -354,22 +354,19 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         }
     }
 
-    # Get sample metadata. Check if all biplot covariate names can be found
-    # from sample metadata. As biplot have merged names, we have to use sample
-    # metadata later to make the vector labels tidier.
-    coldata <- colData(tse)
-    variable_names <- colnames(coldata)
-    all_var_found <- vapply(rownames(vector_data), function(x)
-        vapply(variable_names, function(y) grepl(y, x), logical(1L)),
-        logical(ncol(coldata)) )
-    all_var_found <- all( colSums(all_var_found) == 1)
-
+    # Some variables might have merged names, i.e., the group and variable
+    # name might be merged. Get the original variable names and
+    # groups.
+    if( !is.null(vector_data) ){
+        vector_data <- .get_variable_mapping_from_coldata(tse, vector_data)
+    }
+    vars_found <- all(c("var", "levels") %in% colnames(vector_data))
     # Make the vector labels tidier. For instance, covriate name and value
     # are separated. This applies only when labels were not provided by user.
-    if( !is.null(vector_data) && is.null(vec.lab) && all_var_found ){
+    if( !is.null(vector_data) && is.null(vec.lab) && vars_found ){
         # Make labels more tidy
-        vector_data[["vector_label"]] <- .tidy_vector_labels(
-            vector_data[["vector_label"]], coldata, sep.group = sep.group,
+        vector_data <- .tidy_vector_labels(
+            vector_data, sep.group = sep.group,
             repl.underscore = repl.underscore)
     }
     # Add vector labels provodied by user
@@ -384,22 +381,54 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     }
 
     # Add significance information to the labels
-    signif_data <- if( add.significance && !is.null(vector_data) &&
-        all_var_found ) .get_rda_attribute(reduced_dim, "significance")
+    signif_data <- if( add.significance && !is.null(vector_data) && vars_found )
+        .get_rda_attribute(reduced_dim, "significance")
     if( !is.null(signif_data) ){
         signif_data <- signif_data[[1L]] |> as.data.frame()
         # Add significance to vector labels
-        vector_data[["vector_label"]] <- .add_signif_to_vector_labels(
-            vector_data[["vector_label"]], variable_names, signif_data,
-            repl.underscore)
+        vector_data <- .add_signif_to_vector_labels(
+            vector_data, signif_data, repl.underscore)
     }
     if( add.significance && is.null(signif_data) &&
             !(.is_a_bool(add.vectors) && !add.vectors) ){
         # If it cannot be found, give warning
-        warning("Significance data was not found. please compute",
+        warning("Significance data was not found. please compute ",
                 "CCA/RDA by using add* function.", call. = FALSE)
     }
 
+    return(vector_data)
+}
+
+# The RDA/CCA modifies the variable names. Those variables that are factor or
+# character i.e., groups, they get variable names that tell the variable and
+# group. This function matches those modified names with the original data.
+.get_variable_mapping_from_coldata <- function(tse, vector_data, ...){
+    # Loop over each variable in colData. Get all the possible values that they
+    # can get in RDA/CCA methods.
+    name_map <- lapply(colnames(colData(tse)), function(col){
+        # If the value is factor, get all possible values
+        if( is.factor(tse[[col]]) || is.character(tse[[col]]) ){
+            levels <- levels(as.factor(tse[[col]]))
+            name <- paste0(col, levels)
+            var <- rep(col, length(levels))
+            res <- data.frame(var, levels, name)
+        } else{
+            # The name of numeric variables are not changed
+            res <- data.frame(var = col, levels = NA, name = col)
+        }
+        return(res)
+    })
+    name_map <- do.call(rbind, name_map)
+    # Check that all variables can be found from colData
+    if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
+        warning("All variables in RDA/CCA rsults must be present in ",
+            "colData(x).", call. = FALSE)
+    } else{
+        # Add group names to vector data
+        name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
+        name_map <- name_map[, seq_len(2)]
+        vector_data <- cbind(vector_data, name_map)
+    }
     return(vector_data)
 }
 
@@ -408,63 +437,50 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # just combined, i.e., we do not know if "group" is the group name or is it
 # "groupName" when the name in biplot is "groupNameValue".
 # Replace also underscores with space.
-.tidy_vector_labels <- function(
-        vector_label, coldata, sep.group, repl.underscore, ...){
-    # Get variable names from sample metadata
-    var_names <- colnames(coldata)
-    # Loop through vector labels
-    vector_label <- lapply(vector_label, FUN = function(name){
-        # Get the real variable name from sample metadata
-        var_name <- var_names[
-            unlist(lapply(var_names, function(x) grepl(x, name))) ]
-        # If the vector label includes also group name
-        if( !name %in% var_names ){
-            # Get the group name
-            group_name <- unique( coldata[[var_name]] )[
-                which(
-                    paste0(var_name, unique( coldata[[var_name]] )) == name ) ]
-            # Modify vector so that group is separated from variable name
-            new_name <- paste0(var_name, " ", sep.group, " ", group_name)
-        } else{
-            new_name <- name
-        }
-        # Replace underscores with space
-        new_name <- gsub("_", repl.underscore, new_name)
-        return(new_name)
-    }) |> unlist()
-    return(vector_label)
+.tidy_vector_labels <- function(vector_data, sep.group, repl.underscore, ...){
+    # Store old labels
+    vector_data[["old_label"]] <- vector_data[["vector_label"]]
+    # Get those variables that are numeric. We know that because they do not
+    # have levels
+    num_var <- vector_data[["levels"]] |> is.na()
+    # For factor/character variables, we divide the variable and group name
+    vector_data[!num_var, "vector_label"] <- paste0(
+        vector_data[!num_var, "var"],
+        " ", sep.group, " ",
+        vector_data[!num_var, "levels"]
+    )
+    # Replace underscores with space
+    vector_data[!num_var, "vector_label"] <- gsub(
+        "_", repl.underscore, vector_data[!num_var, "vector_label"])
+    return(vector_data)
 }
 
 # This function adds significance info to vector labels
 .add_signif_to_vector_labels <- function(
-        vector_label, var_names, signif_data, repl.underscore = " ", ...){
+        vector_data, signif_data, repl.underscore = " ", ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     italic <- NULL
-    # Replace underscores from significance data and variable names to match
-    # labels
-    rownames(signif_data) <- lapply(
-        rownames(signif_data), function(x) gsub("_", repl.underscore, x)
+
+    # Add significance values
+    ind <- match(vector_data[["var"]], rownames(signif_data))
+    cols <- c("Explained variance", "Pr(>F)")
+    vector_data <- cbind(vector_data, signif_data[ind, cols, drop = FALSE])
+
+    # Create new labels with significance information
+    vector_data[["old_label_signif"]] <- vector_data[["vector_label"]]
+    labs <- lapply(seq_len(nrow(vector_data)), function(i){
+        lab <- vector_data[i, "vector_label"]
+        expl_var <- round(vector_data[i, "Explained variance"]*100, 1)
+        p_value <- round(vector_data[i, "Pr(>F)"], 3)
+        temp <- paste(
+            !!lab, " (", !!format(expl_var, nsmall = 1), "%, ",
+            italic("P"), " = ",
+            !!gsub("0\\.","\\.", format( p_value, nsmall = 3)), ")") |> expr()
+        return(temp)
+        }
     ) |> unlist()
-    var_names <- lapply(
-        var_names, function(x) gsub("_", repl.underscore, x)
-    ) |> unlist()
-    # Loop through vector labels
-    vector_label <- lapply(vector_label, FUN = function(name){
-        # Get the real variable name from sample metadata
-        var_name <- var_names[
-            unlist(lapply(var_names, function(x) grepl(x, name))) ]
-        # Add percentage how much this variable explains, and p-value
-        new_name <- expr(
-            paste(!!name, " (",
-                !!format(
-                    round(signif_data[var_name, "Explained variance"]*100, 1),
-                    nsmall = 1), "%, ", italic("P"), " = ",
-                !!gsub("0\\.","\\.", format(
-                    round(signif_data[var_name, "Pr(>F)"], 3),
-                    nsmall = 3)), ")"))
-        return(new_name)
-    }) |> unlist()
-    return(vector_label)
+    vector_data[["vector_label"]] <- labs
+    return(vector_data)
 }
 
 # This functions returns optional centroids for plotting.
