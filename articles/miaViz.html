@@ -33,7 +33,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.15.8</span>
       </span>
     </div>
 
@@ -69,7 +69,7 @@
       <h1 data-toc-skip>miaViz</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/plotseries/vignettes/miaViz.Rmd" class="external-link"><code>vignettes/miaViz.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/plotHistogram/vignettes/miaViz.Rmd" class="external-link"><code>vignettes/miaViz.Rmd</code></a></small>
       <div class="hidden name"><code>miaViz.Rmd</code></div>
 
     </div>
@@ -338,8 +338,8 @@ features can plotted at the same time.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
-<span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>    features <span class="op">=</span> <span class="va">taxa</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    y <span class="op">=</span> <span class="va">taxa</span>,</span>
 <span>    colour_by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></code></pre></div>
 <p>If replicated data is present, data is automatically used for
 calculation of the <code>mean</code> and <code>sd</code> and plotted as
@@ -348,7 +348,7 @@ a range. Data from different assays can be used for plotting via the
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span><span class="op">[</span><span class="va">taxa</span>,<span class="op">]</span>,</span>
-<span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
 <span>    colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>    linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
@@ -356,8 +356,8 @@ a range. Data from different assays can be used for plotting via the
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
-<span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>    yfeatures<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
+<span>    y <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
 <span>    colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
 <span>    linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
@@ -516,7 +516,7 @@ Analysis <span class="citation">(Lahti, Shetty, and Ernst
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; other attached packages:</span></span>
 <span><span class="co">#&gt;  [1] patchwork_1.3.0                 scater_1.35.1                  </span></span>
-<span><span class="co">#&gt;  [3] scuttle_1.17.0                  miaViz_1.15.9                  </span></span>
+<span><span class="co">#&gt;  [3] scuttle_1.17.0                  miaViz_1.15.8                  </span></span>
 <span><span class="co">#&gt;  [5] mia_1.15.20                     TreeSummarizedExperiment_2.15.0</span></span>
 <span><span class="co">#&gt;  [7] Biostrings_2.75.4               XVector_0.47.2                 </span></span>
 <span><span class="co">#&gt;  [9] SingleCellExperiment_1.29.1     MultiAssayExperiment_1.33.9    </span></span>
