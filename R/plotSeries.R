@@ -247,8 +247,8 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
         plot_data <- plot_data |>
             group_by(across(all_of(cols))) |>
             mutate(
-                !!assay.type := mean(.data[[assay.type]], na.rm = TRUE),
                 sd = sd(.data[[assay.type]], na.rm = TRUE),
+                !!assay.type := mean(.data[[assay.type]], na.rm = TRUE)
             ) |>
             ungroup()
     }
