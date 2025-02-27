@@ -2,7 +2,7 @@
 #' plotHistogram
 #'
 #' @title
-#' Create histogram of abundance table, \code{rowData} or \code{colData}
+#' Create histogram of \code{assay}, \code{rowData} or \code{colData}
 #'
 #' @description
 #' This methods visualizes abundances or variables from \code{rowData} or
@@ -138,7 +138,7 @@ setMethod("plotHistogram", signature = c(x = "SummarizedExperiment"),
 ################################ HELP FUNCTIONS ################################
 
 # This function retrieves the data from TreeSE and returns a data.frame, ready
-# for inputtig it to plotting function.
+# for inputting it to plotting function.
 #' @importFrom tidyr pivot_longer
 .get_histogram_data <- function(x, assay.type, features, row.var, col.var, ...){
     # If assay.type is specified, get melted data

@@ -3,7 +3,7 @@
 \name{plotHistogram}
 \alias{plotHistogram}
 \alias{plotHistogram,SummarizedExperiment-method}
-\title{Create histogram of abundance table, \code{rowData} or \code{colData}}
+\title{Create histogram of \code{assay}, \code{rowData} or \code{colData}}
 \usage{
 plotHistogram(x, ...)
 
