@@ -571,7 +571,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     # with the tree.
     links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
     links <- links_FUN(object)
-    ind <- links[["whichTree"]] == tree_name
+    ind <- links[["whichTree"]] == tree_name & links[["isLeaf"]]
     if( all(!ind) ){
         stop("Tree does not have any ", type, "s to plot.", call. = FALSE)
     }
@@ -581,30 +581,17 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     } else{
         object <- object[, ind]
     }
-    # Get tree and links
-    tree <- tree_FUN(object, tree_name)
-    links <- links_FUN(object)
 
-    # Remove those tips that are not leaves
-    tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
-    drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
-    oldTree <- tree
-    newTree <- drop.tip(oldTree, tip = drop_tip, collapse.singles = FALSE)
-    # Add alias labels to tree
-    track <- trackNode(oldTree)
-    track <- drop.tip(track, tip = drop_tip, collapse.singles = FALSE)
-    # Link tree with alias labels
-    oldAlias <- links$nodeLab_alias
-    newNode <- convertNode(tree = track, node = oldAlias)
-    newAlias <- convertNode(tree = newTree, node = newNode)
-    # Change the tree with trimmed tree and add aliases as node labels
+    # Remove those tips from the tree that are not included in the dataset
+    links <- links_FUN(object)[["nodeLab"]]
+    args <- list(object, links, tree_name)
     if( type == "row" ){
-        object <- changeTree(
-            x = object, rowTree = newTree, rowNodeLab = newAlias)
-    } else {
-        object <- changeTree(
-            x = object, colTree = newTree, colNodeLab = newAlias)
+        nams <- c("x", "rowLeaf", "whichRowTree")
+    } else{
+        nams <- c("x", "colLeaf", "whichColTree")
     }
+    names(args) <- nams
+    object <- do.call(subsetByLeaf, args)
 
     # Get tree, links and row/colnames
     tree <- tree_FUN(object)
