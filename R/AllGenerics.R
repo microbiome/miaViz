@@ -140,3 +140,8 @@ setGeneric("combineTreeData", signature = c("x"),
 #' @export
 setGeneric("plotHistogram", signature = c("x"), function(x, ...)
     standardGeneric("plotHistogram"))
+
+#' @rdname plotHistogram
+#' @export
+setGeneric("plotBarplot", signature = c("x"), function(x, ...)
+    standardGeneric("plotBarplot"))

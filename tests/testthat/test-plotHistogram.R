@@ -28,6 +28,8 @@ test_that("plotHistogram check input tssts", {
     expect_error(plotHistogram(tse, features = "test", assay.type = "counts"))
     #
     expect_error(plotHistogram(tse, layout = "test", assay.type = "counts"))
+    #
+    expect_error(plotBarplot(tse, assay.type = "counts"))
 })
 
 test_that("plotHistogram returns a ggplot object for valid inputs", {
@@ -49,4 +51,16 @@ test_that("plotHistogram returns a ggplot object for valid inputs", {
 
     # Check that the values are correct
     expect_equal(tse[["value"]], p$data$value)
+})
+
+test_that("plotBarplot returns a ggplot object for valid inputs", {
+    tse <- makeTSE()
+    # Check for ggplot object when assay.type is specified
+    p <- plotBarplot(tse, col.var = "group")
+    expect_s3_class(p, "ggplot")
+    # Check for ggplot object when row.var is specified
+    p <- plotBarplot(tse, row.var = "var1")
+    expect_s3_class(p, "ggplot")
+    # Check that the values are correct
+    expect_equal(rowData(tse)[["var1"]], p$data$value)
 })
