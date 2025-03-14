@@ -10,7 +10,8 @@ plotSeries(x, ...)
 \S4method{plotSeries}{SummarizedExperiment}(
   x,
   time.col,
-  assay.type = "counts",
+  assay.type = NULL,
+  col.var = NULL,
   features = NULL,
   group = NULL,
   ...
@@ -96,6 +97,7 @@ tse <- SilvermanAGutData
 # Plots 2 most abundant taxa, which are colored by their family
 plotSeries(
     tse,
+    assay.type = "counts",
     time.col = "DAY_ORDER",
     features = getTop(tse, 2),
     colour.by = "Family"
@@ -113,7 +115,7 @@ plotSeries(
     time.col = "DAY_ORDER",
     colour.by = "Family",
     linetype.by = "Phylum",
-    sssay.type = "relabundance"
+    assay.type = "relabundance"
 )
 
 # In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used
@@ -128,7 +130,7 @@ plotSeries(
 )
 
 # If the data includes multiple systems, e.g., patients or bioreactors,
-# one can pot each system separately
+# one can plot each system separately
 plotSeries(
     tse,
     time.col = "DAY_ORDER",
@@ -137,6 +139,17 @@ plotSeries(
     group = "Vessel",
     linetype.by = "Pre_Post_Challenge",
     scales = "free"
+)
+
+# One can visualize colData variables by specifying col.var
+# First calculate alpha diversity index to visualize.
+tse <- addAlpha(tse, index = "shannon")
+# Then create a plot
+plotSeries(
+    tse,
+    col.var = "shannon",
+    time.col = "DAY_ORDER",
+    group = "Vessel"
 )
 
 }

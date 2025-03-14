@@ -24,7 +24,7 @@ test_that("plot series", {
 
     ##################### Test .get_series_data #################################
     tse_sub <- tse[1:10, ]
-    expect_error(miaViz:::.get_series_data(tse_sub, "counts", "DAY_ORDER"),
+    expect_error(miaViz:::.get_series_data(tse_sub, "counts", NULL, "DAY_ORDER"),
                  "argument \"group\" is missing, with no default")
 
     ################### Test .series_plotter ###########################
@@ -41,7 +41,7 @@ test_that("plot series", {
 
     # Get data from function
     data_from_function <- miaViz:::.get_series_data(
-        tse, assay.type = "counts", time.col = "DAY_ORDER",
+        tse, assay.type = "counts", col.var = NULL, time.col = "DAY_ORDER",
         colour.by = "Phylum", linetype.by = "Family", size.by = "Kingdom",
         group = NULL)
 
@@ -55,7 +55,9 @@ test_that("plot series", {
     expect_true("Y" %in% names(series_data_test))
 
     ################## Test .melt_series_data ##################################
-    melted <- miaViz:::.get_series_data(tse_sub, "counts", group = NULL, "DAY_ORDER", "Phylum", "Family", "Kingdom")
+    melted <- miaViz:::.get_series_data(
+        tse_sub, "counts", col.var = NULL, group = NULL, "DAY_ORDER",
+        "Phylum", "Family", "Kingdom")
 
     # Convert melted data to data frame
     melted <- as.data.frame(melted$plot_data)
@@ -124,4 +126,17 @@ test_that("plot series", {
             expect_equal(melted_size_by_value, rowData_size_by_value)
         }
     }
+
+    # Check that the function works with col.var
+    tse <- addAlpha(tse, index = "shannon")
+    plotSeries(
+        tse, assay.type = "counts", col.var = "shannon",
+        time.col = "DAY_ORDER") |>
+        expect_error()
+    plotSeries(
+        tse, colour.by = "Family", col.var = "shannon",
+        time.col = "DAY_ORDER") |>
+        expect_error()
+    p <- plotSeries(tse, col.var = "shannon", time.col = "DAY_ORDER")
+    expect_s3_class(p, "ggplot")
 })

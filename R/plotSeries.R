@@ -80,6 +80,7 @@
 #' # Plots 2 most abundant taxa, which are colored by their family
 #' plotSeries(
 #'     tse,
+#'     assay.type = "counts",
 #'     time.col = "DAY_ORDER",
 #'     features = getTop(tse, 2),
 #'     colour.by = "Family"
@@ -97,7 +98,7 @@
 #'     time.col = "DAY_ORDER",
 #'     colour.by = "Family",
 #'     linetype.by = "Phylum",
-#'     sssay.type = "relabundance"
+#'     assay.type = "relabundance"
 #' )
 #'
 #' # In addition to 'colour.by' and 'linetype.by', 'size.by' can also be used
@@ -112,7 +113,7 @@
 #' )
 #'
 #' # If the data includes multiple systems, e.g., patients or bioreactors,
-#' # one can pot each system separately
+#' # one can plot each system separately
 #' plotSeries(
 #'     tse,
 #'     time.col = "DAY_ORDER",
@@ -121,6 +122,17 @@
 #'     group = "Vessel",
 #'     linetype.by = "Pre_Post_Challenge",
 #'     scales = "free"
+#' )
+#'
+#' # One can visualize colData variables by specifying col.var
+#' # First calculate alpha diversity index to visualize.
+#' tse <- addAlpha(tse, index = "shannon")
+#' # Then create a plot
+#' plotSeries(
+#'     tse,
+#'     col.var = "shannon",
+#'     time.col = "DAY_ORDER",
+#'     group = "Vessel"
 #' )
 #'
 #' }
@@ -135,13 +147,30 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     function(
         x,
         time.col,
-        assay.type = "counts",
+        assay.type = NULL,
+        col.var = NULL,
         features = NULL,
         group = NULL,
         ...){
         ###################### Input check #######################
+        if( sum(c(is.null(assay.type), is.null(col.var))) != 1L ){
+            stop("Either 'assay.type' or 'col.var' must be specified.",
+                call. = FALSE)
+        }
+        if( !is.null(col.var) && !is.null(features) ){
+            stop("'features' can be specified only when 'assay.type' is ",
+                "specified.", call. = FALSE)
+        }
         # Checks assay.type
-        .check_assay_present(assay.type, x)
+        if( !is.null(assay.type) ){
+            .check_assay_present(assay.type, x)
+        }
+        # Check col.var
+        if( !(is.null(col.var) || (is.character(col.var) &&
+                all(col.var %in% colnames(colData(x))))) ){
+            stop("'col.var' must be NULL or specify a column(s) from ",
+                "colData(x).", call. = FALSE)
+        }
         # Checks X
         if( !(.is_a_string(time.col) && time.col %in% names(colData(x))) ){
             stop("'time.col' must be a name of column of colData(x)",
@@ -167,14 +196,14 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
         }
         # Gets warning or error if too many taxa are selected. Too many taxa
         # cannot be plotted since otherwise the plot is too crowded.
-        if( length(rownames(x)) > 20 ){
+        if( !is.null(assay.type) && length(rownames(x)) > 20 ){
             stop("Over 20 taxa selected. 20 or under allowed.", call. = FALSE)
-        } else if ( length(rownames(x)) > 10 ){
+        } else if ( !is.null(assay.type) && length(rownames(x)) > 10 ){
             warning("Over 10 taxa selected.", call. = FALSE)
         }
         ###################### Input check end ####################
         # Get the data
-        args <- .get_series_data(x, assay.type, time.col, group, ...)
+        args <- .get_series_data(x, assay.type, col.var, time.col, group, ...)
         # Create the plot
         p <- do.call(.series_plotter, args)
         return(p)
@@ -185,12 +214,13 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
 
 # This function fetches data from SE object. It outputs data in a format that
 # can directly be plotted with .series_plotter().
+#' @importFrom tidyr pivot_longer
 #' @importFrom dplyr group_by mutate ungroup
 #' @importFrom stats sd
 #' @importFrom mia meltSE
 #' @importFrom SummarizedExperiment rowData<-
 .get_series_data <- function(
-        x, assay.type, time.col, group,
+        x, assay.type, col.var, time.col, group,
         colour.by = color.by, color.by = colour_by, colour_by = color_by,
         color_by = NULL,
         size.by = size_by, size_by = NULL,
@@ -231,17 +261,37 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     ind <- match(cols, row_names)
     row_vars <- setNames(row_names[ind], names(cols)) |> na.omit()
 
-    # Melt SE object
-    plot_data <- meltSE(
-        x, assay.type = assay.type,
-        row.name = "feature",
-        add.row = row_vars,
-        add.col = c(time.col, group, col_vars)
-    )
+    # If user wanted to plot variable from colData, user cannot specify
+    # variables from rowData
+    if( !is.null(col.var) && length(row_vars)> 0L ){
+        stop("If 'col.var' is specified, variables from rowData(x) cannot be ",
+            "visualized.", call. = FALSE)
+    }
+
+    # Melt SE object or take variables from colData
+    if( !is.null(assay.type) ){
+        plot_data <- meltSE(
+            x, assay.type = assay.type,
+            row.name = "feature",
+            add.row = row_vars,
+            add.col = c(time.col, group, col_vars)
+        )
+    } else{
+        plot_data <- colData(x)[
+            , c(col.var, time.col, group, col_vars), drop = FALSE] |>
+            as.data.frame()
+        # Put to long format so that it matches with data when assay.type is
+        # specified
+        plot_data <- plot_data |>
+            pivot_longer(
+                cols = col.var, names_to = "feature", values_to = "values")
+        assay.type <- "values"
+    }
 
     # If time point replicates are present, calculate sd and mean for each
     # timepoint
     cols <- setNames(c("feature", time.col, group), c("feature", "X", group))
+    cols <- cols[ cols %in% colnames(plot_data) ]
     if( anyDuplicated(plot_data[, cols, drop = FALSE]) ){
         # Summarize the data to mean and sd
         plot_data <- plot_data |>
