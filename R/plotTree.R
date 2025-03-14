@@ -127,9 +127,9 @@
 #'
 #' @param other_fields Deprecated. Use \code{other.fields} instead.
 #'
-#' @param ... additional arguments for plotting. See
-#' \code{\link{mia-plot-args}} for more details i.e. call
-#' \code{help("mia-plot-args")}
+#' @param ... additional arguments for plotting. See \code{\link{mia-plot-args}}
+#' (e.g., call \code{help("mia-plot-args")}) and
+#' \code{\link[ggtree:ggtree]{ggtree}} for details.
 #'
 #' @details
 #' If \code{show.label} or \code{show.highlight.label} have the same length
@@ -585,26 +585,13 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     tree <- tree_FUN(object, tree_name)
     links <- links_FUN(object)
 
-    # Remove those tips that are not leaves
-    tips <- sort(setdiff(tree$edge[, 2], tree$edge[, 1]))
-    drop_tip <- tips[!(tips %in% unique(links$nodeNum[links$isLeaf]))]
-    oldTree <- tree
-    newTree <- drop.tip(oldTree, tip = drop_tip, collapse.singles = FALSE)
-    # Add alias labels to tree
-    track <- trackNode(oldTree)
-    track <- drop.tip(track, tip = drop_tip, collapse.singles = FALSE)
-    # Link tree with alias labels
-    oldAlias <- links$nodeLab_alias
-    newNode <- convertNode(tree = track, node = oldAlias)
-    newAlias <- convertNode(tree = newTree, node = newNode)
-    # Change the tree with trimmed tree and add aliases as node labels
-    if( type == "row" ){
-        object <- changeTree(
-            x = object, rowTree = newTree, rowNodeLab = newAlias)
-    } else {
-        object <- changeTree(
-            x = object, colTree = newTree, colNodeLab = newAlias)
-    }
+    # Remove those tips that are not included in the data
+    args <- list(object, links_FUN(object)[["nodeLab"]], tree_name)
+    names(args) <- c(
+        "x",
+        paste0(type, "Leaf"),
+        paste0("which", .capitalize(type), "Tree"))
+    object <- do.call(subsetByLeaf, args)
 
     # Get tree, links and row/colnames
     tree <- tree_FUN(object)
