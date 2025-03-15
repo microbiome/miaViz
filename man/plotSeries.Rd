@@ -58,13 +58,18 @@ scales of each facet. The value is passed into
 See \code{\link{mia-plot-args}} for more details i.e. call
 \code{help("mia-plot-args")}}
 
-\item{time.col}{\code{Character scalar}. selecting the column from
+\item{time.col}{\code{Character scalar}. Selecting the column from
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}} that
 will specify values of x-axis.}
 
 \item{assay.type}{\code{Character scalar}. Specifies the
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-plotted. (Default: \code{"counts"})}
+plotted.}
+
+\item{col.var}{\code{Character scalar}. Selecting the column from
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}} that
+will be plotted. This can be used instead of \code{assay.type} for
+visualizing temporal changes in sample metadata variable.}
 
 \item{features}{\code{Character scalar}. Selects the taxa from
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.

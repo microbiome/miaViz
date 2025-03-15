@@ -8,9 +8,14 @@
 #'
 #' @param assay.type \code{Character scalar}. Specifies the
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{assay}} to be
-#' plotted. (Default: \code{"counts"})
+#' plotted.
 #'
-#' @param time.col \code{Character scalar}. selecting the column from
+#' @param col.var \code{Character scalar}. Selecting the column from
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}} that
+#' will be plotted. This can be used instead of \code{assay.type} for
+#' visualizing temporal changes in sample metadata variable.
+#'
+#' @param time.col \code{Character scalar}. Selecting the column from
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}} that
 #' will specify values of x-axis.
 #'
