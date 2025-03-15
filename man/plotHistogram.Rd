@@ -2,12 +2,25 @@
 % Please edit documentation in R/AllGenerics.R, R/plotHistogram.R
 \name{plotHistogram}
 \alias{plotHistogram}
+\alias{plotBarplot}
 \alias{plotHistogram,SummarizedExperiment-method}
-\title{Create histogram of \code{assay}, \code{rowData} or \code{colData}}
+\alias{plotBarplot,SummarizedExperiment-method}
+\title{Create histogram or barplot of \code{assay}, \code{rowData} or \code{colData}}
 \usage{
 plotHistogram(x, ...)
 
+plotBarplot(x, ...)
+
 \S4method{plotHistogram}{SummarizedExperiment}(
+  x,
+  assay.type = NULL,
+  features = NULL,
+  row.var = NULL,
+  col.var = NULL,
+  ...
+)
+
+\S4method{plotBarplot}{SummarizedExperiment}(
   x,
   assay.type = NULL,
   features = NULL,
@@ -49,10 +62,11 @@ This methods visualizes abundances or variables from \code{rowData} or
 \code{colData}.
 }
 \details{
-Histogram is a basic visualization technique in quality control. It helps to
-visualize the distribution of data. \code{plotAbundance} allows researcher
-to visualise the abundance from \code{assay}, or variables from
-\code{rowData} or \code{colData}.
+Histogram and bar plot are a basic visualization techniques in quality
+control. It helps to visualize the distribution of data. \code{plotAbundance}
+allows researcher to visualise the abundance from \code{assay}, or variables
+from \code{rowData} or \code{colData}. For visualizing categorical values,
+one can utilize \code{plotBarplot}.
 
 \code{\link[=plotAbundanceDensity]{plotAbundanceDensity}} function is related
 to \code{plotHistogram}. However, the former visualizes the most prevalent
@@ -75,6 +89,9 @@ plotHistogram(tse, assay.type = "clr", features = rownames(tse)[1:10])
 # plot
 tse <- addAlpha(tse, index = "shannon")
 plotHistogram(tse, col.var = "shannon", layout = "density")
+
+# For categorical values, one can utilize a bar plot
+plotBarplot(tse, col.var = "SampleType")
 
 }
 \seealso{
