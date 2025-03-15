@@ -1120,9 +1120,22 @@ NODE_VARIABLES <- c("node_colour_by", "node_shape_by", "node_size_by")
         label.font.size = 3,
         highlight_font_size = highlight.font.size,
         highlight.font.size = 3,
+        branch.length = "branch.length",
         ...){
+    # We capture branch.length to disable other options than plotting branches
+    # as they are or with equal branch lengths. That is because user cannot
+    # control the parameter as it only specifies column from the object table.
+    # However, the table cannot include any other length scales than the
+    # original.
+    cols <- c("branch.length", "none")
+    if( !(.is_a_string(branch.length) && branch.length %in% cols) ){
+        stop("'branch.length' must be one of the following options: '",
+            paste0(cols, collapse = "', '"), "'", call. = FALSE)
+    }
     # start plotting
-    plot_out <- ggtree(object, ladderize = !order_tree, layout = layout, ...)
+    plot_out <- ggtree(
+        object, ladderize = !order_tree, layout = layout,
+        branch.length = branch.length, ...)
     # add highlights
     plot_out <- .plot_tree_plot_highlights(
         plot_out, layout, show_highlights, show_highlight_label, abbr_label,

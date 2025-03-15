@@ -41,4 +41,5 @@ Changes in version 1.15.x
 + plotMediation: Method to visualise results of mediation analysis
 + plotRDA: Fix error that occurred when variable names were similar
 + Added plotHistogram
++ Added plotBarplot
 + plotSeries: Improve by adding functionality for sample groups
