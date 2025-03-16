@@ -18,6 +18,7 @@
 .get_name_in_parent <- mia:::.get_name_in_parent
 .is_an_integer <- mia:::.is_an_integer
 TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
+.is_a_numeric <- mia:::.is_a_numeric
 
 .norm_label <- function(label, x){
     if(!is.null(label)){

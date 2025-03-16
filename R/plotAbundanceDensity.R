@@ -68,6 +68,12 @@
 #'
 #'   \item \code{add_x_text} \code{Logical scalar}. Determines if text that
 #'   represents values is included in x-axis. (Default: \code{TRUE})
+#'
+#'   \item \code{jitter.height} \code{Numeric scalar}. Controls jitter in a
+#'   jitter plot. (Default: \code{0.25})
+#'
+#'   \item \code{jitter.width} \code{Numeric scalar}. Controls jitter in a
+#'   jitter plot. (Default: \code{NULL})
 #' }
 #' See \code{\link{mia-plot-args}} for more details i.e. call
 #' \code{help("mia-plot-args")}
@@ -305,7 +311,18 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
         scales_free = scales.free,
         scales.free = TRUE,
         angle_x_text = angle.x.text,
-        angle.x.text = TRUE){
+        angle.x.text = TRUE,
+        jitter.height = 0.25,
+        jitter.width = NULL,
+        ...
+        ){
+    #
+    if( !(is.null(jitter.height) || .is_a_numeric(jitter.height)) ){
+        stop("'jitter.height' must be numeric.", call. = FALSE)
+    }
+    if( !(is.null(jitter.width) || .is_a_numeric(jitter.width)) ){
+        stop("'jitter.width' must be numeric.", call. = FALSE)
+    }
     # start plotting
     plot_out <- ggplot(density_data, aes(x=.data[["X"]])) +
         xlab(xlab) +
@@ -345,7 +362,8 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
             plot_out <- plot_out +
                 do.call(geom_point, point_args$args)
         } else if (layout == "jitter") {
-            point_args$args$height <- 0.25
+            point_args$args$height <- jitter.height
+            point_args$args$width <- jitter.width
             plot_out <- plot_out +
                 do.call(geom_jitter, point_args$args)
         } else {
