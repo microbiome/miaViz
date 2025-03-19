@@ -50,29 +50,23 @@
 #'   column metadata field or a feature to size tree edges by.
 #'   (Default: \code{NULL})
 #'
-#'   \item \code{tip.colour.by}: \code{Character scalar}. Specification of a
-#'   column metadata field or a feature to colour tree tips by.
-#'   (Default: \code{NULL})
-#'
-#'   \item \code{tip.shape.by}: \code{Character scalar}. Specification of a
-#'   column metadata field or a feature to shape tree tips by.
-#'   (Default: \code{NULL})
-#'
-#'   \item \code{tip.size.by}: \code{Character scalar}. Specification of a
-#'   column metadata field or a feature to size tree tips by.
-#'   (Default: \code{NULL})
-#'
-#'   \item \code{node.colour.by}: \code{Character scalar}. Specification of a
+#'   \item \code{colour.by}: \code{Character scalar}. Specification of a
 #'   column metadata field or a feature to colour tree nodes by.
 #'   (Default: \code{NULL})
 #'
-#'   \item \code{node.shape.by}: \code{Character scalar}. Specification of a
-#'   column metadata field or a feature to shape tree nodes by. Must be a field
-#'   from \code{other.fields}. (Default: \code{NULL})
-#'
-#'   \item \code{node.size.by}: \code{Character scalar}. Specification of a
-#'   column metadata field or a feature to size tree nodes by.
+#'   \item \code{shape.by}: \code{Character scalar}. Specification of a
+#'   column metadata field or a feature to shape tree nodes by.
 #'   (Default: \code{NULL})
+#'
+#'   \item \code{size.by}: \code{Character scalar}. Specification of a
+#'   column metadata field or a feature to size tree tips by.
+#'   (Default: \code{NULL})
+#'
+#'   \item \code{show.tips}: \code{Logical scalar}. Whether to show
+#'   tip points. (Default: \code{FALSE})
+#'
+#'   \item \code{show.nodes}: \code{Logical scalar}. Whether to show
+#'   node points. (Default: \code{FALSE})
 #'
 #'   \item \code{colour.highlights.by}: \code{Logical scalar}. Should the
 #'   highlights be colour differently? If \code{show.highlights = TRUE},
@@ -108,77 +102,96 @@
 #' data(GlobalPatterns)
 #' GlobalPatterns <- agglomerateByRanks(GlobalPatterns)
 #' altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(
-#'   altExp(GlobalPatterns,"Genus"))
-#' rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
-#'   log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
-#' rowData(altExp(GlobalPatterns,"Genus"))$detected <-
-#'    rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
-#' top_genus <- getTop(altExp(GlobalPatterns,"Genus"),
-#'                         method="mean",
-#'                         top=100L,
-#'                         assay.type="counts")
+#'     altExp(GlobalPatterns,"Genus"))
+#' rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- log(
+#'     rowData(altExp(GlobalPatterns,"Genus"))$mean)
+#' rowData(altExp(GlobalPatterns,"Genus"))$detected <- rowData(
+#'     altExp(GlobalPatterns,"Genus"))$detected / 100
+#' top_genus <- getTop(
+#'     altExp(GlobalPatterns,"Genus"),
+#'     method = "mean",
+#'     top = 100L,
+#'     assay.type = "counts"
+#' )
 #' #
 #' x <- altExp(GlobalPatterns,"Genus")
-#' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             tip.colour.by = "log_mean",
-#'             tip.size.by = "detected")
+#' plotRowTree(
+#'     x[rownames(x) %in% top_genus,],
+#'     colour.by = "log_mean", size.by = "detected"
+#' )
 #'
 #' # plot with tip labels
-#' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             tip.colour.by = "log_mean",
-#'             tip.size.by = "detected",
-#'             show.label = TRUE)
+#' plotRowTree(
+#'     x[rownames(x) %in% top_genus,],
+#'     colour.by = "log_mean",
+#'     size.by = "detected",
+#'     show.label = TRUE
+#' )
 #' # plot with selected labels
 #' labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
-#' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             tip.colour.by = "log_mean",
-#'             tip.size.by = "detected",
-#'             show.label = labels,
-#'             layout="rectangular")
+#' plotRowTree(
+#'     x[rownames(x) %in% top_genus,],
+#'     colour.by = "log_mean",
+#'     size.by = "detected",
+#'     show.label = labels,
+#'     layout = "rectangular"
+#' )
 #'
 #' # plot with labeled edges
-#' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             edge.colour.by = "Phylum",
-#'             tip.colour.by = "log_mean")
+#' plotRowTree(
+#'     x[rownames(x) %in% top_genus,],
+#'     colour.by = "Phylum",
+#'     colour.by = "log_mean"
+#' )
 #' # if edges are sized, colours might disappear depending on plotting device
-#' plotRowTree(x[rownames(x) %in% top_genus,],
-#'             edge.colour.by = "Phylum",
-#'             edge.size.by = "detected",
-#'             tip.colour.by = "log_mean")
+#' plotRowTree(
+#'     x[rownames(x) %in% top_genus,],
+#'     colour.by = "Phylum",
+#'     size.by = "detected",
+#'     colour.by = "log_mean"
+#' )
 #'
 #' # aggregating data over the taxonomic levels for plotting a taxonomic tree
 #' # please note that the original tree of GlobalPatterns is dropped by
 #' # unsplitByRanks
 #' altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
-#' top_phyla <- getTop(altExp(GlobalPatterns,"Phylum"),
-#'                         method="mean",
-#'                         top=10L,
-#'                         assay.type="counts")
+#' top_phyla <- getTop(
+#'     altExp(GlobalPatterns,"Phylum"),
+#'     method = "mean",
+#'     top = 10L,
+#'     assay.type="counts"
+#' )
 #' altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
-#' altExps(GlobalPatterns) <-
-#'    lapply(altExps(GlobalPatterns),
-#'           function(y){
-#'               rowData(y)$log_mean <- log(rowData(y)$mean)
-#'               rowData(y)$detected <- rowData(y)$detected / 100
-#'               y
-#'           })
+#' altExps(GlobalPatterns) <- lapply(
+#'     altExps(GlobalPatterns), function(y){
+#'         rowData(y)$log_mean <- log(rowData(y)$mean)
+#'         rowData(y)$detected <- rowData(y)$detected / 100
+#'         return(y)
+#'     })
 #' x <- unsplitByRanks(GlobalPatterns)
 #' x <- addHierarchyTree(x)
 #'
-#' highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
-#'                 "Family:Pseudomonadaceae","Order:Bifidobacteriales")
-#' plotRowTree(x[rowData(x)$Phylum %in% top_phyla,],
-#'             tip.colour.by = "log_mean",
-#'             node.colour.by = "log_mean",
-#'             show.highlights = highlights,
-#'             show.highlight.label = highlights,
-#'             colour.highlights.by = "Phylum")
+#' highlights <- c(
+#'     "Phylum:Firmicutes","Phylum:Bacteroidetes",
+#'     "Family:Pseudomonadaceae","Order:Bifidobacteriales")
+#' plotRowTree(
+#'     x[rowData(x)$Phylum %in% top_phyla,],
+#'     colour.by = "log_mean",
+#'     colour.by = "log_mean",
+#'     show.highlights = highlights,
+#'     show.highlight.label = highlights,
+#'     colour.highlights.by = "Phylum"
+#' )
 #'
-#' plotRowTree(x[rowData(x)$Phylum %in% top_phyla,],
-#'             edge.colour.by = "Phylum",
-#'             edge.size.by = "detected",
-#'             tip.colour.by = "log_mean",
-#'             node.colour.by = "log_mean")
+#' # If you do not want to show internal nodes
+#' plotRowTree(
+#'     x[rowData(x)$Phylum %in% top_phyla,],
+#'     edge.colour.by = "Phylum",
+#'     edge.size.by = "detected",
+#'     colour.by = "log_mean",
+#'     show.nodes = FALSE
+#' )
+#'
 NULL
 
 #' @rdname plotTree
@@ -594,47 +607,73 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 # assay. This additional data is used for example for coloring edges.
 .incorporate_tree_vis <- function(
         df, x, type,
+        show.tips = show_tips, show_tips = TRUE,
+        show.nodes = show_nodes, show_nodes = TRUE,
+        # Tips and nodes are colored, sized and shaped based on same variable.
+        colour.by = color.by, color.by = colour_by,
+        colour_by = color_by, color_by = tip.colour.by,
+        tip.colour.by = tip.color.by, tip.color.by = tip_colour_by,
+        tip_colour_by = tip_color_by, tip_color_by = node.colour.by,
+        node.colour.by = node.color.by, node.color.by = node_colour_by,
+        node_colour_by = node_color_by, node_color_by = NULL,
+        #
+        shape.by = shape_by, shape_by = tip.shape.by,
+        tip.shape.by = tip_shape_by, tip_shape_by = node.shape.by,
+        node.shape.by = node_shape_by, node_shape_by = NULL,
+        #
+        size.by = size_by, size_by = tip.size.by,
+        tip.size.by = tip_size_by, tip_size_by = node.size.by,
+        node.size.by = node_size_by, node_size_by = NULL,
+        # Edge and highlights are colored separately
         edge.colour.by = edge.color.by, edge.color.by = edge_colour_by,
         edge_colour_by = edge_color_by, edge_color_by = NULL,
         edge.size.by = edge_size_by, edge_size_by = NULL,
-        tip.colour.by = tip.color.by, tip.color.by = tip_colour_by,
-        tip_colour_by = tip_color_by, tip_color_by = NULL,
-        tip.shape.by = tip_shape_by, tip_shape_by = NULL,
-        tip.size.by = tip_size_by, tip_size_by = NULL,
-        node.colour.by = node.color.by, node.color.by = node_colour_by,
-        node_colour_by = node_color_by, node_color_by = NULL,
-        node.shape.by = node_shape_by, node_shape_by = NULL,
-        node.size.by = node_size_by, node_size_by = NULL,
         colour.highlights.by = color.highlights.by,
         color.highlights.by = colour_highlights_by,
         colour_highlights_by = color_highlights_by,
         color_highlights_by = NULL,
         other.fields = other_fields, other_fields = NULL,
         ...){
+    # Input check
+    if( !.is_a_bool(show.tips) ){
+        stop("'show.tips' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(show.nodes) ){
+        stop("'show.nodes' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(.is_a_string(colour.by) || is.null(colour.by)) ){
+        stop("'colour.by' must be a single character value.", call. = FALSE)
+    }
+    if( !(.is_a_string(shape.by) || is.null(shape.by)) ){
+        stop("'shape.by' must be a single character value.", call. = FALSE)
+    }
+    if( !(.is_a_string(size.by) || is.null(size.by)) ){
+        stop("'size.by' must be a single character value.", call. = FALSE)
+    }
+    if( !(.is_a_string(edge.colour.by) || is.null(edge.colour.by)) ){
+        stop("'edge.colour.by' must be a single character value.",
+            call. = FALSE)
+    }
+    if( !(.is_a_string(edge.size.by) || is.null(edge.size.by)) ){
+        stop("'edge.size.by' must be a single character value.", call. = FALSE)
+    }
+    if( !(.is_a_string(colour.highlights.by) ||
+            is.null(colour.highlights.by)) ){
+        stop("'colour.highlights.by' must be a single character value.",
+            call. = FALSE)
+    }
+    if( !(is.character(other.fields) || is.null(other.fields)) ){
+        stop("'other.fields' must be a character value.", call. = FALSE)
+    }
     # Get all the variables into single vector
     variables <- c(
+        colour_by = colour.by,
+        shape_by = shape.by,
+        size_by = size.by,
         edge_colour_by = edge.colour.by,
         edge_size_by = edge.size.by,
-        tip_colour_by = tip.colour.by,
-        tip_shape_by = tip.shape.by,
-        tip_size_by = tip.size.by,
-        node_colour_by = node.colour.by,
-        node_shape_by = node.shape.by,
-        node_shape.by = node.shape.by,
         colour_highlights_by = colour.highlights.by
         )
-    # Tips and nodes are colored, sized and shaped based on same variable.
-    if( !is.null(variables) ){
-        new_names <- gsub("node_|tip_", "", names(variables))
-        dupl_names <- duplicated(new_names)
-        dupl_values <- duplicated(variables)
-        if( any(dupl_names & !dupl_values) ){
-            stop("Cannot color, shape or size nodes and tips based on ",
-                "different variables.", call. = FALSE)
-        }
-        names(variables) <- new_names
-        variables <- variables[ !dupl_names ]
-    }
     names(other.fields) <- other.fields
     all_variables <- c(variables, other.fields)
 
@@ -657,15 +696,16 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         df <- dplyr::left_join(
             df, metadata_df, by = "node", suffix = c("", ".y"))
     }
-    # Based on variables, determine whether user wanted to color tips and/or
-    # nodes
-    show_tips <- any(!vapply(
-        c(tip.colour.by, tip.shape.by, tip.size.by), is.null, logical(1)))
-    show_nodes <- any(!vapply(
-        c(node.colour.by, node.shape.by, node.size.by),
-        is.null, logical(1)))
+    # Based on variables, determine whether user wanted to show labels
+    # and highlight sectors
+    show_label <- !all(is.na(df[["node_label"]]))
+    show_highlights <- df[["highlight"]] |> any()
+    show_highlight_label <- any(!is.na(df[["highlight_label"]]))
     # Create an argument list that is passed to plotting function
-    res <- list(df = df, show_tips = show_tips, show_nodes = show_nodes)
+    res <- list(
+        df = df, show_tips = show.tips, show_nodes = show.nodes,
+        show_label = show_label, show_highlights = show_highlights,
+        show_highlight_label = show_highlight_label)
     res <- c(res, variables, list(...))
     return(res)
 }
@@ -724,7 +764,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     }
     # Do the same for all node variables
     if( show_nodes ){
-        node_var <- c("node_colour_by", "node_shape_by", "node_size_by")
+        node_var <- c("colour_by", "shape_by", "size_by")
         for( var in node_var ){
             if( var %in% colnames(df) &&
                     anyNA(df[[var]]) && !is.numeric(df[[var]]) ){
@@ -740,6 +780,12 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                     "nodes were found. That is why 'node*by' arguments are ",
                     "ignored.", call. = FALSE)
         }
+    }
+    # Propagate also highlight color info
+    if( !is.null(df[["colour_highlights_by"]]) &&
+            anyNA(df[["colour_highlights_by"]]) &&
+            !is.numeric(df[["colour_highlights_by"]]) ){
+        df <- .propagate_to_internal_nodes(df, var = "colour_highlights_by")
     }
     # Replace NA values with default shape or size
     df <- .na_replace_from_plot_data(
@@ -783,14 +829,14 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         # be that not all are available as user did not specify them.
         show_tips,
         show_nodes,
+        show_label,
+        show_highlights,
+        show_highlight_label,
         edge_colour_by = NULL,
         edge_size_by = NULL,
         colour_by = NULL,
         shape_by = NULL,
         size_by = NULL,
-        node_colour_by = NULL,
-        node_shape_by = NULL,
-        node_size_by = NULL,
         colour_highlights_by = NULL,
         # These parameters are for modifying visuals of the tree plot
         layout = "circular",
@@ -814,14 +860,13 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         highlight.font.size = highlight_font_size,
         highlight_font_size = 3,
         branch.length = "branch.length",
-        # Thse are just cathced so that they are not fed forward
-        show.label = show_label, show_label = NULL,
+        # These are just catched so that they are not fed forward
+        show.label = NULL,
         show.nodes = NULL,
         relabel.tree = NULL,
         levels.rm= NULL,
-        show.highlights = show_highlights, show_highlights = NULL,
-        show.highlight.label = show_highlight_label,
-        show_highlight_label = NULL,
+        show.highlights = NULL,
+        show.highlight.label = NULL,
         ...){
     # Check switches
     if(!.is_a_string(layout)){
@@ -839,10 +884,6 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                  call. = FALSE)
         }
     }
-
-    show_label <- !all(is.na(df[["node_label"]]))
-    show_highlights <- df[["highlight"]] |> any()
-    show_highlight_label <- any(!is.na(df[["highlight_label"]]))
     # We capture branch.length to disable other options than plotting branches
     # as they are or with equal branch lengths. That is because user cannot
     # control the parameter as it only specifies column from the object table.
