@@ -18,6 +18,8 @@
 .get_name_in_parent <- mia:::.get_name_in_parent
 .is_an_integer <- mia:::.is_an_integer
 TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
+.check_rowTree_present <- mia:::.check_rowTree_present
+.check_colTree_present <- mia:::.check_colTree_present
 
 .norm_label <- function(label, x){
     if(!is.null(label)){

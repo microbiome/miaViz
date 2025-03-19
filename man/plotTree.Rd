@@ -12,129 +12,33 @@ plotRowTree(x, ...)
 
 plotColTree(x, ...)
 
-\S4method{plotColTree}{TreeSummarizedExperiment}(
-  x,
-  tree.name = tree_name,
-  tree_name = "phylo",
-  relabel.tree = relabel_tree,
-  relabel_tree = FALSE,
-  order.tree = order_tree,
-  order_tree = FALSE,
-  levels.rm = remove_levels,
-  remove_levels = FALSE,
-  show.label = show_label,
-  show_label = FALSE,
-  show.highlights = show_highlights,
-  show_highlights = FALSE,
-  show.highlight.label = show_highlight_label,
-  show_highlight_label = FALSE,
-  abbr.label = abbr_label,
-  abbr_label = FALSE,
-  add.legend = add_legend,
-  add_legend = TRUE,
-  layout = "circular",
-  edge.colour.by = edge.colour.by,
-  edge_colour_by = NULL,
-  edge.size.by = edge_size_by,
-  edge_size_by = NULL,
-  tip.colour.by = tip_colour_by,
-  tip_colour_by = NULL,
-  tip.shape.by = tip_shape_by,
-  tip_shape_by = NULL,
-  tip.size.by = tip_size_by,
-  tip_size_by = NULL,
-  node.colour.by = node_colour_by,
-  node_colour_by = NULL,
-  node.shape.by = node_shape_by,
-  node_shape_by = NULL,
-  node.size.by = node_size_by,
-  node_size_by = NULL,
-  colour.highlights.by = colour_highlights_by,
-  colour_highlights_by = NULL,
-  assay.type = by_exprs_values,
-  by_exprs_values = "counts",
-  other.fields = other_fields,
-  other_fields = list(),
-  ...
-)
+\S4method{plotColTree}{TreeSummarizedExperiment}(x, tree.name = "phylo", ...)
 
-\S4method{plotRowTree}{TreeSummarizedExperiment}(
-  x,
-  tree.name = tree_name,
-  tree_name = "phylo",
-  relabel.tree = relabel_tree,
-  relabel_tree = FALSE,
-  order.tree = order_tree,
-  order_tree = FALSE,
-  levels.rm = remove_levels,
-  remove_levels = FALSE,
-  show.label = show_label,
-  show_label = FALSE,
-  show.highlights = show_highlights,
-  show_highlights = FALSE,
-  show.highlight.label = show_highlight_label,
-  show_highlight_label = FALSE,
-  abbr.label = abbr_label,
-  abbr_label = FALSE,
-  add.legend = add_legend,
-  add_legend = TRUE,
-  layout = "circular",
-  edge.colour.by = edge_colour_by,
-  edge_colour_by = NULL,
-  edge.size.by = edge_size_by,
-  edge_size_by = NULL,
-  tip.colour.by = tip_colour_by,
-  tip_colour_by = NULL,
-  tip.shape.by = tip_shape_by,
-  tip_shape_by = NULL,
-  tip.size.by = tip_size_by,
-  tip_size_by = NULL,
-  node.colour.by = node_colour_by,
-  node_colour_by = NULL,
-  node.shape.by = node_shape_by,
-  node_shape_by = NULL,
-  node.size.by = node_size_by,
-  node_size_by = NULL,
-  colour.highlights.by = colour_highlights_by,
-  colour_highlights_by = NULL,
-  assay.type = by_exprs_values,
-  by_exprs_values = "counts",
-  other.fields = other_fields,
-  other_fields = list(),
-  ...
-)
+\S4method{plotRowTree}{TreeSummarizedExperiment}(x, tree.name = "phylo", ...)
 }
 \arguments{
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
-\item{...}{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call
-\code{help("mia-plot-args")}}
+\item{...}{additional parameters for plotting.
+\itemize{
+\item \code{layout}: layout for the plotted tree. See
+\code{\link[ggtree:ggtree]{ggtree}} for details.
 
-\item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
-\code{x}. (Default: \code{tree.name = "phylo"})}
+\item \code{relabel.tree}: \code{Logical scalar}. Should the tip labels be
+relabelec using the output of
+\code{getTaxonomyLabels(x, with_rank = TRUE)}? (Default: \code{FALSE})
 
-\item{tree_name}{Deprecated. Use \code{tree.name} instead.}
+\item \code{order.tree}: \code{Logical scalar}. Should the tree be ordered
+based on alphabetic order of taxonomic levels? (Default: \code{FALSE})
 
-\item{relabel.tree}{\code{Logical scalar}. Should the tip labels be relabeled
-using the output of \code{getTaxonomyLabels(x, with_rank = TRUE)}?
-(Default: \code{FALSE})}
+\item \code{levels.rm}: \code{Logical scalar}. Should taxonomic level
+information be removed from labels? (Default: \code{FALSE})
 
-\item{relabel_tree}{Deprecated. Use \code{relavel.tree} instead.}
-
-\item{order.tree}{\code{Logical scalar}. Should the tree be ordered based on
-alphabetic order of taxonomic levels? (Default: \code{FALSE})}
-
-\item{order_tree}{Deprecated. Use \code{order.tree} instead.}
-
-\item{levels.rm}{\code{Logical scalar}. Should taxonomic level information
-be removed from labels? (Default: \code{FALSE})}
-
-\item{remove_levels}{Deprecated. Use \code{levels.rm} instead.}
-
-\item{show.label, show.highlights, show.highlight.label, abbr.label}{\code{logical} (scalar), \code{integer} or \code{character} vector. If a
-\code{logical} scalar is given, should tip labels be plotted or if a
+\item \code{show.label}, \code{show.highlights},
+\code{show.highlight.label}, \code{abbr.label} \code{logical vector},
+\code{integer vector}. or \code{character vector}. If a \code{logical}
+scalar is given, should tip labels be plotted or if a
 logical vector is provided, which labels should be shown? If an
 \code{integer} or \code{character} vector is provided, it will be converted
 to a logical vector. The \code{integer} values must be in the range of 1
@@ -142,93 +46,61 @@ and number of nodes, whereas the values of a \code{character} vector must
 match values of the \code{label} column in the node data. In case of a
 \code{character} vector only values corresponding to actual labels will be
 plotted and if no labels are provided no labels will be shown. (Default:
-\code{FALSE})}
+\code{FALSE})
 
-\item{show_label, show_highlights, show_highlight_label, abbr_label}{Deprecated.
-Use \code{show.label, show.highlights, show.highlight.label, abbr_label}
-instead.}
+\item \code{add.legend}: \code{Logical scalar}. Should legends be plotted?
+(Default: \code{TRUE})
 
-\item{add.legend}{\code{Logical scalar}. Should legends be plotted?
-(Default: \code{TRUE})}
+\item \code{edge.colour.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to colour tree edges by.
+(Default: \code{NULL})
 
-\item{add_legend}{Deprecated. Use \code{add.legend} instead.}
+\item \code{edge.size.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to size tree edges by.
+(Default: \code{NULL})
 
-\item{layout}{layout for the plotted tree. See
-\code{\link[ggtree:ggtree]{ggtree}} for details.}
+\item \code{tip.colour.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to colour tree tips by.
+(Default: \code{NULL})
 
-\item{edge.colour.by}{\code{Character scalar}. Specification of a column
-metadata field or a feature to colour tree edges by, see the by argument in
-\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values.}
+\item \code{tip.shape.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to shape tree tips by.
+(Default: \code{NULL})
 
-\item{edge_colour_by}{Deprecated. Use \code{edge.colour.by} instead.}
+\item \code{tip.size.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to size tree tips by.
+(Default: \code{NULL})
 
-\item{edge.size.by}{\code{Character scalar}. Specification of a column
-metadata field or a feature to size tree edges by, see the by argument in
-\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values. (Default: \code{NULL})}
+\item \code{node.colour.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to colour tree nodes by.
+(Default: \code{NULL})
 
-\item{edge_size_by}{Deprecated. Use \code{edge.size.by} instead.}
+\item \code{node.shape.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to shape tree nodes by. Must be a field
+from \code{other.fields}. (Default: \code{NULL})
 
-\item{tip.colour.by}{\code{Character scalar}. Specification of a column
-metadata field or a feature to colour tree tips by, see the by argument in
-\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values. (Default: \code{NULL})}
+\item \code{node.size.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to size tree nodes by.
+(Default: \code{NULL})
 
-\item{tip_colour_by}{Deprecated. Use \code{tip.colour.by} instead.}
-
-\item{tip.shape.by}{\code{Character scalar}. Specification of a column
-metadata field or a feature to shape tree tips by, see the by argument in
-\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values. (Default: \code{NULL})}
-
-\item{tip_shape_by}{Deprecated. Use \code{tip.shape.by} isntead.}
-
-\item{tip.size.by}{\code{Character scalar}. Specification of a column
-metadata field or a feature to size tree tips by, see the by argument in
-\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}} for possible
-values. (Default: \code{NULL})}
-
-\item{tip_size_by}{Deprecated. Use \code{tip.size.by} instead.}
-
-\item{node.colour.by}{\code{Character scalar}. Specification of a column
-metadata field or a feature to colour tree nodes by. Must be a field from
-\code{other.fields}. (Default: \code{NULL})}
-
-\item{node_colour_by}{Deprecated. Use \code{node.colour.by} instead.}
-
-\item{node.shape.by}{\code{Character scalar}. Specification of a column
-metadata field or a feature to shape tree nodes by. Must be a field from
-\code{other.fields}. (Default: \code{NULL})}
-
-\item{node_shape_by}{Deprecated. Use \code{node.shape.by} instead.}
-
-\item{node.size.by}{\code{Character scalar}. Specification of a column
-metadata field or a feature to size tree nodes by. Must be a field from
-\code{other.fields}. (Default: \code{NULL})}
-
-\item{node_size_by}{Deprecated. Use \code{node.size.by} instead.}
-
-\item{colour.highlights.by}{\code{Logical scalar}. Should the highlights be
-colour differently? If \code{show.highlights = TRUE},
+\item \code{colour.highlights.by}: \code{Logical scalar}. Should the
+highlights be colour differently? If \code{show.highlights = TRUE},
 \code{colour_highlights} will be set to \code{TRUE} as default.
-(Default: \code{FALSE})}
+(Default: \code{FALSE})
 
-\item{colour_highlights_by}{Deprecated. Use \code{colour.highlights.by}
-instead.}
+\item \code{assay.type}: \code{Character scalar}. Specifies which assay to
+obtain expression values from, for use in point aesthetics.
+(Default: \code{"counts"})
 
-\item{assay.type}{\code{Character scalar}. or \code{integer scalar}.
-Specifies which assay to obtain expression values from, for use in point
-aesthetics - see the \code{exprs_values} argument in
-\code{\link[scater:retrieveCellInfo]{?retrieveCellInfo}}.
-(Default: \code{"counts"})}
+\item \code{other.fields}: \code{Character vector}. Additional fields to
+include in the node information without plotting them.
+(Default: \code{NULL})
+}
+See \code{\link{mia-plot-args}} for more details i.e. call
+\code{help("mia-plot-args")}}
 
-\item{by_exprs_values}{Deprecated. Use \code{assay.type} instead.}
-
-\item{other.fields}{\code{Character vector}. Additional fields to include in
-the node information without plotting them. (Default: \code{list()})}
-
-\item{other_fields}{Deprecated. Use \code{other.fields} instead.}
+\item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
+\code{x}. (Default: \code{tree.name = "phylo"})}
 }
 \value{
 a \code{\link{ggtree}} plot

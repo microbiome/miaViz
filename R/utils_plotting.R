@@ -319,24 +319,28 @@ NULL
 # Adjusted function originally developed for scater package by Aaron Lun
 .get_point_args <- function(
         colour_by, shape_by, size_by, alpha = 0.65, size = NULL, shape = 21,
-        colour = "grey70"){
+        colour = "grey70",
+        colour_by_column_name = "colour_by",
+        shape_by_column_name = "shape_by",
+        size_by_column_name = "size_by",
+        ...){
     aes_args <- list()
     fill_colour <- TRUE
     if (!is.null(shape_by)) {
-        aes_args$shape <- "shape_by"
+        aes_args$shape <- shape_by_column_name
     }
     if (!is.null(colour_by)) {
         # Only shapes 21 to 25 can be filled. Filling does not work in other
         # shapes.
         if(shape >= 21 && shape <= 25){
-            aes_args$fill <- "colour_by"
+            aes_args$fill <- colour_by_column_name
         } else {
-            aes_args$colour <- "colour_by"
+            aes_args$colour <- colour_by_column_name
             fill_colour <- FALSE
         }
     }
     if (!is.null(size_by)) {
-        aes_args$size <- "size_by"
+        aes_args$size <- size_by_column_name
     }
     aes_args <- lapply(aes_args, function(x) if (!is.null(x)) sym(x))
     new_aes <- do.call(aes, aes_args)
