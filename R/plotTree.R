@@ -236,6 +236,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     df <- .add_tree_highlight_labels(df, ...)
     # Add data from rowData, e.g., for edge colors
     args <- .incorporate_tree_vis(df = df, x = x, type = type, ...)
+    # Combine point and node formatting into single column
+    args <- do.call(.combine_tree_point_formatting, args)
     # Modify the argument list so that it is ready for plotting
     args[["tree"]] <- tree
     args <- do.call(.create_treedata_for_plotting, args)
@@ -415,11 +417,10 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     # Input check
     if(!.is_a_bool(show.label)){
         if( (!is.logical(show.label) && !is.character(show.label) &&
-             !is.numeric(show.label)) || is.null(show.label)){
+                !is.numeric(show.label)) || is.null(show.label)){
             stop("'show.label' must be either TRUE or FALSE or logical, ",
-                 "integer or character ",
-                 "vector. Character alues should match the label of the tree.",
-                 call. = FALSE)
+                "integer or character vector. Character alues should match ",
+                "the label of the tree.", call. = FALSE)
         }
     }
     if(!.is_a_bool(levels.rm)){
@@ -432,7 +433,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
             !"label" %in% colnames(df) &&
             !(is.character(show.label) && length(show.label) == nrow(df))) {
         warning("'show.label' is specified but no labels present in a tree.",
-            call. = FALSE)
+                call. = FALSE)
     }
     #
     # If tree includes labels, add them to new column to keep book on labels.
@@ -482,7 +483,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 .add_tree_highlights <- function(df, show.highlights = FALSE, ...){
     if(!.is_a_bool(show.highlights)){
         if( (!is.logical(show.highlights) && !is.character(show.highlights) &&
-             !is.numeric(show.highlights)) || is.null(show.highlights)){
+                !is.numeric(show.highlights)) || is.null(show.highlights)){
             stop("'show.label' must be either TRUE or FALSE or logical, ",
                 "integer or character vector. Character alues should match ",
                 "the label of the tree.", call. = FALSE)
@@ -538,9 +539,9 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     # Input check
     if(!.is_a_bool(show.highlight.label)){
         if( (!is.logical(show.highlight.label) &&
-             !is.character(show.highlight.label) &&
-             !is.numeric(show.highlight.label)) ||
-            is.null(show.highlight.label)){
+                !is.character(show.highlight.label) &&
+                !is.numeric(show.highlight.label)) ||
+                is.null(show.highlight.label)){
             stop("'show.highlight.label' must be either TRUE or FALSE or ",
                 "logical, integer or character vector. Character alues should ",
                 "match the label of the tree.", call. = FALSE)
@@ -678,60 +679,9 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
             df, metadata_df, by = "node", suffix = c("", ".y"))
     }
     
-    # Propagate tip info to nodes
-    node_var <- c("node_colour_by", "node_shape_by", "node_size_by")
-    for( var in node_var ){
-        if( var %in% colnames(df) &&
-            anyNA(df[[var]]) && !is.numeric(df[[var]]) ){
-            df <- .propagate_to_internal_nodes(df, var = var)
-        }
-    }
-    # Check if user wanted to show nodes, but we do not have coloring,
-    # shaping, or size info for them
-    if( any(node_var %in% colnames(df)) ){
-        df_node <- df[
-            !isTip(df, df[["node"]]), colnames(df) %in% node_var, drop = FALSE]
-        if( all(colSums(is.na(df_node)) == nrow(df_node)) ){
-            warning("The dataset seems to include only tips and no internal ",
-                    "nodes were found. That is why 'node*by' arguments are ",
-                    "ignored.", call. = FALSE)
-        }
-    }
-    
-    # Combine node and tip formatting into single column
-    df <- .combine_tip_and_node(df, "colour")
-    df <- .combine_tip_and_node(df, "shape")
-    df <- .combine_tip_and_node(df, "size")
-    # Combine variable names into single title
-    colour_by <- .combine_tip_and_node_title(tip.colour.by, node.colour.by)
-    shape_by <- .combine_tip_and_node_title(tip.shape.by, node.shape.by)
-    size_by <- .combine_tip_and_node_title(tip.size.by, node.size.by)
-    
-    # Based on variables, determine whether user wanted to show nodes and labels
-    # and highlight sectors
-    show_tips <- any(!vapply(
-        c(tip.colour.by, tip.shape.by, tip.size.by),
-        is.null, logical(1)))
-    show_nodes <- any(!vapply(
-        c(node.colour.by, node.shape.by, node.size.by),
-        is.null, logical(1)))
-    show_label <- !all(is.na(df[["node_label"]]))
-    show_highlights <- df[["highlight"]] |> any()
-    show_highlight_label <- any(!is.na(df[["highlight_label"]]))
     # Create an argument list that is passed to plotting function
-    res <- list(
-        df = df,
-        show_tips = show_tips,
-        show_nodes = show_nodes,
-        show_label = show_label,
-        show_highlights = show_highlights,
-        show_highlight_label = show_highlight_label,
-        colour_by = colour_by,
-        shape_by = shape_by,
-        size_by = size_by
-        )
-    res <- c(res, variables, list(...))
-    return(res)
+    args <- c(list(df = df), variables, list(...))
+    return(args)
 }
 
 # This function gets single variable as input and it tries to fetch it from
@@ -770,6 +720,67 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
             " names: '", var, "'", call. = FALSE)
     }
     return(res)
+}
+
+# Tree tip and node coloring, shape or size must be in single column. That is
+# why we combine these columns; there should be single column for each coloring,
+# shape and size.
+.combine_tree_point_formatting <- function(
+        df,
+        tip_colour_by = NULL,
+        node_colour_by = NULL,
+        tip_shape_by = NULL,
+        node_shape_by = NULL,
+        tip_size_by = NULL,
+        node_size_by = NULL,
+        ...){
+    # Propagate tip info to nodes
+    node_var <- c("node_colour_by", "node_shape_by", "node_size_by")
+    for( var in node_var ){
+        if( var %in% colnames(df) &&
+            anyNA(df[[var]]) && !is.numeric(df[[var]]) ){
+            df <- .propagate_to_internal_nodes(df, var = var)
+        }
+    }
+    # Check if user wanted to show nodes, but we do not have coloring,
+    # shaping, or size info for them
+    if( any(node_var %in% colnames(df)) ){
+        df_node <- df[
+            !isTip(df, df[["node"]]), colnames(df) %in% node_var, drop = FALSE]
+        if( all(colSums(is.na(df_node)) == nrow(df_node)) ){
+            warning("The dataset seems to include only tips and no internal ",
+                    "nodes were found. That is why 'node*by' arguments are ",
+                    "ignored.", call. = FALSE)
+        }
+    }
+    
+    # Combine node and tip formatting into single column
+    df <- .combine_tip_and_node(df, "colour")
+    df <- .combine_tip_and_node(df, "shape")
+    df <- .combine_tip_and_node(df, "size")
+    # Combine variable names into single title
+    colour_by <- .combine_tip_and_node_title(tip_colour_by, node_colour_by)
+    shape_by <- .combine_tip_and_node_title(tip_shape_by, node_shape_by)
+    size_by <- .combine_tip_and_node_title(tip_size_by, node_size_by)
+    
+    # Based on available columns, determine whether user wanted to show nodes
+    # and labels
+    show_tips <- any(
+        c("tip_colour_by", "tip_shape_by", "tip_size_by") %in% colnames(df))
+    show_nodes <- any(
+        c("node_colour_by", "node_shape_by", "node_size_by") %in% colnames(df))
+    
+    # Create a list to forward to next function
+    args <- list(
+        df = df,
+        colour_by = colour_by,
+        shape_by = shape_by,
+        size_by = size_by,
+        show_tips = show_tips,
+        show_nodes = show_nodes
+    )
+    args <- c(args, list(...))
+    return(args)
 }
 
 # This function combines tip and node formatting columns into one single column.
@@ -836,7 +847,17 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     # tree needs to be restored since the original leave/tip/node orientation
     # is not compatible with ladderize = FALSE
     df@phylo <- tree
-    res <- c(list(...), df = df)
+    # Based on label and highlight availability, determine whether to show them
+    show_label <- !all(is.na(df[["node_label"]]))
+    show_highlights <- df[["highlight"]] |> any()
+    show_highlight_label <- any(!is.na(df[["highlight_label"]]))
+    res <- c(
+        list(...),
+        df = df,
+        show_label = show_label,
+        show_highlights = show_highlights,
+        show_highlight_label = show_highlight_label
+    )
     return(res)
 }
 
@@ -918,11 +939,10 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     }
     if(!.is_a_bool(abbr.label)){
         if( (!is.logical(abbr.label) && !is.character(abbr.label) &&
-             !is.numeric(abbr.label)) || is.null(abbr.label)){
+                !is.numeric(abbr.label)) || is.null(abbr.label)){
             stop("'abbr.label' must be either TRUE or FALSE or logical, ",
-                 "integer or character ",
-                 "vector. Character alues should match the label of the tree.",
-                 call. = FALSE)
+                "integer or character vector. Character alues should match ",
+                "the label of the tree.", call. = FALSE)
         }
     }
     # We capture branch.length to disable other options than plotting branches

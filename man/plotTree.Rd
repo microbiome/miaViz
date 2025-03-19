@@ -59,29 +59,23 @@ column metadata field or a feature to colour tree edges by.
 column metadata field or a feature to size tree edges by.
 (Default: \code{NULL})
 
-\item \code{tip.colour.by}: \code{Character scalar}. Specification of a
-column metadata field or a feature to colour tree tips by.
-(Default: \code{NULL})
-
-\item \code{tip.shape.by}: \code{Character scalar}. Specification of a
-column metadata field or a feature to shape tree tips by.
-(Default: \code{NULL})
-
-\item \code{tip.size.by}: \code{Character scalar}. Specification of a
-column metadata field or a feature to size tree tips by.
-(Default: \code{NULL})
-
-\item \code{node.colour.by}: \code{Character scalar}. Specification of a
+\item \code{colour.by}: \code{Character scalar}. Specification of a
 column metadata field or a feature to colour tree nodes by.
 (Default: \code{NULL})
 
-\item \code{node.shape.by}: \code{Character scalar}. Specification of a
-column metadata field or a feature to shape tree nodes by. Must be a field
-from \code{other.fields}. (Default: \code{NULL})
-
-\item \code{node.size.by}: \code{Character scalar}. Specification of a
-column metadata field or a feature to size tree nodes by.
+\item \code{shape.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to shape tree nodes by.
 (Default: \code{NULL})
+
+\item \code{size.by}: \code{Character scalar}. Specification of a
+column metadata field or a feature to size tree tips by.
+(Default: \code{NULL})
+
+\item \code{show.tips}: \code{Logical scalar}. Whether to show
+tip points. (Default: \code{FALSE})
+
+\item \code{show.nodes}: \code{Logical scalar}. Whether to show
+node points. (Default: \code{FALSE})
 
 \item \code{colour.highlights.by}: \code{Logical scalar}. Should the
 highlights be colour differently? If \code{show.highlights = TRUE},
@@ -122,77 +116,96 @@ library(mia)
 data(GlobalPatterns)
 GlobalPatterns <- agglomerateByRanks(GlobalPatterns)
 altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(
-  altExp(GlobalPatterns,"Genus"))
-rowData(altExp(GlobalPatterns,"Genus"))$log_mean <-
-  log(rowData(altExp(GlobalPatterns,"Genus"))$mean)
-rowData(altExp(GlobalPatterns,"Genus"))$detected <-
-   rowData(altExp(GlobalPatterns,"Genus"))$detected / 100
-top_genus <- getTop(altExp(GlobalPatterns,"Genus"),
-                        method="mean",
-                        top=100L,
-                        assay.type="counts")
+    altExp(GlobalPatterns,"Genus"))
+rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- log(
+    rowData(altExp(GlobalPatterns,"Genus"))$mean)
+rowData(altExp(GlobalPatterns,"Genus"))$detected <- rowData(
+    altExp(GlobalPatterns,"Genus"))$detected / 100
+top_genus <- getTop(
+    altExp(GlobalPatterns,"Genus"),
+    method = "mean",
+    top = 100L,
+    assay.type = "counts"
+)
 #
 x <- altExp(GlobalPatterns,"Genus")
-plotRowTree(x[rownames(x) \%in\% top_genus,],
-            tip.colour.by = "log_mean",
-            tip.size.by = "detected")
+plotRowTree(
+    x[rownames(x) \%in\% top_genus,],
+    tip.colour.by = "log_mean", tip.size.by = "detected"
+)
 
 # plot with tip labels
-plotRowTree(x[rownames(x) \%in\% top_genus,],
-            tip.colour.by = "log_mean",
-            tip.size.by = "detected",
-            show.label = TRUE)
+plotRowTree(
+    x[rownames(x) \%in\% top_genus,],
+    tip.colour.by = "log_mean",
+    tip.size.by = "detected",
+    show.label = TRUE
+)
 # plot with selected labels
 labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
-plotRowTree(x[rownames(x) \%in\% top_genus,],
-            tip.colour.by = "log_mean",
-            tip.size.by = "detected",
-            show.label = labels,
-            layout="rectangular")
+plotRowTree(
+    x[rownames(x) \%in\% top_genus,],
+    tip.colour.by = "log_mean",
+    tip.size.by = "detected",
+    show.label = labels,
+    layout = "rectangular"
+)
 
 # plot with labeled edges
-plotRowTree(x[rownames(x) \%in\% top_genus,],
-            edge.colour.by = "Phylum",
-            tip.colour.by = "log_mean")
+plotRowTree(
+    x[rownames(x) \%in\% top_genus,],
+    edge.colour.by = "Phylum",
+    tip.colour.by = "log_mean"
+)
 # if edges are sized, colours might disappear depending on plotting device
-plotRowTree(x[rownames(x) \%in\% top_genus,],
-            edge.colour.by = "Phylum",
-            edge.size.by = "detected",
-            tip.colour.by = "log_mean")
+plotRowTree(
+    x[rownames(x) \%in\% top_genus,],
+    node.colour.by = "Phylum",
+    edge.size.by = "detected",
+    edge.colour.by = "log_mean"
+)
 
 # aggregating data over the taxonomic levels for plotting a taxonomic tree
 # please note that the original tree of GlobalPatterns is dropped by
 # unsplitByRanks
 altExps(GlobalPatterns) <- splitByRanks(GlobalPatterns)
-top_phyla <- getTop(altExp(GlobalPatterns,"Phylum"),
-                        method="mean",
-                        top=10L,
-                        assay.type="counts")
+top_phyla <- getTop(
+    altExp(GlobalPatterns,"Phylum"),
+    method = "mean",
+    top = 10L,
+    assay.type="counts"
+)
 altExps(GlobalPatterns) <- lapply(altExps(GlobalPatterns), addPerFeatureQC)
-altExps(GlobalPatterns) <-
-   lapply(altExps(GlobalPatterns),
-          function(y){
-              rowData(y)$log_mean <- log(rowData(y)$mean)
-              rowData(y)$detected <- rowData(y)$detected / 100
-              y
-          })
+altExps(GlobalPatterns) <- lapply(
+    altExps(GlobalPatterns), function(y){
+        rowData(y)$log_mean <- log(rowData(y)$mean)
+        rowData(y)$detected <- rowData(y)$detected / 100
+        return(y)
+    })
 x <- unsplitByRanks(GlobalPatterns)
 x <- addHierarchyTree(x)
 
-highlights <- c("Phylum:Firmicutes","Phylum:Bacteroidetes",
-                "Family:Pseudomonadaceae","Order:Bifidobacteriales")
-plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
-            tip.colour.by = "log_mean",
-            node.colour.by = "log_mean",
-            show.highlights = highlights,
-            show.highlight.label = highlights,
-            colour.highlights.by = "Phylum")
+highlights <- c(
+    "Phylum:Firmicutes","Phylum:Bacteroidetes",
+    "Family:Pseudomonadaceae","Order:Bifidobacteriales")
+plotRowTree(
+    x[rowData(x)$Phylum \%in\% top_phyla,],
+    tip.colour.by = "log_mean",
+    node.colour.by = "log_mean",
+    show.highlights = highlights,
+    show.highlight.label = highlights,
+    colour.highlights.by = "Phylum"
+)
 
-plotRowTree(x[rowData(x)$Phylum \%in\% top_phyla,],
-            edge.colour.by = "Phylum",
-            edge.size.by = "detected",
-            tip.colour.by = "log_mean",
-            node.colour.by = "log_mean")
+# If you do not want to show internal nodes
+plotRowTree(
+    x[rowData(x)$Phylum \%in\% top_phyla,],
+    edge.colour.by = "Phylum",
+    edge.size.by = "detected",
+    node.colour.by = "log_mean",
+    show.nodes = FALSE
+)
+
 }
 \seealso{
 \code{\link[mia:agglomerate-methods]{agglomerateByRanks}}
