@@ -117,22 +117,22 @@
 #' x <- altExp(GlobalPatterns,"Genus")
 #' plotRowTree(
 #'     x[rownames(x) %in% top_genus,],
-#'     colour.by = "log_mean", size.by = "detected"
+#'     tip.colour.by = "log_mean", tip.size.by = "detected"
 #' )
 #'
 #' # plot with tip labels
 #' plotRowTree(
 #'     x[rownames(x) %in% top_genus,],
-#'     colour.by = "log_mean",
-#'     size.by = "detected",
+#'     tip.colour.by = "log_mean",
+#'     tip.size.by = "detected",
 #'     show.label = TRUE
 #' )
 #' # plot with selected labels
 #' labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
 #' plotRowTree(
 #'     x[rownames(x) %in% top_genus,],
-#'     colour.by = "log_mean",
-#'     size.by = "detected",
+#'     tip.colour.by = "log_mean",
+#'     tip.size.by = "detected",
 #'     show.label = labels,
 #'     layout = "rectangular"
 #' )
@@ -140,15 +140,15 @@
 #' # plot with labeled edges
 #' plotRowTree(
 #'     x[rownames(x) %in% top_genus,],
-#'     colour.by = "Phylum",
-#'     colour.by = "log_mean"
+#'     edge.colour.by = "Phylum",
+#'     tip.colour.by = "log_mean"
 #' )
 #' # if edges are sized, colours might disappear depending on plotting device
 #' plotRowTree(
 #'     x[rownames(x) %in% top_genus,],
-#'     colour.by = "Phylum",
-#'     size.by = "detected",
-#'     colour.by = "log_mean"
+#'     node.colour.by = "Phylum",
+#'     edge.size.by = "detected",
+#'     edge.colour.by = "log_mean"
 #' )
 #'
 #' # aggregating data over the taxonomic levels for plotting a taxonomic tree
@@ -176,8 +176,8 @@
 #'     "Family:Pseudomonadaceae","Order:Bifidobacteriales")
 #' plotRowTree(
 #'     x[rowData(x)$Phylum %in% top_phyla,],
-#'     colour.by = "log_mean",
-#'     colour.by = "log_mean",
+#'     tip.colour.by = "log_mean",
+#'     node.colour.by = "log_mean",
 #'     show.highlights = highlights,
 #'     show.highlight.label = highlights,
 #'     colour.highlights.by = "Phylum"
@@ -188,7 +188,7 @@
 #'     x[rowData(x)$Phylum %in% top_phyla,],
 #'     edge.colour.by = "Phylum",
 #'     edge.size.by = "detected",
-#'     colour.by = "log_mean",
+#'     node.colour.by = "log_mean",
 #'     show.nodes = FALSE
 #' )
 #'
@@ -607,22 +607,15 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 # assay. This additional data is used for example for coloring edges.
 .incorporate_tree_vis <- function(
         df, x, type,
-        show.tips = show_tips, show_tips = TRUE,
-        show.nodes = show_nodes, show_nodes = TRUE,
-        # Tips and nodes are colored, sized and shaped based on same variable.
-        colour.by = color.by, color.by = colour_by,
-        colour_by = color_by, color_by = tip.colour.by,
         tip.colour.by = tip.color.by, tip.color.by = tip_colour_by,
-        tip_colour_by = tip_color_by, tip_color_by = node.colour.by,
+        tip_colour_by = tip_color_by, tip_color_by = NULL,
         node.colour.by = node.color.by, node.color.by = node_colour_by,
         node_colour_by = node_color_by, node_color_by = NULL,
         #
-        shape.by = shape_by, shape_by = tip.shape.by,
-        tip.shape.by = tip_shape_by, tip_shape_by = node.shape.by,
+        tip.shape.by = tip_shape_by, tip_shape_by = NULL,
         node.shape.by = node_shape_by, node_shape_by = NULL,
         #
-        size.by = size_by, size_by = tip.size.by,
-        tip.size.by = tip_size_by, tip_size_by = node.size.by,
+        tip.size.by = tip_size_by, tip_size_by = NULL,
         node.size.by = node_size_by, node_size_by = NULL,
         # Edge and highlights are colored separately
         edge.colour.by = edge.color.by, edge.color.by = edge_colour_by,
@@ -635,21 +628,6 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         other.fields = other_fields, other_fields = NULL,
         ...){
     # Input check
-    if( !.is_a_bool(show.tips) ){
-        stop("'show.tips' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !.is_a_bool(show.nodes) ){
-        stop("'show.nodes' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !(.is_a_string(colour.by) || is.null(colour.by)) ){
-        stop("'colour.by' must be a single character value.", call. = FALSE)
-    }
-    if( !(.is_a_string(shape.by) || is.null(shape.by)) ){
-        stop("'shape.by' must be a single character value.", call. = FALSE)
-    }
-    if( !(.is_a_string(size.by) || is.null(size.by)) ){
-        stop("'size.by' must be a single character value.", call. = FALSE)
-    }
     if( !(.is_a_string(edge.colour.by) || is.null(edge.colour.by)) ){
         stop("'edge.colour.by' must be a single character value.",
             call. = FALSE)
@@ -667,9 +645,12 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     }
     # Get all the variables into single vector
     variables <- c(
-        colour_by = colour.by,
-        shape_by = shape.by,
-        size_by = size.by,
+        tip_colour_by = tip.colour.by,
+        tip_shape_by = tip.shape.by,
+        tip_size_by = tip.size.by,
+        node_colour_by = node.colour.by,
+        node_shape_by = node.shape.by,
+        node_size_by = node.size.by,
         edge_colour_by = edge.colour.by,
         edge_size_by = edge.size.by,
         colour_highlights_by = colour.highlights.by
@@ -684,7 +665,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         column = colLinks
     )
 
-    # Retrieve info and create a table to add
+    # Retrieve info and create a table to add to tree data
     if( !is.null(all_variables) && length(all_variables > 0L) ){
         # Get variables
         metadata_df <- lapply(all_variables, function(var){
@@ -696,16 +677,59 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         df <- dplyr::left_join(
             df, metadata_df, by = "node", suffix = c("", ".y"))
     }
-    # Based on variables, determine whether user wanted to show labels
+    
+    # Propagate tip info to nodes
+    node_var <- c("node_colour_by", "node_shape_by", "node_size_by")
+    for( var in node_var ){
+        if( var %in% colnames(df) &&
+            anyNA(df[[var]]) && !is.numeric(df[[var]]) ){
+            df <- .propagate_to_internal_nodes(df, var = var)
+        }
+    }
+    # Check if user wanted to show nodes, but we do not have coloring,
+    # shaping, or size info for them
+    if( any(node_var %in% colnames(df)) ){
+        df_node <- df[
+            !isTip(df, df[["node"]]), colnames(df) %in% node_var, drop = FALSE]
+        if( all(colSums(is.na(df_node)) == nrow(df_node)) ){
+            warning("The dataset seems to include only tips and no internal ",
+                    "nodes were found. That is why 'node*by' arguments are ",
+                    "ignored.", call. = FALSE)
+        }
+    }
+    
+    # Combine node and tip formatting into single column
+    df <- .combine_tip_and_node(df, "colour")
+    df <- .combine_tip_and_node(df, "shape")
+    df <- .combine_tip_and_node(df, "size")
+    # Combine variable names into single title
+    colour_by <- .combine_tip_and_node_title(tip.colour.by, node.colour.by)
+    shape_by <- .combine_tip_and_node_title(tip.shape.by, node.shape.by)
+    size_by <- .combine_tip_and_node_title(tip.size.by, node.size.by)
+    
+    # Based on variables, determine whether user wanted to show nodes and labels
     # and highlight sectors
+    show_tips <- any(!vapply(
+        c(tip.colour.by, tip.shape.by, tip.size.by),
+        is.null, logical(1)))
+    show_nodes <- any(!vapply(
+        c(node.colour.by, node.shape.by, node.size.by),
+        is.null, logical(1)))
     show_label <- !all(is.na(df[["node_label"]]))
     show_highlights <- df[["highlight"]] |> any()
     show_highlight_label <- any(!is.na(df[["highlight_label"]]))
     # Create an argument list that is passed to plotting function
     res <- list(
-        df = df, show_tips = show.tips, show_nodes = show.nodes,
-        show_label = show_label, show_highlights = show_highlights,
-        show_highlight_label = show_highlight_label)
+        df = df,
+        show_tips = show_tips,
+        show_nodes = show_nodes,
+        show_label = show_label,
+        show_highlights = show_highlights,
+        show_highlight_label = show_highlight_label,
+        colour_by = colour_by,
+        shape_by = shape_by,
+        size_by = size_by
+        )
     res <- c(res, variables, list(...))
     return(res)
 }
@@ -748,38 +772,49 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     return(res)
 }
 
+# This function combines tip and node formatting columns into one single column.
+# For instance, coloring of the points are combined into single column.
+.combine_tip_and_node <- function(df, var){
+    tip_ind <- isTip(df, df[["node"]])
+    tip_col <- paste0("tip_", var, "_by")
+    node_col <- paste0("node_", var, "_by")
+    final_col <- paste0(var, "_by")
+    temp <- rep(NA, nrow(df))
+    if( tip_col %in% colnames(df) ){
+        temp[tip_ind] <- df[tip_ind, ][[tip_col]]
+    } 
+    if( node_col %in% colnames(df) ){
+        temp[!tip_ind] <- df[!tip_ind, ][[node_col]]
+    }
+    if( any(!is.na(temp)) ){
+        df[[final_col]] <- temp
+    }
+    return(df)
+}
+
+# This function combines varibale names for point formatting
+.combine_tip_and_node_title <- function(var1, var2){
+    var <- unique(c(var1, var2))
+    var <- paste0(var, collapse = " & ")
+    if( var == "" ){
+        var <- NULL
+    }
+    return(var)
+}
+
 # due to a bug in ggtree/tidytree the treedata object needs to be constructed
 # in a separate step
 #
 # also there is some data wrangling needed
 #' @importFrom tidytree as.treedata isTip
-.create_treedata_for_plotting <- function(df, tree, show_nodes, ...){
+.create_treedata_for_plotting <- function(df, tree, ...){
     # We do not have info on internal nodes, info is only for rows, i.e.,
     # usually for tips. Next step propagates the info to all nodes by finding
-    # the first common ancestor, snd correctly grouping the edges. This
-    # does not work with numeirc data.
+    # the first common ancestor, and correctly grouping the edges. This
+    # does not work with numeric data.
     if( !is.null(df[["edge_colour_by"]]) && anyNA(df[["edge_colour_by"]]) &&
             !is.numeric(df[["edge_colour_by"]]) ){
         df <- .propagate_to_internal_nodes(df, var = "edge_colour_by")
-    }
-    # Do the same for all node variables
-    if( show_nodes ){
-        node_var <- c("colour_by", "shape_by", "size_by")
-        for( var in node_var ){
-            if( var %in% colnames(df) &&
-                    anyNA(df[[var]]) && !is.numeric(df[[var]]) ){
-                df <- .propagate_to_internal_nodes(df, var = var)
-            }
-        }
-        # Check if user wanted to show nodes, but we do not have coloring,
-        # chaping, or size info for them
-        df_node <- df[
-            !isTip(df, df[["node"]]), colnames(df) %in% node_var, drop = FALSE]
-        if( all(colSums(is.na(df_node)) == nrow(df_node)) ){
-            warning("The dataset seems to include only tips and no internal ",
-                    "nodes were found. That is why 'node*by' arguments are ",
-                    "ignored.", call. = FALSE)
-        }
     }
     # Propagate also highlight color info
     if( !is.null(df[["colour_highlights_by"]]) &&
@@ -801,7 +836,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     # tree needs to be restored since the original leave/tip/node orientation
     # is not compatible with ladderize = FALSE
     df@phylo <- tree
-    res <- c(list(...), df = df, show_nodes = show_nodes)
+    res <- c(list(...), df = df)
     return(res)
 }
 
@@ -867,6 +902,12 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         levels.rm= NULL,
         show.highlights = NULL,
         show.highlight.label = NULL,
+        tip_colour_by = NULL,
+        tip_shape_by = NULL,
+        tip_size_by = NULL,
+        node_colour_by = NULL,
+        node_shape_by = NULL,
+        node_size_by = NULL,
         ...){
     # Check switches
     if(!.is_a_string(layout)){
