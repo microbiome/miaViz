@@ -133,10 +133,11 @@ data("enterotype", package = "mia")
 tse <- enterotype
 
 # Run RDA and store results into TreeSE
+tse <- transformAssay(tse, method = "relabundance")
 tse <- addRDA(
     tse,
+    assay.type = "relabundance",
     formula = assay ~ ClinicalStatus + Gender + Age,
-    FUN = getDissimilarity,
     distance = "bray",
     na.action = na.exclude
     )
@@ -159,8 +160,8 @@ plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.vectors = FALSE)
 # Calculate RDA as a separate object
 rda_mat <- getRDA(
     tse,
+    assay.type = "relabundance",
     formula = assay ~ ClinicalStatus + Gender + Age,
-    FUN = getDissimilarity,
     distance = "bray",
     na.action = na.exclude
     )
