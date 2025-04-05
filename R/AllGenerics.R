@@ -145,3 +145,8 @@ setGeneric("plotHistogram", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("plotBarplot", signature = c("x"), function(x, ...)
     standardGeneric("plotBarplot"))
+
+#' @rdname plotBoxplot
+#' @export
+setGeneric("plotBoxplot", signature = c("object"), function(object, ...)
+    standardGeneric("plotBoxplot"))
