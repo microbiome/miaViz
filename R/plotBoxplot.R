@@ -229,12 +229,15 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         stop("x must be charcter.,")
     }
 
-    if( !is.null(group.by) && !is.null(fill.by) ){
-        stop("djfkfkf")
-    }
+    # if( !is.null(group.by) && !is.null(fill.by) ){
+    #     stop("djfkfkf")
+    # }
 
     if( !is.null(pair.by) && !add.points ){
         stop("must points be there-")
+    }
+    if( !is.null(facet.by) && (!is.null(group.by) || !is.null(fill.by) ) && length(unique(c(facet.by, group.by, fill.by))) == 1L ){
+        stop("Cannot specify x to be same as facet")
     }
     return(NULL)
 }
@@ -265,7 +268,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # If features were specified, subset data
     if( !is.null(features) ){
         df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
-        # colnames(df)[ colnames(df) == "FeatureID" ] <- "facet_by"
     }
     # If row.var was specified, get the data from rowData
     if( !is.null(row.var) ){
@@ -280,33 +282,49 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         stop("Y-axis must be numeric.", call. = FALSE)
     }
 
+    difference <- NULL
     if( add.chance ){
         df <- df |>
             as.data.frame() |>
             arrange(across(all_of(c(pair.by, x, group.by, fill.by)))) |>
-            group_by(.data[[pair.by]]) |>
+            group_by(across(all_of(c(pair.by, facet.by)))) |>
             mutate(
                 difference = .data[[c(assay.type, col.var, row.var)]] - dplyr::lag(.data[[c(assay.type, col.var, row.var)]])
             ) |>
             ungroup()
+        difference <- "difference"
         if( !is.null(x) ){
             df <- df |>
                 arrange(desc(across(all_of(c(pair.by, x)))))
         }
 
     }
-
+    subject.group <- NULL
     if( !is.null(pair.by) && !is.null(group.by) ){
-        df[["pair+group"]] <- interaction(df[[pair.by]], df[[group.by]])
+        subject.group <- "subject_group"
+        df[[subject.group]] <- interaction(df[[pair.by]], df[[group.by]])
 
     }
 
+    x.box <- group.by
     if( !is.null(x) && !is.null(group.by) ){
-        df[["x+group"]] <- interaction(df[[x]], df[[group.by]])
+        x.box <- "x_box"
+        df[[x.box]] <- interaction(df[[x]], df[[group.by]])
     }
+    remove.x.axis <- FALSE
+    if( is.null(x) ){
+        x <- "x_axis"
+        df[[x]] <- 0
+        remove.x.axis <- TRUE
+    }
+
 
     df <- df |> as.data.frame()
+    df <- .add_fixed_jitterdodge(df, x, group.by, fill.by, ...)
 
+
+    df <- df |>
+        arrange(across(all_of(c(pair.by, facet.by))))
     attributes(df) <- c(
         attributes(df),
         value = c(assay.type, col.var, row.var),
@@ -318,8 +336,43 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         fill.by = fill.by,
         size.by = size.by,
         shape.by = shape.by,
-        facet.by = facet.by
+        facet.by = facet.by,
+        x.box = x.box,
+        subject.group = subject.group,
+        difference = difference,
+        remove.x.axis = remove.x.axis
     )
+
+    return(df)
+}
+
+.add_fixed_jitterdodge <- function(
+        df, x, group.by = NULL, fill.by = NULL, facet.by = NULL,
+        jitter.width = 0.1, dodge.width = 0.75, ...
+) {
+    # Determine dodge grouping variable, if any
+    dodge.var <- if (!is.null(fill.by)) fill.by else group.by
+
+    # Convert to symbol once for cleaner dplyr usage
+    x_sym <- rlang::sym(x)
+
+    df <- df %>%
+        group_by(across(all_of(facet.by))) %>%
+        mutate(
+            x_base = as.numeric(factor(!!x_sym)),
+            x_base = if(all(.data[[x]] == 0)) x_base - 1 else x_base,
+            x_point = if (!is.null(dodge.var)) {
+                group_index = as.numeric(factor(.data[[dodge.var]]))
+                n_groups = n_distinct(.data[[dodge.var]])
+                x_dodged = x_base +
+                    (group_index - 1 - (n_groups - 1) / 2) * dodge.width / n_groups
+                x_dodged + runif(n(), -jitter.width, jitter.width)
+            } else {
+                x_base + runif(n(), -jitter.width, jitter.width)
+            }
+        ) %>%
+        ungroup() %>%
+        select(-x_base)
 
     return(df)
 }
@@ -327,13 +380,13 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 .plot_boxplot <- function(
         df, add.points = TRUE, scales = "fixed", ...){
     p <- ggplot(df, aes(
-        x = if(!is.null(attributes(df)[["x"]])) .data[[attributes(df)[["x"]]]] else 0,
+        x = .data[[attributes(df)[["x"]]]],
         y = .data[[attributes(df)[["value"]]]],
-        fill = if(!is.null(attributes(df)[["fill.by"]])) .data[[attributes(df)[["fill.by"]]]],
         group = if(!is.null(attributes(df)[["group.by"]])) .data[[attributes(df)[["group.by"]]]]
     ))
 
-    p <- .add_boxplot_layer(p, add.points, ...)
+
+    p <- .add_boxplot_layer(p, df, add.points, ...)
 
     point_position <- .get_point_position(df, add.points, ...)
     if( add.points ){
@@ -351,10 +404,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     return(p)
 }
 
-.add_boxplot_layer <- function(p, add.points, box.alpha = 0.5,  ...){
+.add_boxplot_layer <- function(p, df, add.points, box.alpha = 0.5, dodge.width = 0.8, ...){
     p <- p + geom_boxplot(
+        mapping = aes(
+            fill = if(!is.null(attributes(df)[["fill.by"]])) .data[[attributes(df)[["fill.by"]]]],
+            group = if(!is.null(attributes(df)[["x.box"]])) .data[[attributes(df)[["x.box"]]]]
+            ),
         outlier.shape = if(add.points) NA else 19,
-        alpha = box.alpha
+        alpha = box.alpha, position = position_dodge(width = dodge.width)
     )
     return(p)
 }
@@ -382,113 +439,59 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 .add_points_layer <- function(p, df, point_position, ...){
     p <- p + geom_point(aes(
+        x = x_point,
         colour = if(!is.null(attributes(df)[["colour.by"]])) .data[[attributes(df)[["colour.by"]]]],
         shape = if(!is.null(attributes(df)[["shape.by"]])) .data[[attributes(df)[["shape.by"]]]],
         size = if(!is.null(attributes(df)[["size.by"]])) .data[[attributes(df)[["size.by"]]]],
-        fill = if(!is.null(attributes(df)[["fill.by"]])) .data[[attributes(df)[["fill.by"]]]] else "black"
-    ), position = point_position)
-    # if( !is.null(attributes(df)[["pair.by"]]) ){
-    #     p <- p + geom_point(aes(
-    #         group = if(!is.null(attributes(df)[["pair.by"]])) .data[[attributes(df)[["pair.by"]]]],
-    #         colour = if(!is.null(attributes(df)[["colour.by"]])) .data[[attributes(df)[["colour.by"]]]],
-    #         shape = if(!is.null(attributes(df)[["shape.by"]])) .data[[attributes(df)[["shape.by"]]]],
-    #         size = if(!is.null(attributes(df)[["size.by"]])) .data[[attributes(df)[["size.by"]]]],
-    #         fill = if(!is.null(attributes(df)[["fill.by"]])) .data[[attributes(df)[["fill.by"]]]] else "black"
-    #     ), position = point_position)
-    # } else{
-    #     p <- p + geom_point(aes(
-    #         colour = if(!is.null(attributes(df)[["colour.by"]])) .data[[attributes(df)[["colour.by"]]]],
-    #         shape = if(!is.null(attributes(df)[["shape.by"]])) .data[[attributes(df)[["shape.by"]]]],
-    #         size = if(!is.null(attributes(df)[["size.by"]])) .data[[attributes(df)[["size.by"]]]],
-    #         fill = if(!is.null(attributes(df)[["fill.by"]])) .data[[attributes(df)[["fill.by"]]]] else "black"
-    #     ), position = point_position)
-    # }
+        fill = if(!is.null(attributes(df)[["fill.by"]])) .data[[attributes(df)[["fill.by"]]]]
+    ))
     return(p)
 }
 
-.add_line_layers <- function(p, df, point_position, ...){
-
-    p_data <- ggplot_build(p)
-
-    p_data <- p_data[["data"]][[2L]]
-    p_data
-    p_data <- cbind(p_data, df[, colnames(df) %in% c(attributes(df)[["pair.by"]], "difference", attributes(df)[["facet.by"]]), drop = FALSE])
-
-    p_data <- p_data[, colnames(p_data) %in% c(attributes(df)[["pair.by"]], "x", "y", "difference", attributes(df)[["facet.by"]]), drop = FALSE]
-    library(dplyr)
-    library(tidyr)
-
-    p_lines <- p_data |>
-        arrange(subject, x) |>
-        group_by(across(all_of(c(attributes(df)[["pair.by"]], attributes(df)[["facet.by"]])))) |>
-        filter(n() > 1) |>
-        mutate(
-            xend = lead(x),
-            yend = lead(y),
-            difference_lead = if ("difference" %in% names(p_data)) lead(difference) else NA_real_
-        ) |>
-        filter(!is.na(xend)) |>
-        ungroup()
-
+.add_line_layers <- function(p, df, point_position, line.alpha = 0.5, ...){
     p <- p +
-        geom_segment(
-            data = p_lines,
+        geom_path(
             aes(
-                x = x, xend = xend, y = y, yend = yend,
-                color = if(any(!is.na(.data[["difference_lead"]]))) difference_lead ),
-            inherit.aes = FALSE
+                x = x_point,
+                group = .data[[attributes(df)[["pair.by"]]]],
+                # color = if( !is.null(attributes(df)[["difference"]])) .data[[attributes(df)[["difference"]]]],
+                color = difference
+            ),
+            alpha = line.alpha
         )
-
-#
-#     p <- p +
-#         geom_path(
-#             data = df,
-#             aes(
-#                 group = .data[[attributes(df)[["pair.by"]]]],
-#                 color = if("difference" %in% colnames(df)) difference,
-#                 fill = if(!"difference" %in% colnames(df)) "black"
-#             ),
-#             position = point_position
-#         ) |>
-#         # For position_jitterdodge(), we have to specify one of the following
-#         # aesthetics: "fill", "colour", "linetype", "shape", "size", or "alpha".
-#         # As fill does not do nothing, we choose it. However, it gives this
-#         # warning which is suppressed: "Ignoring unknown aesthetics: fill"
-#         suppressWarnings()
-    if( "difference" %in% colnames(df) ){
+    if( !is.null(attributes(df)[["difference"]]) ){
         p <- p +
             scale_color_gradient2(
                 low="blue", mid="white", high="red",
-                limits = c(-max(abs(df[["difference"]])), max(abs(df[["difference"]]))))
+                limits = c(-max(abs(df[[attributes(df)[["difference"]]]])), max(abs(df[[attributes(df)[["difference"]]]]))))
     }
     return(p)
 }
 
 .adjust_boxplot_theme <- function(p, df, ...){
     p <- p + theme_classic()
-    if( is.null(attributes(df)[["x"]]) ){
+    if( attributes(df)[["remove.x.axis"]] ){
         p <- p +
             theme(
                 axis.title.x=element_blank(),
                 axis.text.x=element_blank(),
                 axis.ticks.x=element_blank()
             )
-    }
-    if( is.null(attributes(df)[["fill.by"]]) ){
-        p <- p +
-            guides(fill = "none")
-    }
-    if( !is.null(attributes(df)[["x"]]) ){
+    } else{
         p <- p + labs(
             x = attributes(df)[["x"]]
         )
     }
-    if( !is.null(attributes(df)[["fill.by"]]) ){
+    if( is.null(attributes(df)[["fill.by"]]) ){
+        p <- p +
+            guides(fill = "none")
+    } else{
         p <- p +
             labs(
                 fill = attributes(df)[["fill.by"]]
             )
     }
+
     if( !is.null(attributes(df)[["colour.by"]]) ){
         p <- p +
             labs(
