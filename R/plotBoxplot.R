@@ -2,14 +2,17 @@
 #' plotBoxplot
 #'
 #' @title
-#' Create boxplot of \code{assay}, \code{rowData} or \code{colData}
+#' Create boxplot of \code{assay}, \code{rowData} or \code{colData}.
 #'
 #' @description
 #' This methods visualizes abundances or variables from \code{rowData} or
 #' \code{colData}.
 #'
 #' @details
-#' Add here.
+#' A box plot is standard visualization technique to compare numeric values,
+#' such as abundance, between categorical values, such as sample groups.
+#' \code{plotBoxplot()} streamlines creation of box plots, and it offers
+#' multiple options for visualization.
 #'
 #' @return
 #' A \code{ggplot2} object.
@@ -31,7 +34,7 @@
 #'
 #' @param ... Additional parameters for plotting.
 #' \itemize{
-#'   \item \code{layout}: \code{Character scalar}. Specifies the layout of plot.
+#'   \item \code{facet.by}: \code{Character scalar}. Specifies the layout of plot.
 #'   Must be either \code{"histogram"} or \code{"density"}.
 #'   (Default: \code{"histogram"})
 #' }
@@ -274,19 +277,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     df <- .add_fixed_jitterdodge(
         df, x, c(assay.type, col.var, row.var), group.by, fill.by, facet.by,
         ...)
-
-    # subject.group <- NULL
-    # if( !is.null(pair.by) && !is.null(group.by) ){
-    #     subject.group <- "subject_group"
-    #     df[[subject.group]] <- interaction(df[[pair.by]], df[[group.by]])
-    #
-    # }
-
-
     df <- df |>
         as.data.frame()
-    # |>
-        # arrange(across(all_of(c(pair.by, facet.by))))
 
     # Add plotting options to attributes of the data.frame. Now the data.frame
     # includes all the information for plotting.
@@ -413,7 +405,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function adds boxplot layer
 .add_boxplot_layer <- function(
-        p, df, add.points, box.alpha = 0.5, dodge.width = 0.8,
+        p, df, add.points, box.alpha = 0.5, dodge.width = 0.75,
         point.shape = 21, ...){
     p <- p + geom_boxplot(
         mapping = aes(
