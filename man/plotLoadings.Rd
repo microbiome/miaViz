@@ -87,8 +87,11 @@ tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
 tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 
-#' # Plotting feature loadings with tree
-plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
+# Plotting feature loadings with tree
+# Remove suppressMessages({}) to see the suppressed messages.
+suppressMessages({
+    plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
+ })
 
 # Plotting matrix as a barplot
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
@@ -98,7 +101,7 @@ plotLoadings(loadings_matrix)
 plotLoadings(tse, dimred = "PCA", ncomponents = 2, n = 12)
 
 # Plotting matrix as heatmap without tree
-plotLoadings(loadings_matrix, layout = "heatmap")
+#' plotLoadings(loadings_matrix, layout = "heatmap")
 
 # Plot with less components
 plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)

@@ -123,6 +123,7 @@
 #'     )
 #'
 #' # Create RDA plot coloured by variable
+#' suppressWarnings({
 #' plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
 #'
 #' # Create RDA plot with empty ellipses
@@ -148,6 +149,7 @@
 #'
 #' # Create RDA plot from RDA matrix
 #' plotRDA(rda_mat)
+#' })
 NULL
 
 #' @rdname plotCCA
