@@ -58,7 +58,7 @@ data's intrinsic structure as captured by the ordination process."><!-- mathjax 
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Sorting by radial theta angle</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/devel/R/getNeatOrder.R" class="external-link"><code>R/getNeatOrder.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/exp/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/exp/R/getNeatOrder.R" class="external-link"><code>R/getNeatOrder.R</code></a></small>
     <div class="hidden name"><code>getNeatOrder.Rd</code></div>
     </div>
 
@@ -131,45 +131,8 @@ outlines this in more detail.</p>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/mia" class="external-link">mia</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: scuttle</span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap" class="external-link">ComplexHeatmap</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Loading required package: grid</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Attaching package: ‘grid’</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The following object is masked from ‘package:Biostrings’:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     pattern</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ========================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ComplexHeatmap version 2.23.0</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Bioconductor page: http://bioconductor.org/packages/ComplexHeatmap/</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Github page: https://github.com/jokergoo/ComplexHeatmap</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Documentation: http://jokergoo.github.io/ComplexHeatmap-reference</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> If you use it in published research, please cite either one:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Gu, Z. Complex Heatmap Visualization. iMeta 2022.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> - Gu, Z. Complex heatmaps reveal patterns and correlations in multidimensional </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>     genomic data. Bioinformatics 2016.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> The new InteractiveComplexHeatmap package can directly export static </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> complex heatmaps into an interactive Shiny app with zero effort. Have a try!</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This message can be suppressed by:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   suppressPackageStartupMessages(library(ComplexHeatmap))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ========================================</span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/circlize" class="external-link">circlize</a></span><span class="op">)</span></span></span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ========================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> circlize version 0.4.16</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> CRAN page: https://cran.r-project.org/package=circlize</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Github page: https://github.com/jokergoo/circlize</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Documentation: https://jokergoo.github.io/circlize_book/book/</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> If you use it in published research, please cite:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Gu, Z. circlize implements and enhances circular visualization</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   in R. Bioinformatics 2014.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> This message can be suppressed by:</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   suppressPackageStartupMessages(library(circlize))</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ========================================</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/ComplexHeatmap" class="external-link">ComplexHeatmap</a></span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jokergoo/circlize" class="external-link">circlize</a></span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">peerj13075</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Group data by taxonomic order</span></span></span>
