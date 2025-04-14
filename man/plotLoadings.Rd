@@ -88,10 +88,10 @@ tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 
 # Plotting feature loadings with tree
-# Remove suppressMessages({}) to see the suppressed messages.
-suppressMessages({
-    plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE)
- })
+plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE) |>
+    # Remove this line to see messages
+    suppressMessages()
+
 
 # Plotting matrix as a barplot
 loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")

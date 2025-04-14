@@ -143,8 +143,7 @@ tse <- addRDA(
     )
 
 # Create RDA plot coloured by variable
-suppressWarnings({
-plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
+plotRDA(tse, "RDA", colour.by = "ClinicalStatus") 
 
 # Create RDA plot with empty ellipses
 plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.ellipse = "colour")
@@ -169,5 +168,4 @@ rda_mat <- getRDA(
 
 # Create RDA plot from RDA matrix
 plotRDA(rda_mat)
-})
 }
