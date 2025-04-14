@@ -156,11 +156,11 @@ content in <code>reducedDim</code> slot calculated with standardized methods fro
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">tse</span>, ncomponents <span class="op">=</span> <span class="fl">5</span>, assay.type <span class="op">=</span> <span class="st">"clr"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting feature loadings with tree</span></span></span>
-<span class="r-in"><span><span class="co"># Remove suppressMessages({}) to see the suppressed messages.</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">{</span></span></span>
-<span class="r-in"><span>    <span class="fu">plotLoadings</span><span class="op">(</span><span class="va">tse</span>, dimred <span class="op">=</span> <span class="st">"PCA"</span>, layout <span class="op">=</span> <span class="st">"heatmap"</span>, add.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span> <span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotLoadings</span><span class="op">(</span><span class="va">tse</span>, dimred <span class="op">=</span> <span class="st">"PCA"</span>, layout <span class="op">=</span> <span class="st">"heatmap"</span>, add.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>    <span class="co"># Remove this line to see messages</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressMessages</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotLoadings-1.png" alt="" width="3000" height="2100"></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plotting matrix as a barplot</span></span></span>
 <span class="r-in"><span><span class="va">loadings_matrix</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span>, <span class="st">"PCA"</span><span class="op">)</span>, <span class="st">"rotation"</span><span class="op">)</span></span></span>
