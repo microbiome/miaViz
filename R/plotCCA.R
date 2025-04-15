@@ -123,8 +123,8 @@
 #'     )
 #'
 #' # Create RDA plot coloured by variable
-#' plotRDA(tse, "RDA", colour.by = "ClinicalStatus") 
-#' 
+#' plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
+#'
 #' # Create RDA plot with empty ellipses
 #' plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.ellipse = "colour")
 #'
