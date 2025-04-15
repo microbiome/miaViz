@@ -75,7 +75,7 @@
 #' plotLoadings(tse, dimred = "PCA", ncomponents = 2, n = 12)
 #'
 #' # Plotting matrix as heatmap without tree
-#' #' plotLoadings(loadings_matrix, layout = "heatmap")
+#' plotLoadings(loadings_matrix, layout = "heatmap")
 #'
 #' # Plot with less components
 #' plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)
