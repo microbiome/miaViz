@@ -43,6 +43,12 @@
 #'   \item \code{layout}: \code{Character scalar}. Specifies the layout of plot.
 #'   Must be either \code{"histogram"} or \code{"density"}.
 #'   (Default: \code{"histogram"})
+#'   \item \code{facet.by}: \code{Character vector}. Specifies variables from
+#'   \code{colData(x)} or \code{rowData(x)} used for facetting.
+#'   (Default: \code{NULL})
+#'   \item \code{fill.by}: \code{Character scalar}. Specifies variable from
+#'   \code{colData(x)} or \code{rowData(x)} used for coloring.
+#'   (Default: \code{NULL})
 #' }
 #'
 #' @examples
@@ -55,7 +61,12 @@
 #' # Apply transformation
 #' tse <- transformAssay(tse, method = "clr", pseudocount = TRUE)
 #' # And plot specified rows
-#' plotHistogram(tse, assay.type = "clr", features = rownames(tse)[1:10])
+#' plotHistogram(
+#'     tse,
+#'     assay.type = "clr",
+#'     features = rownames(tse)[1:5],
+#'     facet.by = "rownames"
+#' )
 #'
 #' # Calculate shannon diversity and visualize its distribution with density
 #' # plot
@@ -80,6 +91,7 @@ NULL
 setMethod("plotHistogram", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = NULL, features = NULL, row.var = NULL,
             col.var = NULL, ...){
+        # Add rownames to rowData so that they are available for plotting.
         rowData(x)[["rownames"]] <- rownames(x)
         # Check input
         args <- list(
@@ -91,7 +103,9 @@ setMethod("plotHistogram", signature = c(x = "SummarizedExperiment"),
         args[["mode"]] <- "histogram"
         df <- do.call(.get_histogram_data, args)
         # Create a histogram
-        p <- .plot_histogram(df, ...)
+        args <- c(list(df = df), list(...))
+        args <- args[ !names(args) %in% c("fill.by", "facet.by") ]
+        p <- do.call(.plot_histogram, args)
         return(p)
     }
 )
@@ -101,6 +115,7 @@ setMethod("plotHistogram", signature = c(x = "SummarizedExperiment"),
 setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     function(x, assay.type = NULL, features = NULL, row.var = NULL,
             col.var = NULL, ...){
+        # Add rownames to rowData so that they are available for plotting.
         rowData(x)[["rownames"]] <- rownames(x)
         # Check input
         args <- list(
@@ -112,10 +127,13 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         args[["mode"]] <- "barplot"
         df <- do.call(.get_histogram_data, args)
         # Create a barplot
-        p <- .plot_barplot(df, ...)
+        args <- c(list(df = df), list(...))
+        args <- args[ !names(args) %in% c("fill.by", "facet.by") ]
+        p <- do.call(.plot_barplot, args)
         return(p)
     }
 )
+
 ################################ HELP FUNCTIONS ################################
 
 # This function harmonizes the input check for histogram and bar plot
@@ -141,11 +159,11 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         stop("'assay.type' must be NULL or single character value.",
             call. = FALSE)
     }
-    if( !(is.null(row.var) || is.character(row.var)) ){
+    if( !(is.null(row.var) || .is_a_string(row.var)) ){
         stop("'row.var' must be NULL or single character value.",
             call. = FALSE)
     }
-    if( !(is.null(col.var) || is.character(col.var)) ){
+    if( !(is.null(col.var) || .is_a_string(col.var)) ){
         stop("'col.var' must be NULL or single character value.",
             call. = FALSE)
     }
@@ -171,10 +189,26 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         stop("'feature' must specify features from rownames(x).",
             call. = FALSE)
     }
-    temp <- .check_metadata_variable(x, fill.by, row = TRUE, col = TRUE, enable.multi = TRUE)
-    temp <- .check_metadata_variable(x, facet.by, row = TRUE, col = TRUE, enable.multi = TRUE)
+    temp <- .check_metadata_variable(
+        x, fill.by,
+        row = length(c(row.var, assay.type))>0,
+        col = length(c(col.var, assay.type))>0,
+        enable.multi = TRUE
+    )
+    temp <- .check_metadata_variable(
+        x, facet.by,
+        row = length(c(row.var, assay.type))>0,
+        col = length(c(col.var, assay.type))>0,
+        enable.multi = TRUE
+    )
     if( length(facet.by) > 2L ){
         stop("'facet.by' cannot specify more than 2 variables.", call. = FALSE)
+    }
+    if( !is.null(col.var) && col.var %in% c(facet.by, fill.by) ){
+        stop("'col.var' must not equal to 'fill.by' or 'facet.by'.", call. = FALSE)
+    }
+    if( !is.null(row.var) && row.var %in% c(facet.by, fill.by) ){
+        stop("'row.var' must not equal to 'fill.by' or 'facet.by'.", call. = FALSE)
     }
     return(NULL)
 }
@@ -213,27 +247,14 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         # colnames(df)[ colnames(df) == "FeatureID" ] <- "facet_by"
     }
     # If row.var was specified, get the data from rowData
-    if( !is.null(row.var) && is.null(assay.type) ){
-        df <- rowData(x)[, row.var, drop = FALSE]
+    if( !is.null(row.var) ){
+        df <- rowData(x)[, c(row.var, fill.by, facet.by), drop = FALSE]
+        colnames(df)[ colnames(df) == row.var ] <- "value"
     }
     # If col.var was specified, get the data from colData
-    if( !is.null(col.var) && is.null(assay.type) ){
-        df <- colData(x)[, col.var, drop = FALSE]
-    }
-    # If either row.var or col.var was specified, convert data into long format
-    if( (!is.null(row.var) || !is.null(col.var)) && is.null(assay.type) ){
-        cols <- colnames(df)
-        df[["id"]] <- rownames(df)
-        df <- df |> as.data.frame() |>
-            pivot_longer(
-                cols = all_of(cols),
-                names_to = "facet_by",
-                values_to = "value"
-                )
-    }
-    # If there is single facetting value, disable facetting
-    if( length(unique(df[["facet_by"]])) == 1L ){
-        df[["facet_by"]] <- NULL
+    if( !is.null(col.var) ){
+        df <- colData(x)[, c(col.var, fill.by, facet.by), drop = FALSE]
+        colnames(df)[ colnames(df) == col.var ] <- "value"
     }
     # Check that values are numeric for histogram and categorical for barplot
     if( mode == "histogram" && !is.numeric(df[["value"]]) ){
@@ -243,7 +264,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
             !(is.character(df[["value"]]) || is.factor(df[["value"]])) ){
         stop("Values must be categorical.", call. = FALSE)
     }
-    attributes(df)[["facet.by"]] <- c("facet_by", facet.by)[ c("facet_by", facet.by) %in% colnames(df) ]
+    attributes(df)[["facet.by"]] <- facet.by
     attributes(df)[["fill.by"]] <- fill.by
     attributes(df)[["x"]] <- c(assay.type, col.var, row.var)
     return(df)
@@ -297,7 +318,8 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
 
 # This function gets data.frame and creates a plot.
 .plot_barplot <- function(
-        df, color = colour, colour = "black", ...){
+        df, color = colour, colour = "black", alpha = 0.4,
+        position = ifelse(!is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"), ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     value <- facet_by <- NULL
     # Initialize a plot
@@ -307,11 +329,14 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
             .data[[attributes(df)[["fill.by"]]]]
         ))
     # Either create barplot
-    p <- p + geom_bar(color = color, ...)
+    p <- p + geom_bar(color = color, alpha = alpha, position = position, ...)
     # If there are multiple features and user wants to plot them separately,
     # apply facetting
-    if( "facet_by" %in% colnames(df) ){
-        p <- p + facet_wrap(vars(facet_by))
+    # if( "facet_by" %in% colnames(df) ){
+    #     p <- p + facet_wrap(vars(facet_by))
+    # }
+    if( length(attributes(df)[["facet.by"]]) > 0L ){
+        p <- p + facet_grid( attributes(df)[["facet.by"]] )
     }
     # Adjust theme
     p <- p + theme_classic()
