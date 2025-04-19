@@ -281,6 +281,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
 # This function gets data.frame and creates a plot.
 .plot_histogram <- function(
         df, layout = "histogram", color = colour, colour = "black", alpha = 0.4,
+        scales = "fixed",
         position = ifelse(
             !is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"),
         ...){
@@ -307,7 +308,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     }
     # Apply facetting
     if( length(attributes(df)[["facet.by"]]) > 0L ){
-        p <- p + facet_grid( attributes(df)[["facet.by"]] )
+        p <- p + facet_grid(attributes(df)[["facet.by"]], scales = scales)
     }
     # Adjust theme
     p <- p + theme_classic()
@@ -321,7 +322,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
 
 # This function gets data.frame and creates a plot.
 .plot_barplot <- function(
-        df, color = colour, colour = "black", alpha = 0.4,
+        df, color = colour, colour = "black", alpha = 0.4, scales = "fixed",
         position = ifelse(
             !is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"),
         ...){
@@ -337,7 +338,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     p <- p + geom_bar(color = color, alpha = alpha, position = position, ...)
     # Apply facetting
     if( length(attributes(df)[["facet.by"]]) > 0L ){
-        p <- p + facet_grid( attributes(df)[["facet.by"]] )
+        p <- p + facet_grid(attributes(df)[["facet.by"]], scales = scales)
     }
     # Adjust theme
     p <- p + theme_classic()
