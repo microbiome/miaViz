@@ -45,7 +45,7 @@ colData."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create histogram or barplot of <code>assay</code>, <code>rowData</code> or <code>colData</code></h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/exp/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/exp/R/plotHistogram.R" class="external-link"><code>R/plotHistogram.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/improve_histogram/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/improve_histogram/R/plotHistogram.R" class="external-link"><code>R/plotHistogram.R</code></a></small>
     <div class="hidden name"><code>plotHistogram.Rd</code></div>
     </div>
 
@@ -94,6 +94,12 @@ object.</p></dd>
 <dd><p>Additional parameters for plotting.</p><ul><li><p><code>layout</code>: <code>Character scalar</code>. Specifies the layout of plot.
 Must be either <code>"histogram"</code> or <code>"density"</code>.
 (Default: <code>"histogram"</code>)</p></li>
+<li><p><code>facet.by</code>: <code>Character vector</code>. Specifies variables from
+<code>colData(x)</code> or <code>rowData(x)</code> used for facetting.
+(Default: <code>NULL</code>)</p></li>
+<li><p><code>fill.by</code>: <code>Character scalar</code>. Specifies variable from
+<code>colData(x)</code> or <code>rowData(x)</code> used for coloring.
+(Default: <code>NULL</code>)</p></li>
 </ul></dd>
 
 
@@ -158,7 +164,12 @@ distributions.</p>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"clr"</span>, pseudocount <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> A pseudocount of 0.5 was applied.</span>
 <span class="r-in"><span><span class="co"># And plot specified rows</span></span></span>
-<span class="r-in"><span><span class="fu">plotHistogram</span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"clr"</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotHistogram</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"clr"</span>,</span></span>
+<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">5</span><span class="op">]</span>,</span></span>
+<span class="r-in"><span>    facet.by <span class="op">=</span> <span class="st">"rownames"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</span>
 <span class="r-plt img"><img src="plotHistogram-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
