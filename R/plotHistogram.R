@@ -189,26 +189,33 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         stop("'feature' must specify features from rownames(x).",
             call. = FALSE)
     }
+    # Check that facetting and cooring variables can be found correctly from
+    # row or column metadata
     temp <- .check_metadata_variable(
         x, fill.by,
         row = length(c(row.var, assay.type))>0,
         col = length(c(col.var, assay.type))>0,
-        enable.multi = TRUE
+        multiple = TRUE
     )
     temp <- .check_metadata_variable(
         x, facet.by,
         row = length(c(row.var, assay.type))>0,
         col = length(c(col.var, assay.type))>0,
-        enable.multi = TRUE
+        multiple = TRUE
     )
+    # User cannot specify more than 2 variables for facetting
     if( length(facet.by) > 2L ){
         stop("'facet.by' cannot specify more than 2 variables.", call. = FALSE)
     }
+    # It does not make sense to visualize same variable as used for facetting or
+    # coloring
     if( !is.null(col.var) && col.var %in% c(facet.by, fill.by) ){
-        stop("'col.var' must not equal to 'fill.by' or 'facet.by'.", call. = FALSE)
+        stop("'col.var' must not equal to 'fill.by' or 'facet.by'.",
+            call. = FALSE)
     }
     if( !is.null(row.var) && row.var %in% c(facet.by, fill.by) ){
-        stop("'row.var' must not equal to 'fill.by' or 'facet.by'.", call. = FALSE)
+        stop("'row.var' must not equal to 'fill.by' or 'facet.by'.",
+            call. = FALSE)
     }
     return(NULL)
 }
@@ -217,8 +224,8 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
 # for inputting it to plotting function.
 #' @importFrom tidyr pivot_longer
 .get_histogram_data <- function(
-        x, assay.type, features, row.var, col.var, mode = "histogram",
-        fill.by = NULL, facet.by = NULL, ...){
+        x, assay.type, features, row.var, col.var,
+        fill.by = NULL, facet.by = NULL, mode = "histogram", ...){
     #
     if( !(.is_a_string(mode) && mode %in% c("histogram", "barplot")) ){
         stop("'mode' must be 'histogram' or 'barplot'.", call. = FALSE)
@@ -244,7 +251,6 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     # If features wre specified, subset data
     if( !is.null(features) ){
         df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
-        # colnames(df)[ colnames(df) == "FeatureID" ] <- "facet_by"
     }
     # If row.var was specified, get the data from rowData
     if( !is.null(row.var) ){
@@ -264,6 +270,8 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
             !(is.character(df[["value"]]) || is.factor(df[["value"]])) ){
         stop("Values must be categorical.", call. = FALSE)
     }
+    # Add facetting, coloring and x-axis title info to attributes so that we
+    # can use it in plotting function.
     attributes(df)[["facet.by"]] <- facet.by
     attributes(df)[["fill.by"]] <- fill.by
     attributes(df)[["x"]] <- c(assay.type, col.var, row.var)
@@ -273,7 +281,9 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
 # This function gets data.frame and creates a plot.
 .plot_histogram <- function(
         df, layout = "histogram", color = colour, colour = "black", alpha = 0.4,
-        position = ifelse(!is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"), ...){
+        position = ifelse(
+            !is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"),
+        ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     value <- facet_by <- NULL
     # Check layout
@@ -292,24 +302,17 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     if( layout == "density" ){
         p <- p + geom_density(alpha = alpha, ...)
     } else{
-        p <- p + geom_histogram(color = color, alpha = alpha, position = position, ...)
+        p <- p + geom_histogram(
+            color = color, alpha = alpha, position = position, ...)
     }
-    # If there are multiple features and user wants to plot them separately,
-    # apply facetting
-    # if( "facet_by" %in% colnames(df) ){
-    #     p <- p + facet_wrap(vars(facet_by))
-    # }
+    # Apply facetting
     if( length(attributes(df)[["facet.by"]]) > 0L ){
         p <- p + facet_grid( attributes(df)[["facet.by"]] )
     }
     # Adjust theme
     p <- p + theme_classic()
-    # Otherwise, we add correct title from original variable name
-    p <- p + labs(
-        x = attributes(df)[["x"]]
-    )
-    # Add correct titles for aesthetics. The titles are the original variable
-    # names.
+    # Adjust titles
+    p <- p + labs(x = attributes(df)[["x"]])
     if( !is.null(attributes(df)[["fill.by"]]) ){
         p <- p + labs(fill = attributes(df)[["fill.by"]])
     }
@@ -319,7 +322,9 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
 # This function gets data.frame and creates a plot.
 .plot_barplot <- function(
         df, color = colour, colour = "black", alpha = 0.4,
-        position = ifelse(!is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"), ...){
+        position = ifelse(
+            !is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"),
+        ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     value <- facet_by <- NULL
     # Initialize a plot
@@ -330,45 +335,16 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         ))
     # Either create barplot
     p <- p + geom_bar(color = color, alpha = alpha, position = position, ...)
-    # If there are multiple features and user wants to plot them separately,
-    # apply facetting
-    # if( "facet_by" %in% colnames(df) ){
-    #     p <- p + facet_wrap(vars(facet_by))
-    # }
+    # Apply facetting
     if( length(attributes(df)[["facet.by"]]) > 0L ){
         p <- p + facet_grid( attributes(df)[["facet.by"]] )
     }
     # Adjust theme
     p <- p + theme_classic()
-    # Otherwise, we add correct title from original variable name
-    p <- p + labs(
-        x = attributes(df)[["x"]]
-    )
-    # Add correct titles for aesthetics. The titles are the original variable
-    # names.
+    # Adjust titles
+    p <- p + labs(x = attributes(df)[["x"]])
     if( !is.null(attributes(df)[["fill.by"]]) ){
         p <- p + labs(fill = attributes(df)[["fill.by"]])
     }
     return(p)
-}
-
-# This function checks whether variable can be found from colData or rowData.
-.check_metadata_variable <- function(
-        tse, var, row = FALSE, col = FALSE,
-        var.name = .get_name_in_parent(var), enable.multi = FALSE){
-    # If the variable is not NULL
-    if( !is.null(var) ){
-        # It must be a string and found from colData/rowData
-        is_string <- ifelse(enable.multi, is.character(var), .is_a_string(var))
-        check_values <- c()
-        check_values <- c(check_values, if(col) colnames(colData(tse)))
-        check_values <- c(check_values, if(row) colnames(rowData(tse)))
-        var_found <- all( var %in% check_values )
-        if( !(is_string && var_found) ){
-            stop("'", var.name, "' must be", ifelse(enable.multi, "", "a single "), "character value from the ",
-                 "following options: '",
-                 paste0(check_values, collapse = "', '"), "'", call. = FALSE)
-        }
-    }
-    return(NULL)
 }
