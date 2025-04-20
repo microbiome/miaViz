@@ -328,7 +328,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # boxplot is set with ggplot.
 .add_fixed_jitterdodge <- function(
         df, x, y, group.by, fill.by, facet.by,
-        jitter.width = 0.1, jitter.height = 0, dodge.width = 0.75, ...){
+        jitter.width = 0.05, jitter.height = 0, dodge.width = 0.8,
+        apply.beeswarm = FALSE, ...){
     if( !.is_a_numeric(jitter.width) ){
         stop("'jitter.width' must be numeric.", call. = FALSE)
     }
@@ -338,10 +339,12 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !.is_a_numeric(dodge.width) ){
         stop("'dodge.width' must be numeric.", call. = FALSE)
     }
+    if( !.is_a_bool(apply.beeswarm) ){
+        stop("'apply.beeswarm' must be TRUE or FALSE.", call. = FALSE)
+    }
     #
     # Determine dodge grouping variable, if any
     dodge.var <- if (!is.null(fill.by)) fill.by else group.by
-    #
     df <- df |>
         as.data.frame() |>
         # If there are facets, we specify jitter and dodge for each one
@@ -352,9 +355,28 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             x_point = as.numeric(factor(.data[[x]])),
             # If x-axis was not specified, move base x-axis back to 0 as they
             # are currently starting from 1.
-            x_point = if(all(.data[[x]] == 0)) x_point - 1 else x_point,
+            x_point = if(all(.data[[x]] == 0)) x_point - 1 else x_point
+        )
+    # Apply dodge
+    df <- .apply_dodge(df, x, dodge.var, dodge.width)
+    # Apply either jitter or beeswarm (or none)
+    if( !apply.beeswarm ){
+        df <- .apply_jitter(df, y, jitter.width, jitter.height)
+    } else{
+        df <- .apply_beeswarm(df, x, y, facet.by, dodge.var, dodge.width, ...)
+    }
+    df <- df |>
+        ungroup()
+    return(df)
+}
+
+# If there are grouping with group.by or fill.by, we add dodge so that points
+# are aligned correctly with the boxplots.
+.apply_dodge <- function(df, x, dodge.var, dodge.width){
+    df <- df |>
+        mutate(
             # Add dodge if there are groups
-            x_point = if (!is.null(dodge.var)) {
+            x_point = if( !is.null(dodge.var) && dodge.var != x ) {
                 group_index = as.numeric(factor(.data[[dodge.var]]))
                 n_groups = n_distinct(.data[[dodge.var]])
                 x_dodged = x_point +
@@ -362,13 +384,53 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                     n_groups
             } else{
                 x_point
-            },
-            # Add jitter
+            }
+        )
+    return(df)
+}
+
+# This function adds random jitter to points.
+.apply_jitter <- function(df, y, jitter.width, jitter.height){
+    df <- df |>
+        mutate(
+            # Add jitter for x axis
             x_point = x_point + runif(n(), -jitter.width, jitter.width),
             # Add jitter for y-axis
             y_point = .data[[y]] + runif(n(), -jitter.height, jitter.height)
-        ) |>
-        ungroup()
+        )
+    return(df)
+}
+
+# This function adds beeswarm to points.
+#' @importFrom scales rescale
+.apply_beeswarm <- function(
+        df, x, y, facet.by, dodge.var, dodge.width,
+        beeswarm.method = "swarm", beeswarm.corral = "none", ...){
+    .require_package("beeswarm")
+    # We apply beeswarm for each facet, x axis variable and group
+    grouping_vars <- c(facet.by, x, dodge.var)
+    grouping_vars <- grouping_vars[!is.null(grouping_vars)]
+    n_groups <- if (is.null(dodge.var)) n_distinct(df[[x]]) else
+        n_distinct(df[[dodge.var]])
+    # Apply beeswarm
+    df <- df |>
+        group_by(across(all_of(grouping_vars))) |>
+        group_modify(~{
+            # We calculate beeswarm with beeswarm::beeswarm()
+            swarm <- beeswarm::beeswarm(
+                .x[[y]],
+                method = beeswarm.method,
+                corral = beeswarm.corral,
+                do.plot = FALSE
+            )
+            # We adjust beeswarm x axis position based on dodge
+            max_spread <- 0.5 * dodge.width / n_groups
+            x_scaled <- rescale(
+                swarm[["x"]], to = c(-max_spread/2, max_spread/2))
+            .x[["x_point"]] <- mean(.x[["x_point"]]) + x_scaled
+            .x[["y_point"]] <- swarm[["y"]]
+            return(.x)
+        })
     return(df)
 }
 
@@ -405,7 +467,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function adds boxplot layer
 .add_boxplot_layer <- function(
-        p, df, add.points, box.alpha = 0.5, dodge.width = 0.75,
+        p, df, add.points, box.alpha = 0.5, dodge.width = 0.8,
         point.shape = 21, ...){
     p <- p + geom_boxplot(
         mapping = aes(
