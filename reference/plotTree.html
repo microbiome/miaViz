@@ -47,7 +47,7 @@ additional information."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plotting tree information enriched with information</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/devel/R/plotTree.R" class="external-link"><code>R/plotTree.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/improve_docs/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/improve_docs/R/plotTree.R" class="external-link"><code>R/plotTree.R</code></a></small>
     <div class="hidden name"><code>plotTree.Rd</code></div>
     </div>
 
@@ -168,9 +168,9 @@ additional information.</p>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional arguments for plotting. See
-<code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call
-<code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></dd>
+<dd><p>additional arguments for plotting. See <code><a href="mia-plot-args.html">mia-plot-args</a></code>
+(e.g., call <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code>) and
+<code><a href="https://rdrr.io/pkg/ggtree/man/ggtree.html" class="external-link">ggtree</a></code> for details.</p></dd>
 
 
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
@@ -454,6 +454,8 @@ as the number of nodes, the vector will be used to relabel the nodes.</p>
 <span class="r-in"><span>            show.highlights <span class="op">=</span> <span class="va">highlights</span>,</span></span>
 <span class="r-in"><span>            show.highlight.label <span class="op">=</span> <span class="va">highlights</span>,</span></span>
 <span class="r-in"><span>            colour.highlights.by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>some tip numbers were larger than the number of tips: they were ignored</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>537 row(s) are dropped due to mismatch with nodes of 'value'</span>
 <span class="r-plt img"><img src="plotTree-6.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">plotRowTree</span><span class="op">(</span><span class="va">x</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="va">Phylum</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">top_phyla</span>,<span class="op">]</span>,</span></span>
@@ -461,6 +463,8 @@ as the number of nodes, the vector will be used to relabel the nodes.</p>
 <span class="r-in"><span>            edge.size.by <span class="op">=</span> <span class="st">"detected"</span>,</span></span>
 <span class="r-in"><span>            tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>,</span></span>
 <span class="r-in"><span>            node.colour.by <span class="op">=</span> <span class="st">"log_mean"</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>some tip numbers were larger than the number of tips: they were ignored</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>537 row(s) are dropped due to mismatch with nodes of 'value'</span>
 <span class="r-plt img"><img src="plotTree-7.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
     </div>
