@@ -81,7 +81,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         tse, assay.type, features, row.var, col.var, x, group.by, pair.by = NULL,
         add.chance = FALSE, colour.by = color.by, color.by = NULL,
         fill.by = NULL, size.by = NULL, shape.by = NULL, facet.by = NULL,
-        add.points = TRUE, ...){
+        add.points = TRUE, add.prevalence = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
         stop("Please specify either 'assay.type', 'row.var', or 'col.var'.",
@@ -105,6 +105,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # If assay was specified, check that it is correct.
     if( !is.null(assay.type) ){
         .check_assay_present(assay.type, tse)
+    }
+    if( !.is_a_bool(add.prevalence) ){
+        stop("'add.prevalence' must be TRUE or FALSE.", call. = FALSE)
     }
     # Check colData/rowData variables
     temp <- .check_metadata_variable(tse, row.var, row = TRUE)
@@ -210,7 +213,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.chance = FALSE,
         colour.by = color.by, color.by = NULL,
         size.by = NULL, shape.by = NULL, facet.by = NULL,
-        fill.by = NULL,
+        fill.by = NULL, add.prevalence = FALSE,
         ...){
     # If assay.type is specified, get melted data
     all_vars <- c(x, group.by, colour.by, size.by, shape.by, facet.by, fill.by)
@@ -244,6 +247,13 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Check that y-axis is numeric
     if( !is.numeric(df[[c(assay.type, col.var, row.var)]]) ){
         stop("Y-axis must be numeric.", call. = FALSE)
+    }
+    # Prevalence can be added only if values are non-negative
+    is_negative <- any(!is.na(df[[c(assay.type, col.var, row.var)]]) &
+        df[[c(assay.type, col.var, row.var)]]<0)
+    if( add.prevalence && is_negative ){
+        stop("When 'add.prevalence=TRUE', values must be non-negative.",
+            call. = FALSE)
     }
 
     # If user specified, calculate difference
@@ -344,7 +354,25 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     #
     # Determine dodge grouping variable, if any
-    dodge.var <- if (!is.null(fill.by)) fill.by else group.by
+    dodge_var <- if (!is.null(fill.by)) fill.by else group.by
+    # Convert categorical x-axis to numeric
+    df <- .categorical_x_to_numeric(df, x, facet.by)
+    # Apply dodge
+    df <- .apply_dodge(df, x, dodge_var, dodge.width)
+    # Apply either jitter or beeswarm (or none)
+    if( !apply.beeswarm ){
+        df <- .apply_jitter(df, y, jitter.width, jitter.height)
+    } else{
+        df <- .apply_beeswarm(df, x, y, facet.by, dodge_var, dodge.width, ...)
+    }
+    df <- df |>
+        ungroup()
+    return(df)
+}
+
+# This function converts categorical x axis values to numeric so that we can use
+# them to determine position of points
+.categorical_x_to_numeric <- function(df, x, facet.by){
     df <- df |>
         as.data.frame() |>
         # If there are facets, we specify jitter and dodge for each one
@@ -357,16 +385,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             # are currently starting from 1.
             x_point = if(all(.data[[x]] == 0)) x_point - 1 else x_point
         )
-    # Apply dodge
-    df <- .apply_dodge(df, x, dodge.var, dodge.width)
-    # Apply either jitter or beeswarm (or none)
-    if( !apply.beeswarm ){
-        df <- .apply_jitter(df, y, jitter.width, jitter.height)
-    } else{
-        df <- .apply_beeswarm(df, x, y, facet.by, dodge.var, dodge.width, ...)
-    }
-    df <- df |>
-        ungroup()
     return(df)
 }
 
@@ -435,7 +453,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function is the main plotter function
-.plot_boxplot <- function(df, add.points = TRUE, scales = "fixed", ...){
+.plot_boxplot <- function(
+        df, add.points = TRUE, scales = "fixed", add.prevalence = FALSE, ...){
     # Initialize the plot
     p <- ggplot(df, aes(
         x = .data[[attributes(df)[["x"]]]],
@@ -451,6 +470,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Add lines connecting points
     if( !is.null(attributes(df)[["pair.by"]]) ){
         p <- .add_line_layers(p, df, ...)
+    }
+    # If user wants to add prevalence bar under the boxplot
+    if( add.prevalence ){
+        p <- .add_prevalence_bar(p, df, ...)
     }
     # If facetting was specified, split plot to separate panels
     if( !is.null(attributes(df)[["facet.by"]]) ){
@@ -544,6 +567,70 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 max(abs(df[[attributes(df)[["difference"]]]])))
             )
     }
+    return(p)
+}
+
+# This function adds bar under the boxplot to denote prevalence.
+.add_prevalence_bar <- function(p, df, detection = 0, dodge.width = 0.8, ...){
+    if( !.is_a_numeric(detection) ){
+        stop("'detection' must be a single numeric value.", call. = FALSE)
+    }
+    if( !.is_a_numeric(dodge.width) ){
+        stop("'dodge.width' must be numeric.", call. = FALSE)
+    }
+    #
+    # Offset for prevalence bar layer below zero
+    prevalence_height <- -0.04  # how far below y=0 the bars are drawn
+    bar_thickness <- 0.015     # height of the bar
+    bar_width <- 0.75        # width of background bar
+    # If facetting is not applied but there is grouping, the default width does
+    # not fit.
+    if( is.null(attributes(df)[["facet.by"]]) &&
+        (!is.null(attributes(df)[["fill.by"]]) ||
+         !is.null(attributes(df)[["group.by"]])) ){
+        group <- c(attributes(df)[["fill.by"]], attributes(df)[["group.by"]])
+        num_groups <- df[[group]] |> unique() |> length()
+        bar_width <- bar_width / num_groups
+    }
+
+    # Determine dodge grouping variable, if any
+    dodge_var <- if (!is.null(attributes(df)[["fill.by"]]))
+        attributes(df)[["fill.by"]] else attributes(df)[["group.by"]]
+    # Convert categorical x-axis to numeric
+    df_prev <- .categorical_x_to_numeric(
+        df, attributes(df)[["x"]], attributes(df)[["facet.by"]])
+    # Apply dodge
+    df_prev <- .apply_dodge(
+        df_prev, attributes(df)[["x"]], dodge_var, dodge.width)
+
+    # Calculate prevalence
+    grouping_var <- c(
+        "x_point", attributes(df)[["facet.by"]],
+        attributes(df)[["group.by"]], attributes(df)[["fill.by"]]) |> unique()
+    df_prev <- df_prev |>
+        group_by(across(all_of(grouping_var))) |>
+        summarise(prevalence = mean(
+            .data[[attributes(df)[["value"]]]] > detection, na.rm = TRUE))
+    # Add prevalence bar plot
+    p <- p +
+        # White background bar
+        geom_rect(
+            data = df_prev,
+            mapping = aes(
+                xmin = x_point - bar_width / 2,
+                xmax = x_point + bar_width / 2,
+                ymin = prevalence_height - bar_thickness / 2,
+                ymax = prevalence_height + bar_thickness / 2),
+            fill = "white", color = "black", inherit.aes = FALSE) +
+        # Filled bar
+        geom_rect(
+            data = df_prev,
+            mapping = aes(
+                xmin = x_point - bar_width / 2,
+                xmax = x_point - bar_width / 2 + prevalence * bar_width,
+                ymin = prevalence_height - bar_thickness / 2,
+                ymax = prevalence_height + bar_thickness / 2),
+            fill = "black", inherit.aes = FALSE)
     return(p)
 }
 
