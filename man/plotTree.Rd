@@ -108,9 +108,9 @@ plotColTree(x, ...)
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
-\item{...}{additional arguments for plotting. See
-\code{\link{mia-plot-args}} for more details i.e. call
-\code{help("mia-plot-args")}}
+\item{...}{additional arguments for plotting. See \code{\link{mia-plot-args}}
+(e.g., call \code{help("mia-plot-args")}) and
+\code{\link[ggtree:ggtree]{ggtree}} for details.}
 
 \item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
 \code{x}. (Default: \code{tree.name = "phylo"})}
