@@ -122,7 +122,7 @@
 #'     na.action = na.exclude
 #'     )
 #'
-#' suppressWarnings(
+#' suppressWarnings({
 #' # Create RDA plot coloured by variable
 #' plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
 #'
@@ -149,7 +149,7 @@
 #'
 #' # Create RDA plot from RDA matrix
 #' plotRDA(rda_mat)
-#' )
+#' })
 #'
 NULL
 
