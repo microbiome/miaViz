@@ -142,6 +142,7 @@ tse <- addRDA(
     na.action = na.exclude
     )
 
+suppressWarnings({
 # Create RDA plot coloured by variable
 plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
 
@@ -168,4 +169,6 @@ rda_mat <- getRDA(
 
 # Create RDA plot from RDA matrix
 plotRDA(rda_mat)
+})
+
 }

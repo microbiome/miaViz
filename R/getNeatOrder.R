@@ -50,8 +50,8 @@
 #' # Load the required libraries and dataset
 #' library(mia)
 #' library(scater)
-#' library(ComplexHeatmap)
-#' library(circlize)
+#' library(ComplexHeatmap) |> suppressPackageStartupMessages()
+#' library(circlize) |> suppressPackageStartupMessages()
 #' data(peerj13075)
 #'
 #' # Group data by taxonomic order
