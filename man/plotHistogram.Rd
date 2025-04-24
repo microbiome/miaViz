@@ -97,9 +97,14 @@ plotHistogram(
 )
 
 # Calculate shannon diversity and visualize its distribution with density
-# plot
+# plot. Different sample types are separated with color.
 tse <- addAlpha(tse, index = "shannon")
-plotHistogram(tse, col.var = "shannon", layout = "density")
+plotHistogram(
+    tse,
+    col.var = "shannon",
+    layout = "density",
+    fill.by = "SampleType"
+)
 
 # For categorical values, one can utilize a bar plot
 plotBarplot(tse, col.var = "SampleType")

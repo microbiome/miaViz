@@ -69,9 +69,14 @@
 #' )
 #'
 #' # Calculate shannon diversity and visualize its distribution with density
-#' # plot
+#' # plot. Different sample types are separated with color.
 #' tse <- addAlpha(tse, index = "shannon")
-#' plotHistogram(tse, col.var = "shannon", layout = "density")
+#' plotHistogram(
+#'     tse,
+#'     col.var = "shannon",
+#'     layout = "density",
+#'     fill.by = "SampleType"
+#' )
 #'
 #' # For categorical values, one can utilize a bar plot
 #' plotBarplot(tse, col.var = "SampleType")
@@ -270,18 +275,31 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
             !(is.character(df[["value"]]) || is.factor(df[["value"]])) ){
         stop("Values must be categorical.", call. = FALSE)
     }
-    # Add facetting, coloring and x-axis title info to attributes so that we
+    # Facetting and coloring values must be categorical
+    are_correct <- vapply(df[, facet.by, drop = FALSE], function(col){
+        is.character(col) || is.factor(col)
+    }, logical(1L))
+    if( !all(are_correct) ){
+        stop("'facet.by' must specify categorical values.", call. = FALSE)
+    }
+    are_correct <- vapply(df[, fill.by, drop = FALSE], function(col){
+        is.character(col) || is.factor(col)
+    }, logical(1L))
+    if( !all(are_correct) ){
+        stop("'fill.by' must specify categorical values.", call. = FALSE)
+    }
+    # Add x-axis title, facetting, and coloring info to attributes so that we
     # can use it in plotting function.
+    attributes(df)[["x"]] <- c(assay.type, col.var, row.var)
     attributes(df)[["facet.by"]] <- facet.by
     attributes(df)[["fill.by"]] <- fill.by
-    attributes(df)[["x"]] <- c(assay.type, col.var, row.var)
     return(df)
 }
 
 # This function gets data.frame and creates a plot.
 .plot_histogram <- function(
-        df, layout = "histogram", color = colour, colour = "black", alpha = 0.4,
-        scales = "fixed",
+        df, layout = "histogram", color = colour, colour = "black",
+        fill = "grey35", alpha = 0.4, scales = "fixed",
         position = ifelse(
             !is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"),
         ...){
@@ -297,11 +315,11 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     p <- ggplot(df, aes(
         x = value,
         fill = if(!is.null(attributes(df)[["fill.by"]]))
-            .data[[attributes(df)[["fill.by"]]]]
+            .data[[attributes(df)[["fill.by"]]]] else fill
         ))
     # Either create histogram or density
     if( layout == "density" ){
-        p <- p + geom_density(alpha = alpha, ...)
+        p <- p + geom_density(color = color, alpha = alpha, ...)
     } else{
         p <- p + geom_histogram(
             color = color, alpha = alpha, position = position, ...)
@@ -316,13 +334,16 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     p <- p + labs(x = attributes(df)[["x"]])
     if( !is.null(attributes(df)[["fill.by"]]) ){
         p <- p + labs(fill = attributes(df)[["fill.by"]])
+    } else{
+        p <- p + guides(fill = "none")
     }
     return(p)
 }
 
 # This function gets data.frame and creates a plot.
 .plot_barplot <- function(
-        df, color = colour, colour = "black", alpha = 0.4, scales = "fixed",
+        df, color = colour, colour = "black", fill = "grey35", alpha = 0.4,
+        scales = "fixed",
         position = ifelse(
             !is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"),
         ...){
@@ -332,7 +353,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     p <- ggplot(df, aes(
         x = value,
         fill = if(!is.null(attributes(df)[["fill.by"]]))
-            .data[[attributes(df)[["fill.by"]]]]
+            .data[[attributes(df)[["fill.by"]]]] else fill
         ))
     # Either create barplot
     p <- p + geom_bar(color = color, alpha = alpha, position = position, ...)
@@ -346,6 +367,8 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     p <- p + labs(x = attributes(df)[["x"]])
     if( !is.null(attributes(df)[["fill.by"]]) ){
         p <- p + labs(fill = attributes(df)[["fill.by"]])
+    } else{
+        p <- p + guides(fill = "none")
     }
     return(p)
 }
