@@ -9,8 +9,8 @@ test_that("plot RDA/CCA", {
   expect_error(plotRDA(tse, "RDA"), "'dimred' must specify reducedDim.")
 
   # Run/calculate RDA
-  tse <- addRDA(tse, formula = assay ~ patient_status + cohort)
-  rda <- getRDA(tse, formula = assay ~ patient_status + cohort)
+  tse <- addRDA(tse, assay.type = "counts", formula = assay ~ patient_status + cohort)
+  rda <- getRDA(tse, assay.type = "counts", formula = assay ~ patient_status + cohort)
 
   # Minimal functionality
   expect_no_error(plotRDA(tse, "RDA"))

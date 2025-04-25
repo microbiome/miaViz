@@ -46,7 +46,7 @@ test_that("plotHistogram returns a ggplot object for valid inputs", {
     expect_s3_class(p, "ggplot")
 
     # Check for ggplot object when col.var is specified
-    p <- plotHistogram(tse, col.var = "value")
+    p <- plotHistogram(tse, col.var = "value", fill.by = "group")
     expect_s3_class(p, "ggplot")
 
     # Check that the values are correct
@@ -55,11 +55,12 @@ test_that("plotHistogram returns a ggplot object for valid inputs", {
 
 test_that("plotBarplot returns a ggplot object for valid inputs", {
     tse <- makeTSE()
+    rowData(tse)[["group"]] <- sample(c("A", "B"), nrow(tse), replace = TRUE)
     # Check for ggplot object when assay.type is specified
     p <- plotBarplot(tse, col.var = "group")
     expect_s3_class(p, "ggplot")
     # Check for ggplot object when row.var is specified
-    p <- plotBarplot(tse, row.var = "var1")
+    p <- plotBarplot(tse, row.var = "var1", facet.by = "group")
     expect_s3_class(p, "ggplot")
     # Check that the values are correct
     expect_equal(rowData(tse)[["var1"]], p$data$value)

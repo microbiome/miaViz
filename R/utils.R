@@ -18,6 +18,8 @@
 .get_name_in_parent <- mia:::.get_name_in_parent
 .is_an_integer <- mia:::.is_an_integer
 TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
+.is_a_numeric <- mia:::.is_a_numeric
+.capitalize <- mia:::.capitalize
 .check_rowTree_present <- mia:::.check_rowTree_present
 .check_colTree_present <- mia:::.check_colTree_present
 
@@ -49,4 +51,28 @@ TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
         }
     }
     label
+}
+
+# This function checks whether variable can be found from colData or rowData.
+.check_metadata_variable <- function(
+        tse, var, row = FALSE, col = FALSE, multiple = FALSE,
+        var.name = .get_name_in_parent(var)){
+    if( !.is_a_bool(multiple) ){
+        stop("'multiple' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # If the variable is not NULL
+    if( !is.null(var) ){
+        # It must be a string and found from colData/rowData
+        is_string <- ifelse(multiple, is.character(var), .is_a_string(var))
+        check_values <- c()
+        check_values <- c(check_values, if(col) colnames(colData(tse)))
+        check_values <- c(check_values, if(row) colnames(rowData(tse)))
+        var_found <- all( var %in% check_values )
+        if( !(is_string && var_found) ){
+            stop("'", var.name, "' must be", ifelse(multiple, "", "a single "),
+                "character value from the following options: '",
+                paste0(check_values, collapse = "', '"), "'", call. = FALSE)
+        }
+    }
+    return(NULL)
 }

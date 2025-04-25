@@ -59,6 +59,12 @@ of plot is changed so that x-axis and y-axis are swapped.
 
 \item \code{add_x_text} \code{Logical scalar}. Determines if text that
 represents values is included in x-axis. (Default: \code{TRUE})
+
+\item \code{jitter.height} \code{Numeric scalar}. Controls jitter in a
+jitter plot. (Default: \code{0.25})
+
+\item \code{jitter.width} \code{Numeric scalar}. Controls jitter in a
+jitter plot. (Default: \code{NULL})
 }
 See \code{\link{mia-plot-args}} for more details i.e. call
 \code{help("mia-plot-args")}}
