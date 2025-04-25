@@ -76,3 +76,14 @@ TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
     }
     return(NULL)
 }
+
+# Combine two names together with "&" --> "var1 & var2"
+.get_new_var_name_value <- function(var_name_value, add){
+    if(!is.null(var_name_value) && add != var_name_value){
+        new_var_name_value <- paste0(
+            var_name_value, ifelse(is.null(var_name_value),"", " & "), add)
+    } else {
+        new_var_name_value <- add
+    }
+    return(new_var_name_value)
+}
