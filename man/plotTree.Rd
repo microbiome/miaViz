@@ -20,7 +20,7 @@ plotColTree(x, ...)
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-class]{TreeSummarizedExperiment}}.}
 
-\item{...}{additional parameters for plotting.
+\item{...}{additional arguments for plotting.
 \itemize{
 \item \code{layout}: layout for the plotted tree. See
 \code{\link[ggtree:ggtree]{ggtree}} for details.
@@ -89,9 +89,7 @@ obtain expression values from, for use in point aesthetics.
 \item \code{other.fields}: \code{Character vector}. Additional fields to
 include in the node information without plotting them.
 (Default: \code{NULL})
-}
-See \code{\link{mia-plot-args}} for more details i.e. call
-\code{help("mia-plot-args")}}
+}}
 
 \item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
 \code{x}. (Default: \code{tree.name = "phylo"})}

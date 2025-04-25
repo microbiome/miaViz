@@ -11,7 +11,7 @@
 #' @param tree.name \code{Character scalar}. Specifies a rowTree/colTree from
 #' \code{x}. (Default: \code{tree.name = "phylo"})
 #'
-#' @param ... additional parameters for plotting.
+#' @param ... additional arguments for plotting.
 #' \itemize{
 #'   \item \code{layout}: layout for the plotted tree. See
 #'   \code{\link[ggtree:ggtree]{ggtree}} for details.
@@ -292,12 +292,12 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     links <- links_FUN(x)
 
     # Remove those tips that are not included in the data
-    args <- list(object, links_FUN(object)[["nodeLab"]], tree_name)
+    args <- list(x, links[["nodeLab"]], tree.name)
     names(args) <- c(
         "x",
         paste0(type, "Leaf"),
         paste0("which", .capitalize(type), "Tree"))
-    object <- do.call(subsetByLeaf, args)
+    x <- do.call(subsetByLeaf, args)
 
     # Get tree, links and row/colnames
     tree <- tree_FUN(x)
@@ -663,7 +663,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         df <- dplyr::left_join(
             df, metadata_df, by = "node", suffix = c("", ".y"))
     }
-    
+
     # Create an argument list that is passed to plotting function
     args <- c(list(df = df), variables, list(...))
     return(args)
@@ -738,7 +738,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                     "ignored.", call. = FALSE)
         }
     }
-    
+
     # Combine node and tip formatting into single column
     df <- .combine_tip_and_node(df, "colour")
     df <- .combine_tip_and_node(df, "shape")
@@ -747,14 +747,14 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     colour_by <- .combine_tip_and_node_title(tip_colour_by, node_colour_by)
     shape_by <- .combine_tip_and_node_title(tip_shape_by, node_shape_by)
     size_by <- .combine_tip_and_node_title(tip_size_by, node_size_by)
-    
+
     # Based on available columns, determine whether user wanted to show nodes
     # and labels
     show_tips <- any(
         c("tip_colour_by", "tip_shape_by", "tip_size_by") %in% colnames(df))
     show_nodes <- any(
         c("node_colour_by", "node_shape_by", "node_size_by") %in% colnames(df))
-    
+
     # Create a list to forward to next function
     args <- list(
         df = df,
@@ -778,7 +778,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     temp <- rep(NA, nrow(df))
     if( tip_col %in% colnames(df) ){
         temp[tip_ind] <- df[tip_ind, ][[tip_col]]
-    } 
+    }
     if( node_col %in% colnames(df) ){
         temp[!tip_ind] <- df[!tip_ind, ][[node_col]]
     }
