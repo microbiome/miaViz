@@ -400,6 +400,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 .add_tree_node_labels <- function(
         df, show.label = show_label, show_label = FALSE,
         levels.rm = levels_rm, levels_rm = FALSE, ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    node.label <- NULL
     # Input check
     if(!.is_a_bool(show.label)){
         if( (!is.logical(show.label) && !is.character(show.label) &&
@@ -525,6 +527,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         df, show.highlight.label = show_highlight_label,
         show_highlight_label = FALSE, levels.rm = levels_rm,
         levels_rm = FALSE, ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    show.highlights <- NULL
     # Input check
     if(!.is_a_bool(show.highlight.label)){
         if( (!is.logical(show.highlight.label) &&
