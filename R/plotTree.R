@@ -398,7 +398,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
 .add_tree_node_labels <- function(
-        df, show.label = FALSE, levels.rm = FALSE, ...){
+        df, show.label = show_label, show_label = FALSE,
+        levels.rm = levels_rm, levels_rm = FALSE, ...){
     # Input check
     if(!.is_a_bool(show.label)){
         if( (!is.logical(show.label) && !is.character(show.label) &&
@@ -465,7 +466,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 # highlights are show as a sectors behind the tree.
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
-.add_tree_highlights <- function(df, show.highlights = FALSE, ...){
+.add_tree_highlights <- function(
+        df, show.highlights = show_highlights, show_highlights = FALSE, ...){
     if(!.is_a_bool(show.highlights)){
         if( (!is.logical(show.highlights) && !is.character(show.highlights) &&
                 !is.numeric(show.highlights)) || is.null(show.highlights)){
@@ -520,7 +522,9 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
 .add_tree_highlight_labels <- function(
-        df, show.highlight.label = FALSE, levels.rm = FALSE, ...){
+        df, show.highlight.label = show_highlight_label,
+        show_highlight_label = FALSE, levels.rm = levels_rm,
+        levels_rm = FALSE, ...){
     # Input check
     if(!.is_a_bool(show.highlight.label)){
         if( (!is.logical(show.highlight.label) &&
@@ -833,16 +837,10 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     # is not compatible with ladderize = FALSE
     df@phylo <- tree
     # Based on label and highlight availability, determine whether to show them
-    show_label <- !all(is.na(df[["node_label"]]))
-    show_highlights <- df[["highlight"]] |> any()
-    show_highlight_label <- any(!is.na(df[["highlight_label"]]))
-    res <- c(
-        list(...),
-        df = df,
-        show_label = show_label,
-        show_highlights = show_highlights,
-        show_highlight_label = show_highlight_label
-    )
+    res <- c(list(...), df = df)
+    res[["show_label"]] <- !all(is.na(df[["node_label"]]))
+    res[["show_highlights"]] <- df[["highlight"]] |> any()
+    res[["show_highlight_label"]] <- any(!is.na(df[["highlight_label"]]))
     return(res)
 }
 

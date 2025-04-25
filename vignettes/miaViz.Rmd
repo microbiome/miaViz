@@ -61,11 +61,11 @@ On the other hand, plotAbundance can be used to plot abundance by  `rank`. A bar
 plot is returned showing the relative abundance within each sample for a given
 `rank`. At the same time the `features` argument can be set to `NULL` (default).
 
-```{r}
+```{r transform}
 GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
 ```
 
-```{r}
+```{r plotabundance}
 plotAbundance(GlobalPatterns, rank = "Kingdom", assay.type = "relabundance")
 ```
 
@@ -73,18 +73,18 @@ If `rank` is set to null however then the bars will be colored by each
 individual taxon. Please note that if you're doing this make sure to agglomerate
 your data to a certain taxonomic hand before plotting.
 
-```{r}
+```{r plotabundance_king}
 GlobalPatterns_king <- agglomerateByRank(GlobalPatterns, "Kingdom")
 plotAbundance(GlobalPatterns_king, assay.type = "relabundance")
 ```
 
 With subsetting to selected features the plot can be fine tuned.
 
-```{r}
+```{r prevalent}
 prev_phylum <- getPrevalent(GlobalPatterns, rank = "Phylum", detection = 0.01)
 ```
 
-```{r}
+```{r plotabundance_prev}
 plotAbundance(
     GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
     rank = "Phylum",
@@ -96,7 +96,7 @@ In the next example the ~SampleType~ is plotted along the samples. In this case
 the result is a list, which can combined using external tools, for example
 `patchwork`. 
 
-```{r}
+```{r plotabundance_sampletype}
 library(patchwork)
 plots <- plotAbundance(
     GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
@@ -118,16 +118,16 @@ To visualize prevalence within the dataset, two functions are available,
 `plotFeaturePrevalence` produces a so-called landscape plot, which
 visualizes the prevalence of samples across abundance thresholds.
 
-```{r}
-plotFeaturePrevalence(
+```{r plotrowprevalence}
+plotRowPrevalence(
     GlobalPatterns, rank = "Phylum", detections = c(0, 0.001, 0.01, 0.1, 0.2))
 ```
 
 `plotPrevalenceAbundance` plot the prevalence depending on the mean relative 
 abundance on the chosen taxonomic level.
 
-```{r}
-plotPrevalentAbundance(GlobalPatterns, rank = "Family", colour_by = "Phylum") +
+```{r plotprevalentabundance}
+plotPrevalentAbundance(GlobalPatterns, rank = "Family", colour.by = "Phylum") +
     scale_x_log10()
 ```
 
@@ -136,7 +136,7 @@ different abundance thresholds. Abundance steps can be adjusted using the
 `detections` argument, whereas the analyzed prevalence steps is set using the
 `prevalences` argument.
 
-```{r}
+```{r plotprevalence}
 plotPrevalence(
     GlobalPatterns, rank = "Phylum",
     detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
@@ -157,7 +157,7 @@ library(scater)
 library(mia)
 ```
 
-```{r}
+```{r gettop}
 altExp(GlobalPatterns,"Genus") <- agglomerateByRank(GlobalPatterns,"Genus")
 altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(
     altExp(GlobalPatterns,"Genus"))
@@ -182,8 +182,8 @@ provided. `label` takes precedent.
 
 ```{r plot1, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size)"}
 plotRowTree(
-    altExp(GlobalPatterns,"Genus")[top_taxa,], tip_colour_by = "log_mean",
-    tip_size_by = "detected")
+    altExp(GlobalPatterns,"Genus")[top_taxa,], tip.colour.by = "log_mean",
+    tip.size.by = "detected")
 ```
 
 Tip and node labels can be shown as well. Setting `show_label = TRUE` shows the
@@ -192,7 +192,7 @@ tip labels only ...
 ```{r plot2, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and prevalence (size). Tip labels of the tree are shown as well."}
 plotRowTree(
     altExp(GlobalPatterns,"Genus")[top_taxa,],
-    tip_colour_by = "log_mean", tip_size_by = "detected", show_label = TRUE)
+    tip.colour.by = "log_mean", tip.size.by = "detected", show.label = TRUE)
 ```
 
 ... whereas node labels can be selectively shown by providing a named logical
@@ -205,9 +205,9 @@ layout.
 labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
 plotRowTree(
     altExp(GlobalPatterns,"Genus")[top_taxa,],
-    tip_colour_by = "log_mean",
-    tip_size_by = "detected",
-    show_label = labels,
+    tip.colour.by = "log_mean",
+    tip.size.by = "detected",
+    show.label = labels,
     layout="rectangular")
 ```
 
@@ -216,8 +216,8 @@ Information can also be visualized on the edges of the tree plot.
 ```{r plot4, fig.cap="Tree plot using ggtree with tip labels decorated by mean abundance (colour) and edges labeled Kingdom (colour) and prevalence (size)"}
 plotRowTree(
     altExp(GlobalPatterns,"Genus")[top_taxa,],
-    edge_colour_by = "Phylum",
-    tip_colour_by = "log_mean")
+    edge.colour.by = "Phylum",
+    tip.colour.by = "log_mean")
 ```
 
 # Graph plotting
@@ -230,7 +230,7 @@ element from the `metedata`.
 Here we load an example graph. As graph data, all objects types accepted by
 `as_tbl_graph` from the `tidygraph` package are supported. 
 
-```{r}
+```{r colgraph}
 data(col_graph)
 ```
 
@@ -239,14 +239,14 @@ graph data. The `SummarizedExperiment` provided is required to have overlapping
 rownames with the node names of the graph. Using this link the graph plot
 can incorporate data from the `SummarizedExperiment`.
 
-```{r}
+```{r plotcolgraph}
 plotColGraph(
     col_graph,
     altExp(GlobalPatterns,"Genus"),
-    colour_by = "SampleType",
-    edge_colour_by = "weight",
-    edge_width_by = "weight",
-    show_label = TRUE)
+    colour.by = "SampleType",
+    edge.colour.by = "weight",
+    edge.width.by = "weight",
+    show.label = TRUE)
 ```
 
 As mentioned the graph data can be provided from the `metadata` of the 
@@ -258,25 +258,25 @@ metadata(altExp(GlobalPatterns,"Genus"))$graph <- col_graph
 
 This produces the same plot as shown above.
 
-```{r include=FALSE}
+```{r plotcolgraph2, include=FALSE}
 plotColGraph(
     altExp(GlobalPatterns,"Genus"),
     name = "graph",
-    colour_by = "SampleType",
-    edge_colour_by = "weight",
-    edge_width_by = "weight",
-    show_label = TRUE)
+    colour.by = "SampleType",
+    edge.colour.by = "weight",
+    edge.width.by = "weight",
+    show.label = TRUE)
 ```
 
 # Plotting of serial data
 
-```{r, eval=FALSE}
+```{r load_miatime, eval=FALSE}
 if(!requireNamespace("miaTime", quietly = TRUE)){
     remotes::install_github("microbiome/miaTime", upgrade = "never")
 }
 ```
 
-```{r, eval=FALSE}
+```{r plotseries, eval=FALSE}
 # Load data from miaTime package
 library("miaTime")
 data(SilvermanAGutData, package="miaTime")
@@ -291,7 +291,7 @@ descriptor for ordering the data. The `y` argument selects the feature to show.
 Since plotting a lot of features is not advised a maximum of 20 features can 
 plotted at the same time.
 
-```{r, eval=FALSE}
+```{r plotseries2, eval=FALSE}
 plotSeries(
     tse,
     x = "DAY_ORDER",
@@ -303,7 +303,7 @@ If replicated data is present, data is automatically used for calculation of the
 `mean` and `sd` and plotted as a range. Data from different assays can be used
 for plotting via the `assay.type`.
 
-```{r, eval=FALSE}
+```{r plotseries3, eval=FALSE}
 plotSeries(
     tse[taxa,],
     x = "DAY_ORDER",
@@ -314,7 +314,7 @@ plotSeries(
 
 Additional variables can be used to modify line type aesthetics.
 
-```{r, eval=FALSE}
+```{r plotseries4, eval=FALSE}
 plotSeries(
     tse,
     x = "DAY_ORDER",
@@ -329,7 +329,7 @@ plotSeries(
 To visualize the relative relations between two groupings among the factor data,
 two functions are available for the purpose; `plotColTile` and `plotRowTile`.
 
-```{r}
+```{r plotcoltile}
 data(GlobalPatterns, package="mia")
 se <- GlobalPatterns
 plotColTile(se,"SampleType","Primer") +
@@ -345,7 +345,7 @@ clusters  are used to observe the best fit (see also `getDMN` and
 `getBestDMNFit`). To visualize the fit using e.g. "laplace" as a measure of
 goodness of fit:
 
-```{r}
+```{r plotdmn}
 data(dmn_se, package = "mia")
 names(metadata(dmn_se))
 # plot the fit
@@ -373,7 +373,7 @@ p
 
 Retrieving information about all available trajectories:
 
-```{r, eval=FALSE}
+```{r timepoint_table, eval=FALSE}
 library(dplyr)
 
 # List subjects with two time points
@@ -386,7 +386,7 @@ table(table(tse$subject)) %>% as.data.frame() %>%
 
 Lets look at all trajectories having two time points in the data:
 
-```{r, eval=FALSE}
+```{r mds_timepoint, eval=FALSE}
 # plot
 p + geom_path(
     aes(x=X1, y=X2, group=subject), 
@@ -402,7 +402,7 @@ p + geom_path(
 
 Filtering the two time point trajectories by divergence and displaying top 10%:
 
-```{r, eval=FALSE}
+```{r stepwise_divergence, eval=FALSE}
 library(miaTime)
 # calculating step wise divergence based on the microbial profiles
 tse <- getStepwiseDivergence(tse, group = "subject", time_field = "time")
@@ -432,7 +432,7 @@ p + geom_path(
 
 Plotting an example of the trajectory with the maximum total divergence:
 
-```{r, eval=FALSE}
+```{r visualize_divergence, eval=FALSE}
 # Get subject with the maximum total divergence
 selected.subject <- data.frame(reducedDim(tse), colData(tse)) %>%
     group_by(subject) %>% 
@@ -455,7 +455,7 @@ More examples and materials are available at Orchestrating Microbiome Analysis
 
 # Session info
 
-```{r}
+```{r sessioninfo}
 sessionInfo()
 ```
 
