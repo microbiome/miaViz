@@ -1108,7 +1108,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 #' @importFrom ggnewscale new_scale_fill new_scale_colour
 #' @importFrom tidytree rootnode
 .plot_tree_plot_highlights <- function(
-        plot_out, layout, show_highlights, show_highlight_label, abbr.label,
+        plot_out, layout, show_highlights, show_highlight_label, abbr_label,
         colour_highlights_by, highlight_font_size){
     plot_out$data <- .calc_highlight_extendto(plot_out$data, layout)
     plot_out$data <- .calc_highlight_label_text_offset(plot_out$data, layout)
@@ -1139,7 +1139,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
             highlight_label_nodes <- plot_out$data[subset,"node",drop=TRUE]
             if(length(highlight_label_nodes) > 0L){
                 subset_abbr <- plot_out$data[,"highlight_label",drop=TRUE] %in%
-                    abbr.label
+                    abbr_label
                 subset[!subset_abbr] <- FALSE
                 plot_out <- .add_label_abbreviations(
                     plot_out, "highlight_label", which(subset))
@@ -1159,21 +1159,21 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 }
 
 .plot_tree_edges <- function(
-        plot_out, edge.colour.by, edge.size.by, line_alpha, line_width,
+        plot_out, edge_colour_by, edge_size_by, line_alpha, line_width,
         line_width_range, layout){
     # assemble arg list
     edge_out <- .get_edge_args(
-        edge.colour.by, edge.size.by, alpha = line_alpha, size = line_width,
+        edge_colour_by, edge_size_by, alpha = line_alpha, size = line_width,
         layout = layout)
     plot_out <- plot_out +
         do.call(geom_tree, edge_out$args) +
         theme_tree()
     plot_out <- .add_extra_guide_tree(
-        plot_out, edge.size.by, line_width_range)
+        plot_out, edge_size_by, line_width_range)
     # adjust edge colours
-    if(!is.null(edge.colour.by)){
+    if(!is.null(edge_colour_by)){
         plot_out <- .resolve_plot_colours(
-            plot_out, plot_out$data[["edge_colour_by"]], edge.colour.by,
+            plot_out, plot_out$data[["edge_colour_by"]], edge_colour_by,
             na.translate = FALSE)
     }
     plot_out
@@ -1214,8 +1214,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom ggtree geom_tiplab geom_nodelab
 .plot_tree_node_labels <- function(
-        plot_out, show.label, abbr.label, label_font_size){
-    if(show.label){
+        plot_out, show_label, abbr_label, label_font_size){
+    if(show_label){
         data <- plot_out$data
         label_data <- plot_out$data |> drop_na(.data$node_label)
         #
@@ -1223,7 +1223,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         f_node <- data$node %in% label_data$node & !data$isTip
         subset <- !is.na(plot_out$data$node_label)
         subset_abbr <- plot_out$data[,"node_label",drop=TRUE] %in%
-            abbr.label
+            abbr_label
         subset[!subset_abbr] <- FALSE
         plot_out <- .add_label_abbreviations(
             plot_out, "node_label",  which(subset))
