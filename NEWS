@@ -42,3 +42,6 @@ Changes in version 1.15.x
 + plotRDA: Fix error that occurred when variable names were similar
 + Added plotHistogram
 + Added plotBarplot
+
+Changes in version 1.17.x
++ Improve *Histogram and *Barplot by adding options for filling and facetting (2025-04-24)

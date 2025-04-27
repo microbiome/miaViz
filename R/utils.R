@@ -19,6 +19,9 @@
 .is_an_integer <- mia:::.is_an_integer
 TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
 .is_a_numeric <- mia:::.is_a_numeric
+.capitalize <- mia:::.capitalize
+.check_rowTree_present <- mia:::.check_rowTree_present
+.check_colTree_present <- mia:::.check_colTree_present
 
 .norm_label <- function(label, x){
     if(!is.null(label)){
@@ -48,4 +51,39 @@ TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
         }
     }
     label
+}
+
+# This function checks whether variable can be found from colData or rowData.
+.check_metadata_variable <- function(
+        tse, var, row = FALSE, col = FALSE, multiple = FALSE,
+        var.name = .get_name_in_parent(var)){
+    if( !.is_a_bool(multiple) ){
+        stop("'multiple' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # If the variable is not NULL
+    if( !is.null(var) ){
+        # It must be a string and found from colData/rowData
+        is_string <- ifelse(multiple, is.character(var), .is_a_string(var))
+        check_values <- c()
+        check_values <- c(check_values, if(col) colnames(colData(tse)))
+        check_values <- c(check_values, if(row) colnames(rowData(tse)))
+        var_found <- all( var %in% check_values )
+        if( !(is_string && var_found) ){
+            stop("'", var.name, "' must be", ifelse(multiple, "", "a single "),
+                "character value from the following options: '",
+                paste0(check_values, collapse = "', '"), "'", call. = FALSE)
+        }
+    }
+    return(NULL)
+}
+
+# Combine two names together with "&" --> "var1 & var2"
+.get_new_var_name_value <- function(var_name_value, add){
+    if(!is.null(var_name_value) && add != var_name_value){
+        new_var_name_value <- paste0(
+            var_name_value, ifelse(is.null(var_name_value),"", " & "), add)
+    } else {
+        new_var_name_value <- add
+    }
+    return(new_var_name_value)
 }
