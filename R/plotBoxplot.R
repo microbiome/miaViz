@@ -293,6 +293,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function calculates difference between paired samples.
+#' @importFrom dplyr arrange across all_of group_by mutate desc
 .calculate_paired_difference <- function(
         df, x, y, pair.by, group.by, fill.by, facet.by){
     # Calculate difference between paired points
@@ -316,6 +317,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # for points' positions while dodging means that we separate groups in x-axis.
 # This functions works with similar logic than position_jitterdodge. Dodge for
 # boxplot is set with ggplot.
+#' @importFrom dplyr ungroup
 .add_fixed_jitterdodge <- function(
         df, x, y, group.by, fill.by, facet.by,
         jitter.width = 0.05, jitter.height = 0, dodge.width = 0.8,
@@ -351,6 +353,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function converts categorical x axis values to numeric so that we can use
 # them to determine position of points
+#' @importFrom dplyr group_by across all_of mutate
 .categorical_x_to_numeric <- function(df, x, facet.by){
     df <- df |>
         as.data.frame() |>
@@ -369,6 +372,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # If there are grouping with group.by or fill.by, we add dodge so that points
 # are aligned correctly with the boxplots.
+#' @importFrom dplyr mutate
 .apply_dodge <- function(df, x, dodge.var, dodge.width){
     df <- df |>
         mutate(
@@ -387,6 +391,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds random jitter to points.
+#' @importFrom dplyr mutate
 .apply_jitter <- function(df, y, jitter.width, jitter.height){
     df <- df |>
         mutate(
@@ -399,6 +404,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds beeswarm to points.
+#' @importFrom dplyr group_by across all_of
 #' @importFrom scales rescale
 .apply_beeswarm <- function(
         df, x, y, facet.by, dodge.var, dodge.width,
@@ -548,7 +554,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # we improve the color scale to blue-white-red
     if( !is.null(attributes(df)[["difference"]]) ){
         p <- p + scale_color_gradient2(
-            low="blue", mid="white", high="red",
+            low = "blue", mid = "white", high = "red",
             limits = c(
                 -max(abs(df[[attributes(df)[["difference"]]]])),
                 max(abs(df[[attributes(df)[["difference"]]]])))
@@ -558,6 +564,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds bar under the boxplot to denote prevalence.
+#' @importFrom dplyr group_by across all_of mutate
 .add_prevalence_bar <- function(
         p, df, scales, threshold = 0, dodge.width = 0.8, bar.width = 0.75,
         ...){
