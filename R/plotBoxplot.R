@@ -17,8 +17,6 @@
 #' @return
 #' A \code{ggplot2} object.
 #'
-#' @inheritParams plotAbundance
-#'
 #' @param object a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
@@ -234,10 +232,11 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function validates the input for boxplot plotter.
 .check_input_for_boxplot <- function(
-        tse, assay.type, features, row.var, col.var, x, group.by, pair.by = NULL,
-        add.chance = FALSE, colour.by = color.by, color.by = NULL,
-        fill.by = NULL, size.by = NULL, shape.by = NULL, facet.by = NULL,
-        add.box = TRUE, add.points = TRUE, add.proportion = FALSE, ...){
+        tse, assay.type, features, row.var, col.var, x, group.by,
+        pair.by = NULL, add.chance = FALSE, colour.by = color.by,
+        color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
+        facet.by = NULL, add.box = TRUE, add.points = TRUE,
+        add.proportion = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
         stop("Please specify either 'assay.type', 'row.var', or 'col.var'.",
@@ -534,9 +533,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         mutate(
             # Add dodge if there are groups
             x_point = if( !is.null(dodge.var) && dodge.var != x ) {
-                group_index = as.numeric(factor(.data[[dodge.var]]))
-                n_groups = n_distinct(.data[[dodge.var]])
-                x_dodged = x_point +
+                group_index <- as.numeric(factor(.data[[dodge.var]]))
+                n_groups <- n_distinct(.data[[dodge.var]])
+                x_dodged <- x_point +
                     (group_index - 1 - (n_groups - 1) / 2) * dodge.width /
                     n_groups
             } else{
@@ -737,8 +736,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # If facetting is not applied but there is grouping, the default width does
     # not fit.
     if( is.null(attributes(df)[["facet.by"]]) &&
-        (!is.null(attributes(df)[["fill.by"]]) ||
-         !is.null(attributes(df)[["group.by"]])) ){
+            (!is.null(attributes(df)[["fill.by"]]) ||
+            !is.null(attributes(df)[["group.by"]])) ){
         group <- c(attributes(df)[["fill.by"]], attributes(df)[["group.by"]])
         num_groups <- df[[group]] |> unique() |> length()
         bar.width <- bar.width / num_groups
