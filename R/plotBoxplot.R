@@ -142,10 +142,10 @@
 #' tse <- Tito2024QMP
 #'
 #' tse <- transformAssay(tse, method = "relabundance")
-#' tse <- addAlpha(tse)
+#' tse <- addAlpha(tse, index = "shannon")
 #'
 #' # Visualize alpha diversity
-#' plotBoxplot(tse, col.var = "shannon_diversity", x = "diagnosis")
+#' plotBoxplot(tse, col.var = "shannon", x = "diagnosis")
 #'
 #' # Visualize relative abundance of top features
 #' tse <- tse[getTop(tse, 6), ]
@@ -510,6 +510,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # them to determine position of points
 #' @importFrom dplyr group_by across all_of mutate
 .categorical_x_to_numeric <- function(df, x, facet.by){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    x_point <- NULL
     df <- df |>
         as.data.frame() |>
         # If there are facets, we specify jitter and dodge for each one
@@ -529,6 +531,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # are aligned correctly with the boxplots.
 #' @importFrom dplyr mutate n_distinct
 .apply_dodge <- function(df, x, dodge.var, dodge.width){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    x_point <- NULL
     df <- df |>
         mutate(
             # Add dodge if there are groups
@@ -547,7 +551,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function adds random jitter to points.
 #' @importFrom dplyr mutate
+#' @importFrom stats runif
 .apply_jitter <- function(df, y, jitter.width, jitter.height){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    x_point <-  NULL
     df <- df |>
         mutate(
             # Add jitter for x axis
@@ -559,7 +566,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds beeswarm to points.
-#' @importFrom dplyr group_by across all_of n_distinct
+#' @importFrom dplyr group_by across all_of n_distinct group_modify
 #' @importFrom scales rescale
 .apply_beeswarm <- function(
         df, x, y, facet.by, dodge.var, dodge.width,
@@ -663,6 +670,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 .add_points_layer <- function(
         p, df, point.alpha = 0.65, point.size = 2, point.shape = 21,
         point.colour = point.color, point.color = "grey70", ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    x_point <- y_point <- NULL
     args <- list(
         mapping = aes(
             x = x_point,
@@ -690,6 +699,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 .add_line_layers <- function(
         p, df, line.alpha = 0.5, linetype = 1, linewidth = 1,
         line.colour = line.color, line.color = "grey70", ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    x_point <- y_point <- NULL
     args <- list(
         mapping = aes(
             x = x_point,
@@ -723,6 +734,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 .add_prevalence_bar <- function(
         p, df, scales, threshold = 0, dodge.width = 0.8, bar.width = 0.75,
         ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    min_val <- max_val <- x_point <- width <- y_pos <- heigth <- prevalence <-
+        NULL
     if( !.is_a_numeric(threshold) ){
         stop("'threshold' must be a single numeric value.", call. = FALSE)
     }

@@ -157,10 +157,10 @@ data("Tito2024QMP")
 tse <- Tito2024QMP
 
 tse <- transformAssay(tse, method = "relabundance")
-tse <- addAlpha(tse)
+tse <- addAlpha(tse, index = "shannon")
 
 # Visualize alpha diversity
-plotBoxplot(tse, col.var = "shannon_diversity", x = "diagnosis")
+plotBoxplot(tse, col.var = "shannon", x = "diagnosis")
 
 # Visualize relative abundance of top features
 tse <- tse[getTop(tse, 6), ]
