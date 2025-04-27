@@ -435,6 +435,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 .plot_boxplot <- function(
         df, add.box = TRUE, add.points = TRUE, scales = "fixed",
         add.proportion = FALSE, ...){
+    if( !.is_a_string(scales) ){
+        stop("'scales' must be a string.", call. = FALSE)
+    }
+    #
     # Initialize the plot
     p <- ggplot(df, aes(
         x = .data[[attributes(df)[["x"]]]],
@@ -456,7 +460,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     # If user wants to add prevalence bar under the boxplot
     if( add.proportion ){
-        p <- .add_prevalence_bar(p, df, ...)
+        p <- .add_prevalence_bar(p, df, scales, ...)
     }
     # If facetting was specified, split plot to separate panels
     if( !is.null(attributes(df)[["facet.by"]]) ){
@@ -554,18 +558,19 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds bar under the boxplot to denote prevalence.
-.add_prevalence_bar <- function(p, df, threshold = 0, dodge.width = 0.8, ...){
+.add_prevalence_bar <- function(
+        p, df, scales, threshold = 0, dodge.width = 0.8, bar.width = 0.75,
+        ...){
     if( !.is_a_numeric(threshold) ){
         stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
     if( !.is_a_numeric(dodge.width) ){
         stop("'dodge.width' must be numeric.", call. = FALSE)
     }
+    if( !.is_a_numeric(bar.width) ){
+        stop("'bar.width' must be numeric.", call. = FALSE)
+    }
     #
-    # Offset for prevalence bar layer below zero
-    prevalence_height <- -0.04  # how far below y=0 the bars are drawn
-    bar_thickness <- 0.015     # height of the bar
-    bar_width <- 0.75        # width of background bar
     # If facetting is not applied but there is grouping, the default width does
     # not fit.
     if( is.null(attributes(df)[["facet.by"]]) &&
@@ -573,9 +578,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
          !is.null(attributes(df)[["group.by"]])) ){
         group <- c(attributes(df)[["fill.by"]], attributes(df)[["group.by"]])
         num_groups <- df[[group]] |> unique() |> length()
-        bar_width <- bar_width / num_groups
+        bar.width <- bar.width / num_groups
     }
-
     # Determine dodge grouping variable, if any
     dodge_var <- if (!is.null(attributes(df)[["fill.by"]]))
         attributes(df)[["fill.by"]] else attributes(df)[["group.by"]]
@@ -592,27 +596,51 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         attributes(df)[["group.by"]], attributes(df)[["fill.by"]]) |> unique()
     df_prev <- df_prev |>
         group_by(across(all_of(grouping_var))) |>
-        summarise(prevalence = mean(
-            .data[[attributes(df)[["value"]]]] > threshold, na.rm = TRUE))
+        summarise(
+            prevalence = mean(
+                .data[[attributes(df)[["value"]]]] > threshold, na.rm = TRUE),
+            min_val = min(.data[[attributes(df)[["value"]]]], na.rm = TRUE),
+            max_val = max(.data[[attributes(df)[["value"]]]], na.rm = TRUE),
+            .groups = "keep"
+            )
+    # Calculate bars y-position. It is shared by facets.
+    grouping_var <- c(attributes(df)[["facet.by"]]) |> unique()
+    df_prev <- df_prev |>
+        group_by(across(all_of(grouping_var))) |>
+        mutate(
+            y_pos = min(min_val) - (max(max_val) - min(min_val))*0.1
+            )
+    # Depending on the scales, bar height can also be shared by facets. If the
+    # y-axis is free, we adjust the height for each facet separately.
+    if( !scales %in% c("free", "free_y") ){
+        df_prev <- df_prev |> ungroup()
+    }
+    # Calculate height and width of the bar
+    df_prev <- df_prev |>
+        mutate(
+            heigth = (max(max_val) - min(min_val))*0.025,
+            width = bar.width
+        )
+
     # Add prevalence bar plot
     p <- p +
         # White background bar
         geom_rect(
             data = df_prev,
             mapping = aes(
-                xmin = x_point - bar_width / 2,
-                xmax = x_point + bar_width / 2,
-                ymin = prevalence_height - bar_thickness / 2,
-                ymax = prevalence_height + bar_thickness / 2),
+                xmin = x_point - width / 2,
+                xmax = x_point + width / 2,
+                ymin = y_pos - heigth / 2,
+                ymax = y_pos + heigth / 2),
             fill = "white", color = "black", inherit.aes = FALSE) +
         # Filled bar
         geom_rect(
             data = df_prev,
             mapping = aes(
-                xmin = x_point - bar_width / 2,
-                xmax = x_point - bar_width / 2 + prevalence * bar_width,
-                ymin = prevalence_height - bar_thickness / 2,
-                ymax = prevalence_height + bar_thickness / 2),
+                xmin = x_point - width / 2,
+                xmax = x_point - width / 2 + prevalence * width,
+                ymin = y_pos - heigth / 2,
+                ymax = y_pos + heigth / 2),
             fill = "black", inherit.aes = FALSE)
     return(p)
 }
