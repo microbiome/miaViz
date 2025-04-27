@@ -81,7 +81,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         tse, assay.type, features, row.var, col.var, x, group.by, pair.by = NULL,
         add.chance = FALSE, colour.by = color.by, color.by = NULL,
         fill.by = NULL, size.by = NULL, shape.by = NULL, facet.by = NULL,
-        add.points = TRUE, add.prevalence = FALSE, ...){
+        add.box = TRUE, add.points = TRUE, add.proportion = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
         stop("Please specify either 'assay.type', 'row.var', or 'col.var'.",
@@ -106,8 +106,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !is.null(assay.type) ){
         .check_assay_present(assay.type, tse)
     }
-    if( !.is_a_bool(add.prevalence) ){
-        stop("'add.prevalence' must be TRUE or FALSE.", call. = FALSE)
+    if( !.is_a_bool(add.box) ){
+        stop("'add.box' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(add.points) ){
+        stop("'add.points' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(add.proportion) ){
+        stop("'add.proportion' must be TRUE or FALSE.", call. = FALSE)
     }
     # Check colData/rowData variables
     temp <- .check_metadata_variable(tse, row.var, row = TRUE)
@@ -185,27 +191,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     return(NULL)
 }
 
-# This function checks whether variable can be found from colData or rowData.
-.check_metadata_variable <- function(
-        tse, var, row = FALSE, col = FALSE,
-        var.name = .get_name_in_parent(var)){
-    # If the variable is not NULL
-    if( !is.null(var) ){
-        # It must be a sting and found from colData/rowData
-        is_string <- .is_a_string(var)
-        check_values <- c()
-        check_values <- c(check_values, if(col) colnames(colData(tse)))
-        check_values <- c(check_values, if(row) colnames(rowData(tse)))
-        var_found <- all( var %in% check_values )
-        if( !(is_string && var_found) ){
-            stop("'", var.name, "' must be a single character value from the ",
-                "following options: '",
-                paste0(check_values, collapse = "', '"), "'", call. = FALSE)
-        }
-    }
-    return(NULL)
-}
-
 # This function retrieves the data from TreeSE and outputs a data.frame, ready
 # for the plotter function.
 .get_data_for_boxplot <- function(
@@ -213,12 +198,12 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.chance = FALSE,
         colour.by = color.by, color.by = NULL,
         size.by = NULL, shape.by = NULL, facet.by = NULL,
-        fill.by = NULL, add.prevalence = FALSE,
+        fill.by = NULL, add.proportion = FALSE,
         ...){
     # If assay.type is specified, get melted data
     all_vars <- c(x, group.by, colour.by, size.by, shape.by, facet.by, fill.by)
     if( !is.null(assay.type) ){
-        # Specify whether yp retrive data from rowData or colData
+        # Specify whether to retrieve data from rowData or colData
         row_vars <- vapply(all_vars, function(x){
             x %in% colnames(rowData(tse))
         }, logical(1L))
@@ -251,10 +236,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Prevalence can be added only if values are non-negative
     is_negative <- any(!is.na(df[[c(assay.type, col.var, row.var)]]) &
         df[[c(assay.type, col.var, row.var)]]<0)
-    if( add.prevalence && is_negative ){
-        stop("When 'add.prevalence=TRUE', values must be non-negative.",
-            call. = FALSE)
-    }
 
     # If user specified, calculate difference
     difference <- NULL
@@ -305,7 +286,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         shape.by = shape.by,
         facet.by = facet.by,
         x.box = x.box,
-        # subject.group = subject.group,
         difference = difference,
         remove.x.axis = remove.x.axis
     )
@@ -365,8 +345,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     } else{
         df <- .apply_beeswarm(df, x, y, facet.by, dodge_var, dodge.width, ...)
     }
-    df <- df |>
-        ungroup()
+    df <- df |> ungroup()
     return(df)
 }
 
@@ -454,15 +433,19 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function is the main plotter function
 .plot_boxplot <- function(
-        df, add.points = TRUE, scales = "fixed", add.prevalence = FALSE, ...){
+        df, add.box = TRUE, add.points = TRUE, scales = "fixed",
+        add.proportion = FALSE, ...){
     # Initialize the plot
     p <- ggplot(df, aes(
         x = .data[[attributes(df)[["x"]]]],
         y = .data[[attributes(df)[["value"]]]],
-        group = if(!is.null(attributes(df)[["group.by"]])) .data[[attributes(df)[["group.by"]]]]
+        group = if(!is.null(attributes(df)[["group.by"]]))
+            .data[[attributes(df)[["group.by"]]]]
     ))
-    # Add boxplot layer
-    p <- .add_boxplot_layer(p, df, add.points, ...)
+    # Add boxplot
+    if( add.box ){
+        p <- .add_boxplot_layer(p, df, add.points, ...)
+    }
     # Add optional points layer
     if( add.points ){
         p <- .add_points_layer(p, df, ...)
@@ -472,7 +455,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         p <- .add_line_layers(p, df, ...)
     }
     # If user wants to add prevalence bar under the boxplot
-    if( add.prevalence ){
+    if( add.proportion ){
         p <- .add_prevalence_bar(p, df, ...)
     }
     # If facetting was specified, split plot to separate panels
@@ -484,7 +467,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             )
     }
     # Adjust themes and titles
-    p <- .adjust_boxplot_theme(p, df, ...)
+    p <- .adjust_boxplot_theme(p, df, add.box, ...)
     return(p)
 }
 
@@ -571,9 +554,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds bar under the boxplot to denote prevalence.
-.add_prevalence_bar <- function(p, df, detection = 0, dodge.width = 0.8, ...){
-    if( !.is_a_numeric(detection) ){
-        stop("'detection' must be a single numeric value.", call. = FALSE)
+.add_prevalence_bar <- function(p, df, threshold = 0, dodge.width = 0.8, ...){
+    if( !.is_a_numeric(threshold) ){
+        stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
     if( !.is_a_numeric(dodge.width) ){
         stop("'dodge.width' must be numeric.", call. = FALSE)
@@ -610,7 +593,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     df_prev <- df_prev |>
         group_by(across(all_of(grouping_var))) |>
         summarise(prevalence = mean(
-            .data[[attributes(df)[["value"]]]] > detection, na.rm = TRUE))
+            .data[[attributes(df)[["value"]]]] > threshold, na.rm = TRUE))
     # Add prevalence bar plot
     p <- p +
         # White background bar
@@ -635,7 +618,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adjust the theme and titles of the plot
-.adjust_boxplot_theme <- function(p, df, ...){
+.adjust_boxplot_theme <- function(p, df, add.box, ...){
     p <- p + theme_classic()
     # If user did not specify x-axis, we remove all the titles and ticks from
     # x-axis.
@@ -650,6 +633,12 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         p <- p + labs(
             x = attributes(df)[["x"]]
         )
+    }
+    # If user did not want to add boxplot player, the x axis is currently
+    # numeric because of point layer. Make it categorical.
+    if( !add.box ){
+        p <- p + scale_x_discrete(limits = levels(
+            as.factor(df[[attributes(df)[["x"]]]])))
     }
     # Add correct titles for aesthetics. The titles are the original variable
     # names.
