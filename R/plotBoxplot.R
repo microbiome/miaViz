@@ -572,6 +572,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         df, x, y, facet.by, dodge.var, dodge.width,
         beeswarm.method = "swarm", beeswarm.corral = "none", ...){
     .require_package("beeswarm")
+    # To suppress cmdcheck warning:
+    # '::' or ':::' import not declared from: ‘beeswarm’
     beeswarm_fun <- getFromNamespace("beeswarm", "beeswarm")
     # We apply beeswarm for each facet, x axis variable and group
     grouping_vars <- c(facet.by, x, dodge.var)
