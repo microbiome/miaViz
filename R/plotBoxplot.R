@@ -528,7 +528,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # If there are grouping with group.by or fill.by, we add dodge so that points
 # are aligned correctly with the boxplots.
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate n_distinct
 .apply_dodge <- function(df, x, dodge.var, dodge.width){
     df <- df |>
         mutate(
@@ -560,7 +560,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds beeswarm to points.
-#' @importFrom dplyr group_by across all_of
+#' @importFrom dplyr group_by across all_of n_distinct
 #' @importFrom scales rescale
 .apply_beeswarm <- function(
         df, x, y, facet.by, dodge.var, dodge.width,
