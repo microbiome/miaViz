@@ -62,6 +62,7 @@ Imports:
     tidytree,
     viridis
 Suggests:
+    beeswarm,
     BiocStyle,
     bluster,
     circlize,

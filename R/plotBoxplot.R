@@ -572,6 +572,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         df, x, y, facet.by, dodge.var, dodge.width,
         beeswarm.method = "swarm", beeswarm.corral = "none", ...){
     .require_package("beeswarm")
+    beeswarm_fun <- getFromNamespace("beeswarm", "beeswarm")
     # We apply beeswarm for each facet, x axis variable and group
     grouping_vars <- c(facet.by, x, dodge.var)
     grouping_vars <- grouping_vars[!is.null(grouping_vars)]
@@ -582,7 +583,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         group_by(across(all_of(grouping_vars))) |>
         group_modify(~{
             # We calculate beeswarm with beeswarm::beeswarm()
-            swarm <- beeswarm::beeswarm(
+            swarm <- beeswarm_fun(
                 .x[[y]],
                 method = beeswarm.method,
                 corral = beeswarm.corral,
