@@ -45,3 +45,4 @@ Changes in version 1.15.x
 
 Changes in version 1.17.x
 + Improve *Histogram and *Barplot by adding options for filling and facetting (2025-04-24)
++ Added plotBoxplot function (2025-04-28)
