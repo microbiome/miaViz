@@ -566,6 +566,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds beeswarm to points.
+#' @importFrom utils getFromNamespace
 #' @importFrom dplyr group_by across all_of n_distinct group_modify
 #' @importFrom scales rescale
 .apply_beeswarm <- function(
