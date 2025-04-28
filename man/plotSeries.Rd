@@ -13,7 +13,7 @@ plotSeries(x, ...)
   assay.type = NULL,
   col.var = NULL,
   features = NULL,
-  group = NULL,
+  facet.by = NULL,
   ...
 )
 }
@@ -41,11 +41,6 @@ to different line types. If \code{NULL}, this is not applied.
 \code{rowData(x)} or \code{colData(x)}, that is used to divide observations
 to different size types. If \code{NULL}, this is not applied.
 (Default: \code{NULL})
-
-\item \code{facet.cols}: \code{Logical scalar}. Should the sample groups
-specified by \code{group} be spitted into facets? If \code{group} is
-specified and \code{facet.cols = FALSE}, features are facetted instead.
-(Default: \code{FALSE})
 
 \item \code{ncol}: \code{Numeric scalar}. if facets are applied,
 \code{ncol} defines many columns should be for plotting the different
@@ -75,8 +70,9 @@ visualizing temporal changes in sample metadata variable.}
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{rownames}}.
 This parameter specifies taxa whose abundances will be plotted.}
 
-\item{group}{\code{Character scalar}. Specifies a sample grouping. Must be
+\item{facet.by}{\code{Character scalar}. Specifies a sample grouping. Must be
 value from
+\code{\link[SummarizedExperiment:SummarizedExperiment-class]{rowData}} or
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{colData}}. If
 \code{NULL}, grouping is not applied. (Default: \code{NULL})}
 }
@@ -141,7 +137,8 @@ plotSeries(
     time.col = "DAY_ORDER",
     assay.type = "relabundance",
     features = getTop(tse, 5),
-    group = "Vessel",
+    facet.by = "Vessel",
+    colour.by = "rownames", colour.lab = "Feature",
     linetype.by = "Pre_Post_Challenge",
     scales = "free"
 )
@@ -154,7 +151,7 @@ plotSeries(
     tse,
     col.var = "shannon",
     time.col = "DAY_ORDER",
-    group = "Vessel"
+    facet.by = "Vessel",
 )
 
 }

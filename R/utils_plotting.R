@@ -381,13 +381,13 @@ NULL
     return(list(args = geom_args))
 }
 
-.get_ribbon_args <- function(colour_by, alpha = 0.3){
+.get_ribbon_args <- function(
+        colour_by = "colour_by", mean_col = "Y", sd_col = "sd", alpha = 0.3){
     aes_args <- aes(
-        ymin = .data[["Y"]] - .data[["sd"]],
-        ymax = .data[["Y"]] + .data[["sd"]])
-    if (!is.null(colour_by)) {
-        aes_args$fill <- substitute(`colour_by`)
-    }
+        ymin = .data[[mean_col]] - .data[[sd_col]],
+        ymax = .data[[mean_col]] + .data[[sd_col]],
+        fill = if(!is.null(colour_by)) .data[[colour_by]]
+        )
     new_aes <- do.call(aes, aes_args)
     geom_args <- list(mapping = new_aes, alpha = alpha)
     if (is.null(colour_by)) {

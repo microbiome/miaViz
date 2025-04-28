@@ -252,13 +252,13 @@ plotColGraph(
 As mentioned the graph data can be provided from the `metadata` of the 
 `SummarizedExperiment`.
 
-```{r}
+```{r plotcolgraph2}
 metadata(altExp(GlobalPatterns,"Genus"))$graph <- col_graph
 ```
 
 This produces the same plot as shown above.
 
-```{r plotcolgraph2, include=FALSE}
+```{r plotcolgraph3, include=FALSE}
 plotColGraph(
     altExp(GlobalPatterns,"Genus"),
     name = "graph",
@@ -286,17 +286,20 @@ taxa <- getTop(tse, 2)
 ```
 
 Data from samples collected along time can be visualized using `plotSeries`.
-The `x` argument is used to reference data from the `colData` to use as 
-descriptor for ordering the data. The `y` argument selects the feature to show.
-Since plotting a lot of features is not advised a maximum of 20 features can 
-plotted at the same time.
+The `time.col` argument is used to reference data from the `colData` to use as 
+descriptor for ordering the data. The `features` argument selects the feature
+to show. Since plotting a lot of features is not advised a maximum of 20
+features can plotted at the same time.
 
 ```{r plotseries2, eval=FALSE}
 plotSeries(
     tse,
+    assay.type = "relabundance",
     time.col = "DAY_ORDER",
     features = taxa,
-    colour_by = "Family")
+    colour.by = "Family",
+    facet.by = "Vessel"
+    )
 ```
 
 If replicated data is present, data is automatically used for calculation of the
@@ -307,8 +310,8 @@ for plotting via the `assay.type`.
 plotSeries(
     tse[taxa,],
     time.col = "DAY_ORDER",
-    colour_by = "Family",
-    linetype_by = "Phylum",
+    colour.by = "Family",
+    linetype.by = "Phylum",
     assay.type = "relabundance")
 ```
 
@@ -318,9 +321,9 @@ Additional variables can be used to modify line type aesthetics.
 plotSeries(
     tse,
     time.col = "DAY_ORDER",
-    yfeatures= getTop(tse, 5),
-    colour_by = "Family",
-    linetype_by = "Phylum",
+    features = getTop(tse, 5),
+    colour.by = "Family",
+    linetype.by = "Phylum",
     assay.type = "counts")
 ```
 

@@ -70,7 +70,7 @@ TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
         check_values <- c(check_values, if(row) colnames(rowData(tse)))
         var_found <- all( var %in% check_values )
         if( !(is_string && var_found) ){
-            stop("'", var.name, "' must be", ifelse(multiple, "", "a single "),
+            stop("'", var.name, "' must be ", ifelse(multiple, "", "a single "),
                 "character value from the following options: '",
                 paste0(check_values, collapse = "', '"), "'", call. = FALSE)
         }

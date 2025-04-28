@@ -25,7 +25,7 @@ test_that("plot series", {
     ##################### Test .get_series_data #################################
     tse_sub <- tse[1:10, ]
     expect_error(miaViz:::.get_series_data(tse_sub, "counts", NULL, "DAY_ORDER"),
-                 "argument \"group\" is missing, with no default")
+                 "argument \"group.by\" is missing, with no default")
 
     ################### Test .series_plotter ###########################
     # Get data from colData
@@ -43,7 +43,7 @@ test_that("plot series", {
     data_from_function <- miaViz:::.get_series_data(
         tse, assay.type = "counts", col.var = NULL, time.col = "DAY_ORDER",
         colour.by = "Phylum", linetype.by = "Family", size.by = "Kingdom",
-        group = NULL)
+        group.by = NULL)
 
     # Extracting the relevant columns from the data
     series_data_test <- data_from_function$plot_data
@@ -56,7 +56,7 @@ test_that("plot series", {
 
     ################## Test .melt_series_data ##################################
     melted <- miaViz:::.get_series_data(
-        tse_sub, "counts", col.var = NULL, group = NULL, "DAY_ORDER",
+        tse_sub, "counts", col.var = NULL, group.by = NULL, "DAY_ORDER",
         "Phylum", "Family", "Kingdom")
 
     # Convert melted data to data frame
