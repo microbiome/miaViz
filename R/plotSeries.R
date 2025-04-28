@@ -261,6 +261,15 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     }
     df <- df |> as.data.frame()
 
+    # Check that data is numeric. Both x and y axis must be numeric.
+    if( !is.numeric(df[[assay.type]]) ){
+        stop("'", ifelse(!is.null(col.var), "col.var", "assay.type"),
+            "' must specify numeric data.", call. = FALSE)
+    }
+    if( !is.numeric(df[[time.col]]) ){
+        stop("'time.col' must specify numeric data.", call. = FALSE)
+    }
+
     # If time point replicates are present, calculate sd and mean for each
     # timepoint
     cols <- c("feature", time.col, facet.by)
