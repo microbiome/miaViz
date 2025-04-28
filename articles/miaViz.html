@@ -327,17 +327,20 @@ the graph plot can incorporate data from the
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span>
 <span><span class="va">taxa</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <p>Data from samples collected along time can be visualized using
-<code>plotSeries</code>. The <code>x</code> argument is used to
+<code>plotSeries</code>. The <code>time.col</code> argument is used to
 reference data from the <code>colData</code> to use as descriptor for
-ordering the data. The <code>y</code> argument selects the feature to
-show. Since plotting a lot of features is not advised a maximum of 20
-features can plotted at the same time.</p>
+ordering the data. The <code>features</code> argument selects the
+feature to show. Since plotting a lot of features is not advised a
+maximum of 20 features can plotted at the same time.</p>
 <div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
+<span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span>
 <span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
 <span>    features <span class="op">=</span> <span class="va">taxa</span>,</span>
-<span>    colour_by <span class="op">=</span> <span class="st">"Family"</span><span class="op">)</span></span></code></pre></div>
+<span>    colour.by <span class="op">=</span> <span class="st">"Family"</span>,</span>
+<span>    facet.by <span class="op">=</span> <span class="st">"Vessel"</span></span>
+<span>    <span class="op">)</span></span></code></pre></div>
 <p>If replicated data is present, data is automatically used for
 calculation of the <code>mean</code> and <code>sd</code> and plotted as
 a range. Data from different assays can be used for plotting via the
@@ -346,17 +349,17 @@ a range. Data from different assays can be used for plotting via the
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span><span class="op">[</span><span class="va">taxa</span>,<span class="op">]</span>,</span>
 <span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>    colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
-<span>    linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>    colour.by <span class="op">=</span> <span class="st">"Family"</span>,</span>
+<span>    linetype.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
 <p>Additional variables can be used to modify line type aesthetics.</p>
 <div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
 <span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
-<span>    yfeatures<span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
-<span>    colour_by <span class="op">=</span> <span class="st">"Family"</span>,</span>
-<span>    linetype_by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
+<span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>    colour.by <span class="op">=</span> <span class="st">"Family"</span>,</span>
+<span>    linetype.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"counts"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
