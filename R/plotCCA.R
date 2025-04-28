@@ -113,14 +113,16 @@
 #' tse <- enterotype
 #'
 #' # Run RDA and store results into TreeSE
+#' tse <- transformAssay(tse, method = "relabundance")
 #' tse <- addRDA(
 #'     tse,
+#'     assay.type = "relabundance",
 #'     formula = assay ~ ClinicalStatus + Gender + Age,
-#'     FUN = getDissimilarity,
 #'     distance = "bray",
 #'     na.action = na.exclude
 #'     )
 #'
+#' suppressWarnings({
 #' # Create RDA plot coloured by variable
 #' plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
 #'
@@ -139,14 +141,16 @@
 #' # Calculate RDA as a separate object
 #' rda_mat <- getRDA(
 #'     tse,
+#'     assay.type = "relabundance",
 #'     formula = assay ~ ClinicalStatus + Gender + Age,
-#'     FUN = getDissimilarity,
 #'     distance = "bray",
 #'     na.action = na.exclude
 #'     )
 #'
 #' # Create RDA plot from RDA matrix
 #' plotRDA(rda_mat)
+#' })
+#'
 NULL
 
 #' @rdname plotCCA

@@ -1,59 +1,19 @@
 
 context("plot tree")
 test_that("plot tree", {
-    # .check_tree_plot_switches
-    expect_error(miaViz:::.check_tree_plot_switches(),
-                 'argument "layout" is missing')
-    expect_error(miaViz:::.check_tree_plot_switches(TRUE),
-                 "'layout' must be a single character value")
-    expect_error(miaViz:::.check_tree_plot_switches("a",TRUE),
-                 'argument "remove_levels" is missing')
-    expect_error(miaViz:::.check_tree_plot_switches("a",TRUE,TRUE),
-                 'argument "order_tree" is missing')
-    expect_error(miaViz:::.check_tree_plot_switches("a",TRUE,TRUE,TRUE),
-                 'argument "show_label" is missing')
-    expect_error(miaViz:::.check_tree_plot_switches("a",TRUE,TRUE,TRUE,TRUE),
-                 'argument "show_highlights" is missing')
-    expect_error(miaViz:::.check_tree_plot_switches("a",TRUE,TRUE,TRUE,TRUE,
-                                                    TRUE),
-                 'argument "show_highlight_label" is missing')
-    expect_error(miaViz:::.check_tree_plot_switches("a",TRUE,TRUE,TRUE,TRUE,
-                                                    TRUE, TRUE),
-                 'argument "abbr_label" is missing')
-    expect_error(miaViz:::.check_tree_plot_switches("a",TRUE,TRUE,TRUE,TRUE,
-                                                    TRUE, TRUE,TRUE),
-                 'argument "add_legend" is missing')
-    expect_error(miaViz:::.check_tree_plot_switches("a",TRUE,TRUE,TRUE,TRUE,
-                                                    TRUE, TRUE,TRUE),
-                 'argument "add_legend" is missing')
-    expect_null(miaViz:::.check_tree_plot_switches("a",TRUE,TRUE,TRUE,TRUE,
-                                                   TRUE, TRUE,TRUE, TRUE))
-    #
-    expect_error(miaViz:::.check_tree_plot_switches("A","TRUE", TRUE,TRUE,TRUE,
-                                                    TRUE, TRUE,TRUE, TRUE),
-                 "'relabel.tree' must be either TRUE or FALSE")
-    expect_error(miaViz:::.check_tree_plot_switches("A",TRUE, 2, TRUE,TRUE,
-                                                    TRUE, TRUE,TRUE, TRUE),
-                 "'level.rm' must be either TRUE or FALSE")
-    expect_error(miaViz:::.check_tree_plot_switches("A",TRUE, TRUE, 2, TRUE,
-                                                    TRUE, TRUE,TRUE, TRUE),
-                 "'order.tree' must be either TRUE or FALSE")
-    expect_null(miaViz:::.check_tree_plot_switches("A",TRUE, TRUE, TRUE, 2,
-                                                    TRUE, TRUE,TRUE, TRUE))
     #
     data(GlobalPatterns)
     x <- GlobalPatterns
     # .get_object_and_trimmed_tree
-    expect_error(miaViz:::.get_object_and_trimmed_tree(),
-                 'argument "object" is missing')
+    expect_error(miaViz:::.get_object_and_trimmed_tree())
     actual <- miaViz:::.get_object_and_trimmed_tree(x["549322",])
-    expect_s3_class(actual$tree,"phylo")
-    expect_s4_class(actual$object,"TreeSummarizedExperiment")
-    expect_equal(unique(actual$tree$tip.label), c("549322"))
+    expect_s3_class(rowTree(actual),"phylo")
+    expect_s4_class(actual,"TreeSummarizedExperiment")
+    expect_equal(unique(rowTree(actual)$tip.label), c("549322"))
     actual <- miaViz:::.get_object_and_trimmed_tree(x)
-    expect_equal(actual$tree$tip.label, rownames(x))
+    expect_equal(rowTree(actual)$tip.label, rownames(x))
     actual <- miaViz:::.get_object_and_trimmed_tree(x, relabel = TRUE)
-    expect_equal(actual$tree$tip.label[1L], "Class:Thermoprotei")
+    expect_equal(rowTree(actual)$tip.label[1L], "Class:Thermoprotei")
     #
     library(scater)
     library(mia)

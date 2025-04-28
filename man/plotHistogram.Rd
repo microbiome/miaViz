@@ -39,6 +39,12 @@ object.}
 \item \code{layout}: \code{Character scalar}. Specifies the layout of plot.
 Must be either \code{"histogram"} or \code{"density"}.
 (Default: \code{"histogram"})
+\item \code{facet.by}: \code{Character vector}. Specifies variables from
+\code{colData(x)} or \code{rowData(x)} used for facetting.
+(Default: \code{NULL})
+\item \code{fill.by}: \code{Character scalar}. Specifies variable from
+\code{colData(x)} or \code{rowData(x)} used for coloring.
+(Default: \code{NULL})
 }}
 
 \item{assay.type}{\code{NULL} or \code{character scalar}. Specifies the
@@ -83,12 +89,22 @@ plotHistogram(tse, assay.type = "counts")
 # Apply transformation
 tse <- transformAssay(tse, method = "clr", pseudocount = TRUE)
 # And plot specified rows
-plotHistogram(tse, assay.type = "clr", features = rownames(tse)[1:10])
+plotHistogram(
+    tse,
+    assay.type = "clr",
+    features = rownames(tse)[1:5],
+    facet.by = "rownames"
+)
 
 # Calculate shannon diversity and visualize its distribution with density
-# plot
+# plot. Different sample types are separated with color.
 tse <- addAlpha(tse, index = "shannon")
-plotHistogram(tse, col.var = "shannon", layout = "density")
+plotHistogram(
+    tse,
+    col.var = "shannon",
+    layout = "density",
+    fill.by = "SampleType"
+)
 
 # For categorical values, one can utilize a bar plot
 plotBarplot(tse, col.var = "SampleType")
