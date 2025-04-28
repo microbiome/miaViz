@@ -177,7 +177,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
         colour_by = color_by, color_by = NULL,
         size.by = size_by, size_by = NULL,
         linetype.by = linetype_by, linetype_by = NULL,
-        facet.cols = FALSE, ...){
+        ...){
     # Agglomerate data if specified
     x <- .merge_features(x, ...)
     # Check assay.type and col.var
@@ -220,10 +220,6 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     temp <- .check_metadata_variable(x, colour.by, !is.null(assay.type), TRUE)
     temp <- .check_metadata_variable(x, size.by, !is.null(assay.type), TRUE)
     temp <- .check_metadata_variable(x, linetype.by, !is.null(assay.type), TRUE)
-    # Check that facet.cols is boolean value
-    if( !.is_a_bool(facet.cols) ){
-        stop("'facet.cols' must be TRUE or FALSE.", call. = FALSE)
-    }
     return(x)
 }
 
@@ -240,7 +236,6 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
         color_by = NULL,
         size.by = size_by, size_by = NULL,
         linetype.by = linetype_by, linetype_by = NULL,
-        facet.cols = FALSE,
         ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     Y <- NULL
