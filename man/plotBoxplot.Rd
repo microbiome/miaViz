@@ -69,7 +69,7 @@ barplots. (Default: \code{0})
 beeswarm layout for points. (Default: \code{FALSE})
 
 \item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
-(Default: \code{0.2})
+(Default: \code{0.5})
 
 \item \code{jitter.height}: \code{Numeric scalar}. Height of jitter.
 (Default: \code{0})

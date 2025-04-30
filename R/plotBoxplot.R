@@ -88,7 +88,7 @@
 #'   beeswarm layout for points. (Default: \code{FALSE})
 #'
 #'   \item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
-#'   (Default: \code{0.2})
+#'   (Default: \code{0.5})
 #'
 #'   \item \code{jitter.height}: \code{Numeric scalar}. Height of jitter.
 #'   (Default: \code{0})
@@ -475,7 +475,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 #' @importFrom dplyr ungroup
 .add_fixed_jitterdodge <- function(
         df, x, y, group.by, fill.by, facet.by,
-        jitter.width = 0.2, jitter.height = 0, dodge.width = 0.8,
+        jitter.width = 0.5, jitter.height = 0, dodge.width = 0.8,
         apply.beeswarm = FALSE, ...){
     if( !.is_a_numeric(jitter.width) ){
         stop("'jitter.width' must be numeric.", call. = FALSE)
@@ -498,7 +498,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     df <- .apply_dodge(df, x, dodge_var, dodge.width)
     # Apply either jitter or beeswarm (or none)
     if( !apply.beeswarm ){
-        df <- .apply_jitter(df, y, jitter.width, jitter.height)
+        df <- .apply_jitter(df, x, y, facet.by, dodge_var, dodge.width, jitter.width, jitter.height)
     } else{
         df <- .apply_beeswarm(
             df, x, y, facet.by, dodge_var, dodge.width, jitter.width, ...)
@@ -553,17 +553,38 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function adds random jitter to points.
 #' @importFrom dplyr mutate
 #' @importFrom stats runif
-.apply_jitter <- function(df, y, jitter.width, jitter.height){
+.apply_jitter <- function(df, x, y, facet.by, dodge.var, dodge.width, jitter.width, jitter.height){
     # To disable "no visible binding for global variable" message in cmdcheck
     x_point <-  NULL
+
+    # Calculate spreading
+    max_spread <- .get_jitter_spread(
+        df, x, dodge.var, dodge.width, jitter.width)
+    # Apply jitter
     df <- df |>
         mutate(
             # Add jitter for x axis
-            x_point = x_point + runif(n(), -jitter.width, jitter.width),
+            x_point = x_point + runif(n(), -max_spread/2, max_spread/2),
             # Add jitter for y-axis
             y_point = .data[[y]] + runif(n(), -jitter.height, jitter.height)
         )
     return(df)
+}
+
+# This function calculates the jitter spread based on grouping and user-defined
+# jitter width.
+.get_jitter_spread <- function(df, x, dodge.var, dodge.width, jitter.width){
+    # Get the number of groups. If the coloring/grouping is the same as x axis,
+    # it is not taken into account as x axis already have separate placement for
+    # points.
+    dodge.var <- if( dodge.var != x ) dodge.var
+    n_groups <- if (is.null(dodge.var)) 1L else
+        n_distinct(df[[dodge.var]])
+    # We adjust jitter x axis position based on dodge and the user-
+    # specified jitter width.
+    max_spread <- dodge.width / n_groups
+    max_spread <- jitter.width * max_spread
+    return(max_spread)
 }
 
 # This function adds beeswarm to points.
@@ -577,11 +598,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # To suppress cmdcheck warning:
     # '::' or ':::' import not declared from: ‘beeswarm’
     beeswarm_fun <- getFromNamespace("beeswarm", "beeswarm")
+
+    # Calculate spreading of beeswarm
+    max_spread <- .get_jitter_spread(
+        df, x, dodge.var, dodge.width, jitter.width)
     # We apply beeswarm for each facet, x axis variable and group
     grouping_vars <- c(facet.by, x, dodge.var)
     grouping_vars <- grouping_vars[!is.null(grouping_vars)]
-    n_groups <- if (is.null(dodge.var)) n_distinct(df[[x]]) else
-        n_distinct(df[[dodge.var]])
+
     # Apply beeswarm
     df <- df |>
         group_by(across(all_of(grouping_vars))) |>
@@ -593,8 +617,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 corral = beeswarm.corral,
                 do.plot = FALSE
             )
-            # We adjust beeswarm x axis position based on dodge
-            max_spread <- 0.5 * dodge.width / n_groups
+            # We adjust beeswarm x axis position based on dodge and the user-
+            # specified jitter-width
             x_scaled <- rescale(
                 swarm[["x"]], to = c(-max_spread/2, max_spread/2))
             .x[["x_point"]] <- mean(.x[["x_point"]]) + x_scaled
