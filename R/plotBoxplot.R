@@ -483,8 +483,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !.is_a_numeric(jitter.height) ){
         stop("'jitter.height' must be numeric.", call. = FALSE)
     }
-    if( !.is_a_numeric(dodge.width) ){
-        stop("'dodge.width' must be numeric.", call. = FALSE)
+    if( !(.is_a_numeric(dodge.width) && (dodge.width >=0 && dodge.width <=1)) ){
+        stop("'dodge.width' must be numeric (0,1).", call. = FALSE)
     }
     if( !.is_a_bool(apply.beeswarm) ){
         stop("'apply.beeswarm' must be TRUE or FALSE.", call. = FALSE)
@@ -500,7 +500,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !apply.beeswarm ){
         df <- .apply_jitter(df, y, jitter.width, jitter.height)
     } else{
-        df <- .apply_beeswarm(df, x, y, facet.by, dodge_var, dodge.width, ...)
+        df <- .apply_beeswarm(
+            df, x, y, facet.by, dodge_var, dodge.width, jitter.width, ...)
     }
     df <- df |> ungroup()
     return(df)
@@ -570,7 +571,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 #' @importFrom dplyr group_by across all_of n_distinct group_modify
 #' @importFrom scales rescale
 .apply_beeswarm <- function(
-        df, x, y, facet.by, dodge.var, dodge.width,
+        df, x, y, facet.by, dodge.var, dodge.width, jitter.width,
         beeswarm.method = "swarm", beeswarm.corral = "none", ...){
     .require_package("beeswarm")
     # To suppress cmdcheck warning:
@@ -744,8 +745,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !.is_a_numeric(threshold) ){
         stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
-    if( !.is_a_numeric(dodge.width) ){
-        stop("'dodge.width' must be numeric.", call. = FALSE)
+    if( !(.is_a_numeric(dodge.width) && (dodge.width >=0 && dodge.width <=1)) ){
+        stop("'dodge.width' must be numeric (0,1).", call. = FALSE)
     }
     if( !.is_a_numeric(bar.width) ){
         stop("'bar.width' must be numeric.", call. = FALSE)
