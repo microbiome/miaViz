@@ -69,8 +69,16 @@ specified. (Default: \code{TRUE})
 \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 barplots. (Default: \code{0})
 
-\item \code{apply.beeswarm}: \code{Logical scalar}. Whether to apply
-beeswarm layout for points. (Default: \code{FALSE})
+\item \code{point.offset.method}: \code{Character scalar}. Utilized method
+for offsetting points. The available options include:
+\code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
+\code{"swarm"}
+(see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
+\code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
+\code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
+(see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
+for details), \code{"jitter"}, and \code{"none"},
+If \code{"none"}, ofsetting is not applied. (Default: \code{"quasirandom"})
 
 \item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
 (Default: \code{0.5})
@@ -80,9 +88,6 @@ beeswarm layout for points. (Default: \code{FALSE})
 
 \item \code{dodge.width}: \code{Numeric scalar}. Width of dodge. How far
 apart the groups are plotted? (Default: \code{0})
-
-\item \code{beeswarm.method}: \code{Character scalar}. Beeswarm method.
-Fed to function \code{beeswarm::beeswarm()}. (Default: \code{"swarm"})
 
 \item \code{beeswarm.corral}: \code{Character scalar}. Beeswarm's "corral"
 method. Fed to function \code{beeswarm::beeswarm()}.
@@ -193,7 +198,7 @@ plotBoxplot(
     x = "diagnosis", group.by = "diagnosis",
     colour.by = "colonoscopy",
     features = rownames(tse), facet.by = "rownames",
-    apply.beeswarm = TRUE, add.box = FALSE
+    point.offset.method = "swarm", add.box = FALSE
 )
 
 # Do not add points

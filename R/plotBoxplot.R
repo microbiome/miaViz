@@ -88,8 +88,16 @@
 #'   \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 #'   barplots. (Default: \code{0})
 #'
-#'   \item \code{apply.beeswarm}: \code{Logical scalar}. Whether to apply
-#'   beeswarm layout for points. (Default: \code{FALSE})
+#'   \item \code{point.offset.method}: \code{Character scalar}. Utilized method
+#'   for offsetting points. The available options include:
+#'   \code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
+#'   \code{"swarm"}
+#'   (see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
+#'   \code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
+#'   \code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
+#'   (see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
+#'   for details), \code{"jitter"}, and \code{"none"},
+#'   If \code{"none"}, ofsetting is not applied. (Default: \code{"quasirandom"})
 #'
 #'   \item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
 #'   (Default: \code{0.5})
@@ -99,9 +107,6 @@
 #'
 #'   \item \code{dodge.width}: \code{Numeric scalar}. Width of dodge. How far
 #'   apart the groups are plotted? (Default: \code{0})
-#'
-#'   \item \code{beeswarm.method}: \code{Character scalar}. Beeswarm method.
-#'   Fed to function \code{beeswarm::beeswarm()}. (Default: \code{"swarm"})
 #'
 #'   \item \code{beeswarm.corral}: \code{Character scalar}. Beeswarm's "corral"
 #'   method. Fed to function \code{beeswarm::beeswarm()}.
@@ -178,7 +183,7 @@
 #'     x = "diagnosis", group.by = "diagnosis",
 #'     colour.by = "colonoscopy",
 #'     features = rownames(tse), facet.by = "rownames",
-#'     apply.beeswarm = TRUE, add.box = FALSE
+#'     point.offset.method = "swarm", add.box = FALSE
 #' )
 #'
 #' # Do not add points
@@ -484,7 +489,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 .add_fixed_jitterdodge <- function(
         df, x, y, group.by, fill.by, facet.by,
         jitter.width = 0.5, jitter.height = 0, dodge.width = 0.8,
-        apply.beeswarm = FALSE, ...){
+        point.offset.method = "quasirandom", ...){
     if( !.is_a_numeric(jitter.width) ){
         stop("'jitter.width' must be numeric.", call. = FALSE)
     }
@@ -494,23 +499,44 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !(.is_a_numeric(dodge.width) && (dodge.width >=0 && dodge.width <=1)) ){
         stop("'dodge.width' must be numeric (0,1).", call. = FALSE)
     }
-    if( !.is_a_bool(apply.beeswarm) ){
-        stop("'apply.beeswarm' must be TRUE or FALSE.", call. = FALSE)
+    # Check that the offset method can be found from the supported methods
+    beeswarm_methods <- c("swarm", "compactswarm", "center", "hex", "square")
+    vipor_methods <- c(
+        "quasirandom", "pseudorandom", "smiley", "maxout", "frowney", "minout",
+        "tukey", "tukeyDense")
+    jitter_methods <- c("jitter", "none")
+    if( !(.is_a_string(point.offset.method) &&
+          point.offset.method %in% c(
+              beeswarm_methods, vipor_methods, jitter_methods)) ){
+        stop("'point.offset.method' must be a single character value from the ",
+            "following options: '",
+            paste0(
+                sort(c(beeswarm_methods, vipor_methods, jitter_methods)),
+                collapse = "', '"),
+            "'", call. = FALSE)
     }
-    #
+    # If user do not want to offset points, we disable jitter
+    if( point.offset.method == "none" ){
+        jitter.width <- jitter.height <- 0
+    }
     # Determine dodge grouping variable, if any
     dodge_var <- if (!is.null(fill.by)) fill.by else group.by
     # Convert categorical x-axis to numeric
     df <- .categorical_x_to_numeric(df, x, facet.by)
     # Apply dodge
     df <- .apply_dodge(df, x, dodge_var, dodge.width)
-    # Apply either jitter or beeswarm (or none)
-    if( !apply.beeswarm ){
+    # Apply offset based on specified method
+    if( point.offset.method %in% vipor_methods ){
+        df <- .apply_vipor_spread(
+            df, x, y, facet.by, dodge_var, dodge.width, jitter.width,
+            vipor.method = point.offset.method, ...)
+    } else if( point.offset.method %in% beeswarm_methods ){
+        df <- .apply_beeswarm(
+            df, x, y, facet.by, dodge_var, dodge.width, jitter.width,
+            beeswarm.method = point.offset.method, ...)
+    } else{
         df <- .apply_jitter(
             df, x, y, dodge_var, dodge.width, jitter.width, jitter.height)
-    } else{
-        df <- .apply_beeswarm(
-            df, x, y, facet.by, dodge_var, dodge.width, jitter.width, ...)
     }
     df <- df |> ungroup()
     return(df)
@@ -583,6 +609,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function calculates the jitter spread based on grouping and user-defined
 # jitter width.
+#' @importFrom dplyr n_distinct
 .get_jitter_spread <- function(df, x, dodge.var, dodge.width, jitter.width){
     # Get the number of groups. If the coloring/grouping is the same as x axis,
     # it is not taken into account as x axis already have separate placement for
@@ -599,7 +626,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function adds beeswarm to points.
 #' @importFrom utils getFromNamespace
-#' @importFrom dplyr group_by across all_of n_distinct group_modify
+#' @importFrom dplyr group_by across all_of group_modify arrange select
 #' @importFrom scales rescale
 .apply_beeswarm <- function(
         df, x, y, facet.by, dodge.var, dodge.width, jitter.width,
@@ -607,7 +634,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     .require_package("beeswarm")
     # To suppress cmdcheck warning:
     # '::' or ':::' import not declared from: ‘beeswarm’
-    beeswarm_fun <- getFromNamespace("beeswarm", "beeswarm")
+    point_fun <- getFromNamespace("beeswarm", "beeswarm")
+
+    # Add row IDs to preserve original order
+    df[[".row_id"]] <- seq_len(nrow(df))
 
     # Calculate spreading of beeswarm
     max_spread <- .get_jitter_spread(
@@ -620,7 +650,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         group_by(across(all_of(grouping_vars))) |>
         group_modify(~{
             # We calculate beeswarm with beeswarm::beeswarm()
-            swarm <- beeswarm_fun(
+            swarm <- point_fun(
                 .x[[y]],
                 method = beeswarm.method,
                 corral = beeswarm.corral,
@@ -633,7 +663,56 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             .x[["x_point"]] <- mean(.x[["x_point"]]) + x_scaled
             .x[["y_point"]] <- swarm[["y"]]
             return(.x)
-        })
+        }) |>
+        arrange(.row_id) |>
+        select(-.row_id)
+    return(df)
+}
+
+#' @importFrom utils getFromNamespace
+#' @importFrom dplyr group_by across all_of group_modify arrange select
+#' @importFrom scales rescale
+.apply_vipor_spread <- function(
+        df, x, y, facet.by, dodge.var, dodge.width, jitter.width,
+        vipor.method, ...){
+    .require_package("vipor")
+    # To suppress cmdcheck warning:
+    # '::' or ':::' import not declared from: ‘vipor’
+    point_fun <- getFromNamespace("offsetSingleGroup", "vipor")
+    # vipor cannot be used with NA values as it calculates density, and density
+    # cannot be calculated if there are missing values
+    if( anyNA(df[[y]]) ){
+        stop("Please choose another offset method. The current option, ",
+            "point.offset.method='", vipor.method, "', cannot be used with ",
+            "missing values.", call. = FALSE)
+    }
+
+    # Add row IDs to preserve original order
+    df[[".row_id"]] <- seq_len(nrow(df))
+
+    # Calculate spreading of beeswarm
+    max_spread <- .get_jitter_spread(
+        df, x, dodge.var, dodge.width, jitter.width)
+    # We apply offset for each facet, x axis variable and group
+    grouping_vars <- c(facet.by, x, dodge.var) |> unique()
+    # Apply offset function from vipor package
+    df <- df |>
+        group_by(across(all_of(grouping_vars))) |>
+        group_modify(~{
+            # vipor offsets for swarm effect
+            x_offsets <- point_fun(
+                .x[[y]],
+                method = vipor.method
+            )
+            # Adjust x position based on dodge + jitter width
+            x_scaled <- rescale(
+                x_offsets, to = c(-max_spread/2, max_spread/2))
+            .x[["x_point"]] <- mean(.x[["x_point"]]) + x_scaled
+            .x[["y_point"]] <- .x[[y]]
+            return(.x)
+        }) |>
+        arrange(.row_id) |>
+        select(-.row_id)
     return(df)
 }
 
