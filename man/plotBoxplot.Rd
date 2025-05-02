@@ -62,6 +62,10 @@ layout. (Default: \code{TRUE})
 barplot layout denoting the proportion of observations above
 \code{threshold}. (Default: \code{FALSE})
 
+\item \code{add.threshold}: \code{Logical scalar}. Whether to add a
+\code{threshold} as horizontal line when \code{add.proportion = TRUE} is
+specified. (Default: \code{TRUE})
+
 \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 barplots. (Default: \code{0})
 
@@ -114,8 +118,12 @@ layer. (Default: \code{0.5})
 \item \code{line.colour}: \code{Character scalar}. Colour of lines.
 (Default: \code{"grey70"})
 
-\item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
+\item \code{box.width}: \code{Numeric scalar}. Width of boxes.
 (Default: \code{0.75})
+
+\item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
+By default, it is calculated based so that the width matches with the
+width of boxes.
 }}
 
 \item{assay.type}{\code{NULL} or \code{character scalar}. Specifies the
