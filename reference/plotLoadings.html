@@ -19,7 +19,7 @@ A tree from rowTree can be added to heatmap layout."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.17.7</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ A tree from rowTree can be added to heatmap layout."><!-- mathjax --><script src
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot feature loadings for TreeSummarizedExperiment objects or feature loadings numeric matrix.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/sort_loadings/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/sort_loadings/R/plotLoadings.R" class="external-link"><code>R/plotLoadings.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/point_offset/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/point_offset/R/plotLoadings.R" class="external-link"><code>R/plotLoadings.R</code></a></small>
     <div class="hidden name"><code>plotLoadings.Rd</code></div>
     </div>
 
@@ -93,13 +93,6 @@ Applicable when <code>layout="barplot"</code>. (Default: <code>10</code>))</p></
 <li><p><code>absolute.scale</code>: ("barplot", "lollipop") <code>Logical scalar</code>.
 Specifies whether a barplot or a lollipop plot should be visualized in
 absolute scale. (Default: <code>TRUE</code>)</p></li>
-<li><p><code>sort.method</code>: ("heatmap") <code>Character scalar</code> or
-<code>function</code>. Specifies sorting method. If it specifies column, i.e.,
-principal coordinate, features are ordered in dcreasing order based on the
-specified coordinate. If <code>"neatsort"</code>, <code><a href="getNeatOrder.html">getNeatOrder()</a></code> is
-utilized. If <code>function</code>, the argument is passed to
-<code><a href="https://rdrr.io/pkg/bluster/man/clusterRows.html" class="external-link">bluster:clusterRows()</a></code> <code>BLUSPARAM</code>
-parameter. (Default: <code>NULL</code>)</p></li>
 </ul></dd>
 
 
@@ -183,10 +176,7 @@ content in <code>reducedDim</code> slot calculated with standardized methods fro
 <span class="r-plt img"><img src="plotLoadings-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Plot with less components</span></span></span>
-<span class="r-in"><span><span class="fu">plotLoadings</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, <span class="st">"PCA"</span>, layout <span class="op">=</span> <span class="st">"heatmap"</span>,</span></span>
-<span class="r-in"><span>    ncomponents <span class="op">=</span> <span class="fl">2</span>, sort.method <span class="op">=</span> <span class="st">"neatsort"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plotLoadings</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"PCA"</span>, layout <span class="op">=</span> <span class="st">"heatmap"</span>, ncomponents <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotLoadings-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
