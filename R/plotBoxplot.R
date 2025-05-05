@@ -44,6 +44,17 @@
 #'
 #' @param ... Additional parameters for plotting.
 #' \itemize{
+#'   \item \code{point.offset}: \code{Character scalar}. Utilized method
+#'   for offsetting points. The available options include:
+#'   \code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
+#'   \code{"swarm"}
+#'   (see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
+#'   \code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
+#'   \code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
+#'   (see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
+#'   for details), \code{"jitter"}, and \code{"none"},
+#'   If \code{"none"}, ofsetting is not applied. (Default: \code{"jitter"})
+#'
 #'   \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
 #'   variable from \code{colData(x)} or \code{rowData(x)} which is used to
 #'   colour observations. (Default: \code{NULL})
@@ -88,19 +99,8 @@
 #'   \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 #'   barplots. (Default: \code{0})
 #'
-#'   \item \code{point.offset.method}: \code{Character scalar}. Utilized method
-#'   for offsetting points. The available options include:
-#'   \code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
-#'   \code{"swarm"}
-#'   (see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
-#'   \code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
-#'   \code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
-#'   (see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
-#'   for details), \code{"jitter"}, and \code{"none"},
-#'   If \code{"none"}, ofsetting is not applied. (Default: \code{"quasirandom"})
-#'
 #'   \item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
-#'   (Default: \code{0.5})
+#'   (Default: \code{0.3})
 #'
 #'   \item \code{jitter.height}: \code{Numeric scalar}. Height of jitter.
 #'   (Default: \code{0})
@@ -183,7 +183,7 @@
 #'     x = "diagnosis", group.by = "diagnosis",
 #'     colour.by = "colonoscopy",
 #'     features = rownames(tse), facet.by = "rownames",
-#'     point.offset.method = "swarm", add.box = FALSE
+#'     point.offset = "swarm", add.box = FALSE
 #' )
 #'
 #' # Do not add points
@@ -488,8 +488,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 #' @importFrom dplyr ungroup
 .add_fixed_jitterdodge <- function(
         df, x, y, group.by, fill.by, facet.by,
-        jitter.width = 0.5, jitter.height = 0, dodge.width = 0.8,
-        point.offset.method = "quasirandom", ...){
+        jitter.width = 0.3, jitter.height = 0, dodge.width = 0.8,
+        point.offset = "jitter", ...){
     if( !.is_a_numeric(jitter.width) ){
         stop("'jitter.width' must be numeric.", call. = FALSE)
     }
@@ -505,10 +505,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         "quasirandom", "pseudorandom", "smiley", "maxout", "frowney", "minout",
         "tukey", "tukeyDense")
     jitter_methods <- c("jitter", "none")
-    if( !(.is_a_string(point.offset.method) &&
-          point.offset.method %in% c(
+    if( !(.is_a_string(point.offset) &&
+          point.offset %in% c(
               beeswarm_methods, vipor_methods, jitter_methods)) ){
-        stop("'point.offset.method' must be a single character value from the ",
+        stop("'point.offset' must be a single character value from the ",
             "following options: '",
             paste0(
                 sort(c(beeswarm_methods, vipor_methods, jitter_methods)),
@@ -516,7 +516,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             "'", call. = FALSE)
     }
     # If user do not want to offset points, we disable jitter
-    if( point.offset.method == "none" ){
+    if( point.offset == "none" ){
         jitter.width <- jitter.height <- 0
     }
     # Determine dodge grouping variable, if any
@@ -526,14 +526,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Apply dodge
     df <- .apply_dodge(df, x, dodge_var, dodge.width)
     # Apply offset based on specified method
-    if( point.offset.method %in% vipor_methods ){
+    if( point.offset %in% vipor_methods ){
         df <- .apply_vipor_spread(
             df, x, y, facet.by, dodge_var, dodge.width, jitter.width,
-            vipor.method = point.offset.method, ...)
-    } else if( point.offset.method %in% beeswarm_methods ){
+            vipor.method = point.offset, ...)
+    } else if( point.offset %in% beeswarm_methods ){
         df <- .apply_beeswarm(
             df, x, y, facet.by, dodge_var, dodge.width, jitter.width,
-            beeswarm.method = point.offset.method, ...)
+            beeswarm.method = point.offset, ...)
     } else{
         df <- .apply_jitter(
             df, x, y, dodge_var, dodge.width, jitter.width, jitter.height)
@@ -683,7 +683,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # cannot be calculated if there are missing values
     if( anyNA(df[[y]]) ){
         stop("Please choose another offset method. The current option, ",
-            "point.offset.method='", vipor.method, "', cannot be used with ",
+            "point.offset='", vipor.method, "', cannot be used with ",
             "missing values.", call. = FALSE)
     }
 

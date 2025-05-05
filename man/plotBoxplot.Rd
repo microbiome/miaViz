@@ -25,6 +25,17 @@ object.}
 
 \item{...}{Additional parameters for plotting.
 \itemize{
+\item \code{point.offset}: \code{Character scalar}. Utilized method
+for offsetting points. The available options include:
+\code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
+\code{"swarm"}
+(see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
+\code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
+\code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
+(see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
+for details), \code{"jitter"}, and \code{"none"},
+If \code{"none"}, ofsetting is not applied. (Default: \code{"jitter"})
+
 \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} or \code{rowData(x)} which is used to
 colour observations. (Default: \code{NULL})
@@ -69,19 +80,8 @@ specified. (Default: \code{TRUE})
 \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 barplots. (Default: \code{0})
 
-\item \code{point.offset.method}: \code{Character scalar}. Utilized method
-for offsetting points. The available options include:
-\code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
-\code{"swarm"}
-(see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
-\code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
-\code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
-(see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
-for details), \code{"jitter"}, and \code{"none"},
-If \code{"none"}, ofsetting is not applied. (Default: \code{"quasirandom"})
-
 \item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
-(Default: \code{0.5})
+(Default: \code{0.3})
 
 \item \code{jitter.height}: \code{Numeric scalar}. Height of jitter.
 (Default: \code{0})
@@ -198,7 +198,7 @@ plotBoxplot(
     x = "diagnosis", group.by = "diagnosis",
     colour.by = "colonoscopy",
     features = rownames(tse), facet.by = "rownames",
-    point.offset.method = "swarm", add.box = FALSE
+    point.offset = "swarm", add.box = FALSE
 )
 
 # Do not add points
