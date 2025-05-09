@@ -38,10 +38,9 @@ NULL
 #' @rdname plotOrdination
 #' @export
 setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, colour.by = NULL, ...){
+    function(x, dimred, colour.by = color.by, color.by = NULL, ...){
         args <- .check_ordination_input(x, dimred, colour.by = colour.by, ...)
         df <- do.call(.get_ordination_data, args)
-        return(df)
         p <- .ordination_plotter(df, ...)
         return(p)
     }
@@ -53,11 +52,13 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         x, dimred,
         ncomponents = 2L,
         colour.by = color.by, color.by = NULL,
+        fill.by = NULL,
         shape.by = NULL,
         size.by = NULL,
         group.by = NULL,
         pair.by = NULL,
         order.by = NULL,
+        facet.by = NULL,
         assay.type = "counts",
         ...){
     # Check if there are any reduced dim present
@@ -82,11 +83,13 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 
     # Check aesthetic variables
     temp <- .check_metadata_variable(tse, colour.by, FALSE, TRUE, FALSE, TRUE)
+    temp <- .check_metadata_variable(tse, fill.by, FALSE, TRUE, FALSE, TRUE)
     temp <- .check_metadata_variable(tse, shape.by, FALSE, TRUE, FALSE, FALSE)
     temp <- .check_metadata_variable(tse, size.by, FALSE, TRUE, FALSE, FALSE)
     temp <- .check_metadata_variable(tse, group.by, FALSE, TRUE, FALSE, FALSE)
     temp <- .check_metadata_variable(tse, pair.by, FALSE, TRUE, FALSE, FALSE)
     temp <- .check_metadata_variable(tse, order.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(tse, facet.by, FALSE, TRUE, FALSE, FALSE)
     # If colour.by specifies rowname, we check assay.type as the abundance
     # values are used for coloring
     if( !is.null(colour.by) && colour.by %in% rownames(x) ){
@@ -99,33 +102,41 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         x = x, dimred = dimred,
         ncomponents = ncomponents,
         colour.by = colour.by,
+        fill.by = fill.by,
         shape.by = shape.by,
         size.by = size.by,
         group.by = group.by,
         pair.by = pair.by,
         order.by = order.by,
+        facet.by = facet.by,
         assay.type = "counts"
     )
     args <- c(args, list(...))
     return(args)
 }
 
-.get_ordination_data <- function(x, dimred, ncomponents, colour.by, shape.by, size.by, group.by, pair.by, order.by, assay.type, ...){
+.get_ordination_data <- function(x, dimred, ncomponents, colour.by, fill.by, shape.by, size.by, group.by, pair.by, order.by, facet.by, assay.type, ...){
     df <- reducedDim(x, dimred)
     if( is.null(colnames(df)) ){
-        colnames(df) <- paste0(dimred, seq_len(ncol(df)))
+        colnames(df) <- paste0(dimred, ncomponents)
     }
     df <- df |> as.data.frame()
     df <- df[, ncomponents]
     x_var <- colnames(df)[[1L]]
     y_var <- colnames(df)[[2L]]
 
-    cols <- c(shape.by, size.by, group.by, pair.by, order.by)
+    cols <- c(shape.by, size.by, group.by, pair.by, order.by, facet.by)
     if( !is.null(colour.by) && colour.by %in% colnames(colData(x)) ){
         cols <- c(cols, colour.by)
     } else if( !is.null(colour.by) ){
         df[[colour.by]] <- assay(x, assay.type)[colour.by, ]
     }
+    if( !is.null(fill.by) && fill.by %in% colnames(colData(x)) ){
+        cols <- c(cols, fill.by)
+    } else if( !is.null(fill.by) ){
+        df[[fill.by]] <- assay(x, assay.type)[fill.by, ]
+    }
+    cols <- cols |> unique()
     cd <- colData(x)[, cols, drop = FALSE]
     df <- cbind(df, cd)
 
@@ -134,16 +145,49 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         x = x_var,
         y = y_var,
         colour.by = colour.by,
+        fill.by = fill.by,
         shape.by = shape.by,
         size.by = size.by,
         group.by = group.by,
         pair.by = pair.by,
         order.by = order.by,
+        facet.by = facet.by,
         assay.type = assay.type
     )
     return(df)
 }
 
-.ordination_plotter <- function(df, ...){
+.ordination_plotter <- function(df, scales = "fixed", ...){
+    p <- ggplot(df, aes(
+        x = .data[[attributes(df)[["x"]]]],
+        y = .data[[attributes(df)[["y"]]]],
+        colour = if( !is.null(attributes(df)[["colour.by"]]) )
+            .data[[attributes(df)[["colour.by"]]]]
+    ))
+    p <- .add_points_layer(p, df, x = attributes(df)[["x"]], y = attributes(df)[["y"]], ...)
 
+    # If facetting was specified, split plot to separate panels
+    if( !is.null(attributes(df)[["facet.by"]]) ){
+        p <- p +
+            facet_wrap(
+                ~ .data[[attributes(df)[["facet.by"]]]],
+                scales = scales
+            )
+    }
+
+    p <- p + theme_classic()
+    p <- p + labs(x = attributes(df)[["x"]])
+    if( !is.null(attributes(df)[["fill.by"]]) ){
+        p <- p + labs(fill = attributes(df)[["fill.by"]])
+    }
+    if( !is.null(attributes(df)[["colour.by"]]) ){
+        p <- p + labs(colour = attributes(df)[["colour.by"]])
+    }
+    if( !is.null(attributes(df)[["shape.by"]]) ){
+        p <- p + labs(shape = attributes(df)[["shape.by"]])
+    }
+    if( !is.null(attributes(df)[["size.by"]]) ){
+        p <- p + labs(shape = attributes(df)[["size.by"]])
+    }
+    return(p)
 }

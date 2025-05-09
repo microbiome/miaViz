@@ -710,14 +710,15 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function adds points to plot
 .add_points_layer <- function(
-        p, df, point.alpha = 0.65, point.size = 2, point.shape = 21,
+        p, df, x = "x_point", y = "y_point",
+        point.alpha = 0.65, point.size = 2, point.shape = 21,
         point.colour = point.color, point.color = "grey70", ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     x_point <- y_point <- NULL
     args <- list(
         mapping = aes(
-            x = x_point,
-            y = y_point,
+            x = .data[[x]],
+            y = .data[[y]],
             colour = if(!is.null(attributes(df)[["colour.by"]]))
                 .data[[attributes(df)[["colour.by"]]]],
             shape = if(!is.null(attributes(df)[["shape.by"]]))
