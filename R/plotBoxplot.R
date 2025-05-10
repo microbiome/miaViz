@@ -892,22 +892,20 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             min_val = min(.data[[attributes(df)[["value"]]]], na.rm = TRUE),
             max_val = max(.data[[attributes(df)[["value"]]]], na.rm = TRUE),
             .groups = "keep"
-            )
-    # Calculate bars y-position. It is shared by facets.
-    grouping_var <- c(attributes(df)[["facet.by"]]) |> unique()
-    df_prev <- df_prev |>
-        group_by(across(all_of(grouping_var))) |>
-        mutate(
-            y_pos = min(min_val) - (max(max_val) - min(min_val))*0.1
-            )
+            ) |>
+        ungroup()
+
     # Depending on the scales, bar height can also be shared by facets. If the
     # y-axis is free, we adjust the height for each facet separately.
-    if( !scales %in% c("free", "free_y") ){
-        df_prev <- df_prev |> ungroup()
+    if( scales %in% c("free", "free_y") ){
+        grouping_var <- c(attributes(df)[["facet.by"]]) |> unique()
+        df_prev <- df_prev |>
+            group_by(across(all_of(grouping_var)))
     }
-    # Calculate height and width of the bar
+    # Calculate bars' y-position, height and width of the bar
     df_prev <- df_prev |>
         mutate(
+            y_pos = min(min_val) - (max(max_val) - min(min_val))*0.1,
             heigth = (max(max_val) - min(min_val))*0.025,
             width = bar_width
         )
