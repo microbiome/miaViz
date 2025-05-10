@@ -249,7 +249,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.chance = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
-        add.proportion = FALSE, ...){
+        add.proportion = FALSE, add.threshold = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
         stop("Please specify either 'assay.type', 'row.var', or 'col.var'.",
@@ -282,6 +282,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     if( !.is_a_bool(add.proportion) ){
         stop("'add.proportion' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(length(add.threshold) && is.logical(add.threshold)) ){
+        stop("'add.threshold' must be TRUE or FALSE.", call. = FALSE)
     }
     # Check colData/rowData variables
     temp <- .check_metadata_variable(tse, row.var, row = TRUE)
@@ -719,7 +722,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function is the main plotter function
 .plot_boxplot <- function(
         df, add.box = TRUE, add.points = TRUE, scales = "fixed",
-        add.proportion = FALSE, ...){
+        add.proportion = FALSE, add.threshold = FALSE, ...){
     if( !.is_a_string(scales) ){
         stop("'scales' must be a string.", call. = FALSE)
     }
@@ -746,6 +749,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # If user wants to add prevalence bar under the boxplot
     if( add.proportion ){
         p <- .add_prevalence_bar(p, df, scales, ...)
+    }
+    # If user wants to add horizontal line to y-axis to denote threshold
+    if( add.threshold || add.proportion ){
+        p <- .add_threshold_line(p, ...)
     }
     # If facetting was specified, split plot to separate panels
     if( !is.null(attributes(df)[["facet.by"]]) ){
@@ -853,8 +860,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function adds bar under the boxplot to denote prevalence.
 #' @importFrom dplyr group_by across all_of mutate
 .add_prevalence_bar <- function(
-        p, df, scales, threshold = 0, dodge.width = 0.8, add.threshold = TRUE,
-        ...){
+        p, df, scales, threshold = 0, dodge.width = 0.8, ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     min_val <- max_val <- x_point <- width <- y_pos <- heigth <- prevalence <-
         NULL
@@ -863,9 +869,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     if( !(.is_a_numeric(dodge.width) && (dodge.width >=0 && dodge.width <=1)) ){
         stop("'dodge.width' must be numeric (0,1).", call. = FALSE)
-    }
-    if( !(length(add.threshold) && is.logical(add.threshold)) ){
-        stop("'add.threshold' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     # Get bar width based on box width
@@ -930,12 +933,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 ymin = y_pos - heigth / 2,
                 ymax = y_pos + heigth / 2),
             fill = "black", inherit.aes = FALSE)
-
-    # Finally add threshold as horizontal line
-    if( add.threshold ){
-        p <- p + geom_hline(yintercept = threshold, linetype = 2)
-    }
-
     return(p)
 }
 
@@ -966,6 +963,15 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         bar.width <- bar.width / n_groups
     }
     return(bar.width)
+}
+
+# Add horizontal line to plot to denote threshold
+.add_threshold_line <- function(p, threshold = 0, ...){
+    if( !.is_a_numeric(threshold) ){
+        stop("'threshold' must be a single numeric value.", call. = FALSE)
+    }
+    p <- p + geom_hline(yintercept = threshold, linetype = 2)
+    return(p)
 }
 
 # This function adjust the theme and titles of the plot
