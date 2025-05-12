@@ -63,7 +63,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         assay.type = "counts",
         add.points = TRUE, add.ellipse = FALSE, add.density = FALSE,
         add.centroids = FALSE, add.centroids.lines = FALSE, add.vectors = FALSE,
-        add.rotation = FALSE,
+        add.rotation = FALSE, add.expl.var = FALSE,
         ...){
     # Check if there are any reduced dim present
     if( length(reducedDims(x)) == 0L ){
@@ -125,6 +125,9 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     if( !.is_a_bool(add.rotation) ){
         stop("'add.rotation' must be TRUE or FALSE.", call. = FALSE)
     }
+    if( !.is_a_bool(add.expl.var) ){
+        stop("'add.expl.var' must be TRUE or FALSE.", call. = FALSE)
+    }
 
     # add.density cannot be specified simultaneously with fill.by as they both
     # are using fill aesthetic and we can have only on fill scale.
@@ -144,7 +147,8 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         pair.by = pair.by,
         sort.by = sort.by,
         facet.by = facet.by,
-        assay.type = "counts"
+        assay.type = assay.type,
+        add.expl.var = add.expl.var
     )
     args <- c(args, list(...))
     return(args)
@@ -153,7 +157,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 # This function retrieves the data from reducedDim
 .get_ordination_data <- function(
         x, dimred, ncomponents, colour.by, fill.by, shape.by, size.by, group.by,
-        pair.by, sort.by, facet.by, assay.type, ...){
+        pair.by, sort.by, facet.by, assay.type, add.expl.var = FALSE, ...){
     # Get data and store the original attributes that might include rotation
     # data, for instance
     df <- reducedDim(x, dimred)
@@ -180,6 +184,26 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         rotation <- rotation[, ncomponents, drop = FALSE]
         colnames(rotation) <- colnames(df)
     }
+
+    expl_var_name <- c("eig")
+    xlab <- x_var
+    ylab <- y_var
+    if( add.expl.var && any(expl_var_name %in% names(orig_attributes)) ){
+        eigen <- orig_attributes[expl_var_name][[1L]]
+        xlab <- paste0(
+            xlab, " (",
+            round(eigen[ncomponents][[1L]], 1),
+            "%)"
+        )
+        ylab <- paste0(
+            ylab, " (",
+            round(eigen[ncomponents][[2L]], 1),
+            "%)"
+        )
+    } else if( add.expl.var ){
+        warning("No explained variance found from the data.", call. = FALSE)
+    }
+
 
     # List data that is fetched from colData
     cols <- c(shape.by, size.by, group.by, pair.by, sort.by, facet.by)
@@ -234,7 +258,9 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         pair.by = pair.by,
         sort.by = sort.by,
         facet.by = facet.by,
-        assay.type = assay.type
+        assay.type = assay.type,
+        xlab = xlab,
+        ylab = ylab
     )
     attr(df, "rotation") <- rotation
     attr(df, "centroids") <- df_centroids
@@ -287,7 +313,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     }
     # Add vectors from global centroid to group centroids
     if( add.vectors && length(grouping_var) > 0L ){
-        p <- .add_centroids_vector(p, df, ...)
+        p <- .add_centroids_vector(p, df, grouping_var, ...)
     }
     # If facetting was specified, split plot to separate panels
     if( !is.null(attributes(df)[["facet.by"]]) ){
@@ -409,7 +435,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         dplyr::left_join(df_centroids, by = grouping_var)
     # Connect points with centroids
     p <- p + geom_segment(data = df, aes(
-        x = x_centroid, y = x_centroid,
+        x = x_centroid, y = y_centroid,
         xend = .data[[attributes(df)[["x"]]]],
         yend = .data[[attributes(df)[["y"]]]]
     ), alpha = 0.4)
@@ -418,28 +444,14 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 
 # This methods creates vectors that start from global mean and ends to group
 # centroids. This shows how the covariate correlates with the ordination.
-.add_centroids_vector <- function(p, df, ...){
-    # Calculate centroids
-    grouping_var <- c(
-        attributes(df)[["group.by"]], attributes(df)[["fill.by"]]) |> unique()
-    df_centroids <- df |>
-        group_by(across(all_of(grouping_var))) |>
-        summarise(
-            x_centroid = mean(.data[[attributes(df)[["x"]]]], na.rm = TRUE),
-            y_centroid = mean(.data[[attributes(df)[["y"]]]], na.rm = TRUE),
-            .groups = "drop"
-        )
-    # Add global mean
-    df_centroids[["x_global"]] <- mean(
-        df[[attributes(df)[["x"]]]], na.rm = TRUE)
-    df_centroids[["y_global"]] <- mean(
-        df[[attributes(df)[["y"]]]], na.rm = TRUE)
+.add_centroids_vector <- function(p, df, grouping_var, ...){
+    df_centroids <- attributes(df)[["centroids"]]
     # Visualize vectors
     p <- p + geom_segment(
         data = df_centroids,
         aes(
             x = x_global, y = y_global,
-            xend = x_centroid, yend = x_centroid,
+            xend = x_centroid, yend = y_centroid,
         ),
         arrow = arrow(length = unit(0.2, "cm"), type = "closed"),
         size = 1
@@ -503,9 +515,20 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 }
 
 # This function adjusts the theme of the plot
-.adjust_ordination_theme <- function(p, df, ...){
+.adjust_ordination_theme <- function(
+        p, df,
+        xlab = attributes(df)[["xlab"]],
+        ylab = attributes(df)[["ylab"]],
+        ...){
+    if( !.is_a_string(xlab) ){
+        stop("'xlab' must be a single character value.", call. = FALSE)
+    }
+    if( !.is_a_string(ylab) ){
+        stop("'ylab' must be a single character value.", call. = FALSE)
+    }
+    #
     p <- p + theme_classic()
-    p <- p + labs(x = attributes(df)[["x"]])
+    p <- p + labs(x = xlab, y = ylab)
     if( !is.null(attributes(df)[["fill.by"]]) ){
         p <- p + labs(fill = attributes(df)[["fill.by"]])
     }
