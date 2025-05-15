@@ -758,7 +758,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !is.null(attributes(df)[["facet.by"]]) ){
         p <- p +
             facet_wrap(
-                ~ .data[[attributes(df)[["facet.by"]]]],
+                as.formula(paste("~", attributes(df)[["facet.by"]])),
                 scales = scales
             )
     }
