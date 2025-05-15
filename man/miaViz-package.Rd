@@ -27,13 +27,13 @@ Other contributors:
   \item Basil Courbayre [contributor]
   \item Giulio Benedetti \email{giulio.benedetti@utu.fi} (\href{https://orcid.org/0000-0002-8732-7692}{ORCID}) [contributor]
   \item Théotime Pralas [contributor]
-  \item Nitesh Turaga [contributor]
   \item Chouaib Benchraka [contributor]
   \item Sam Hillman [contributor]
-  \item Muluh Muluh [contributor]
+  \item Geraldson Muluh [contributor]
   \item Noah De Gunst [contributor]
   \item Ely Seraidarian [contributor]
   \item Himmi Lindgren [contributor]
+  \item Akewak Jeba \email{akjeba@utu.fi} (\href{https://orcid.org/0009-0007-1347-7552}{ORCID}) [contributor]
   \item Vivian Ikeh [contributor]
 }
 
