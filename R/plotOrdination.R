@@ -57,6 +57,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         shape.by = NULL,
         size.by = NULL,
         group.by = NULL,
+        linetype.by = NULL,
         pair.by = NULL,
         sort.by = NULL,
         facet.by = NULL,
@@ -94,6 +95,8 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     temp <- .check_metadata_variable(tse, fill.by, FALSE, TRUE, FALSE, TRUE)
     temp <- .check_metadata_variable(tse, shape.by, FALSE, TRUE, FALSE, FALSE)
     temp <- .check_metadata_variable(tse, size.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(
+        tse, linetype.by, FALSE, TRUE, FALSE, FALSE)
     temp <- .check_metadata_variable(tse, group.by, FALSE, TRUE, FALSE, FALSE)
     temp <- .check_metadata_variable(tse, pair.by, FALSE, TRUE, FALSE, FALSE)
     temp <- .check_metadata_variable(tse, sort.by, FALSE, TRUE, FALSE, FALSE)
@@ -144,6 +147,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         shape.by = shape.by,
         size.by = size.by,
         group.by = group.by,
+        linetype.by = linetype.by,
         pair.by = pair.by,
         sort.by = sort.by,
         facet.by = facet.by,
@@ -157,7 +161,8 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 # This function retrieves the data from reducedDim
 .get_ordination_data <- function(
         x, dimred, ncomponents, colour.by, fill.by, shape.by, size.by, group.by,
-        pair.by, sort.by, facet.by, assay.type, add.expl.var = FALSE, ...){
+        linetype.by, pair.by, sort.by, facet.by, assay.type,
+        add.expl.var = FALSE, ...){
     # Get data and store the original attributes that might include rotation
     # data, for instance
     df <- reducedDim(x, dimred)
@@ -204,9 +209,9 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         warning("No explained variance found from the data.", call. = FALSE)
     }
 
-
     # List data that is fetched from colData
-    cols <- c(shape.by, size.by, group.by, pair.by, sort.by, facet.by)
+    cols <- c(
+        shape.by, size.by, group.by, linetype.by, pair.by, sort.by, facet.by)
     # colour.by and fill.by can also specify a feature and its abundance.
     # Either get their column name to fetch from colData or directly add them
     # to data.
@@ -224,6 +229,20 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     cols <- cols |> unique()
     cd <- colData(x)[, cols, drop = FALSE]
     df <- cbind(df, cd)
+
+    # Check that the values are correct
+    if( !is.null(group.by) && is.numeric(df[[group.by]]) ){
+        stop("Values specified by 'group.by' must be categorical.",
+            call. = FALSE)
+    }
+    if( !is.null(linetype.by) && is.numeric(df[[linetype.by]]) ){
+        stop("Values specified by 'linetype.by' must be categorical.",
+            call. = FALSE)
+    }
+    if( !is.null(facet.by) && is.numeric(df[[facet.by]]) ){
+        stop("Values specified by 'facet.by' must be categorical.",
+            call. = FALSE)
+    }
 
     # Sort the data. For instance, if we want to add arrows between consecutive
     # time points, this is essential step.
@@ -255,6 +274,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         shape.by = shape.by,
         size.by = size.by,
         group.by = group.by,
+        linetype.by = linetype.by,
         pair.by = pair.by,
         sort.by = sort.by,
         facet.by = facet.by,
@@ -379,16 +399,20 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
                 .data[[attributes(df)[["colour.by"]]]],
             fill = if( !is.null(attributes(df)[["fill.by"]]) )
                 .data[[attributes(df)[["fill.by"]]]],
+            linetype = if( !is.null(attributes(df)[["linetype.by"]]) )
+                .data[[attributes(df)[["linetype.by"]]]],
         ),
         geom = "polygon",
         linewidth = ellipse.linewidth,
-        linetype = ellipse.linetype,
         level = confidence.level,
         alpha = if( is.null(attributes(df)[["fill.by"]]) ) 0 else ellipse.alpha
     )
     # If user did not specify coloring, add black border to ellipses
     if( is.null(attributes(df)[["colour.by"]]) ){
-        args[["color"]] <- "black"
+
+    }
+    if( is.null(attributes(df)[["linetype.by"]]) ){
+        args[["linetype"]] = ellipse.linetype
     }
     p <- p + do.call(stat_ellipse, args)
     return(p)
@@ -508,10 +532,11 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     return(p)
 }
 
-# This function calculates the
+# This function calculates the smoothing bandwidth. It highlights better point-
+# rich areas than the default choice.
 .get_bandwidth <- function(x){
     r <- quantile(x, c(0.25, 0.75))
-    4 * 1.06 * min(sd(x), (r[[2]] - r[[1]])/1.34) * length(x)^(-.2)
+    4 * 1.06 * min(sd(x), (r[[2]] - r[[1]])/1.34) * length(x)^(-0.2)
 }
 
 # This function adjusts the theme of the plot
@@ -540,6 +565,9 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     }
     if( !is.null(attributes(df)[["size.by"]]) ){
         p <- p + labs(shape = attributes(df)[["size.by"]])
+    }
+    if( !is.null(attributes(df)[["linetype.by"]]) ){
+        p <- p + labs(linetype = attributes(df)[["linetype.by"]])
     }
     return(p)
 }
