@@ -479,8 +479,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Sort data so that last time point comes first. ggplot gets color from
     # first instance. Otherwise it would be time point 1 -> time point 2,
     # which is NA.
-    df <- df |>
-        arrange(desc(across(all_of(c(pair.by, x)))))
+    df <- df[order(df[["difference"]]), , drop = FALSE]
     return(df)
 }
 
