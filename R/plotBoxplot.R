@@ -249,7 +249,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.chance = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
-        add.proportion = FALSE, add.threshold = FALSE, ...){
+        add.proportion = FALSE, add.threshold = FALSE, p.value = NULL,
+        add.significance = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
         stop("Please specify either 'assay.type', 'row.var', or 'col.var'.",
@@ -283,8 +284,11 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !.is_a_bool(add.proportion) ){
         stop("'add.proportion' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !(length(add.threshold) && is.logical(add.threshold)) ){
+    if( !.is_a_bool(add.threshold) ){
         stop("'add.threshold' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(add.significance) ){
+        stop("'add.significance' must be TRUE or FALSE.", call. = FALSE)
     }
     # Check colData/rowData variables
     temp <- .check_metadata_variable(tse, row.var, row = TRUE)
@@ -359,6 +363,27 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         stop("'facet.by' must not match with 'x', 'group.by' or 'fill.by'.",
             call. = FALSE)
     }
+
+    # p.value defines p-values to be plotted. It should be in specific format.
+    # It should have p-values and groups along with facetting variable
+    # if it was specified.
+    if( is.null(x) && !is.null(p.value) ){
+        stop("If 'x' is not specified, 'p.value' must be NULL.", call. = FALSE)
+    }
+    if( !(is.null(p.value) || is.data.frame(p.value)) ){
+        stop("'p.value' must be NULL or data.frame.", call. = FALSE)
+    }
+    cols <- c("group1", "group2")
+    p_cols <- c("p", "p.adj", "p.adj.signif")
+    if( is.data.frame(p.value) && (
+            !all(cols %in% colnames(p.value)) ||
+            sum(p_cols %in% colnames(p.value)) == 0L)
+        ){
+        stop("'p.value' must have columns '", paste0(cols, collapse = "', '"),
+            "' and one of the following columns: '",
+            paste0(p_cols, collapse = "', '"), "'", call. = FALSE)
+    }
+
     return(NULL)
 }
 
@@ -369,7 +394,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.chance = FALSE,
         colour.by = color.by, color.by = NULL,
         size.by = NULL, shape.by = NULL, facet.by = NULL,
-        fill.by = NULL, add.proportion = FALSE,
+        fill.by = NULL, add.proportion = FALSE, p.value = NULL,
+        add.significance = FALSE,
         ...){
     # If assay.type is specified, get melted data
     all_vars <- c(x, group.by, colour.by, size.by, shape.by, facet.by, fill.by)
@@ -388,10 +414,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             add.row = c(row.var, row_vars)
         )
     }
-    # If features were specified, subset data
-    if( !is.null(features) ){
-        df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
-    }
     # If row.var was specified, get the data from rowData
     if( !is.null(row.var) ){
         df <- rowData(tse)[, c(row.var, all_vars), drop = FALSE]
@@ -407,6 +429,25 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Prevalence can be added only if values are non-negative
     is_negative <- any(!is.na(df[[c(assay.type, col.var, row.var)]]) &
         df[[c(assay.type, col.var, row.var)]]<0)
+
+    # If user wants to add significance, but p-value was not defined, calculate
+    # them.
+    if( add.significance && is.null(p.value) ){
+        p.value <- .calculate_significance(
+            df, c(assay.type, col.var, row.var),
+            x, facet.by, fill.by, group.by, pair.by,
+            features, ...)
+    }
+
+    # If features were specified, subset data. The subsetting is done after
+    # calculating p-values to ensure that they are calculated for whole data
+    # instead of subset so that the correction is done correctly.
+    if( !is.null(features) ){
+        df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
+        if( !is.null(p.value) ){
+            p.value <- p.value[p.value[["rownames"]] %in% features, , drop = FALSE]
+        }
+    }
 
     # If user specified, calculate difference
     difference <- NULL
@@ -442,6 +483,39 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     df <- df |>
         as.data.frame()
 
+    # Add p-values placement
+    if( !is.null(p.value) ){
+        p.value <- .add_p_value_position(p.value, x, c(assay.type, col.var, row.var), group.by, fill.by, facet.by, df, ...)
+    }
+
+    # Check that p.value data.frame has the correct grouping variables. If
+    # group.by or fill.by were specified the comparisons were made based on
+    # them. If they are not specified, the comparison were made based on x axis
+    # variable. Check that this is correct.
+    if( !is.null(p.value) && length(c(group.by, fill.by)) > 0L &&
+            !all(c(p.value[["group1"]], p.value[["group2"]]) %in%
+                df[[unique(fill.by, group.by)]]) ){
+        stop("Groups in p.value[['group1']] and p.value[['group2']] ",
+            "must match with 'fill.by'/'group.by'.", call. = FALSE)
+    } else if( !is.null(p.value) && length(c(group.by, fill.by)) == 0L &&
+            !all(c(p.value[["group1"]], p.value[["group2"]]) %in% df[[x]]) ){
+        stop("Groups in p.value[['group1']] and p.value[['group2']] ",
+            "must match with 'x'.", call. = FALSE)
+    }
+    # If grouping variables were specified, x was used as group_by variable and
+    # not as comparison variable.
+    if( !is.null(p.value) && !is.null(x) && !all(p.value[[x]] %in% df[[x]])){
+        stop("Groups in p.value[['", x, "']] ",
+            "must match with 'x'.", call. = FALSE)
+    }
+    # If facetting is specified in the plot, the same facet variable should be
+    # found from p values.
+    if( !is.null(facet.by) && !is.null(p.value) &&
+            !all(p.value[[facet.by]] %in% df[[facet.by]]) ){
+        stop("Groups in p.value[['", facet.by, "']] ",
+            "must match with 'facet.by'.", call. = FALSE)
+    }
+
     # Add plotting options to attributes of the data.frame. Now the data.frame
     # includes all the information for plotting.
     attributes(df) <- c(
@@ -460,6 +534,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         difference = difference,
         remove.x.axis = remove.x.axis
     )
+    attributes(df)[["p.value"]] <- p.value
     return(df)
 }
 
@@ -719,6 +794,135 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     return(df)
 }
 
+# This function calculates significance between the groups
+.calculate_significance <- function(
+        df, y, x, facet.by, fill.by, group.by, pair.by, features,
+        paired = !is.null(pair.by),
+        significance.method = "wilcox.test", p.adjust.method = "fdr",
+        mark.significance = FALSE, digits = 3, ...){
+    #
+    if( !.is_a_bool(paired) ){
+        stop("'paired' must be TRUE or FALSE.", call. = FALSE)
+    }
+    supported_methods <- c("wilcox.test", "wilcoxon", "t-test", "t.test")
+    if( !(.is_a_string(significance.method) &&
+          significance.method %in% supported_methods) ){
+        stop("'significance.method' must be a single character value from the ",
+            "the following options: '",
+            paste0(supported_methods, collapse = "', '"), "'", call. = FALSE)
+    }
+    if( !.is_a_string(p.adjust.method) ){
+        stop("'p.adjust.method' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(mark.significance) ){
+        stop("'mark.significance' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_an_integer(digits) ){
+        stop("'digits' must be a single integer value.", call. = FALSE)
+    }
+    .require_package("rstatix")
+    #
+    # Get correct test function
+    FUN <- if( significance.method %in% c("wilcox.test", "wilcoxon") )
+        rstatix::wilcox_test else rstatix::t_test
+    # Get variables. facet.by and x will specify the grouping variables, i.e.,
+    # we test the significance for these groups separately.
+    grouping_vars <- c(facet.by, x)
+    # fill.by. and group.by specify groups for comparison. If they are not
+    # specified, we make comparison between x axis groups.
+    comparison_vars <- c(fill.by, group.by) |> unique()
+    if( is.null(comparison_vars) ){
+        comparison_vars <- x
+    }
+    grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
+    # Run test
+    pvals <- df |>
+        as.data.frame() |>
+        # Create grouping to test these groups separately
+        group_by(across(all_of(grouping_vars))) |>
+        # If we calculate paired analysis, sort data so that correct samples
+        # are matched with correct subjects.
+        arrange(across(all_of(pair.by))) |>
+        # This runs pairwise comparisons automatically if there are more than 2
+        # groups
+        FUN(
+            as.formula(paste0(y, " ~ ", comparison_vars)),
+            paired = paired,
+            p.adjust.method = "none"
+            ) |>
+        ungroup() |>
+        rstatix::adjust_pvalue(method = p.adjust.method)
+    # If user wants to mark only significance levels with asterisks
+    if( mark.significance ){
+        pvals <- pvals |>
+            rstatix::add_significance()
+    } else{
+        # Otherwise we round p-values
+        pvals <- pvals |>
+            rstatix::p_round(digits = digits)
+    }
+
+    # If user specified features, subset the p-values
+    if( !is.null(features) ){
+        pvals <- pvals[pvals[["rownames"]] %in% features, , drop = FALSE]
+        # Subset also metadata as the data in there is used to define p-value
+        # placement
+        temp <- attributes(pvals)[["args"]][["data"]]
+        temp <- temp[temp[["rownames"]] %in% features, , drop = FALSE]
+        attributes(pvals)[["args"]][["data"]] <- temp
+    }
+
+    return(pvals)
+}
+
+# Add positions of p-values to the data.frame
+.add_p_value_position <- function(
+        pvals, x, y, group.by, fill.by, facet.by, df, dodge.width = 0.8,
+        step.increase = 0.12, ...){
+    if( any(!c("y.position", "xmin", "xmax") %in% colnames(pvals)) ){
+        # We could use rstatix::add_xy_position for calculating position for
+        # p-values. However, that approach would only work for p-values
+        # calculated with rstatix. That is why we calculate the positions
+        # manually; we know the positions, they are defined based on positions
+        # of box and points.
+        # In order to work, ggpubr::stat_pvalue_manual requires y.position
+        # and xmin and xmax.
+        grouping_vars <- c(facet.by, x)
+        comparison_vars <- c(fill.by, group.by) |> unique()
+        if( is.null(comparison_vars) ){
+            comparison_vars <- x
+        }
+        grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
+
+        # Calculate y axis positions. They are defined based on maximum y axis
+        # values for each comparison. Each facet gets its own value.
+        ypos <- df |>
+            group_by(across(all_of(c(grouping_vars)))) |>
+            summarise(
+                y.position = max(y_point, na.rm = TRUE) * (1+step.increase),
+                .groups = "drop")
+        # If the p values include only single comparison
+        if( nrow(ypos) == 1L ){
+            pvals <- cbind(pvals, ypos)
+        } else{
+            pvals <- dplyr::left_join(pvals, ypos, by = grouping_vars)
+        }
+
+        # Calculate x axis positions. They are defined based on x axis and
+        # grouping. Each facet gets own positions.
+        n_groups <- df[[comparison_vars]] |> unique() |> length()
+        if( x %in% colnames(pvals) ){
+            pvals[["x_numeric"]] <- factor(pvals[[x]]) |> as.numeric()
+            pvals[["xmin"]] <- pvals[["x_numeric"]] - dodge.width/2/n_groups
+            pvals[["xmax"]] <- pvals[["x_numeric"]] + dodge.width/2/n_groups
+        } else{
+            pvals[["xmin"]] <- 1
+            pvals[["xmax"]] <- n_groups
+        }
+    }
+    return(pvals)
+}
+
 # This function is the main plotter function
 .plot_boxplot <- function(
         df, add.box = TRUE, add.points = TRUE, scales = "fixed",
@@ -762,6 +966,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 scales = scales
             )
     }
+    # If user wants to add p values
+    if( !is.null(attributes(df)[["p.value"]]) ){
+        p <- .add_pvalues_to_boxplot(p, df, ...)
+    }
     # Adjust themes and titles
     p <- .adjust_boxplot_theme(p, df, add.box, ...)
     return(p)
@@ -796,7 +1004,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function adds points to plot
 .add_points_layer <- function(
-        p, df, point.alpha = 0.65, point.size = 2, point.shape = 21,
+        p, df, point.alpha = 0.65, point.size = 2, point.shape = 19L,
         point.colour = point.color, point.color = "grey70", ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     x_point <- y_point <- NULL
@@ -971,6 +1179,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         stop("'threshold' must be a single numeric value.", call. = FALSE)
     }
     p <- p + geom_hline(yintercept = threshold, linetype = 2)
+    return(p)
+}
+
+# This function adds user-defined p-values to the plot
+.add_pvalues_to_boxplot <- function(p, df, ...){
+    .require_package("ggpubr")
+    # Add p-values
+    p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], ...)
     return(p)
 }
 
