@@ -95,6 +95,20 @@
 #'   \item \code{add.threshold}: \code{Logical scalar}. Whether to add a
 #'   \code{threshold} as horizontal line when \code{add.proportion = TRUE} is
 #'   specified. (Default: \code{TRUE})
+#'   
+#'   \item \code{add.significance}: \code{Logical scalar}. Whether to
+#'   automatically compute statistical significance and add p-value annotations 
+#'   to the plot. Ignored if \code{p.value} is provided. (Default: \code{FALSE})
+#'
+#'   \item \code{mark.significance}: \code{Logical scalar}. Whether to display
+#'   the computed or supplied p-values on the plot as significance asterisks. 
+#'   Has no effect if neither \code{add.significance} nor #'   \code{p.value} is 
+#'   used. (Default: \code{FALSE})
+#'   
+#'   \item \code{p.value}: \code{NULL} or \code{data.frame} with columns
+#'   \code{group1}, \code{group2}, and \code{p}. If supplied, these are used
+#'   as user-defined p-values for group comparisons, overriding any computed
+#'   significance. (Default: \code{NULL})
 #'
 #'   \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 #'   barplots. (Default: \code{0})
@@ -250,7 +264,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
         add.proportion = FALSE, add.threshold = FALSE, p.value = NULL,
-        add.significance = FALSE, ...){
+        add.significance = FALSE, mark.significance = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
         stop("Please specify either 'assay.type', 'row.var', or 'col.var'.",
@@ -289,6 +303,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     if( !.is_a_bool(add.significance) ){
         stop("'add.significance' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(mark.significance) ){
+        stop("'mark.significance' must be TRUE or FALSE.", call. = FALSE)
     }
     # Check colData/rowData variables
     temp <- .check_metadata_variable(tse, row.var, row = TRUE)

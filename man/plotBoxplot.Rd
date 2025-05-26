@@ -77,6 +77,20 @@ barplot layout denoting the proportion of observations above
 \code{threshold} as horizontal line when \code{add.proportion = TRUE} is
 specified. (Default: \code{TRUE})
 
+\item \code{add.significance}: \code{Logical scalar}. Whether to
+automatically compute statistical significance and add p-value annotations
+to the plot. Ignored if \code{p.value} is provided. (Default: \code{FALSE})
+
+\item \code{mark.significance}: \code{Logical scalar}. Whether to display
+the computed or supplied p-values on the plot as significance asterisks.
+Has no effect if neither \code{add.significance} nor #'   \code{p.value} is
+used. (Default: \code{FALSE})
+
+\item \code{p.value}: \code{NULL} or \code{data.frame} with columns
+\code{group1}, \code{group2}, and \code{p}. If supplied, these are used
+as user-defined p-values for group comparisons, overriding any computed
+significance. (Default: \code{NULL})
+
 \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 barplots. (Default: \code{0})
 
