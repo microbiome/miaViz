@@ -121,6 +121,17 @@ barplot layout denoting the proportion of observations above
 <li><p><code>add.threshold</code>: <code>Logical scalar</code>. Whether to add a
 <code>threshold</code> as horizontal line when <code>add.proportion = TRUE</code> is
 specified. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>add.significance</code>: <code>Logical scalar</code>. Whether to
+automatically compute statistical significance and add p-value annotations
+to the plot. Ignored if <code>p.value</code> is provided. (Default: <code>FALSE</code>)</p></li>
+<li><p><code>mark.significance</code>: <code>Logical scalar</code>. Whether to display
+the computed or supplied p-values on the plot as significance asterisks.
+Has no effect if neither <code>add.significance</code> nor #'   <code>p.value</code> is
+used. (Default: <code>FALSE</code>)</p></li>
+<li><p><code>p.value</code>: <code>NULL</code> or <code>data.frame</code> with columns
+<code>group1</code>, <code>group2</code>, and <code>p</code>. If supplied, these are used
+as user-defined p-values for group comparisons, overriding any computed
+significance. (Default: <code>NULL</code>)</p></li>
 <li><p><code>threshold</code>: <code>Numeric scalar</code>. Specifies threshold for the
 barplots. (Default: <code>0</code>)</p></li>
 <li><p><code>jitter.width</code>: <code>Numeric scalar</code>. Width of jitter.
