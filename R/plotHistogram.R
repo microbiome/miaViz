@@ -44,7 +44,7 @@
 #'   Must be either \code{"histogram"} or \code{"density"}.
 #'   (Default: \code{"histogram"})
 #'   \item \code{facet.by}: \code{Character vector}. Specifies variables from
-#'   \code{colData(x)} or \code{rowData(x)} used for facetting.
+#'   \code{colData(x)} or \code{rowData(x)} used for faceting.
 #'   (Default: \code{NULL})
 #'   \item \code{fill.by}: \code{Character scalar}. Specifies variable from
 #'   \code{colData(x)} or \code{rowData(x)} used for coloring.
@@ -194,7 +194,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         stop("'feature' must specify features from rownames(x).",
             call. = FALSE)
     }
-    # Check that facetting and cooring variables can be found correctly from
+    # Check that faceting and cooring variables can be found correctly from
     # row or column metadata
     temp <- .check_metadata_variable(
         x, fill.by,
@@ -208,11 +208,11 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         col = length(c(col.var, assay.type))>0,
         multiple = TRUE
     )
-    # User cannot specify more than 2 variables for facetting
+    # User cannot specify more than 2 variables for faceting
     if( length(facet.by) > 2L ){
         stop("'facet.by' cannot specify more than 2 variables.", call. = FALSE)
     }
-    # It does not make sense to visualize same variable as used for facetting or
+    # It does not make sense to visualize same variable as used for faceting or
     # coloring
     if( !is.null(col.var) && col.var %in% c(facet.by, fill.by) ){
         stop("'col.var' must not equal to 'fill.by' or 'facet.by'.",
@@ -288,7 +288,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     if( !all(are_correct) ){
         stop("'fill.by' must specify categorical values.", call. = FALSE)
     }
-    # Add x-axis title, facetting, and coloring info to attributes so that we
+    # Add x-axis title, faceting, and coloring info to attributes so that we
     # can use it in plotting function.
     attributes(df)[["x"]] <- c(assay.type, col.var, row.var)
     attributes(df)[["facet.by"]] <- facet.by
@@ -324,7 +324,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         p <- p + geom_histogram(
             color = color, alpha = alpha, position = position, ...)
     }
-    # Apply facetting
+    # Apply faceting
     if( length(attributes(df)[["facet.by"]]) > 0L ){
         p <- p + facet_grid(attributes(df)[["facet.by"]], scales = scales)
     }
@@ -357,7 +357,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         ))
     # Either create barplot
     p <- p + geom_bar(color = color, alpha = alpha, position = position, ...)
-    # Apply facetting
+    # Apply faceting
     if( length(attributes(df)[["facet.by"]]) > 0L ){
         p <- p + facet_grid(attributes(df)[["facet.by"]], scales = scales)
     }

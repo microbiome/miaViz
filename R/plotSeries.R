@@ -403,7 +403,7 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
         }
     }
 
-    # If facetting is specified, create separate panels
+    # If faceting is specified, create separate panels
     if( !is.null(attributes(df)[["facet.by"]]) ){
         plot_out <- plot_out + facet_wrap(
             ~ .data[[attributes(df)[["facet.by"]]]],

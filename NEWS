@@ -44,6 +44,6 @@ Changes in version 1.15.x
 + Added plotBarplot
 
 Changes in version 1.17.x
-+ Improve *Histogram and *Barplot by adding options for filling and facetting (2025-04-24)
++ Improve *Histogram and *Barplot by adding options for filling and faceting (2025-04-24)
 + Added plotBoxplot function (2025-04-27)
 + plotSeries: Improve by adding functionality for sample groups (2025-04-28)

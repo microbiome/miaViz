@@ -258,7 +258,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     # features cannot be specified if row.var or col.var is specified
     if( is.null(assay.type) && !is.null(features) ){
-        stop("'features' can be specified only when 'assay.type is ",
+        stop("'features' can only be specified when 'assay.type is ",
             "specified.", call. = FALSE)
     }
     # As features points to rownames, the TreeSE must have rownames and features
@@ -365,7 +365,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
 
     # p.value defines p-values to be plotted. It should be in specific format.
-    # It should have p-values and groups along with facetting variable
+    # It should have p-values and groups along with faceting variable
     # if it was specified.
     if( is.null(x) && !is.null(p.value) ){
         stop("If 'x' is not specified, 'p.value' must be NULL.", call. = FALSE)
@@ -474,8 +474,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     # We add jitter to points manually. The problem is that ggplot evaluates
     # jitter for each layer separately when rendering the plot. We could specify
-    # seed, but the problem comes from facetting. Even though, we know the
-    # points' positions before facetting, they are not the same after facetting.
+    # seed, but the problem comes from faceting. Even though, we know the
+    # points' positions before faceting, they are not the same after faceting.
     # Setting manually the jitter for points is much easier for us.
     df <- .add_fixed_jitterdodge(
         df, x, c(assay.type, col.var, row.var), group.by, fill.by, facet.by,
@@ -485,35 +485,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
     # Add p-values placement
     if( !is.null(p.value) ){
-        p.value <- .add_p_value_position(p.value, x, c(assay.type, col.var, row.var), group.by, fill.by, facet.by, df, ...)
-    }
-
-    # Check that p.value data.frame has the correct grouping variables. If
-    # group.by or fill.by were specified the comparisons were made based on
-    # them. If they are not specified, the comparison were made based on x axis
-    # variable. Check that this is correct.
-    if( !is.null(p.value) && length(c(group.by, fill.by)) > 0L &&
-            !all(c(p.value[["group1"]], p.value[["group2"]]) %in%
-                df[[unique(fill.by, group.by)]]) ){
-        stop("Groups in p.value[['group1']] and p.value[['group2']] ",
-            "must match with 'fill.by'/'group.by'.", call. = FALSE)
-    } else if( !is.null(p.value) && length(c(group.by, fill.by)) == 0L &&
-            !all(c(p.value[["group1"]], p.value[["group2"]]) %in% df[[x]]) ){
-        stop("Groups in p.value[['group1']] and p.value[['group2']] ",
-            "must match with 'x'.", call. = FALSE)
-    }
-    # If grouping variables were specified, x was used as group_by variable and
-    # not as comparison variable.
-    if( !is.null(p.value) && !is.null(x) && !all(p.value[[x]] %in% df[[x]])){
-        stop("Groups in p.value[['", x, "']] ",
-            "must match with 'x'.", call. = FALSE)
-    }
-    # If facetting is specified in the plot, the same facet variable should be
-    # found from p values.
-    if( !is.null(facet.by) && !is.null(p.value) &&
-            !all(p.value[[facet.by]] %in% df[[facet.by]]) ){
-        stop("Groups in p.value[['", facet.by, "']] ",
-            "must match with 'facet.by'.", call. = FALSE)
+        # Check that p.value data.frame has the correct grouping variables. If
+        # group.by or fill.by are specified the comparisons are made based on
+        # them. If they are not specified, the comparison are made based on x axis
+        # variable.
+        .validate_pvalue(p.value, df, x, group.by, fill.by, facet.by)
+        p.value <- .add_p_value_position(p.value, x, 
+                                         c(assay.type, col.var, row.var), 
+                                         group.by, fill.by, facet.by, df, ...)
     }
 
     # Add plotting options to attributes of the data.frame. Now the data.frame
@@ -958,7 +937,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( add.threshold || add.proportion ){
         p <- .add_threshold_line(p, ...)
     }
-    # If facetting was specified, split plot to separate panels
+    # If faceting was specified, split plot to separate panels
     if( !is.null(attributes(df)[["facet.by"]]) ){
         p <- p +
             facet_wrap(
@@ -1152,7 +1131,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     #
     if( is.null(bar.width) ){
-        # If facetting is not specified, the bar width is simply the boxplot
+        # If faceting is not specified, the bar width is simply the boxplot
         # width divided by number of groups as we have to fit all boxes
         # side-by-side.
         bar.width <- (1 - (1-box.width))
@@ -1180,6 +1159,41 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     p <- p + geom_hline(yintercept = threshold, linetype = 2)
     return(p)
+}
+
+.validate_pvalue <- function(p.value, df, x, group.by = NULL, fill.by = NULL, 
+                             facet.by = NULL) {
+    if (!is.null(p.value)) {
+        group_fill <- c(group.by, fill.by)
+        
+        # If group.by or fill.by are specified, group1/group2 must match those columns
+        if (length(group_fill) > 0L &&
+            !all(c(p.value[["group1"]], p.value[["group2"]]) %in% df[[unique(group_fill)]])) {
+            stop("Groups in p.value[['group1']] and p.value[['group2']] ",
+                 "must match with 'fill.by'/'group.by'.", call. = FALSE)
+        }
+        
+        # If neither group.by nor fill.by specified, group1/group2 must match x
+        else if (length(group_fill) == 0L &&
+                 !all(c(p.value[["group1"]], p.value[["group2"]]) %in% df[[x]])) {
+            stop("Groups in p.value[['group1']] and p.value[['group2']] ",
+                 "must match with 'x'.", call. = FALSE)
+        }
+        
+        # If x is present in p.value, its values must match df
+        if (!is.null(x) && !is.null(p.value[[x]]) &&
+            !all(p.value[[x]] %in% df[[x]])) {
+            stop("Groups in p.value[['", x, "']] ",
+                 "must match with 'x'.", call. = FALSE)
+        }
+        
+        # If facet.by is specified, its values must match df
+        if (!is.null(facet.by) &&
+            !all(p.value[[facet.by]] %in% df[[facet.by]])) {
+            stop("Groups in p.value[['", facet.by, "']] ",
+                 "must match with 'facet.by'.", call. = FALSE)
+        }
+    }
 }
 
 # This function adds user-defined p-values to the plot
