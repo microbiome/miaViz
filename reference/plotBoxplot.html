@@ -90,7 +90,7 @@ for offsetting points. The available options include:
 <code>"quasirandom"</code>,  <code>"smiley"</code>, <code>"tukey"</code>, <code>"tukeyDense"</code>
 (see <code><a href="https://rdrr.io/pkg/vipor/man/offsetX.html" class="external-link">vipor::offsetSingleGroup()</a></code>
 for details), <code>"jitter"</code>, and <code>"none"</code>,
-If <code>"none"</code>, ofsetting is not applied. (Default: <code>"jitter"</code>)</p></li>
+If <code>"none"</code>, offsetting is not applied. (Default: <code>"jitter"</code>)</p></li>
 <li><p><code>colour.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
 variable from <code>colData(x)</code> or <code>rowData(x)</code> which is used to
 colour observations. (Default: <code>NULL</code>)</p></li>
@@ -109,7 +109,7 @@ or group observations. (Default: <code>NULL</code>)</p></li>
 <li><p><code>pair.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
 variable from <code>colData(x)</code> which is used to pair observation points.
 (Default: <code>NULL</code>)</p></li>
-<li><p><code>add.chance</code>: <code>Logical scalar</code>. Whether to visualize chance
+<li><p><code>add.change</code>: <code>Logical scalar</code>. Whether to visualize chance
 of paired observations by the color of line. (Default: <code>FALSE</code>)</p></li>
 <li><p><code>add.box</code>: <code>Logical scalar</code>. Whether to add a boxplot
 layout. (Default: <code>TRUE</code>)</p></li>
@@ -283,9 +283,9 @@ multiple options for visualization.</p>
 <span class="r-in"><span><span class="co"># Create a plot showing chance between time points in abundance of</span></span></span>
 <span class="r-in"><span><span class="co"># Akkermansia</span></span></span>
 <span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, x <span class="op">=</span> <span class="st">"time_point"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, fill.by <span class="op">=</span> <span class="st">"group"</span>,</span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, x <span class="op">=</span> <span class="st">"group"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, fill.by <span class="op">=</span> <span class="st">"time_point"</span>,</span></span>
 <span class="r-in"><span>    features <span class="op">=</span> <span class="st">"Akkermansia"</span>, pair.by <span class="op">=</span> <span class="st">"subject"</span>,</span></span>
-<span class="r-in"><span>    add.chance <span class="op">=</span> <span class="cn">TRUE</span>, scales <span class="op">=</span> <span class="st">"free"</span></span></span>
+<span class="r-in"><span>    add.change <span class="op">=</span> <span class="cn">TRUE</span>, scales <span class="op">=</span> <span class="st">"free"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
