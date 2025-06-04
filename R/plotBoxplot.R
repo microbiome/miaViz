@@ -53,7 +53,7 @@
 #'   \code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
 #'   (see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
 #'   for details), \code{"jitter"}, and \code{"none"},
-#'   If \code{"none"}, ofsetting is not applied. (Default: \code{"jitter"})
+#'   If \code{"none"}, offsetting is not applied. (Default: \code{"jitter"})
 #'
 #'   \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
 #'   variable from \code{colData(x)} or \code{rowData(x)} which is used to
@@ -79,7 +79,7 @@
 #'   variable from \code{colData(x)} which is used to pair observation points.
 #'   (Default: \code{NULL})
 #'
-#'   \item \code{add.chance}: \code{Logical scalar}. Whether to visualize chance
+#'   \item \code{add.change}: \code{Logical scalar}. Whether to visualize chance
 #'   of paired observations by the color of line. (Default: \code{FALSE})
 #'
 #'   \item \code{add.box}: \code{Logical scalar}. Whether to add a boxplot
@@ -218,9 +218,9 @@
 #' # Create a plot showing chance between time points in abundance of
 #' # Akkermansia
 #' plotBoxplot(
-#'     tse, x = "time_point", assay.type = "counts", fill.by = "group",
+#'     tse, x = "group", assay.type = "counts", fill.by = "time_point",
 #'     features = "Akkermansia", pair.by = "subject",
-#'     add.chance = TRUE, scales = "free"
+#'     add.change = TRUE, scales = "free"
 #' )
 #' }
 #'
@@ -260,7 +260,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function validates the input for boxplot plotter.
 .check_input_for_boxplot <- function(
         tse, assay.type, features, row.var, col.var, x, group.by,
-        pair.by = NULL, add.chance = FALSE, colour.by = color.by,
+        pair.by = NULL, add.change = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
         add.proportion = FALSE, add.threshold = FALSE, p.value = NULL,
@@ -347,11 +347,11 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     )
     temp <- .check_metadata_variable(tse, pair.by, col = TRUE)
     # Check that pairing variables are correct
-    if( !.is_a_bool(add.chance) ){
-        stop("'add.chance' must be TRUE or FALSE.", call. = FALSE)
+    if( !.is_a_bool(add.change) ){
+        stop("'add.change' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( add.chance && is.null(pair.by) ){
-        stop("When 'add.chance' is specified, 'pair.by' must be specified.",
+    if( add.change && is.null(pair.by) ){
+        stop("When 'add.change' is specified, 'pair.by' must be specified.",
             call. = FALSE)
     }
     # We have to plot points in order to connect them
@@ -361,8 +361,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     # We can either color based on variable or the difference netween paired
     # samples. There cannot be multiple coloring schemes.
-    if( add.chance && !is.null(colour.by) ){
-        stop("Both 'add.chance' and 'colour.by' cannot be specified ",
+    if( add.change && !is.null(colour.by) ){
+        stop("Both 'add.change' and 'colour.by' cannot be specified ",
             "simultaneously.", call. = FALSE)
     }
     # x must be character or factor in box plots
@@ -408,7 +408,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # for the plotter function.
 .get_data_for_boxplot <- function(
         tse, x = NULL, assay.type, features, row.var, col.var, group.by,
-        pair.by = NULL, add.chance = FALSE,
+        pair.by = NULL, add.change = FALSE,
         colour.by = color.by, color.by = NULL,
         size.by = NULL, shape.by = NULL, facet.by = NULL,
         fill.by = NULL, add.proportion = FALSE, p.value = NULL,
@@ -468,7 +468,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
     # If user specified, calculate difference
     difference <- NULL
-    if( add.chance ){
+    if( add.change ){
         df <- .calculate_paired_difference(
             df, x, c(assay.type, col.var, row.var), pair.by, group.by, fill.by,
             facet.by)
@@ -520,7 +520,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         x = x,
         group.by = group.by,
         pair.by = pair.by,
-        add.chance = add.chance,
+        add.change = add.change,
         colour.by = colour.by,
         fill.by = fill.by,
         size.by = size.by,
@@ -1183,13 +1183,15 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if (!is.null(p.value)) {
         group_fill <- c(group.by, fill.by)
         
-        # If group.by or fill.by are specified, group1/group2 must match those columns
-        if (length(group_fill) > 0L &&
-            !all(c(p.value[["group1"]], p.value[["group2"]]) %in% df[[unique(group_fill)]])) {
-            stop("Groups in p.value[['group1']] and p.value[['group2']] ",
-                 "must match with 'fill.by'/'group.by'.", call. = FALSE)
+        # If group.by or fill.by are specified, group1/group2 must match values in those columns
+        if (length(group_fill) > 0L) {
+            # Get all unique values from the specified grouping columns
+            group_values <- unique(unlist(lapply(group_fill, function(col) unique(df[[col]]))))
+            if (!all(c(p.value[["group1"]], p.value[["group2"]]) %in% group_values)) {
+                stop("Groups in p.value[['group1']] and p.value[['group2']] ",
+                     "must match with values in 'fill.by'/'group.by'.", call. = FALSE)
+            }
         }
-        
         # If neither group.by nor fill.by specified, group1/group2 must match x
         else if (length(group_fill) == 0L &&
                  !all(c(p.value[["group1"]], p.value[["group2"]]) %in% df[[x]])) {
@@ -1205,7 +1207,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         }
         
         # If facet.by is specified, its values must match df
-        if (!is.null(facet.by) &&
+        if (!is.null(facet.by) && !is.null(p.value[[facet.by]]) &&
             !all(p.value[[facet.by]] %in% df[[facet.by]])) {
             stop("Groups in p.value[['", facet.by, "']] ",
                  "must match with 'facet.by'.", call. = FALSE)
@@ -1252,7 +1254,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !is.null(attributes(df)[["colour.by"]]) ){
         p <- p + labs(colour = attributes(df)[["colour.by"]])
     }
-    if( attributes(df)[["add.chance"]] ){
+    if( attributes(df)[["add.change"]] ){
         p <- p + labs(colour = "Difference")
     }
     if( !is.null(attributes(df)[["shape.by"]]) ){

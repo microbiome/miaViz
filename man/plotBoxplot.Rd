@@ -34,7 +34,7 @@ for offsetting points. The available options include:
 \code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
 (see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
 for details), \code{"jitter"}, and \code{"none"},
-If \code{"none"}, ofsetting is not applied. (Default: \code{"jitter"})
+If \code{"none"}, offsetting is not applied. (Default: \code{"jitter"})
 
 \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} or \code{rowData(x)} which is used to
@@ -60,7 +60,7 @@ or group observations. (Default: \code{NULL})
 variable from \code{colData(x)} which is used to pair observation points.
 (Default: \code{NULL})
 
-\item \code{add.chance}: \code{Logical scalar}. Whether to visualize chance
+\item \code{add.change}: \code{Logical scalar}. Whether to visualize chance
 of paired observations by the color of line. (Default: \code{FALSE})
 
 \item \code{add.box}: \code{Logical scalar}. Whether to add a boxplot
@@ -232,9 +232,9 @@ tse[["time_point"]] <- as.character(tse[["time"]])
 # Create a plot showing chance between time points in abundance of
 # Akkermansia
 plotBoxplot(
-    tse, x = "time_point", assay.type = "counts", fill.by = "group",
+    tse, x = "group", assay.type = "counts", fill.by = "time_point",
     features = "Akkermansia", pair.by = "subject",
-    add.chance = TRUE, scales = "free"
+    add.change = TRUE, scales = "free"
 )
 }
 
