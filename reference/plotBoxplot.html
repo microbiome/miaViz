@@ -226,70 +226,7 @@ multiple options for visualization.</p>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Tito2024QMP"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">Tito2024QMP</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/addAlpha.html" class="external-link">addAlpha</a></span><span class="op">(</span><span class="va">tse</span>, index <span class="op">=</span> <span class="st">"shannon"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Visualize alpha diversity</span></span></span>
-<span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span><span class="va">tse</span>, col.var <span class="op">=</span> <span class="st">"shannon"</span>, x <span class="op">=</span> <span class="st">"diagnosis"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotBoxplot-1.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Visualize relative abundance of top features</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">tse</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/pkg/mia/man/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse</span>, <span class="fl">6</span><span class="op">)</span>, <span class="op">]</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>    x <span class="op">=</span> <span class="st">"diagnosis"</span>, fill.by <span class="op">=</span> <span class="st">"diagnosis"</span>,</span></span>
-<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, facet.by <span class="op">=</span> <span class="st">"rownames"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotBoxplot-2.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add proportion bar</span></span></span>
-<span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>    x <span class="op">=</span> <span class="st">"diagnosis"</span>, fill.by <span class="op">=</span> <span class="st">"diagnosis"</span>,</span></span>
-<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, facet.by <span class="op">=</span> <span class="st">"rownames"</span>,</span></span>
-<span class="r-in"><span>    add.proportion <span class="op">=</span> <span class="cn">TRUE</span>, threshold <span class="op">=</span> <span class="fl">0.1</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotBoxplot-3.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Visualize only with beeswarm</span></span></span>
-<span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>    x <span class="op">=</span> <span class="st">"diagnosis"</span>, group.by <span class="op">=</span> <span class="st">"diagnosis"</span>,</span></span>
-<span class="r-in"><span>    colour.by <span class="op">=</span> <span class="st">"colonoscopy"</span>,</span></span>
-<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, facet.by <span class="op">=</span> <span class="st">"rownames"</span>,</span></span>
-<span class="r-in"><span>    point.offset <span class="op">=</span> <span class="st">"swarm"</span>, add.box <span class="op">=</span> <span class="cn">FALSE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotBoxplot-4.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Do not add points</span></span></span>
-<span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
-<span class="r-in"><span>    fill.by <span class="op">=</span> <span class="st">"diagnosis"</span>,</span></span>
-<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, facet.by <span class="op">=</span> <span class="st">"rownames"</span>,</span></span>
-<span class="r-in"><span>    add.points <span class="op">=</span> <span class="cn">FALSE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotBoxplot-5.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span> <span class="co"># \dontrun{</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">microbiomeDataSets</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">mae</span> <span class="op">&lt;-</span> <span class="fu">microbiomeDataSets</span><span class="fu">::</span><span class="fu">peerj32</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://github.com/waldronlab/MultiAssayExperiment/reference/MultiAssayExperiment-helpers.html" class="external-link">getWithColData</a></span><span class="op">(</span><span class="va">mae</span>, <span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span><span class="op">[[</span><span class="st">"time_point"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">tse</span><span class="op">[[</span><span class="st">"time"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Create a plot showing chance between time points in abundance of</span></span></span>
-<span class="r-in"><span><span class="co"># Akkermansia</span></span></span>
-<span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>, x <span class="op">=</span> <span class="st">"group"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, fill.by <span class="op">=</span> <span class="st">"time_point"</span>,</span></span>
-<span class="r-in"><span>    features <span class="op">=</span> <span class="st">"Akkermansia"</span>, pair.by <span class="op">=</span> <span class="st">"subject"</span>,</span></span>
-<span class="r-in"><span>    add.change <span class="op">=</span> <span class="cn">TRUE</span>, scales <span class="op">=</span> <span class="st">"free"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
-<span class="r-in"><span></span></span>
-</code></pre></div>
+
     </div>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
