@@ -165,6 +165,110 @@
 #' }
 #'
 #' @examples
+#' \dontrun{
+#' # This example shows how to plot Boxplots from intervention studies or a 
+#' # similar study design with repeated measures across multiple timepoints
+#' # with two or more interventions.
+#' # the Kumaraswamy2024 data has four Interventions(A-D) over three timepoints
+#' # (summer-autumn-winter)
+#'  
+#' data(Kumaraswamy2024)
+#' tse <- Kumaraswamy2024
+#' 
+#' # Visualize alpha diversity
+#' # We already have computed 'shannon' values.
+#' # Between group comparisons
+#' plotBoxplot(
+#'     tse, col.var = "shannon", 
+#'     fill.by = "group", x = "season"
+#'     )
+#' # with pvalues
+#' plotBoxplot(
+#'     tse, col.var = "shannon", 
+#'     fill.by = "group", x = "season", a
+#'     dd.significance = T
+#'     )
+#' # Within group comparisons
+#' # simple plot
+#' plotBoxplot(
+#'     tse, col.var = "shannon", 
+#'     fill.by = "season", x = "group"
+#'     )
+#' # Link points across timepoints
+#' plotBoxplot(
+#'     tse, col.var = "shannon", 
+#'     fill.by = "season", x = "group", 
+#'     pair.by = "subject"
+#'     )
+#' # Indicate change in diversity across timepoints
+#' # First filter tse to have measurements for each timepoint
+#' multiple_samples_df <- as.data.frame(colData(tse)) %>% 
+#'     group_by(subject) %>% 
+#'     filter(n() == 3) %>% 
+#'     ungroup()
+#' multiple_samples <- multiple_samples_df$sample
+#' # subset tse by valid samples
+#' tse <- tse[, multiple_samples]
+#' 
+#' # Plot with change
+#' plotBoxplot(
+#'     tse, col.var = "shannon", 
+#'     fill.by = "season", x = "group", 
+#'     pair.by = "subject", add.change = TRUE
+#'     )
+#' # Add significance
+#' plotBoxplot(
+#'     tse, col.var = "shannon", 
+#'     fill.by = "season", x = "group", 
+#'     pair.by = "subject", add.change = TRUE, 
+#'     add.significance = TRUE
+#'     )
+#'     
+#' # Visualize relative abundance
+#' # For interested features e.g :
+#' interest <- c("Bifidobacterium", 
+#'     "Dialister", "Veillonella", "Collinsella")
+#' 
+#' # Between groups
+#' plotBoxplot(
+#'     tse, assay.type = "relabundance", 
+#'     fill.by = "group", x = "season", 
+#'     features = interest, facet.by = "rownames", scales = "free"
+#'     )
+#' # Add significance
+#' plotBoxplot(
+#'     tse, assay.type = "relabundance", 
+#'     fill.by = "group", x = "season", features = c(Bifidobacterium), 
+#'     facet.by = "rownames", scales = "free", 
+#'     add.significance = TRUE
+#'     )
+#'     
+#' # Within groups
+#' 
+#' plotBoxplot(
+#'     tse, assay.type = "relabundance", 
+#'     fill.by = "season", x = "group", 
+#'     features = interest, facet.by = "rownames", scales = "free"
+#'     )
+#' # Add pvalues
+#' plotBoxplot(
+#'     tse, assay.type = "relabundance", 
+#'     fill.by = "season", x = "group", 
+#'     features = c("Bifidobacterium"), facet.by = "rownames", 
+#'     add.significance = TRUE
+#'     )
+#' # Add change
+#' plotBoxplot(
+#'     tse, assay.type = "relabundance", 
+#'     fill.by = "season", x = "group", 
+#'     features = c("Bifidobacterium"), 
+#'     facet.by = "rownames", add.significance = TRUE, 
+#'     pair.by = "subject", add.change = TRUE)
+#' 
+#' }
+#' 
+#' # Other Examples
+#' 
 #' data("Tito2024QMP")
 #' tse <- Tito2024QMP
 #'
@@ -207,22 +311,6 @@
 #'     features = rownames(tse), facet.by = "rownames",
 #'     add.points = FALSE
 #' )
-#'
-#' \dontrun{
-#' library(microbiomeDataSets)
-#'
-#' mae <- microbiomeDataSets::peerj32()
-#' tse <- getWithColData(mae, 1)
-#' tse[["time_point"]] <- as.character(tse[["time"]])
-
-#' # Create a plot showing chance between time points in abundance of
-#' # Akkermansia
-#' plotBoxplot(
-#'     tse, x = "group", assay.type = "counts", fill.by = "time_point",
-#'     features = "Akkermansia", pair.by = "subject",
-#'     add.change = TRUE, scales = "free"
-#' )
-#' }
 #'
 #' @seealso
 #' \itemize{
@@ -855,7 +943,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     } else{
         # Otherwise we round p-values
         pvals <- pvals |>
-            rstatix::p_round(digits = digits)
+            rstatix::p_round(digits = digits) |>
+            select(-p.adj.signif)
     }
 
     # If user specified features, subset the p-values
@@ -874,48 +963,62 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # Add positions of p-values to the data.frame
 .add_p_value_position <- function(
         pvals, x, y, group.by, fill.by, facet.by, df, dodge.width = 0.8,
-        step.increase = 0.12, ...){
-    if( any(!c("y.position", "xmin", "xmax") %in% colnames(pvals)) ){
-        # We could use rstatix::add_xy_position for calculating position for
-        # p-values. However, that approach would only work for p-values
-        # calculated with rstatix. That is why we calculate the positions
-        # manually; we know the positions, they are defined based on positions
-        # of box and points.
-        # In order to work, ggpubr::stat_pvalue_manual requires y.position
-        # and xmin and xmax.
-        grouping_vars <- c(facet.by, x)
-        comparison_vars <- c(fill.by, group.by) |> unique()
-        if( is.null(comparison_vars) ){
-            comparison_vars <- x
-        }
-        grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
-
-        # Calculate y axis positions. They are defined based on maximum y axis
-        # values for each comparison. Each facet gets its own value.
+        step.increase = 0.12, ...
+) {
+    if (any(!c("y.position", "xmin", "xmax") %in% colnames(pvals))) {
+        
+        # Determine grouping and comparison variables
+        grouping_vars <- unique(c(facet.by, x))
+        comparison_vars <- unique(c(fill.by, group.by))
+        if (length(comparison_vars) == 0) comparison_vars <- x
+        grouping_vars <- setdiff(grouping_vars, comparison_vars)
+        
+        # Compute max y for each group to stagger p-value y.position
         ypos <- df |>
-            group_by(across(all_of(c(grouping_vars)))) |>
+            group_by(across(all_of(grouping_vars))) |>
             summarise(
-                y.position = max(y_point, na.rm = TRUE) * (1+step.increase),
-                .groups = "drop")
-        # If the p values include only single comparison
-        if( nrow(ypos) == 1L ){
-            pvals <- cbind(pvals, ypos)
-        } else{
+                y_base = max(!!rlang::sym(y), na.rm = TRUE),
+                .groups = "drop"
+            )
+        
+        # Join y_base to pvals
+        # also dplyr::left_join because left_join is deprecated in mia and breaks
+        if (nrow(ypos) == 1L) {
+            pvals$y_base <- ypos$y_base
+        } else {
             pvals <- dplyr::left_join(pvals, ypos, by = grouping_vars)
         }
-
-        # Calculate x axis positions. They are defined based on x axis and
-        # grouping. Each facet gets own positions.
-        n_groups <- df[[comparison_vars]] |> unique() |> length()
-        if( x %in% colnames(pvals) ){
-            pvals[["x_numeric"]] <- factor(pvals[[x]]) |> as.numeric()
-            pvals[["xmin"]] <- pvals[["x_numeric"]] - dodge.width/2/n_groups
-            pvals[["xmax"]] <- pvals[["x_numeric"]] + dodge.width/2/n_groups
-        } else{
-            pvals[["xmin"]] <- 1
-            pvals[["xmax"]] <- n_groups
-        }
+        
+        # Numeric mapping of x (e.g., timepoint levels)
+        x_levels <- sort(unique(df[[x]]))
+        x_numeric_map <- setNames(seq_along(x_levels), x_levels)
+        pvals$x_numeric <- x_numeric_map[as.character(pvals[[x]])]
+        
+        # Compute dodge offset for each group
+        fill_levels <- sort(unique(df[[fill.by]]))
+        n_fill <- length(fill_levels)
+        fill_numeric_map <- setNames(seq_along(fill_levels), fill_levels)
+        dodge_offsets <- seq(-dodge.width / 2, dodge.width / 2, length.out = n_fill)
+        dodge_map <- setNames(dodge_offsets, fill_levels)
+        
+        # Apply offsets based on group1 and group2
+        pvals <- pvals |>
+            mutate(
+                x1 = x_numeric + dodge_map[group1],
+                x2 = x_numeric + dodge_map[group2],
+                xmin = pmin(x1, x2),
+                xmax = pmax(x1, x2),
+                .group = interaction(!!!syms(grouping_vars), drop = TRUE)
+            ) |>
+            group_by(.group) |>
+            mutate(
+                y.position = y_base * (1 + step.increase * (row_number() - 1))
+            ) |>
+            ungroup() |>
+            select(-.group)
+        
     }
+    
     return(pvals)
 }
 
@@ -1030,34 +1133,61 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function connects points with a line
 .add_line_layers <- function(
         p, df, line.alpha = 0.5, linetype = 1, linewidth = 1,
-        line.colour = line.color, line.color = "grey70", ...){
-    # To disable "no visible binding for global variable" message in cmdcheck
+        line.colour = line.color, line.color = "grey70", ...
+) {
     x_point <- y_point <- NULL
-    args <- list(
-        mapping = aes(
-            x = x_point,
-            y = y_point,
-            group = .data[[attributes(df)[["pair.by"]]]],
-            color = if(!is.null(attributes(df)[["difference"]]))
-                .data[[attributes(df)[["difference"]]]]
-        ),
-        alpha = line.alpha,
-        linetype = linetype,
-        linewidth = linewidth,
-        colour = if(is.null(attributes(df)[["difference"]])) line.colour
-    )
-    args <- args[ lengths(args) > 0 ]
-    p <- p + do.call(geom_path, args)
-    # If user wanted to also visualize difference between consecutive samples,
-    # we improve the color scale to blue-white-red
-    if( !is.null(attributes(df)[["difference"]]) ){
-        p <- p + scale_color_gradient2(
+    pair_by_col <- attributes(df)[["pair.by"]]
+    diff_col <- attributes(df)[["difference"]]
+    
+    if (!is.null(diff_col) && diff_col %in% colnames(df)) {
+        # Prepare segments for coloring by difference
+        seg_df <- df %>%
+            arrange(across(all_of(c(pair_by_col, "x_point")))) %>%
+            group_by(across(all_of(pair_by_col))) %>%
+            mutate(
+                xend = lead(x_point),
+                yend = lead(y_point),
+                difference_segment = lead(.data[[diff_col]])
+            ) %>%
+            filter(!is.na(xend) & !is.na(yend)) %>%
+            ungroup()
+        
+        p <- p + geom_segment(
+            data = seg_df,
+            mapping = aes(
+                x = x_point,
+                y = y_point,
+                xend = xend,
+                yend = yend,
+                group = .data[[pair_by_col]],
+                color = .data[["difference_segment"]]
+            ),
+            alpha = line.alpha,
+            linetype = linetype,
+            linewidth = linewidth
+        ) + scale_color_gradient2(
             low = "blue", mid = "white", high = "red",
-            limits = c(
-                -max(abs(df[[attributes(df)[["difference"]]]])),
-                max(abs(df[[attributes(df)[["difference"]]]])))
-            )
+            limits = c(-max(abs(seg_df[["difference_segment"]]), na.rm = TRUE),
+                       max(abs(seg_df[["difference_segment"]]), na.rm = TRUE))
+        )
+    } else {
+        # No difference: fallback to geom_path with plain color
+        args <- list(
+            mapping = aes(
+                x = x_point,
+                y = y_point,
+                group = .data[[pair_by_col]],
+                color = NULL
+            ),
+            alpha = line.alpha,
+            linetype = linetype,
+            linewidth = linewidth,
+            colour = line.colour
+        )
+        args <- args[lengths(args) > 0]
+        p <- p + do.call(geom_path, args)
     }
+    
     return(p)
 }
 

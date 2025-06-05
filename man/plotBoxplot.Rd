@@ -180,6 +180,110 @@ such as abundance, between categorical values, such as sample groups.
 multiple options for visualization.
 }
 \examples{
+\dontrun{
+# This example shows how to plot Boxplots from intervention studies or a 
+# similar study design with repeated measures across multiple timepoints
+# with two or more interventions.
+# the Kumaraswamy2024 data has four Interventions(A-D) over three timepoints
+# (summer-autumn-winter)
+ 
+data(Kumaraswamy2024)
+tse <- Kumaraswamy2024
+
+# Visualize alpha diversity
+# We already have computed 'shannon' values.
+# Between group comparisons
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "group", x = "season"
+    )
+# with pvalues
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "group", x = "season", a
+    dd.significance = T
+    )
+# Within group comparisons
+# simple plot
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "season", x = "group"
+    )
+# Link points across timepoints
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "season", x = "group", 
+    pair.by = "subject"
+    )
+# Indicate change in diversity across timepoints
+# First filter tse to have measurements for each timepoint
+multiple_samples_df <- as.data.frame(colData(tse)) \%>\% 
+    group_by(subject) \%>\% 
+    filter(n() == 3) \%>\% 
+    ungroup()
+multiple_samples <- multiple_samples_df$sample
+# subset tse by valid samples
+tse <- tse[, multiple_samples]
+
+# Plot with change
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "season", x = "group", 
+    pair.by = "subject", add.change = TRUE
+    )
+# Add significance
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "season", x = "group", 
+    pair.by = "subject", add.change = TRUE, 
+    add.significance = TRUE
+    )
+    
+# Visualize relative abundance
+# For interested features e.g :
+interest <- c("Bifidobacterium", 
+    "Dialister", "Veillonella", "Collinsella")
+
+# Between groups
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "group", x = "season", 
+    features = interest, facet.by = "rownames", scales = "free"
+    )
+# Add significance
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "group", x = "season", features = c(Bifidobacterium), 
+    facet.by = "rownames", scales = "free", 
+    add.significance = TRUE
+    )
+    
+# Within groups
+
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "season", x = "group", 
+    features = interest, facet.by = "rownames", scales = "free"
+    )
+# Add pvalues
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "season", x = "group", 
+    features = c("Bifidobacterium"), facet.by = "rownames", 
+    add.significance = TRUE
+    )
+# Add change
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "season", x = "group", 
+    features = c("Bifidobacterium"), 
+    facet.by = "rownames", add.significance = TRUE, 
+    pair.by = "subject", add.change = TRUE)
+
+}
+
+# Other Examples
+
 data("Tito2024QMP")
 tse <- Tito2024QMP
 
@@ -222,21 +326,6 @@ plotBoxplot(
     features = rownames(tse), facet.by = "rownames",
     add.points = FALSE
 )
-
-\dontrun{
-library(microbiomeDataSets)
-
-mae <- microbiomeDataSets::peerj32()
-tse <- getWithColData(mae, 1)
-tse[["time_point"]] <- as.character(tse[["time"]])
-# Create a plot showing chance between time points in abundance of
-# Akkermansia
-plotBoxplot(
-    tse, x = "group", assay.type = "counts", fill.by = "time_point",
-    features = "Akkermansia", pair.by = "subject",
-    add.change = TRUE, scales = "free"
-)
-}
 
 }
 \seealso{
