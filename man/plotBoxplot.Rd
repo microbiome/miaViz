@@ -253,7 +253,7 @@ plotBoxplot(
 # Add significance
 plotBoxplot(
     tse, assay.type = "relabundance", 
-    fill.by = "group", x = "season", features = c(Bifidobacterium), 
+    fill.by = "group", x = "season", features = c("Bifidobacterium"), 
     facet.by = "rownames", scales = "free", 
     add.significance = TRUE
     )

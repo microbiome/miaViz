@@ -238,7 +238,7 @@
 #' # Add significance
 #' plotBoxplot(
 #'     tse, assay.type = "relabundance", 
-#'     fill.by = "group", x = "season", features = c(Bifidobacterium), 
+#'     fill.by = "group", x = "season", features = c("Bifidobacterium"), 
 #'     facet.by = "rownames", scales = "free", 
 #'     add.significance = TRUE
 #'     )
@@ -943,8 +943,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     } else{
         # Otherwise we round p-values
         pvals <- pvals |>
-            rstatix::p_round(digits = digits) |>
-            select(-p.adj.signif)
+            rstatix::p_round(digits = digits)
     }
 
     # If user specified features, subset the p-values
