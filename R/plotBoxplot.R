@@ -1347,8 +1347,15 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function adds user-defined p-values to the plot
 .add_pvalues_to_boxplot <- function(p, df, ...){
     .require_package("ggpubr")
+    args <- list(...)
     # Add p-values
-    p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], ...)
+    if (isTRUE(args$mark.significance)) {
+        p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], 
+                                            label = "p.adj.signif", ...)
+    } else {
+        p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], 
+                                            label = "p.adj", ...)
+    }
     return(p)
 }
 
