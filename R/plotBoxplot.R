@@ -558,6 +558,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 .categorical_x_to_numeric <- function(df, x, facet.by, scales = "fixed", ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     x_point <- NULL
+
+    # Ensure that the data is in data.frame format
+    df <- df |>
+        as.data.frame()
     # If there are facets, we specify jitter and dodge for each one
     # separately
     if( scales %in% c("free", "free_x") ){
