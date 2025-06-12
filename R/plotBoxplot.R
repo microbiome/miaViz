@@ -542,7 +542,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Prevalence can be added only if values are non-negative
     is_negative <- any(!is.na(df[[c(assay.type, col.var, row.var)]]) &
         df[[c(assay.type, col.var, row.var)]]<0)
-
+    
+    # If features were specified, subset data. The subsetting is done after
+    # calculating p-values to ensure that they are calculated for whole data
+    # instead of subset so that the correction is done correctly.
+    if( !is.null(features) ){
+        df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
+    }
+    
     # If user wants to add significance, but p-value was not defined, calculate
     # them.
     if( add.significance && is.null(p.value) ){
