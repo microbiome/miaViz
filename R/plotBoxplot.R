@@ -359,7 +359,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.change = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
-        add.proportion = FALSE, add.threshold = FALSE, p.value = NULL,
+        add.proportion = FALSE, add.threshold = FALSE, scales = "fixed", p.value = NULL,
         add.significance = FALSE, mark.significance = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
@@ -475,6 +475,13 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( g_match || f_match || x_match ){
         stop("'facet.by' must not match with 'x', 'group.by' or 'fill.by'.",
             call. = FALSE)
+    }
+    # scales is passed to faceting, but as we use it also to adjust the point
+    # positions, we have to test that it has correct value.
+    vals <- c("fixed", "free", "free_x", "free_y")
+    if( !(.is_a_string(scales) && scales %in% vals) ){
+        stop("'scales' must be a single character value from the following ",
+            "options: '", paste0(vals, collapse = "', '"), "'", call. = FALSE)
     }
 
     # p.value defines p-values to be plotted. It should be in specific format.
@@ -689,7 +696,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Determine dodge grouping variable, if any
     dodge_var <- if (!is.null(fill.by)) fill.by else group.by
     # Convert categorical x-axis to numeric
-    df <- .categorical_x_to_numeric(df, x, facet.by)
+    df <- .categorical_x_to_numeric(df, x, facet.by, ...)
     # Apply dodge
     df <- .apply_dodge(df, x, dodge_var, dodge.width)
     # Apply offset based on specified method
@@ -712,14 +719,21 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function converts categorical x axis values to numeric so that we can use
 # them to determine position of points
 #' @importFrom dplyr group_by across all_of mutate
-.categorical_x_to_numeric <- function(df, x, facet.by){
+.categorical_x_to_numeric <- function(df, x, facet.by, scales = "fixed", ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     x_point <- NULL
+
+    # Ensure that the data is in data.frame format
     df <- df |>
-        as.data.frame() |>
-        # If there are facets, we specify jitter and dodge for each one
-        # separately
-        group_by(across(all_of(facet.by))) |>
+        as.data.frame()
+    # If there are facets, we specify jitter and dodge for each one
+    # separately
+    if( scales %in% c("free", "free_x") ){
+        df <- df |>
+            group_by(across(all_of(facet.by)))
+    }
+    # Add point positions
+    df <- df |>
         mutate(
             # Get original x-axis position
             x_point = as.numeric(factor(.data[[x]])),
