@@ -71,6 +71,7 @@ Suggests:
     ggh4x,
     knitr,
     patchwork,
+    purrr,
     rmarkdown,
     shadowtext,
     testthat,

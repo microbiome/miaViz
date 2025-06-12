@@ -359,8 +359,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.change = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
-        add.proportion = FALSE, add.threshold = FALSE, scales = "fixed", p.value = NULL,
-        add.significance = FALSE, mark.significance = FALSE, ...){
+        add.proportion = FALSE, add.threshold = FALSE, scales = "fixed", 
+        p.value = NULL, add.significance = FALSE, 
+        mark.significance = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
         stop("Please specify either 'assay.type', 'row.var', or 'col.var'.",
@@ -455,6 +456,25 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         stop("When 'pair.by' is specified, 'add.points' must be enabled.",
             call. = FALSE)
     }
+    
+    # Check that repeated measures are balanced when 'pair.by' is used
+    if (!is.null(pair.by)) {
+        coldata <- as.data.frame(colData(tse))
+        
+        sample_counts <- coldata %>%
+            group_by(.data[[pair.by]]) %>%
+            summarise(n_samples = n(), .groups = "drop")
+        
+        if (length(unique(sample_counts$n_samples)) > 1) {
+            stop(
+                "When 'pair.by' is specified, all subjects must have the ",
+                "same number of samples.\nRemove 'pair.by' or filter your ",
+                "data to include only subjects with balanced repeats.",
+                call. = FALSE
+            )
+        }
+    }
+    
     # We can either color based on variable or the difference netween paired
     # samples. There cannot be multiple coloring schemes.
     if( add.change && !is.null(colour.by) ){
@@ -942,8 +962,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     pvals <- df |>
         as.data.frame() |>
         # Create grouping to test these groups separately
-        group_split(across(all_of(grouping_vars))) |>
-        map_df(function(df_group) {
+        dplyr::group_split(across(all_of(grouping_vars))) |>
+        purrr::map_df(function(df_group) {
             tryCatch({
                 # If we calculate paired analysis, sort data so that correct
                 # samples are matched with correct subjects.
@@ -1245,9 +1265,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             arrange(across(all_of(c(grouping_vars, "x_point")))) %>%
             group_by(across(all_of(grouping_vars))) %>%
             mutate(
-                xend = lead(x_point),
-                yend = lead(y_point),
-                difference_segment = lead(.data[[diff_col]])
+                xend = dplyr::lead(x_point),
+                yend = dplyr::lead(y_point),
+                difference_segment = dplyr::lead(.data[[diff_col]])
             ) %>%
             filter(!is.na(xend) & !is.na(yend)) %>%
             ungroup()
