@@ -970,17 +970,24 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             temp <- attributes(pvals)[["args"]][["data"]]
             temp <- temp[temp[["rownames"]] %in% features, , drop = FALSE]
             attributes(pvals)[["args"]][["data"]] <- temp
-        } else {
+            
+        } else if ("FeatureID" %in% colnames(pvals)) {
             # Use 'FeatureID' for subsetting
             pvals <- pvals[
                 pvals$group1 %in% features & pvals$group2 %in% features,
-                , drop = FALSE]
+                , drop = FALSE
+            ]
             
             temp <- attributes(pvals)[["args"]][["data"]]
             temp <- temp[temp[["FeatureID"]] %in% features, , drop = FALSE]
             attributes(pvals)[["args"]][["data"]] <- temp
+            
+        } else {
+            # Third case: explicitly do nothing
+            # No filtering applied to pvals or its attributes
         }
     }
+    
 
     return(pvals)
 }
@@ -1033,7 +1040,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             pvals <- dplyr::left_join(pvals, ypos, by = grouping_vars)
         }
         
-        if (x == "rownames") {
+        if (x == "rownames" || !x %in% colnames(pvals) ) {
             # When x is rownames (usually unique), dodge doesn't make sense.
             # Create artificial x levels from the comparison groups
             x_levels <- unique(c(pvals$group1, pvals$group2))
@@ -1213,12 +1220,16 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     x_point <- y_point <- NULL
     pair_by_col <- attributes(df)[["pair.by"]]
     diff_col <- attributes(df)[["difference"]]
+    facet_by_col <- attributes(df)[["facet.by"]]
+    
+    grouping_vars <- unique(c(facet_by_col, pair_by_col))
+    grouping_vars <- grouping_vars[grouping_vars %in% colnames(df)] 
     
     if (!is.null(diff_col) && diff_col %in% colnames(df)) {
         # Prepare segments for coloring by difference
         seg_df <- df %>%
-            arrange(across(all_of(c(pair_by_col, "x_point")))) %>%
-            group_by(across(all_of(pair_by_col))) %>%
+            arrange(across(all_of(c(grouping_vars, "x_point")))) %>%
+            group_by(across(all_of(grouping_vars))) %>%
             mutate(
                 xend = lead(x_point),
                 yend = lead(y_point),
