@@ -1010,50 +1010,86 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         # Also dplyr::left_join because left_join is deprecated in mia and 
         # breaks
         if (nrow(ypos) == 1L) {
-            pvals$y_base <- ypos$y_base
+            # Fallback: compute y_base per comparison (group1/group2)
+            x_positions <- unique(c(pvals$group1, pvals$group2))
+            
+            ypos <- df |>
+                filter(!!rlang::sym(x) %in% x_positions) |>
+                group_by(across(all_of(x))) |>
+                summarise(
+                    y_base = max(!!rlang::sym(y), na.rm = TRUE),
+                    .groups = "drop"
+                ) |>
+                rename(xlab = !!x)
+            
+            pvals <- pvals |>
+                dplyr::left_join(ypos, by = c("group1" = "xlab")) |>
+                rename(y1 = y_base) |>
+                dplyr::left_join(ypos, by = c("group2" = "xlab")) |>
+                rename(y2 = y_base) |>
+                mutate(y_base = pmax(y1, y2, na.rm = TRUE)) |>
+                select(-y1, -y2)
         } else {
             pvals <- dplyr::left_join(pvals, ypos, by = grouping_vars)
         }
         
-        # Numeric mapping of x (e.g., timepoint levels)
-        x_levels <- sort(unique(df[[x]]))
-        x_numeric_map <- setNames(seq_along(x_levels), x_levels)
-        #pvals$x_numeric <- x_numeric_map[as.character(pvals[[x]])]
-        
         if (x == "rownames") {
-            pvals$x_numeric <- x_numeric_map[as.character(pvals[["group1"]])]
-            fill_levels <- sort(unique(df[[x]]))
+            # When x is rownames (usually unique), dodge doesn't make sense.
+            # Create artificial x levels from the comparison groups
+            x_levels <- unique(c(pvals$group1, pvals$group2))
+            x_numeric_map <- setNames(seq_along(x_levels), x_levels)
+            
+            # No dodging — just place group1 and group2 at their respective 
+            # x positions
+            pvals$x1 <- x_numeric_map[as.character(pvals$group1)]
+            pvals$x2 <- x_numeric_map[as.character(pvals$group2)]
+            
+            pvals <- pvals |>
+                mutate(.group = group1) |>
+                group_by(.group) |>
+                mutate(
+                    y.position = y_base + (row_number() - 1) * 
+                        (step.increase * y_base)
+                ) |>
+                ungroup()
         } else {
+            # Standard dodging logic when x is grouped
+            x_levels <- sort(unique(df[[x]]))
+            x_numeric_map <- setNames(seq_along(x_levels), x_levels)
             pvals$x_numeric <- x_numeric_map[as.character(pvals[[x]])]
-            fill_levels <- sort(unique(df[[fill.by]]))
+            
+            fill_levels <- if (!is.null(fill.by)) {
+                sort(unique(df[[fill.by]]))
+            } else {
+                sort(unique(c(pvals$group1, pvals$group2)))
+            }
+            
+            # Compute dodge offset for each group
+            dodge_offsets <- seq(-dodge.width / 2, dodge.width / 2, 
+                                 length.out = length(fill_levels))
+            dodge_map <- setNames(dodge_offsets, fill_levels)
+            
+            # Apply offsets based on group1 and group2
+            pvals <- pvals |>
+                mutate(
+                    x1 = x_numeric + dodge_map[group1],
+                    x2 = x_numeric + dodge_map[group2],
+                    xmin = pmin(x1, x2),
+                    xmax = pmax(x1, x2),
+                    .group = if (length(grouping_vars)) {
+                        interaction(!!!syms(grouping_vars), drop = TRUE)
+                    } else {
+                        interaction(group1, drop = TRUE)
+                    }
+                ) |>
+                group_by(.group) |>
+                mutate(
+                    y.position = y_base * (1 + step.increase * 
+                                               (row_number() - 1))
+                ) |>
+                ungroup() |>
+                select(-.group)
         }
-        
-        # Compute dodge offset for each group
-        n_fill <- length(fill_levels)
-        fill_numeric_map <- setNames(seq_along(fill_levels), fill_levels)
-        dodge_offsets <- seq(-dodge.width / 2, dodge.width / 2, 
-                             length.out = n_fill)
-        dodge_map <- setNames(dodge_offsets, fill_levels)
-        
-        # Apply offsets based on group1 and group2
-        pvals <- pvals |>
-            mutate(
-                x1 = x_numeric + dodge_map[group1],
-                x2 = x_numeric + dodge_map[group2],
-                xmin = pmin(x1, x2),
-                xmax = pmax(x1, x2),
-                .group = if (length(grouping_vars)) {
-                    interaction(!!!syms(grouping_vars), drop = TRUE)
-                } else {
-                    interaction(group1, drop = TRUE)
-                }
-            ) |>
-            group_by(.group) |>
-            mutate(
-                y.position = y_base * (1 + step.increase * (row_number() - 1))
-            ) |>
-            ungroup() |>
-            select(-.group)
         
     }
     
