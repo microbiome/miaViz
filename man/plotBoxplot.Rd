@@ -143,6 +143,14 @@ layer. (Default: \code{0.5})
 \item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
 By default, it is calculated based so that the width matches with the
 width of boxes.
+
+\item \code{ncol}: \code{Integer scalar}. Number of columns in the
+\code{facet_wrap} layout. (Default: \code{NULL}, which lets ggplot2 decide the
+optimal layout)
+
+\item \code{nrow}: \code{Integer scalar}. Number of rows in the
+\code{facet_wrap} layout. (Default: \code{NULL}, which lets ggplot2 decide the
+optimal layout)
 }}
 
 \item{assay.type}{\code{NULL} or \code{character scalar}. Specifies the
