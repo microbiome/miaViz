@@ -18,14 +18,14 @@ class.
 
 Authors:
 \itemize{
-  \item Felix G.M. Ernst \email{felix.gm.ernst@outlook.com} (\href{https://orcid.org/0000-0001-5064-0928}{ORCID})
+  \item Felix G.M. Ernst (\href{https://orcid.org/0000-0001-5064-0928}{ORCID})
   \item Leo Lahti \email{leo.lahti@iki.fi} (\href{https://orcid.org/0000-0001-5537-637X}{ORCID})
 }
 
 Other contributors:
 \itemize{
   \item Basil Courbayre [contributor]
-  \item Giulio Benedetti \email{giulio.benedetti@utu.fi} (\href{https://orcid.org/0000-0002-8732-7692}{ORCID}) [contributor]
+  \item Giulio Benedetti (\href{https://orcid.org/0000-0002-8732-7692}{ORCID}) [contributor]
   \item Théotime Pralas [contributor]
   \item Chouaib Benchraka [contributor]
   \item Sam Hillman [contributor]
@@ -33,7 +33,7 @@ Other contributors:
   \item Noah De Gunst [contributor]
   \item Ely Seraidarian [contributor]
   \item Himmi Lindgren [contributor]
-  \item Akewak Jeba \email{akjeba@utu.fi} (\href{https://orcid.org/0009-0007-1347-7552}{ORCID}) [contributor]
+  \item Akewak Jeba (\href{https://orcid.org/0009-0007-1347-7552}{ORCID}) [contributor]
   \item Vivian Ikeh [contributor]
 }
 
