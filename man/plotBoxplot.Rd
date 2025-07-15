@@ -335,6 +335,20 @@ plotBoxplot(
     add.points = FALSE
 )
 
+# With pre-calculated pvalues
+df <- meltSE(tse, assay.type = "relabundance", add.col = TRUE)
+
+# Calculate the pvalues
+res <- df |> 
+    group_by(FeatureID) |> 
+    wilcox_test(relabundance ~ diagnosis) |> 
+    adjust_pvalue()
+
+# Plot with pvalue dataframe    
+plotBoxplot(tse, features = rownames(tse), 
+    x = "diagnosis", assay.type = "relabundance", 
+    p.value = res, facet.by = "rownames")
+
 }
 \seealso{
 \itemize{
