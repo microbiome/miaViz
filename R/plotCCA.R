@@ -425,14 +425,14 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     name_map <- do.call(rbind, name_map)
     # Check that all variables can be found from colData
     if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
-        warning("All variables in RDA/CCA rsults must be present in ",
+        warning("All variables in RDA/CCA results must be present in ",
             "colData(x).", call. = FALSE)
-    } else{
-        # Add group names to vector data
-        name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
-        name_map <- name_map[, seq_len(2)]
-        vector_data <- cbind(vector_data, name_map)
-    }
+    } 
+    # Add group names to vector data
+    name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
+    name_map <- name_map[, seq_len(2)]
+    vector_data <- cbind(vector_data, name_map)
+
     return(vector_data)
 }
 
@@ -588,6 +588,10 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Get scatter plot with plotReducedDim --> keep theme similar between
     # ordination methods
     p <- do.call(plotReducedDim, args)
+    # Modify axis labels if reduced_dim is 1L
+    if (ncol(reduced_dim) <= 1 ) {
+        p <- p + ylab("MDS")
+    }
     return(p)
 }
 
@@ -636,7 +640,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     }
     #
     data <- plot_data[["ellipse_data"]]
-    if( !is.null(data) ){
+    if( !is.null(data) && length(data) > 2L){
         xvar <- colnames(data)[[1]]
         yvar <- colnames(data)[[2]]
         colour_var <- attributes(data)[["colour_by"]]
