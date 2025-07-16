@@ -324,10 +324,11 @@
 #' df <- meltSE(tse, assay.type = "relabundance", add.col = TRUE)
 #' 
 #' # Calculate the pvalues
+#' library(rstatix)
 #' res <- df |> 
 #'     group_by(FeatureID) |> 
 #'     wilcox_test(relabundance ~ diagnosis) |> 
-#'     rstatix::adjust_pvalue()
+#'     adjust_pvalue()
 #' 
 #' # Plot with pvalue dataframe    
 #' plotBoxplot(tse, features = rownames(tse), 
