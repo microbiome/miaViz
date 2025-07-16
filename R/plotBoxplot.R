@@ -327,7 +327,7 @@
 #' res <- df |> 
 #'     group_by(FeatureID) |> 
 #'     wilcox_test(relabundance ~ diagnosis) |> 
-#'     adjust_pvalue()
+#'     rstatix::adjust_pvalue()
 #' 
 #' # Plot with pvalue dataframe    
 #' plotBoxplot(tse, features = rownames(tse), 
