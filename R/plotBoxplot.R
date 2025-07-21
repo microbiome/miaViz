@@ -1086,7 +1086,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 mutate(y_base = pmax(y1, y2, na.rm = TRUE)) |>
                 select(-y1, -y2)
         } else {
-            if (x == "rownames")
+            if ("rownames" %in% grouping_vars)
                 pvals$rownames <- pvals$FeatureID
             pvals <- dplyr::left_join(pvals, ypos, by = grouping_vars)
         }
