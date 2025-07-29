@@ -46,7 +46,7 @@ A tree from rowTree can be added to heatmap layout."><!-- mathjax --><script src
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot feature loadings for TreeSummarizedExperiment objects or feature loadings numeric matrix.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/prda/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/prda/R/plotLoadings.R" class="external-link"><code>R/plotLoadings.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/pln/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/pln/R/plotLoadings.R" class="external-link"><code>R/plotLoadings.R</code></a></small>
     <div class="hidden name"><code>plotLoadings.Rd</code></div>
     </div>
 
@@ -89,7 +89,8 @@ A tree from <code>rowTree</code> can be added to heatmap layout.</p>
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>additional parameters for plotting.</p><ul><li><p><code>n</code>: <code>Integer scalar</code>. Number of features to be plotted.
-Applicable when <code>layout="barplot"</code>. (Default: <code>10</code>))</p></li>
+Applicable when <code>layout="barplot"</code>.
+(Default: <code>min(nrow(x), 10L)</code>))</p></li>
 <li><p><code>absolute.scale</code>: ("barplot", "lollipop") <code>Logical scalar</code>.
 Specifies whether a barplot or a lollipop plot should be visualized in
 absolute scale. (Default: <code>TRUE</code>)</p></li>
