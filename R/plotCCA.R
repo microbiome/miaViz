@@ -108,7 +108,6 @@
 #'
 #' @examples
 #' # Load dataset
-#' library(miaViz)
 #' data("enterotype", package = "mia")
 #' tse <- enterotype
 #'
@@ -424,14 +423,17 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     })
     name_map <- do.call(rbind, name_map)
     # Check that all variables can be found from colData
-    if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
-        warning("All variables in RDA/CCA results must be present in ",
-            "colData(x).", call. = FALSE)
-    } 
-    # Add group names to vector data
-    name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
-    name_map <- name_map[, seq_len(2)]
-    vector_data <- cbind(vector_data, name_map)
+    # Only proceed if name_map is not NULL
+    if (!is.null(name_map)) {  
+        if (!all(rownames(vector_data) %in% name_map[["name"]])) {
+            warning("All variables in RDA/CCA results must be present in ",
+                    "colData(x).", call. = FALSE)
+        }  
+        # Add group names to vector data
+        name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
+        name_map <- name_map[, seq_len(2)]
+        vector_data <- cbind(vector_data, name_map)
+    }
 
     return(vector_data)
 }
