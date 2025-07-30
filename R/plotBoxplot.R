@@ -585,13 +585,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     is_negative <- any(!is.na(df[[c(assay.type, col.var, row.var)]]) &
         df[[c(assay.type, col.var, row.var)]]<0)
     
-    # If features were specified, subset data. The subsetting is done after
-    # calculating p-values to ensure that they are calculated for whole data
-    # instead of subset so that the correction is done correctly.
-    if( !is.null(features) ){
-        df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
-    }
-    
     # If user wants to add significance, but p-value was not defined, calculate
     # them.
     if( add.significance && is.null(p.value) ){
@@ -599,6 +592,13 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             df, c(assay.type, col.var, row.var),
             x, facet.by, fill.by, group.by, pair.by,
             features, ...)
+    }
+    
+    # If features were specified, subset data. The subsetting is done after
+    # calculating p-values to ensure that they are calculated for whole data
+    # instead of subset so that the correction is done correctly.
+    if( !is.null(features) ){
+        df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
     }
 
     # If user specified, calculate difference
@@ -993,7 +993,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 )
                 # Add grouping columns back - assuming grouping_vars are unique 
                 # per group
-                bind_cols(
+                dplyr::bind_cols(
                     res,
                     df_group %>% select(all_of(grouping_vars)) %>% distinct()
                 )
@@ -1037,7 +1037,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         }
     }
     
-
     return(pvals)
 }
 
@@ -1086,7 +1085,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 mutate(y_base = pmax(y1, y2, na.rm = TRUE)) |>
                 select(-y1, -y2)
         } else {
-            if ("rownames" %in% grouping_vars)
+            if ("rownames" %in% grouping_vars && "FeatureID" %in% colnames(pvals))
                 pvals$rownames <- pvals$FeatureID
             pvals <- dplyr::left_join(pvals, ypos, by = grouping_vars)
         }
