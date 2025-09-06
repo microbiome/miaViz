@@ -28,7 +28,7 @@
 #' @param ... additional parameters for plotting.
 #' \itemize{
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
-#'   Applicable when \code{layout="barplot"}. 
+#'   Applicable when \code{layout="barplot"}.
 #'   (Default: \code{min(nrow(x), 10L)}))
 #'
 #'   \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
@@ -66,7 +66,7 @@
 #' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE) |>
 #'     # Remove this line to see messages
 #'     suppressMessages()
-#' 
+#'
 #'
 #' # Plotting matrix as a barplot
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
@@ -207,8 +207,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 }
 
 # This functions checks that loadings matrix is correct
-.check_loadings_matrix <- function(mat, layout, ncomponents, 
-                                   n = min(nrow(mat), 10L), ...) {
+.check_loadings_matrix <- function(
+        mat, layout, ncomponents, n = min(nrow(mat), 10L), ...) {
     # Check layout
     if( !(.is_a_string(layout) && layout %in%
             c("barplot", "heatmap", "lollipop")) ){
@@ -234,8 +234,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # is data.frame in long format directly usable for ggplot.
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
-.get_loadings_plot_data <- function(df, layout, ncomponents, 
-                                    n = min(nrow(df), 10L), ...) {
+.get_loadings_plot_data <- function(
+        df, layout, ncomponents, n = min(nrow(df), 10L), ...) {
     # Transform into a dataframe
     df <- as.data.frame(df)
     # Keep only the number of components needed
