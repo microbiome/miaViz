@@ -95,16 +95,16 @@
 #'   \item \code{add.threshold}: \code{Logical scalar}. Whether to add a
 #'   \code{threshold} as horizontal line when \code{add.proportion = TRUE} is
 #'   specified. (Default: \code{TRUE})
-#'   
+#'
 #'   \item \code{add.significance}: \code{Logical scalar}. Whether to
-#'   automatically compute statistical significance and add p-value annotations 
+#'   automatically compute statistical significance and add p-value annotations
 #'   to the plot. Ignored if \code{p.value} is provided. (Default: \code{FALSE})
 #'
 #'   \item \code{mark.significance}: \code{Logical scalar}. Whether to display
-#'   the computed or supplied p-values on the plot as significance asterisks. 
-#'   Has no effect if neither \code{add.significance} nor #'   \code{p.value} is 
+#'   the computed or supplied p-values on the plot as significance asterisks.
+#'   Has no effect if neither \code{add.significance} nor \code{p.value} is
 #'   used. (Default: \code{FALSE})
-#'   
+#'
 #'   \item \code{p.value}: \code{NULL} or \code{data.frame} with columns
 #'   \code{group1}, \code{group2}, and \code{p}. If supplied, these are used
 #'   as user-defined p-values for group comparisons, overriding any computed
@@ -162,121 +162,121 @@
 #'   \item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
 #'   By default, it is calculated based so that the width matches with the
 #'   width of boxes.
-#'   
-#'   \item \code{ncol}: \code{Integer scalar}. Number of columns in the 
-#'   `facet_wrap` layout. (Default: \code{NULL}, which lets ggplot2 decide the 
+#'
+#'   \item \code{ncol}: \code{Integer scalar}. Number of columns in the
+#'   `facet_wrap` layout. (Default: \code{NULL}, which lets ggplot2 decide the
 #'   optimal layout)
 #'
-#'   \item \code{nrow}: \code{Integer scalar}. Number of rows in the 
-#'   `facet_wrap` layout. (Default: \code{NULL}, which lets ggplot2 decide the 
+#'   \item \code{nrow}: \code{Integer scalar}. Number of rows in the
+#'   `facet_wrap` layout. (Default: \code{NULL}, which lets ggplot2 decide the
 #'   optimal layout)
 #' }
 #'
 #' @examples
 #' \dontrun{
-#' # This example shows how to plot Boxplots from intervention studies or a 
+#' # This example shows how to plot Boxplots from intervention studies or a
 #' # similar study design with repeated measures across multiple timepoints
 #' # with two or more interventions.
 #' # the Kumaraswamy2024 data has four Interventions(A-D) over three timepoints
 #' # (summer-autumn-winter)
-#'  
+#'
 #' data(Kumaraswamy2024)
 #' tse <- Kumaraswamy2024
-#' 
+#'
 #' # Visualize alpha diversity
 #' # We already have computed 'shannon' values.
 #' # Between group comparisons
 #' plotBoxplot(
-#'     tse, col.var = "shannon", 
+#'     tse, col.var = "shannon",
 #'     fill.by = "group", x = "season"
 #'     )
 #' # with pvalues
 #' plotBoxplot(
-#'     tse, col.var = "shannon", 
+#'     tse, col.var = "shannon",
 #'     fill.by = "group", x = "season", a
 #'     dd.significance = T
 #'     )
 #' # Within group comparisons
 #' # simple plot
 #' plotBoxplot(
-#'     tse, col.var = "shannon", 
+#'     tse, col.var = "shannon",
 #'     fill.by = "season", x = "group"
 #'     )
 #' # Link points across timepoints
 #' plotBoxplot(
-#'     tse, col.var = "shannon", 
-#'     fill.by = "season", x = "group", 
+#'     tse, col.var = "shannon",
+#'     fill.by = "season", x = "group",
 #'     pair.by = "subject"
 #'     )
 #' # Indicate change in diversity across timepoints
 #' # First filter tse to have measurements for each timepoint
-#' multiple_samples_df <- as.data.frame(colData(tse)) %>% 
-#'     group_by(subject) %>% 
-#'     filter(n() == 3) %>% 
+#' multiple_samples_df <- as.data.frame(colData(tse)) %>%
+#'     group_by(subject) %>%
+#'     filter(n() == 3) %>%
 #'     ungroup()
 #' multiple_samples <- multiple_samples_df$sample
 #' # subset tse by valid samples
 #' tse <- tse[, multiple_samples]
-#' 
+#'
 #' # Plot with change
 #' plotBoxplot(
-#'     tse, col.var = "shannon", 
-#'     fill.by = "season", x = "group", 
+#'     tse, col.var = "shannon",
+#'     fill.by = "season", x = "group",
 #'     pair.by = "subject", add.change = TRUE
 #'     )
 #' # Add significance
 #' plotBoxplot(
-#'     tse, col.var = "shannon", 
-#'     fill.by = "season", x = "group", 
-#'     pair.by = "subject", add.change = TRUE, 
+#'     tse, col.var = "shannon",
+#'     fill.by = "season", x = "group",
+#'     pair.by = "subject", add.change = TRUE,
 #'     add.significance = TRUE
 #'     )
-#'     
+#'
 #' # Visualize relative abundance
 #' # For interested features e.g :
-#' interest <- c("Bifidobacterium", 
+#' interest <- c("Bifidobacterium",
 #'     "Dialister", "Veillonella", "Collinsella")
-#' 
+#'
 #' # Between groups
 #' plotBoxplot(
-#'     tse, assay.type = "relabundance", 
-#'     fill.by = "group", x = "season", 
+#'     tse, assay.type = "relabundance",
+#'     fill.by = "group", x = "season",
 #'     features = interest, facet.by = "rownames", scales = "free"
 #'     )
 #' # Add significance
 #' plotBoxplot(
-#'     tse, assay.type = "relabundance", 
-#'     fill.by = "group", x = "season", features = c("Bifidobacterium"), 
-#'     facet.by = "rownames", scales = "free", 
+#'     tse, assay.type = "relabundance",
+#'     fill.by = "group", x = "season", features = c("Bifidobacterium"),
+#'     facet.by = "rownames", scales = "free",
 #'     add.significance = TRUE
 #'     )
-#'     
+#'
 #' # Within groups
-#' 
+#'
 #' plotBoxplot(
-#'     tse, assay.type = "relabundance", 
-#'     fill.by = "season", x = "group", 
+#'     tse, assay.type = "relabundance",
+#'     fill.by = "season", x = "group",
 #'     features = interest, facet.by = "rownames", scales = "free"
 #'     )
 #' # Add pvalues
 #' plotBoxplot(
-#'     tse, assay.type = "relabundance", 
-#'     fill.by = "season", x = "group", 
-#'     features = c("Bifidobacterium"), facet.by = "rownames", 
+#'     tse, assay.type = "relabundance",
+#'     fill.by = "season", x = "group",
+#'     features = c("Bifidobacterium"), facet.by = "rownames",
 #'     add.significance = TRUE
 #'     )
 #' # Add change
 #' plotBoxplot(
-#'     tse, assay.type = "relabundance", 
-#'     fill.by = "season", x = "group", 
-#'     features = c("Bifidobacterium"), 
-#'     facet.by = "rownames", add.significance = TRUE, 
+#'     tse, assay.type = "relabundance",
+#'     fill.by = "season", x = "group",
+#'     features = c("Bifidobacterium"),
+#'     facet.by = "rownames", add.significance = TRUE,
 #'     pair.by = "subject", add.change = TRUE)
-#' 
+#'
 #' }
-#' 
+#'
 #' # Other Examples
-#' 
+#'
 #' data("Tito2024QMP")
 #' tse <- Tito2024QMP
 #'
@@ -319,20 +319,20 @@
 #'     features = rownames(tse), facet.by = "rownames",
 #'     add.points = FALSE
 #' )
-#' 
-#' # With pre-calculated pvalues
+#'
+#' # With pre-calculated p values
 #' df <- meltSE(tse, assay.type = "relabundance", add.col = TRUE)
-#' 
+#'
 #' # Calculate the pvalues
 #' library(rstatix)
-#' res <- df |> 
-#'     group_by(FeatureID) |> 
-#'     wilcox_test(relabundance ~ diagnosis) |> 
+#' res <- df |>
+#'     group_by(FeatureID) |>
+#'     wilcox_test(relabundance ~ diagnosis) |>
 #'     adjust_pvalue()
-#' 
-#' # Plot with pvalue dataframe    
-#' plotBoxplot(tse, features = rownames(tse), 
-#'     x = "diagnosis", assay.type = "relabundance", 
+#'
+#' # Plot with p value dataframe
+#' plotBoxplot(tse, features = rownames(tse),
+#'     x = "diagnosis", assay.type = "relabundance",
 #'     p.value = res, facet.by = "rownames")
 #'
 #' @seealso
@@ -374,8 +374,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.change = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
-        add.proportion = FALSE, add.threshold = FALSE, scales = "fixed", 
-        p.value = NULL, add.significance = FALSE, 
+        add.proportion = FALSE, add.threshold = FALSE, scales = "fixed",
+        p.value = NULL, add.significance = FALSE,
         mark.significance = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
@@ -471,25 +471,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         stop("When 'pair.by' is specified, 'add.points' must be enabled.",
             call. = FALSE)
     }
-    
-    # Check that repeated measures are balanced when 'pair.by' is used
-    if (!is.null(pair.by)) {
-        coldata <- as.data.frame(colData(tse))
-        
-        sample_counts <- coldata %>%
-            group_by(.data[[pair.by]]) %>%
-            summarise(n_samples = n(), .groups = "drop")
-        
-        if (length(unique(sample_counts$n_samples)) > 1) {
-            stop(
-                "When 'pair.by' is specified, all subjects must have the ",
-                "same number of samples.\nRemove 'pair.by' or filter your ",
-                "data to include only subjects with balanced repeats.",
-                call. = FALSE
-            )
-        }
-    }
-    
     # We can either color based on variable or the difference netween paired
     # samples. There cannot be multiple coloring schemes.
     if( add.change && !is.null(colour.by) ){
@@ -519,11 +500,18 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             "options: '", paste0(vals, collapse = "', '"), "'", call. = FALSE)
     }
 
-    # p.value defines p-values to be plotted. It should be in specific format.
-    # It should have p-values and groups along with faceting variable
-    # if it was specified.
-    if( is.null(x) && !is.null(p.value) ){
-        stop("If 'x' is not specified, 'p.value' must be NULL.", call. = FALSE)
+    # p.value defines p-values to be plotted. add.significance defines that
+    # the method calculates them. In both cases, x axis must be specified.
+    #
+    # p.value should be in specific format. It should have p-values and groups
+    # along with faceting variable if it was specified.
+    if( is.null(x) && (!is.null(p.value) || add.significance) ){
+        stop("If 'x' is not specified, 'p.value' and 'add.significance' must ",
+            "be NULL.", call. = FALSE)
+    }
+    if( !is.null(p.value) && add.significance ){
+        stop("Please specify either 'p.value' or 'add.significance', not both.",
+            call. = FALSE)
     }
     if( !(is.null(p.value) || is.data.frame(p.value)) ){
         stop("'p.value' must be NULL or data.frame.", call. = FALSE)
@@ -584,7 +572,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Prevalence can be added only if values are non-negative
     is_negative <- any(!is.na(df[[c(assay.type, col.var, row.var)]]) &
         df[[c(assay.type, col.var, row.var)]]<0)
-    
+
     # If user wants to add significance, but p-value was not defined, calculate
     # them.
     if( add.significance && is.null(p.value) ){
@@ -593,7 +581,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             x, facet.by, fill.by, group.by, pair.by,
             features, ...)
     }
-    
+
     # If features were specified, subset data. The subsetting is done after
     # calculating p-values to ensure that they are calculated for whole data
     # instead of subset so that the correction is done correctly.
@@ -639,11 +627,11 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !is.null(p.value) ){
         # Check that p.value data.frame has the correct grouping variables. If
         # group.by or fill.by are specified the comparisons are made based on
-        # them. If they are not specified, the comparison are made based on 
+        # them. If they are not specified, the comparison are made based on
         # x axis variable.
         .validate_pvalue(p.value, df, x, group.by, fill.by, facet.by)
-        p.value <- .add_p_value_position(p.value, x, 
-                                         c(assay.type, col.var, row.var), 
+        p.value <- .add_p_value_position(p.value, x,
+                                         c(assay.type, col.var, row.var),
                                          group.by, fill.by, facet.by, df, ...)
     }
 
@@ -991,7 +979,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                     paired = paired,
                     p.adjust.method = "none"
                 )
-                # Add grouping columns back - assuming grouping_vars are unique 
+                # Add grouping columns back - assuming grouping_vars are unique
                 # per group
                 dplyr::bind_cols(
                     res,
@@ -1015,28 +1003,28 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         if (!is.null(facet.by)) {
             # Use 'rownames' for subsetting
             pvals <- pvals[pvals[["rownames"]] %in% features, , drop = FALSE]
-            
+
             temp <- attributes(pvals)[["args"]][["data"]]
             temp <- temp[temp[["rownames"]] %in% features, , drop = FALSE]
             attributes(pvals)[["args"]][["data"]] <- temp
-            
+
         } else if ("FeatureID" %in% colnames(pvals)) {
             # Use 'FeatureID' for subsetting
             pvals <- pvals[
                 pvals$group1 %in% features & pvals$group2 %in% features,
                 , drop = FALSE
             ]
-            
+
             temp <- attributes(pvals)[["args"]][["data"]]
             temp <- temp[temp[["FeatureID"]] %in% features, , drop = FALSE]
             attributes(pvals)[["args"]][["data"]] <- temp
-            
+
         } else {
             # Third case: explicitly do nothing
             # No filtering applied to pvals or its attributes
         }
     }
-    
+
     return(pvals)
 }
 
@@ -1046,13 +1034,13 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         step.increase = 0.12, ...
 ) {
     if (any(!c("y.position", "xmin", "xmax") %in% colnames(pvals))) {
-        
+
         # Determine grouping and comparison variables
         grouping_vars <- unique(c(facet.by, x))
         comparison_vars <- unique(c(fill.by, group.by))
         if (length(comparison_vars) == 0) comparison_vars <- x
         grouping_vars <- setdiff(grouping_vars, comparison_vars)
-        
+
         # Compute max y for each group to stagger p-value y.position
         ypos <- df |>
             group_by(across(all_of(grouping_vars))) |>
@@ -1060,14 +1048,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 y_base = max(!!rlang::sym(y), na.rm = TRUE),
                 .groups = "drop"
             )
-        
+
         # Join y_base to pvals
-        # Also dplyr::left_join because left_join is deprecated in mia and 
+        # Also dplyr::left_join because left_join is deprecated in mia and
         # breaks
         if (nrow(ypos) == 1L) {
             # Fallback: compute y_base per comparison (group1/group2)
             x_positions <- unique(c(pvals$group1, pvals$group2))
-            
+
             ypos <- df |>
                 filter(!!rlang::sym(x) %in% x_positions) |>
                 group_by(across(all_of(x))) |>
@@ -1076,7 +1064,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                     .groups = "drop"
                 ) |>
                 rename(xlab = !!x)
-            
+
             pvals <- pvals |>
                 dplyr::left_join(ypos, by = c("group1" = "xlab")) |>
                 rename(y1 = y_base) |>
@@ -1089,23 +1077,23 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 pvals$rownames <- pvals$FeatureID
             pvals <- dplyr::left_join(pvals, ypos, by = grouping_vars)
         }
-        
+
         if (x == "rownames" || !x %in% colnames(pvals) ) {
             # When x is rownames (usually unique), dodge doesn't make sense.
             # Create artificial x levels from the comparison groups
             x_levels <- unique(c(pvals$group1, pvals$group2))
             x_numeric_map <- setNames(seq_along(x_levels), x_levels)
-            
-            # No dodging — just place group1 and group2 at their respective 
+
+            # No dodging — just place group1 and group2 at their respective
             # x positions
             pvals$x1 <- x_numeric_map[as.character(pvals$group1)]
             pvals$x2 <- x_numeric_map[as.character(pvals$group2)]
-            
+
             pvals <- pvals |>
                 mutate(.group = group1) |>
                 group_by(.group) |>
                 mutate(
-                    y.position = y_base + (row_number() - 1) * 
+                    y.position = y_base + (row_number() - 1) *
                         (step.increase * y_base)
                 ) |>
                 ungroup()
@@ -1114,18 +1102,18 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             x_levels <- sort(unique(df[[x]]))
             x_numeric_map <- setNames(seq_along(x_levels), x_levels)
             pvals$x_numeric <- x_numeric_map[as.character(pvals[[x]])]
-            
+
             fill_levels <- if (!is.null(fill.by)) {
                 sort(unique(df[[fill.by]]))
             } else {
                 sort(unique(c(pvals$group1, pvals$group2)))
             }
-            
+
             # Compute dodge offset for each group
-            dodge_offsets <- seq(-dodge.width / 2, dodge.width / 2, 
+            dodge_offsets <- seq(-dodge.width / 2, dodge.width / 2,
                                  length.out = length(fill_levels))
             dodge_map <- setNames(dodge_offsets, fill_levels)
-            
+
             # Apply offsets based on group1 and group2
             pvals <- pvals |>
                 mutate(
@@ -1141,25 +1129,31 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 ) |>
                 group_by(.group) |>
                 mutate(
-                    y.position = y_base * (1 + step.increase * 
+                    y.position = y_base * (1 + step.increase *
                                                (row_number() - 1))
                 ) |>
                 ungroup() |>
                 select(-.group)
         }
-        
+
     }
-    
+
     return(pvals)
 }
 
 # This function is the main plotter function
 .plot_boxplot <- function(
-        df, add.box = TRUE, add.points = TRUE, 
+        df, add.box = TRUE, add.points = TRUE,
         scales = "fixed", ncol = NULL, nrow = NULL,
         add.proportion = FALSE, add.threshold = FALSE, ...){
     if( !.is_a_string(scales) ){
         stop("'scales' must be a string.", call. = FALSE)
+    }
+    if( !(is.null(ncol) || .is_an_integer(ncol)) ){
+        stop("'ncol' must be NULL or a single integer value.", call. = FALSE)
+    }
+    if( !(is.null(nrow) || .is_an_integer(nrow)) ){
+        stop("'nrow' must be NULL or a single integer value.", call. = FALSE)
     }
     #
     # Initialize the plot
@@ -1271,10 +1265,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     pair_by_col <- attributes(df)[["pair.by"]]
     diff_col <- attributes(df)[["difference"]]
     facet_by_col <- attributes(df)[["facet.by"]]
-    
+
     grouping_vars <- unique(c(facet_by_col, pair_by_col))
-    grouping_vars <- grouping_vars[grouping_vars %in% colnames(df)] 
-    
+    grouping_vars <- grouping_vars[grouping_vars %in% colnames(df)]
+
     if (!is.null(diff_col) && diff_col %in% colnames(df)) {
         # Prepare segments for coloring by difference
         seg_df <- df %>%
@@ -1287,7 +1281,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             ) %>%
             filter(!is.na(xend) & !is.na(yend)) %>%
             ungroup()
-        
+
         p <- p + geom_segment(
             data = seg_df,
             mapping = aes(
@@ -1323,7 +1317,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         args <- args[lengths(args) > 0]
         p <- p + do.call(geom_path, args)
     }
-    
+
     return(p)
 }
 
@@ -1444,39 +1438,39 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     return(p)
 }
 
-.validate_pvalue <- function(p.value, df, x, group.by = NULL, fill.by = NULL, 
+.validate_pvalue <- function(p.value, df, x, group.by = NULL, fill.by = NULL,
                              facet.by = NULL) {
     if (!is.null(p.value)) {
         group_fill <- c(group.by, fill.by)
-        
-        # If group.by or fill.by are specified, group1/group2 must match values 
+
+        # If group.by or fill.by are specified, group1/group2 must match values
         # in those columns
         if (length(group_fill) > 0L) {
             # Get all unique values from the specified grouping columns
-            group_values <- unique(unlist(lapply(group_fill, 
+            group_values <- unique(unlist(lapply(group_fill,
                                                  function(col) unique(df[[col]]))))
-            if (!all(c(p.value[["group1"]], 
+            if (!all(c(p.value[["group1"]],
                        p.value[["group2"]]) %in% group_values)) {
                 stop("Groups in p.value[['group1']] and p.value[['group2']] ",
-                     "must match with values in 'fill.by'/'group.by'.", 
+                     "must match with values in 'fill.by'/'group.by'.",
                      call. = FALSE)
             }
         }
         # If neither group.by nor fill.by specified, group1/group2 must match x
         else if (length(group_fill) == 0L &&
-                 !all(c(p.value[["group1"]], 
+                 !all(c(p.value[["group1"]],
                         p.value[["group2"]]) %in% df[[x]])) {
             stop("Groups in p.value[['group1']] and p.value[['group2']] ",
                  "must match with 'x'.", call. = FALSE)
         }
-        
+
         # If x is present in p.value, its values must match df
         if (!is.null(x) && !is.null(p.value[[x]]) &&
             !all(p.value[[x]] %in% df[[x]])) {
             stop("Groups in p.value[['", x, "']] ",
                  "must match with 'x'.", call. = FALSE)
         }
-        
+
         # If facet.by is specified, its values must match df
         if (!is.null(facet.by) && !is.null(p.value[[facet.by]]) &&
             !all(p.value[[facet.by]] %in% df[[facet.by]])) {
@@ -1492,10 +1486,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     args <- list(...)
     # Add p-values
     if (isTRUE(args$mark.significance)) {
-        p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], 
+        p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]],
                                             label = "p.adj.signif", ...)
     } else {
-        p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], 
+        p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]],
                                             label = "p.adj", ...)
     }
     return(p)
