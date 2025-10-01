@@ -191,8 +191,6 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
             stop("reducedDim specified by 'dimred' must have at least 2 ",
                 "columns.", call. = FALSE)
         }
-        # Subset by taking only constrained axes
-        reduced_dim <- .subset_constrained_rda(reduced_dim)
         # Create an argument list. Only 2 dimensions are supported currently.
         args <- c(list(
             tse = x, dimred = dimred, reduced_dim = reduced_dim),
@@ -237,35 +235,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         reducedDims = list(RDA = object)
     )
     return(object)
-}
-
-# The data can include constrained and unconstrained axes. This function subsets
-# the data so that it includes only constrained axes.
-.subset_constrained_rda <- function(reduced_dim){
-    # Get only the indices of constrained ones, i.e., first set of axes.
-    # The colnames are in format, constrained_axis1, ca2, ca3..., unconstrained
-    # axis1, uca2, ...
-    comp_num <- as.numeric(gsub("\\D", "", colnames(reduced_dim)))
-    ind <- which( cumsum(comp_num == 1) <= 1 )
-    # If there were problems, it might be that the names are just arbitrary.
-    # Then take all the columns.
-    if( !(length(ind) > 0L && all(diff(ind) == 1L)) ){
-        ind <- seq_len(ncol(reduced_dim))
-    }
-    # Preserve attributes
-    attributes <- attributes(reduced_dim)
-    attributes <- attributes[ !names(attributes) %in% c("dim", "dimnames") ]
-    # Subset the data so that it includes only constrained axes
-    reduced_dim <- reduced_dim[ , ind, drop = FALSE]
-    if( "biplot" %in% names(attributes) ){
-        attributes[["biplot"]] <- attributes[["biplot"]][ , ind, drop = FALSE]
-    }
-    if( "eig" %in% names(attributes) ){
-        attributes[["eig"]] <- attributes[["eig"]][ind]
-    }
-    # Add attributes back
-    attributes(reduced_dim) <- c(attributes(reduced_dim), attributes)
-    return(reduced_dim)
 }
 
 # This function retrieves optional data that is used for creating an ellipses.
@@ -361,7 +330,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # name might be merged. Get the original variable names and
     # groups.
     if( !is.null(vector_data) ){
-        vector_data <- .get_variable_mapping_from_coldata(tse, vector_data)
+        vector_data <- .get_variable_mapping_from_coldata(tse, vector_data, 
+                                                          reduced_dim)
     }
     vars_found <- all(c("var", "levels") %in% colnames(vector_data))
     # Make the vector labels tidier. For instance, covriate name and value
@@ -405,23 +375,59 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # The RDA/CCA modifies the variable names. Those variables that are factor or
 # character i.e., groups, they get variable names that tell the variable and
 # group. This function matches those modified names with the original data.
-.get_variable_mapping_from_coldata <- function(tse, vector_data, ...){
-    # Loop over each variable in colData. Get all the possible values that they
-    # can get in RDA/CCA methods.
-    name_map <- lapply(colnames(colData(tse)), function(col){
-        # If the value is factor, get all possible values
-        if( is.factor(tse[[col]]) || is.character(tse[[col]]) ){
-            levels <- levels(as.factor(tse[[col]]))
-            name <- paste0(col, levels)
-            var <- rep(col, length(levels))
-            res <- data.frame(var, levels, name)
+.get_variable_mapping_from_coldata <- function(
+        tse, vector_data, reduced_dim, ...){
+    # Extract formula from RDA/CCA object
+    rda_obj <- .get_rda_attribute(reduced_dim, "obj")
+    rda_terms <- rda_obj$terms
+    term_labels <- .get_rda_attribute(rda_terms, "term.labels")
+    factors_mat <- .get_rda_attribute(rda_terms, "factors")
+    orders <- .get_rda_attribute(rda_terms, "order")
+    # Build name_map from terms in the RDA/CCA model
+    name_map_list <- lapply(seq_along(term_labels), function(i){
+        term <- term_labels[i]
+        order <- orders[i]
+        vars_in_term <- rownames(factors_mat)[factors_mat[, i] != 0]
+
+        if( order == 1 ) {
+            # main effect
+            var <- vars_in_term
+            if( is.factor(tse[[var]]) || is.character(tse[[var]]) ){
+                lvls <- levels(as.factor(tse[[var]]))
+                data.frame(var = var, levels = lvls, 
+                           name = paste0(var, lvls),
+                           stringsAsFactors = FALSE)
+            } else{
+                data.frame(var = var, levels = NA_character_, name = var,
+                           stringsAsFactors = FALSE)
+            }
         } else{
-            # The name of numeric variables are not changed
-            res <- data.frame(var = col, levels = NA, name = col)
+            # interaction
+            lvls_list <- lapply(vars_in_term, function(v){
+                if( is.factor(tse[[v]]) || is.character(tse[[v]]) ) {
+                    levels(as.factor(tse[[v]]))
+                } else NA_character_
+            })
+            combos <- expand.grid(lvls_list, stringsAsFactors = FALSE)
+            varname <- paste(vars_in_term, collapse = ":")
+            levelnames <- apply(combos, 1, paste, collapse=":")
+            name <- apply(combos, 1, function(x) {
+                paste0(
+                    mapply(function(var, val) {
+                        if( is.numeric(tse[[var]]) ){
+                            var
+                        } else{
+                            paste0(var, val)
+                        }
+                    }, vars_in_term, x),
+                    collapse = ":"
+                )
+            })
+            data.frame(var = varname, levels = levelnames, name = name,
+                       stringsAsFactors = FALSE)
         }
-        return(res)
     })
-    name_map <- do.call(rbind, name_map)
+    name_map <- do.call(rbind, name_map_list)
     # Check that all variables can be found from colData
     # Only proceed if name_map is not NULL
     if (!is.null(name_map)) {  
@@ -478,10 +484,16 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         lab <- vector_data[i, "vector_label"]
         expl_var <- round(vector_data[i, "Explained variance"]*100, 1)
         p_value <- round(vector_data[i, "Pr(>F)"], 3)
-        temp <- paste(
-            !!lab, " (", !!format(expl_var, nsmall = 1), "%, ",
-            italic("P"), " = ",
-            !!gsub("0\\.","\\.", format( p_value, nsmall = 3)), ")") |> expr()
+        # Only valid significance information is labeled. Skip NAs.
+        temp <- if( !is.na(expl_var) || !is.na(p_value) ){
+            paste(
+                !!lab, " (", !!format(expl_var, nsmall = 1), "%, ",
+                italic("P"), " = ",
+                !!gsub("0\\.","\\.", format(p_value, nsmall = 3)), ")"
+            ) |> expr()
+        } else{
+            paste(!!lab) |> expr()
+        }
         return(temp)
         }
     ) |> unlist()
@@ -590,9 +602,12 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Get scatter plot with plotReducedDim --> keep theme similar between
     # ordination methods
     p <- do.call(plotReducedDim, args)
-    # Modify axis labels if reduced_dim is 1L
-    if (ncol(reduced_dim) <= 1 ) {
-        p <- p + ylab("MDS")
+    # Get axis names from the original RDA "sites" attribute
+    col_names <- colnames(.get_rda_attribute(reduced_dim, "sites")
+                          )[seq_len(ncomponents)]
+    # Replace axis labels in the plot
+    if( !is.null(col_names) ){
+        p <- p + ggplot2::labs(x = col_names[1], y = col_names[2])
     }
     return(p)
 }
