@@ -605,9 +605,14 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Get axis names from the original RDA "sites" attribute
     col_names <- colnames(.get_rda_attribute(reduced_dim, "sites")
                           )[seq_len(ncomponents)]
+    # extract existing labels (they include % already from plotReducedDim)
+    old_labs <- ggplot2::ggplot_build(p)$plot$labels
+    # build new labels by swapping only the axis name
+    new_xlab <- sub("^[^ (]+\\s+\\d+", col_names[1], old_labs$x)
+    new_ylab <- sub("^[^ (]+\\s+\\d+", col_names[2], old_labs$y)
     # Replace axis labels in the plot
     if( !is.null(col_names) ){
-        p <- p + ggplot2::labs(x = col_names[1], y = col_names[2])
+        p <- p + ggplot2::labs(x = new_xlab, y =new_ylab)
     }
     return(p)
 }
