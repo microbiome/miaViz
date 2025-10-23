@@ -125,7 +125,8 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         mat <- .get_loadings_matrix(x, dimred, ...)
         if( add.tree && layout == "heatmap" ){
             # Create dataframe for tree plotting
-            data_list <- .get_loadings_tree_data(mat, x, tree.name, row.var)
+            data_list <- .get_loadings_tree_data(
+                mat, x, tree.name, row.var, ncomponents, ...)
             tree <- data_list[["tree"]]
             mat <- data_list[["loadings"]]
             # Plot tree with feature loadings
@@ -444,7 +445,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function retrieves the data for tree + heatmap plotting. The output
 # is a list that includes tree and data.frame in wide format.
 #' @importFrom ggtree ggtree
-.get_loadings_tree_data <- function(df, x, tree.name, row.var){
+.get_loadings_tree_data <- function(
+        df, x, tree.name, row.var, ncomponents, n = min(nrow(df), 10L), ...){
     # Check that rownames of loading matrix match with rownames of TreeSE. It
     # might be that TreeSE is updated after calculating the reduced dimension
     # which is why rownames do not match.
@@ -455,6 +457,18 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             "Features of loading matrix do not match with rownames(x)",
             call. = FALSE)
     }
+    df <- df[ , seq_len(ncomponents), drop = FALSE]
+
+    # Select features with highest loadings
+    df <- df |> as.data.frame()
+    max_loads <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
+    max_loads <- do.call(rbind, max_loads)
+    df <- df[rownames(df) %in% max_loads[["Feature"]], ]
+    x <- x[rownames(x) %in% rownames(df), ]
+    if( any(!rowTree(x)[["tip.label"]] %in% rowLinks(x)[["nodeLab"]]) ){
+        x <- subsetByLeaf(x, rowLinks(x)[["nodeLab"]])
+    }
+
     # Sort the loading matrix
     df <- df[match(rownames(x), rownames(df)), ]
     # Convert loadings matrix to data.frame
