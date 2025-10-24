@@ -99,7 +99,7 @@
 #' graph types which can be converted by \code{tidygraph::as_tbl_graph} can
 #' be used.
 #'
-#' @return a \code{\link{ggtree}} plot
+#' @return a \code{\link[ggtree]{ggtree}} plot
 #'
 #' @name plotGraph
 #'
@@ -113,129 +113,142 @@
 #' data(row_graph_order)
 #' metadata(GlobalPatterns)$col_graph <- col_graph
 #'
-#' genus <- agglomerateByRank(GlobalPatterns,"Genus",na.rm=TRUE)
+#' genus <- agglomerateByRank(GlobalPatterns, "Genus", na.rm = TRUE)
 #' metadata(genus)$row_graph <- row_graph
-#' order <- agglomerateByRank(genus,"Order",na.rm=TRUE)
+#' order <- agglomerateByRank(genus, "Order", na.rm = TRUE)
 #' metadata(order)$row_graph <- row_graph_order
 #'
 #' # plot a graph independently
 #' plotColGraph(col_graph,
-#'              genus,
-#'              colour.by = "SampleType",
-#'              edge.colour.by = "weight",
-#'              edge.width.by = "weight",
-#'              show.label = TRUE)
+#'     genus,
+#'     colour.by = "SampleType",
+#'     edge.colour.by = "weight",
+#'     edge.width.by = "weight",
+#'     show.label = TRUE
+#' )
 #'
 #' # plot the graph stored in the object
 #' plotColGraph(genus,
-#'              name = "col_graph",
-#'              colour.by = "SampleType",
-#'              edge.colour.by = "weight",
-#'              edge.width.by = "weight")
+#'     name = "col_graph",
+#'     colour.by = "SampleType",
+#'     edge.colour.by = "weight",
+#'     edge.width.by = "weight"
+#' )
 #'
 #'
 #' # plot a graph independently
 #' plotRowGraph(row_graph,
-#'              genus,
-#'              colour.by = "Kingdom",
-#'              edge.colour.by = "weight",
-#'              edge.width.by = "weight")
+#'     genus,
+#'     colour.by = "Kingdom",
+#'     edge.colour.by = "weight",
+#'     edge.width.by = "weight"
+#' )
 #'
 #' # plot the graph stored in the object
 #' plotRowGraph(genus,
-#'              name = "row_graph",
-#'              colour.by = "Phylum",
-#'              edge.colour.by = "weight",
-#'              edge.width.by = "weight")
+#'     name = "row_graph",
+#'     colour.by = "Phylum",
+#'     edge.colour.by = "weight",
+#'     edge.width.by = "weight"
+#' )
 #'
 #'
 #' # plot a graph independently
 #' plotRowGraph(row_graph_order,
-#'              order,
-#'              colour.by = "Kingdom",
-#'              edge.colour.by = "weight",
-#'              edge.width.by = "weight")
+#'     order,
+#'     colour.by = "Kingdom",
+#'     edge.colour.by = "weight",
+#'     edge.width.by = "weight"
+#' )
 #'
 #' # plot the graph stored in the object and include some labels
 #' plotRowGraph(order,
-#'              name = "row_graph",
-#'              colour.by = "Phylum",
-#'              edge.colour.by = "weight",
-#'              edge.width.by = "weight",
-#'              show.label = c("Sulfolobales","Spirochaetales",
-#'                             "Verrucomicrobiales"))
+#'     name = "row_graph",
+#'     colour.by = "Phylum",
+#'     edge.colour.by = "weight",
+#'     edge.width.by = "weight",
+#'     show.label = c(
+#'         "Sulfolobales", "Spirochaetales",
+#'         "Verrucomicrobiales"
+#'     )
+#' )
 #'
 #' # labels can also be included via selecting specific rownames of x/y
 #' plotRowGraph(order,
-#'              name = "row_graph",
-#'              colour.by = "Phylum",
-#'              edge.colour.by = "weight",
-#'              edge.width.by = "weight",
-#'              show.label = c(1,10,50))
+#'     name = "row_graph",
+#'     colour.by = "Phylum",
+#'     edge.colour.by = "weight",
+#'     edge.width.by = "weight",
+#'     show.label = c(1, 10, 50)
+#' )
 #'
 #' # labels can also be included via a logical vector, which has the same length
 #' # as nodes are present
-#' label_select <- rep(FALSE,nrow(order))
-#' label_select[c(1,10,50)] <-  TRUE
+#' label_select <- rep(FALSE, nrow(order))
+#' label_select[c(1, 10, 50)] <- TRUE
 #' plotRowGraph(order,
-#'              name = "row_graph",
-#'              colour.by = "Phylum",
-#'              edge.colour.by = "weight",
-#'              edge.width.by = "weight",
-#'              show.label = label_select)
+#'     name = "row_graph",
+#'     colour.by = "Phylum",
+#'     edge.colour.by = "weight",
+#'     edge.width.by = "weight",
+#'     show.label = label_select
+#' )
 #' }
 NULL
 
-.check_graph_plot_switches <- function(show_label, add_legend){
-    if(!.is_a_bool(show_label)){
-        if( (!is.logical(show_label) && !is.character(show_label) &&
+.check_graph_plot_switches <- function(show_label, add_legend) {
+    if (!.is_a_bool(show_label)) {
+        if ((!is.logical(show_label) && !is.character(show_label) &&
             !is.numeric(show_label)) ||
-            is.null(show_label)){
+            is.null(show_label)) {
             stop("'show_label' must be either TRUE or FALSE or logical, ",
                 "integer or character ",
                 "vector. Character alues should match the label of the graph.",
-                call. = FALSE)
+                call. = FALSE
+            )
         }
     }
-    if(!.is_a_bool(add_legend)){
+    if (!.is_a_bool(add_legend)) {
         stop("'add_legend' must be either TRUE or FALSE.", call. = FALSE)
     }
 }
 
-.norm_layout_edge_type <- function(layout, edge_type){
-    edge_type <- match.arg(edge_type[1L], c("fan","link","arc","parallel"))
-    return(list(layout = layout,
-                edge_type = edge_type))
+.norm_layout_edge_type <- function(layout, edge_type) {
+    edge_type <- match.arg(edge_type[1L], c("fan", "link", "arc", "parallel"))
+    return(list(
+        layout = layout,
+        edge_type = edge_type
+    ))
 }
 
 #' @rdname plotGraph
 #' @importFrom tidygraph as_tbl_graph
 #' @export
 setMethod("plotColGraph",
-    signature = c(x = "ANY",y = "SummarizedExperiment"),
+    signature = c(x = "ANY", y = "SummarizedExperiment"),
     function(x, y,
-        show.label = show_label,
-        show_label = FALSE,
-        add.legend = add_legend,
-        add_legend = TRUE,
-        layout = "kk",
-        edge.type = edge_type,
-        edge_type = c("fan","link","arc","parallel"),
-        edge.colour.by = edge_colour_by,
-        edge_colour_by = NULL,
-        edge.width.by = edge_width_by,
-        edge_width_by = NULL,
-        colour.by = colour_by,
-        colour_by = NULL,
-        shape.by = shape_by,
-        shape_by = NULL,
-        size.by = size_by,
-        size_by = NULL,
-        assay.type = by_exprs_values,
-        by_exprs_values = "counts",
-        other.fields = other_fields,
-        other_fields = list(),
-        ...){
+             show.label = show_label,
+             show_label = FALSE,
+             add.legend = add_legend,
+             add_legend = TRUE,
+             layout = "kk",
+             edge.type = edge_type,
+             edge_type = c("fan", "link", "arc", "parallel"),
+             edge.colour.by = edge_colour_by,
+             edge_colour_by = NULL,
+             edge.width.by = edge_width_by,
+             edge_width_by = NULL,
+             colour.by = colour_by,
+             colour_by = NULL,
+             shape.by = shape_by,
+             shape_by = NULL,
+             size.by = size_by,
+             size_by = NULL,
+             assay.type = by_exprs_values,
+             by_exprs_values = "counts",
+             other.fields = other_fields,
+             other_fields = list(),
+             ...) {
         .plot_row_column_graph(
             x = x, y = y,
             show_label = show.label,
@@ -250,7 +263,8 @@ setMethod("plotColGraph",
             by_exprs_values = assay.type,
             other_fields = other.fields,
             type = "column",
-            ...)
+            ...
+        )
     }
 )
 
@@ -259,10 +273,10 @@ setMethod("plotColGraph",
 #' @export
 setMethod("plotColGraph",
     signature = c(x = "SummarizedExperiment", y = "missing"),
-    function(x, y, name = "graph", ...){
+    function(x, y, name = "graph", ...) {
         graph <- metadata(x)[[name]]
-        if(is.null(graph)){
-            stop("No data found in metadata for key '",name,"'", call. = FALSE)
+        if (is.null(graph)) {
+            stop("No data found in metadata for key '", name, "'", call. = FALSE)
         }
         plotColGraph(graph, x, ...)
     }
@@ -272,29 +286,29 @@ setMethod("plotColGraph",
 #' @importFrom tidygraph as_tbl_graph
 #' @export
 setMethod("plotRowGraph",
-    signature = c(x = "ANY",y = "SummarizedExperiment"),
+    signature = c(x = "ANY", y = "SummarizedExperiment"),
     function(x, y,
-        show.label = show_label,
-        show_label = FALSE,
-        add.legend = add_legend,
-        add_legend = TRUE,
-        layout = "kk",
-        edge.type = edge_type,
-        edge_type = c("fan","link","arc","parallel"),
-        edge.colour.by = edge_colour_by,
-        edge_colour_by = NULL,
-        edge.width.by = edge_width_by,
-        edge_width_by = NULL,
-        colour.by = colour_by,
-        colour_by = NULL,
-        shape.by = shape_by,
-        shape_by = NULL,
-        size.by = NULL,
-        assay.type = by_exprs_values,
-        by_exprs_values = "counts",
-        other.fields = other_fields,
-        other_fields = list(),
-        ...){
+             show.label = show_label,
+             show_label = FALSE,
+             add.legend = add_legend,
+             add_legend = TRUE,
+             layout = "kk",
+             edge.type = edge_type,
+             edge_type = c("fan", "link", "arc", "parallel"),
+             edge.colour.by = edge_colour_by,
+             edge_colour_by = NULL,
+             edge.width.by = edge_width_by,
+             edge_width_by = NULL,
+             colour.by = colour_by,
+             colour_by = NULL,
+             shape.by = shape_by,
+             shape_by = NULL,
+             size.by = NULL,
+             assay.type = by_exprs_values,
+             by_exprs_values = "counts",
+             other.fields = other_fields,
+             other_fields = list(),
+             ...) {
         .plot_row_column_graph(
             x = x, y = y,
             show_label = show.label,
@@ -309,7 +323,8 @@ setMethod("plotRowGraph",
             by_exprs_values = assay.type,
             other_fields = other.fields,
             type = "row",
-            ...)
+            ...
+        )
     }
 )
 
@@ -318,29 +333,29 @@ setMethod("plotRowGraph",
 #' @export
 setMethod("plotRowGraph",
     signature = c(x = "SummarizedExperiment", y = "missing"),
-    function(x, y, name = "graph",...){
+    function(x, y, name = "graph", ...) {
         graph <- metadata(x)[[name]]
-        if(is.null(graph)){
-            stop("No data found in metadata for key '",name,"'", call. = FALSE)
+        if (is.null(graph)) {
+            stop("No data found in metadata for key '", name, "'", call. = FALSE)
         }
         plotRowGraph(graph, x, ...)
     }
 )
 
 .plot_row_column_graph <- function(x, y,
-        show_label = FALSE,
-        add_legend = TRUE,
-        layout = "kk",
-        edge_type = c("fan","link","arc","parallel"),
-        edge_colour_by = NULL,
-        edge_width_by = NULL,
-        colour_by = NULL,
-        shape_by = NULL,
-        size_by = NULL,
-        by_exprs_values = "counts",
-        other_fields = list(),
-        type = c("row","column"),
-        ...){
+                                   show_label = FALSE,
+                                   add_legend = TRUE,
+                                   layout = "kk",
+                                   edge_type = c("fan", "link", "arc", "parallel"),
+                                   edge_colour_by = NULL,
+                                   edge_width_by = NULL,
+                                   colour_by = NULL,
+                                   shape_by = NULL,
+                                   size_by = NULL,
+                                   by_exprs_values = "counts",
+                                   other_fields = list(),
+                                   type = c("row", "column"),
+                                   ...) {
     type <- match.arg(type)
     # input check
     .check_graph_plot_switches(show_label = show_label, add_legend = add_legend)
@@ -362,7 +377,8 @@ setMethod("plotRowGraph",
         size_by = size_by,
         by_exprs_values = by_exprs_values,
         other_fields = other_fields,
-        type = type)
+        type = type
+    )
     graph_data <- vis_out$df
     edge_colour_by <- vis_out$edge_colour_by
     edge_width_by <- vis_out$edge_width_by
@@ -380,77 +396,85 @@ setMethod("plotRowGraph",
         colour_by = colour_by,
         shape_by = shape_by,
         size_by = size_by,
-        ...)
+        ...
+    )
 }
 
 ################################################################################
 
 #' @importFrom tidygraph as_tbl_graph
-.get_graph_data <- function(graph){
+.get_graph_data <- function(graph) {
     graph_data <- as_tbl_graph(graph)
     graph_data
 }
 
 #' @importFrom tidygraph activate
 #' @importFrom dplyr mutate
-.add_graph_node_labels <- function(graph_data, show_label){
-    if(!("label" %in% .colnames_tbl_graph(graph_data, "nodes")) &&
-            ("name" %in% .colnames_tbl_graph(graph_data, "nodes"))){
+.add_graph_node_labels <- function(graph_data, show_label) {
+    if (!("label" %in% .colnames_tbl_graph(graph_data, "nodes")) &&
+        ("name" %in% .colnames_tbl_graph(graph_data, "nodes"))) {
         graph_data <- graph_data %>%
             activate("nodes") %>%
             mutate(label = .data$name)
     }
 
-    if(!is.logical(show_label) || length(show_label) > 1L) {
+    if (!is.logical(show_label) || length(show_label) > 1L) {
         data <- graph_data %>%
             activate("nodes") %>%
             as_tibble()
-        if(is.character(show_label) && length(show_label) == nrow(data)) {
+        if (is.character(show_label) && length(show_label) == nrow(data)) {
             graph_data <- graph_data %>%
                 activate("nodes") %>%
                 mutate(label = show_label)
             show_label <- TRUE
-        } else if(!("label" %in% .colnames_tbl_graph(graph_data, "nodes"))){
+        } else if (!("label" %in% .colnames_tbl_graph(graph_data, "nodes"))) {
             warning("If 'show_label' is a character vector with length != ",
-                    "number of nodes in the graph or a logical/integer ",
-                    "vector, a 'name' or 'label' column must exist in the ",
-                    "graph data.",
-                    call. = FALSE)
+                "number of nodes in the graph or a logical/integer ",
+                "vector, a 'name' or 'label' column must exist in the ",
+                "graph data.",
+                call. = FALSE
+            )
             show_label <- FALSE
         } else {
-            if(is.numeric(show_label)){
-                if(any(show_label != as.integer(show_label)) ||
-                        min(show_label) < 1 || max(show_label) > nrow(data)){
+            if (is.numeric(show_label)) {
+                if (any(show_label != as.integer(show_label)) ||
+                    min(show_label) < 1 || max(show_label) > nrow(data)) {
                     stop("If 'show_label' is numeric, values have to be whole ",
                         "numbers and must be between 1 and the number of ",
-                        "nodes in the graph", call. = FALSE)
+                        "nodes in the graph",
+                        call. = FALSE
+                    )
                 }
                 label <- rep(FALSE, nrow(data))
                 label[show_label] <- TRUE
                 show_label <- label
-            } else if(is.character(show_label)) {
+            } else if (is.character(show_label)) {
                 show_label <- data$label %in% show_label
             }
-            if(is.logical(show_label) && length(show_label) != nrow(data)){
+            if (is.logical(show_label) && length(show_label) != nrow(data)) {
                 stop("If 'show_label' is logical, it must have the length as ",
-                    "nodes are in the graph.", call. = FALSE)
+                    "nodes are in the graph.",
+                    call. = FALSE
+                )
             }
             graph_data <- graph_data %>%
                 activate("nodes") %>%
                 mutate(label = ifelse(show_label, label, NA_character_))
             show_label <- TRUE
         }
-        if(all(is.na(graph_data %>% activate("nodes") %>% pull("label")))){
+        if (all(is.na(graph_data %>% activate("nodes") %>% pull("label")))) {
             show_label <- FALSE
             warning("No labels to plot.", call. = FALSE)
         }
     }
-    return(list(df = graph_data,
-                show_label = show_label))
+    return(list(
+        df = graph_data,
+        show_label = show_label
+    ))
 }
 
 #' @importFrom tidygraph activate as_tibble
-.colnames_tbl_graph <- function(graph_data, type){
+.colnames_tbl_graph <- function(graph_data, type) {
     graph_data %>%
         activate(!!sym(type)) %>%
         as_tibble() %>%
@@ -458,12 +482,13 @@ setMethod("plotRowGraph",
 }
 
 #' @importFrom tidygraph activate
-.add_graph_data_or_warn <- function(data, graph_data, type, name = data$name){
+.add_graph_data_or_warn <- function(data, graph_data, type, name = data$name) {
     names <- .colnames_tbl_graph(graph_data, type)
-    if(name %in% names){
-        warning("Data for '",name,"' already present in graph nodes.",
-                "Data will not be added.",
-                call. = FALSE)
+    if (name %in% names) {
+        warning("Data for '", name, "' already present in graph nodes.",
+            "Data will not be added.",
+            call. = FALSE
+        )
     }
     graph_data %>%
         activate(!!sym(type)) %>%
@@ -474,40 +499,41 @@ setMethod("plotRowGraph",
 #' @importFrom dplyr rename
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidygraph activate as_tibble
-.incorporate_graph_vis <- function(
-        graph_data,
-        se,
-        edge_colour_by,
-        edge_width_by,
-        colour_by,
-        shape_by,
-        size_by,
-        by_exprs_values = "counts",
-        other_fields = list(),
-        type = c("row","column")){
+.incorporate_graph_vis <- function(graph_data,
+                                   se,
+                                   edge_colour_by,
+                                   edge_width_by,
+                                   colour_by,
+                                   shape_by,
+                                   size_by,
+                                   by_exprs_values = "counts",
+                                   other_fields = list(),
+                                   type = c("row", "column")) {
     type <- match.arg(type)
-    type_FUN <- switch(
-        type,
+    type_FUN <- switch(type,
         row = scater::retrieveFeatureInfo,
-        column = scater::retrieveCellInfo)
+        column = scater::retrieveCellInfo
+    )
     variables <- c(
-        colour_by = colour_by, shape_by = shape_by, size_by = size_by)
+        colour_by = colour_by, shape_by = shape_by, size_by = size_by
+    )
     colour_by <- NULL
     shape_by <- NULL
     size_by <- NULL
     # node data
-    if(!is.null(variables)){
+    if (!is.null(variables)) {
         # remove any variables values, which are already available and
         # rename columns by their usage
-        cn <- .colnames_tbl_graph(graph_data,"nodes")
-        if(length(cn) > 0L){
+        cn <- .colnames_tbl_graph(graph_data, "nodes")
+        if (length(cn) > 0L) {
             f <- variables %in% cn
-            if(any(f)){
-                for(i in seq_along( variables[f])){
+            if (any(f)) {
+                for (i in seq_along(variables[f])) {
                     var_name <- names(variables[f])[i]
                     # mirror back variable name
                     assign(var_name, .get_new_var_name_value(
-                        get(var_name), variables[f][i]))
+                        get(var_name), variables[f][i]
+                    ))
                     # rename columns by their usage
                     graph_data %>%
                         activate("nodes") %>%
@@ -516,55 +542,66 @@ setMethod("plotRowGraph",
                 variables <- variables[!f]
             }
         }
-        if(length(variables) > 0L){
+        if (length(variables) > 0L) {
             dim_graph_nodes <- graph_data %>%
                 activate("nodes") %>%
                 as_tibble() %>%
                 dim()
-            dim_se <- switch(
-                type,
+            dim_se <- switch(type,
                 row = nrow(se),
-                column = ncol(se))
-            if(dim_graph_nodes[1] != dim_se){
+                column = ncol(se)
+            )
+            if (dim_graph_nodes[1] != dim_se) {
                 stop("The number of nodes in the graph and chosen dimension ",
-                    "of the SummarizedExperiment must be equal.", call. = FALSE)
+                    "of the SummarizedExperiment must be equal.",
+                    call. = FALSE
+                )
             }
-            for(i in seq_along(variables)){
+            for (i in seq_along(variables)) {
                 # get data
                 feature_info <- type_FUN(
-                    se, variables[i], exprs_values = by_exprs_values)
+                    se, variables[i],
+                    exprs_values = by_exprs_values
+                )
                 feature_info_name <- feature_info$name
                 # mirror back variable name, if a partial match was used
                 var_name <- names(variables)[i]
                 assign(var_name, .get_new_var_name_value(
-                    get(var_name), feature_info$name))
+                    get(var_name), feature_info$name
+                ))
                 # rename columns by their usage
                 feature_info$name <- var_name
                 graph_data <- .add_graph_data_or_warn(
-                    feature_info, graph_data, type = "nodes", feature_info_name)
+                    feature_info, graph_data,
+                    type = "nodes", feature_info_name
+                )
             }
         }
     }
-    if(length(other_fields) != 0L){
+    if (length(other_fields) != 0L) {
         for (o in other_fields) {
             other <- type_FUN(se, o, exprs_values = by_exprs_values)
             graph_data <- .add_graph_data_or_warn(
-                other, graph_data, type = "nodes")
+                other, graph_data,
+                type = "nodes"
+            )
         }
     }
     # edge data
     variables <- c(
-        edge_colour_by = edge_colour_by, edge_width_by = edge_width_by)
+        edge_colour_by = edge_colour_by, edge_width_by = edge_width_by
+    )
     edge_colour_by <- NULL
     edge_width_by <- NULL
-    cn <- .colnames_tbl_graph(graph_data,"edges")
+    cn <- .colnames_tbl_graph(graph_data, "edges")
     variables <- variables[variables %in% cn]
-    if(length(variables)  != 0L){
-        for(i in seq_along(variables)){
+    if (length(variables) != 0L) {
+        for (i in seq_along(variables)) {
             var_name <- names(variables)[i]
             # mirror back variable name
             assign(var_name, .get_new_var_name_value(
-                get(var_name), variables[i]))
+                get(var_name), variables[i]
+            ))
             # rename columns by their usage
             graph_data <- graph_data %>%
                 activate("edges") %>%
@@ -578,50 +615,52 @@ setMethod("plotRowGraph",
         edge_width_by = edge_width_by,
         colour_by = colour_by,
         shape_by = shape_by,
-        size_by = size_by)
+        size_by = size_by
+    )
     return(res)
 }
 
-.graph_plotter <- function(
-        object,
-        layout,
-        edge_type,
-        add_legend,
-        show_label,
-        edge_colour_by,
-        edge_width_by,
-        colour_by,
-        shape_by,
-        size_by,
-        algorithm = NULL,
-        line_alpha = line.alpha,
-        line.alpha = 1,
-        line_width = line.width,
-        line.width = NULL,
-        line_width_range = line.width.range,
-        line.width.range = c(0.5,3),
-        point_alpha = point.alpha,
-        point.alpha = 1,
-        point_size = point.size,
-        point.size = 2,
-        point_size_range = point.size.range,
-        point.size.range = c(1,4)){
+.graph_plotter <- function(object,
+                           layout,
+                           edge_type,
+                           add_legend,
+                           show_label,
+                           edge_colour_by,
+                           edge_width_by,
+                           colour_by,
+                           shape_by,
+                           size_by,
+                           algorithm = NULL,
+                           line_alpha = line.alpha,
+                           line.alpha = 1,
+                           line_width = line.width,
+                           line.width = NULL,
+                           line_width_range = line.width.range,
+                           line.width.range = c(0.5, 3),
+                           point_alpha = point.alpha,
+                           point.alpha = 1,
+                           point_size = point.size,
+                           point.size = 2,
+                           point_size_range = point.size.range,
+                           point.size.range = c(1, 4)) {
     # assemble arg list
     point_out <- .get_point_args(
         colour_by,
         shape_by,
         size_by,
         alpha = point_alpha,
-        size = point_size)
+        size = point_size
+    )
     edge_out <- .get_graph_edge_args(
         edge_colour_by,
         edge_width_by,
         alpha = line_alpha,
         size = line_width,
-        edge_type)
-    edge_FUN <- match.fun(paste0("geom_edge_",edge_type))
+        edge_type
+    )
+    edge_FUN <- match.fun(paste0("geom_edge_", edge_type))
     # begin plotting
-    if(!is.null(algorithm)){
+    if (!is.null(algorithm)) {
         plot_out <- ggraph(object, layout = layout, algorithm = algorithm)
     } else {
         plot_out <- ggraph(object, layout = layout)
@@ -632,7 +671,7 @@ setMethod("plotRowGraph",
     # add node labels
     plot_out <- .add_graph_labels(plot_out, show_label)
     # adjust edge colours
-    if(!is.null(edge_colour_by)){
+    if (!is.null(edge_colour_by)) {
         plot_out <- .resolve_plot_colours(
             plot_out,
             object %>% activate("edges") %>% pull("edge_colour_by"),
@@ -641,10 +680,10 @@ setMethod("plotRowGraph",
             na.translate = FALSE,
             # Specify guide
             guide = "edge_colourbar"
-            )
+        )
     }
     if (!is.null(edge_width_by)) {
-        if(is.numeric(object %>% activate("edges") %>% pull("edge_width_by"))){
+        if (is.numeric(object %>% activate("edges") %>% pull("edge_width_by"))) {
             SIZEFUN <- scale_edge_width_continuous
         } else {
             SIZEFUN <- scale_edge_width_discrete
@@ -652,8 +691,8 @@ setMethod("plotRowGraph",
         plot_out <- .add_extra_guide_graph(plot_out, edge_width_by) +
             SIZEFUN(range = line_width_range)
     }
-    if(!is.null(size_by)){
-        if(is.numeric(object %>% activate("nodes") %>% pull("size_by"))){
+    if (!is.null(size_by)) {
+        if (is.numeric(object %>% activate("nodes") %>% pull("size_by"))) {
             SIZEFUN <- scale_size_continuous
         } else {
             SIZEFUN <- scale_size_discrete
@@ -662,13 +701,14 @@ setMethod("plotRowGraph",
             SIZEFUN(range = point_size_range)
     }
     # adjust point colours
-    if(!is.null(colour_by)){
+    if (!is.null(colour_by)) {
         plot_out <- .resolve_plot_colours(
             plot_out,
             object %>% activate("nodes") %>% pull("colour_by"),
             colour_by,
             fill = point_out$fill,
-            na.translate = FALSE)
+            na.translate = FALSE
+        )
     }
 
     # add additional guides
@@ -684,21 +724,22 @@ setMethod("plotRowGraph",
 }
 
 #' @importFrom tidyr drop_na
-.add_graph_labels <- function(plot_out, show_label){
+.add_graph_labels <- function(plot_out, show_label) {
     label <- NULL # disable note: no global binding for variable
-    if(show_label){
+    if (show_label) {
         label_data <- plot_out$data %>% drop_na(label)
         plot_out <- plot_out +
             geom_node_label(
                 mapping = aes(label = .data[["label"]]),
                 data = label_data,
                 repel = TRUE,
-                max.overlaps = 100)
+                max.overlaps = 100
+            )
     }
     plot_out
 }
 
-.theme_plotGraph <- function(plot){
+.theme_plotGraph <- function(plot) {
     plot +
         theme_graph(base_family = "", background = NA)
 }
