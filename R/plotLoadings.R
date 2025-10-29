@@ -58,7 +58,7 @@
 #' tse <- GlobalPatterns
 #'
 #' # Calculate PCA
-#' tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
+#' tse <- agglomerateByPrevalence(tse, rank = "Phylum", update.tree = TRUE)
 #' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 #'
@@ -86,47 +86,50 @@ NULL
 #' @rdname plotLoadings
 #' @export
 #' @importFrom SingleCellExperiment reducedDims
-setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
-    function(
-        x, dimred, layout = "barplot", ncomponents = 5, tree.name = "phylo",
-        row.var = NULL, add.tree = FALSE, ...) {
+setMethod("plotLoadings",
+    signature = c(x = "TreeSummarizedExperiment"),
+    function(x, dimred, layout = "barplot", ncomponents = 5, tree.name = "phylo",
+             row.var = NULL, add.tree = FALSE, ...) {
         # Check that there are reducedDim
-        if( length(reducedDims(x)) == 0 ){
+        if (length(reducedDims(x)) == 0) {
             stop("No reducedDims found.", call. = FALSE)
         }
         # Check dimred. It must be either string specifying the name of
         # reducedDim or an index of reducedDim.
-        if( !((.is_a_string(dimred) && dimred %in% reducedDimNames(x)) ||
+        if (!((.is_a_string(dimred) && dimred %in% reducedDimNames(x)) ||
             .is_an_integer(dimred) && dimred > 0 &&
-            dimred <= length(reducedDims(x)) ) ){
-                stop("'dimred' must be a string or an integer.", call. = FALSE)
+                dimred <= length(reducedDims(x)))) {
+            stop("'dimred' must be a string or an integer.", call. = FALSE)
         }
         # Check add.tree
-        if( !.is_a_bool(add.tree) ){
+        if (!.is_a_bool(add.tree)) {
             stop("'add.tree' must be TRUE or FALSE.", call. = FALSE)
         }
         # Check that tree.name. If user wants to add tree, the tree name must
         # specify a tree
-        if(add.tree && !(.is_a_string(tree.name) &&
-        tree.name %in% rowTreeNames(x)) ){
+        if (add.tree && !(.is_a_string(tree.name) &&
+            tree.name %in% rowTreeNames(x))) {
             stop(
                 "'tree.name' must be a string specifying a rowTree.",
-                call. = FALSE)
+                call. = FALSE
+            )
         }
         # Check row.var
-        if( !(is.null(row.var) ||
-                (.is_a_string(row.var) && row.var %in% colnames(rowData(x)))) ){
+        if (!(is.null(row.var) ||
+            (.is_a_string(row.var) && row.var %in% colnames(rowData(x))))) {
             stop(
                 "'row.var' must be NULL or a column from rowData(x).",
-                call. = FALSE)
+                call. = FALSE
+            )
         }
         #
         # Get loadings matrix
         mat <- .get_loadings_matrix(x, dimred, ...)
-        if( add.tree && layout == "heatmap" ){
+        if (add.tree && layout == "heatmap") {
             # Create dataframe for tree plotting
             data_list <- .get_loadings_tree_data(
-                mat, x, tree.name, row.var, ncomponents, ...)
+                mat, x, tree.name, row.var, ncomponents, ...
+            )
             tree <- data_list[["tree"]]
             mat <- data_list[["loadings"]]
             # Plot tree with feature loadings
@@ -134,44 +137,52 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         } else {
             # Utilize matrix method to create a plot
             p <- plotLoadings(
-                mat, layout = layout, ncomponents = ncomponents, ...)
+                mat,
+                layout = layout, ncomponents = ncomponents, ...
+            )
         }
-    return(p)
-    }
-)
-
-#' @rdname plotLoadings
-#' @export
-#' @importFrom SingleCellExperiment reducedDims
-setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, layout = "barplot", ncomponents = 5, ...){
-        # Check that there are reducedDim
-        if( length(reducedDims(x)) == 0 ){
-            stop("No reducedDims found.", call. = FALSE)
-        }
-        # Check dimred. It must be either string specifying the name of
-        # reducedDim or an index of reducedDim.
-        if( !((.is_a_string(dimred) && dimred %in% reducedDimNames(x)) ||
-                .is_an_integer(dimred) && dimred > 0 &&
-                dimred <= length(reducedDims(x)) ) ){
-            stop("'dimred' must be a string or an integer.", call. = FALSE)
-        }
-        # Get loadings matrix
-        mat <- .get_loadings_matrix(x, dimred, ...)
-        # Utilize matrix method to create a plot
-        p <- plotLoadings(
-            mat, layout = layout, ncomponents = ncomponents, ...)
         return(p)
     }
 )
 
 #' @rdname plotLoadings
 #' @export
-setMethod("plotLoadings", signature = c(x = "matrix"),
+#' @importFrom SingleCellExperiment reducedDims
+setMethod("plotLoadings",
+    signature = c(x = "SingleCellExperiment"),
+    function(x, dimred, layout = "barplot", ncomponents = 5, ...) {
+        # Check that there are reducedDim
+        if (length(reducedDims(x)) == 0) {
+            stop("No reducedDims found.", call. = FALSE)
+        }
+        # Check dimred. It must be either string specifying the name of
+        # reducedDim or an index of reducedDim.
+        if (!((.is_a_string(dimred) && dimred %in% reducedDimNames(x)) ||
+            .is_an_integer(dimred) && dimred > 0 &&
+                dimred <= length(reducedDims(x)))) {
+            stop("'dimred' must be a string or an integer.", call. = FALSE)
+        }
+        # Get loadings matrix
+        mat <- .get_loadings_matrix(x, dimred, ...)
+        # Utilize matrix method to create a plot
+        p <- plotLoadings(
+            mat,
+            layout = layout, ncomponents = ncomponents, ...
+        )
+        return(p)
+    }
+)
+
+#' @rdname plotLoadings
+#' @export
+setMethod("plotLoadings",
+    signature = c(x = "matrix"),
     function(x, layout = "barplot", ncomponents = 5, ...) {
         # Input check
         .check_loadings_matrix(
-            x, layout = layout, ncomponents = ncomponents, ...)
+            x,
+            layout = layout, ncomponents = ncomponents, ...
+        )
         #
         # Get data for plotting
         df <- .get_loadings_plot_data(x, layout, ncomponents, ...)
@@ -186,10 +197,9 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function fetches loadings matrix from TreeSE object. The loadings
 # are fetched from attributes of reducedDim whcih means that the result must be
 # first calculated with standardized method.
-.get_loadings_matrix <- function(
-        x, dimred, loadings.name = c("rotation", "loadings", "species"), ...){
+.get_loadings_matrix <- function(x, dimred, loadings.name = c("rotation", "loadings", "species"), ...) {
     #
-    if( !is.character(loadings.name) ){
+    if (!is.character(loadings.name)) {
         stop("'loadings.name' must be a character value.", call. = FALSE)
     }
     #
@@ -197,8 +207,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     reddim <- reducedDim(x, dimred)
     # Get loadings matrix.
     attr_names <- names(attributes(reddim))
-    attr_name <- attr_names[ attr_names %in% loadings.name ]
-    if( length(attr_name) != 1 ) {
+    attr_name <- attr_names[attr_names %in% loadings.name]
+    if (length(attr_name) != 1) {
         stop("Loadings cannot be found.", call. = FALSE)
     }
     mat <- attr(reddim, attr_name)
@@ -208,25 +218,28 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 }
 
 # This functions checks that loadings matrix is correct
-.check_loadings_matrix <- function(
-        mat, layout, ncomponents, n = min(nrow(mat), 10L), ...) {
+.check_loadings_matrix <- function(mat, layout, ncomponents, n = min(nrow(mat), 10L), ...) {
     # Check layout
-    if( !(.is_a_string(layout) && layout %in%
-            c("barplot", "heatmap", "lollipop")) ){
+    if (!(.is_a_string(layout) && layout %in%
+        c("barplot", "heatmap", "lollipop"))) {
         stop("'layout' must be 'barplot' or 'heatmap',", call. = FALSE)
     }
     # Check n
-    if( !(.is_an_integer(n) && n > 0 && n <= nrow(mat)) ){
+    if (!(.is_an_integer(n) && n > 0 && n <= nrow(mat))) {
         stop(
             "'n' must be a positive integer less than or equal to the total ",
-            "number of features.", call. = FALSE)
+            "number of features.",
+            call. = FALSE
+        )
     }
     # Check ncomponents
-    if( !(.is_an_integer(ncomponents) && ncomponents > 0 &&
-            ncomponents <= ncol(mat)) ){
+    if (!(.is_an_integer(ncomponents) && ncomponents > 0 &&
+        ncomponents <= ncol(mat))) {
         stop(
             "'ncomponents' must be a positive integer less than or equal to ",
-            "the total number of components.", call. = FALSE)
+            "the total number of components.",
+            call. = FALSE
+        )
     }
     return(NULL)
 }
@@ -235,18 +248,17 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # is data.frame in long format directly usable for ggplot.
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
-.get_loadings_plot_data <- function(
-        df, layout, ncomponents, n = min(nrow(df), 10L), ...) {
+.get_loadings_plot_data <- function(df, layout, ncomponents, n = min(nrow(df), 10L), ...) {
     # Transform into a dataframe
     df <- as.data.frame(df)
     # Keep only the number of components needed
-    df <- df[ , seq_len(ncomponents), drop = FALSE]
+    df <- df[, seq_len(ncomponents), drop = FALSE]
     # If the layout is barplot, choose top features for each component
-    if( layout %in% c("barplot", "lollipop") ){
+    if (layout %in% c("barplot", "lollipop")) {
         res <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
         # Combine to single data.frame
         res <- do.call(rbind, res)
-    } else{
+    } else {
         # For heatmap, the whole data.frame is just converted into long format.
         components <- colnames(df)
         res <- df %>%
@@ -254,13 +266,14 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             pivot_longer(
                 cols = components,
                 names_to = "PC",
-                values_to = "Value")
+                values_to = "Value"
+            )
     }
     # Convert into data.frame
     res <- as.data.frame(res)
     # Check that values are numeric. This is the first time we test that the
     # columns were numeric. Now all the values from columns are in this column.
-    if( !is.numeric(res[["Value"]]) ){
+    if (!is.numeric(res[["Value"]])) {
         stop("Values must be numeric.", call. = FALSE)
     }
     # Calculate max and min values along with maximum absolute value and sign
@@ -289,14 +302,15 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 
 # This function calculates place for +/- sign in barplot/lollipop plot
 #' @importFrom dplyr %>% group_by mutate case_when ungroup
-.calculate_max_and_min_for_loadings <- function(df){
+.calculate_max_and_min_for_loadings <- function(df) {
     # To disable "no visible binding for global variable" message in cmdcheck
     Value <- PC <- NULL
     # Add column that shows the values in absolute scale, and another column
     # showing sign
     df[["Value_abs"]] <- abs(df[["Value"]])
     df[["Sign"]] <- ifelse(
-        df[["Value"]] > 0, "+", ifelse(df[["Value"]] < 0, "-", ""))
+        df[["Value"]] > 0, "+", ifelse(df[["Value"]] < 0, "-", "")
+    )
     # Add maximum values. This is used in scaling and placement of +/- sign
     # in barplot and lollipop plot. In absolute scale, we use the maximum
     # absolute value. In original scale, negative values gets minimum value
@@ -328,19 +342,19 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Initialize a plot
     plot_out <- ggplot(df)
     # Either create a heatmap or barplot/lollipop
-    if( layout == "heatmap" ){
+    if (layout == "heatmap") {
         plot_out <- plot_out +
             # Create a heatmap
             geom_tile(
                 mapping = aes(x = PC, y = Feature, fill = Value),
                 position = position_identity()
-                ) +
+            ) +
             # Adjust color scale
             scale_fill_gradient2(
                 limits = c(-max(abs(df$Value)), max(abs(df$Value))),
                 low = "darkblue", mid = "white", high = "darkred"
-                )
-    } else if( layout %in% c("barplot", "lollipop") ){
+            )
+    } else if (layout %in% c("barplot", "lollipop")) {
         plot_out <- .plot_bar_or_lollipop(plot_out, df, layout, ...)
     }
     # Adjust theme
@@ -352,21 +366,20 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This functions creates a barplot or lollipop plot.
 #' @importFrom tidytext scale_y_reordered reorder_within
 #' @importFrom ggplot2 geom_bar geom_segment geom_point geom_text
-.plot_bar_or_lollipop <- function(
-        plot_out, df, layout, absolute.scale = TRUE, show.color = TRUE,
-        show.sign = FALSE, ...){
+.plot_bar_or_lollipop <- function(plot_out, df, layout, absolute.scale = TRUE, show.color = TRUE,
+                                  show.sign = FALSE, ...) {
     # To disable "no visible binding for global variable" message in cmdcheck
     Sign <- max_scale_abs <- max_scale <- NULL
     #
-    if( !.is_a_bool(absolute.scale) ){
+    if (!.is_a_bool(absolute.scale)) {
         stop("'absolute.scale' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    if( !.is_a_bool(show.color) ){
+    if (!.is_a_bool(show.color)) {
         stop("'show.color' must be TRUE or FALSE.", call. = FALSE)
     }
     #
-    if( !.is_a_bool(show.sign) ){
+    if (!.is_a_bool(show.sign)) {
         stop("'show.sign' must be TRUE or FALSE.", call. = FALSE)
     }
     #
@@ -376,9 +389,9 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     y_aes <- reorder_within(
         df$Feature,
         # Either get values in absolute scale or not
-        if(absolute.scale) -df$Value_abs else df$Value,
+        if (absolute.scale) -df$Value_abs else df$Value,
         df$PC
-        )
+    )
 
     # Plot barplot or lollipop
     if (layout == "barplot") {
@@ -387,8 +400,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             x = !!sym(value_var),
             y = y_aes,
             # User can decide whether the bars are colored based on +/-
-            fill = if(show.color) Sign else NULL
-            )
+            fill = if (show.color) Sign else NULL
+        )
         plot_out <- plot_out + geom_bar(mapping = aesthetic, stat = "identity")
     } else if (layout == "lollipop") {
         # This creates a lollipop plot
@@ -408,7 +421,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     }
 
     # Add sign labels if needed
-    if( show.sign ){
+    if (show.sign) {
         plot_out <- plot_out + geom_text(aes(
             # This determines where the sign is placed, absolute scale or not
             x = if (absolute.scale) max_scale_abs else max_scale,
@@ -419,10 +432,13 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     }
 
     # Customize the legend for Sign as "Effect"
-    if( show.color ) {
+    if (show.color) {
         # Get correct function, barplot uses fill, lollipop color
-        scale_FUN <- if( layout == "barplot" ) scale_fill_manual else
+        scale_FUN <- if (layout == "barplot") {
+            scale_fill_manual
+        } else {
             scale_color_manual
+        }
         # Currently the legend has title that shows the function call and the
         # values shows + or -. Make the legend nicer.
         plot_out <- plot_out +
@@ -445,19 +461,19 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function retrieves the data for tree + heatmap plotting. The output
 # is a list that includes tree and data.frame in wide format.
 #' @importFrom ggtree ggtree
-.get_loadings_tree_data <- function(
-        df, x, tree.name, row.var, ncomponents, n = min(nrow(df), 10L), ...){
+.get_loadings_tree_data <- function(df, x, tree.name, row.var, ncomponents, n = min(nrow(df), 10L), ...) {
     # Check that rownames of loading matrix match with rownames of TreeSE. It
     # might be that TreeSE is updated after calculating the reduced dimension
     # which is why rownames do not match.
     all_match <- all(rownames(x) %in% rownames(df)) &&
         all(rownames(df) %in% rownames(x))
-    if( !all_match ){
+    if (!all_match) {
         stop(
             "Features of loading matrix do not match with rownames(x)",
-            call. = FALSE)
+            call. = FALSE
+        )
     }
-    df <- df[ , seq_len(ncomponents), drop = FALSE]
+    df <- df[, seq_len(ncomponents), drop = FALSE]
 
     # Select features with highest loadings
     df <- df |> as.data.frame()
@@ -465,7 +481,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     max_loads <- do.call(rbind, max_loads)
     df <- df[rownames(df) %in% max_loads[["Feature"]], ]
     x <- x[rownames(x) %in% rownames(df), ]
-    if( any(!rowTree(x)[["tip.label"]] %in% rowLinks(x)[["nodeLab"]]) ){
+    if (any(!rowTree(x)[["tip.label"]] %in% rowLinks(x)[["nodeLab"]])) {
         x <- subsetByLeaf(x, rowLinks(x)[["nodeLab"]])
     }
 
@@ -477,7 +493,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     phylo <- rowTree(x, tree.name)
     # Subset data based on the tree
     ind <- rowLinks(x)[["whichTree"]] == tree.name
-    if( any(!ind) ){
+    if (any(!ind)) {
         warning("Data is subsetted.", call. = FALSE)
         # Subset both TreeSE and loadings dfrix
         x <- x[ind, ]
@@ -487,12 +503,12 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     df[["Feature"]] <- rownames(df)
     # Instead of rownames, user can also specify a column from rowData to be
     # plotted
-    if( !is.null(row.var) ){
+    if (!is.null(row.var)) {
         df[["Feature"]] <- rowData(x)[[row.var]]
     }
     # Check that there are not too many features to plot. If there are too many
     # rank values (or rownames), it is not possible to plot.
-    if( length(unique(df[["Feature"]])) > 100 ){
+    if (length(unique(df[["Feature"]])) > 100) {
         stop("Too many features to plot.", call. = FALSE)
     }
     # Add rowlinks to data
@@ -506,22 +522,25 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 #' @importFrom ggnewscale new_scale_fill
 #' @importFrom ggplot2 scale_fill_gradient2 scale_fill_viridis_d
 .loadings_tree_plotter <- function(
-    df, tree, rank, rank.title = ifelse(!is.null(rank), rank, "Feature"),
-    ...) {
+  df, tree, rank, rank.title = ifelse(!is.null(rank), rank, "Feature"),
+  ...
+) {
     # Check rank.title
-    if( !.is_a_string(rank.title) ){
+    if (!.is_a_string(rank.title)) {
         stop("'rank.title' must be a string.", call. = FALSE)
     }
     #
     # Get features
-    features <- df[ , colnames(df) %in% c("Feature"), drop = FALSE]
+    features <- df[, colnames(df) %in% c("Feature"), drop = FALSE]
     # Get loadings
-    loadings <- df[ , !colnames(df) %in% c("Feature"), drop = FALSE]
+    loadings <- df[, !colnames(df) %in% c("Feature"), drop = FALSE]
     # Create a tree plot
     plot_out <- ggtree(tree, layout = "circular")
     # Add first inner circle (features)
     plot_out <- gheatmap(
-        p = plot_out, data = features, width = 0.1, colnames_angle = 90)
+        p = plot_out, data = features, width = 0.1,
+        colnames_angle = 90, hjust = 1
+    )
     # Adjust color scale for discrete feature values
     plot_out <- plot_out +
         scale_fill_viridis_d(option = "D", name = rank.title)
@@ -529,8 +548,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     plot_out <- plot_out + new_scale_fill()
     plot_out <- gheatmap(
         p = plot_out, data = loadings, offset = 0.1, width = 0.3,
-        colnames_angle = 90
-        )
+        colnames_angle = 90, hjust = 1
+    )
     # Adjust color scale in continuous scale
     plot_out <- plot_out +
         scale_fill_gradient2(
