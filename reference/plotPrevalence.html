@@ -45,7 +45,7 @@ information."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot prevalence information</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/devel/R/plotPrevalence.R" class="external-link"><code>R/plotPrevalence.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/prda/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/prda/R/plotPrevalence.R" class="external-link"><code>R/plotPrevalence.R</code></a></small>
     <div class="hidden name"><code>plotPrevalence.Rd</code></div>
     </div>
 
@@ -156,8 +156,8 @@ calculated detection thresholds when <code>detection=NULL</code>. When
 <code>TRUE</code>,  <code>as_relative</code> is then also regarded as <code>TRUE</code>.
 (Default: <code>20</code>)</p></li>
 <li><p>If <code>!is.null(rank)</code> matching arguments are passed on to
-<code><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></code>. See
-<code><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">?agglomerateByRank</a></code> for more details.</p></li>
+<code><a href="https://microbiome.github.io/mia/reference/agglomerate-methods.html" class="external-link">agglomerateByRank</a></code>. See
+<code><a href="https://microbiome.github.io/mia/reference/agglomerate-methods.html" class="external-link">?agglomerateByRank</a></code> for more details.</p></li>
 <li><p>additional arguments for plotting. See
 <code><a href="mia-plot-args.html">mia-plot-args</a></code> for more details i.e. call
 <code><a href="mia-plot-args.html">help("mia-plot-args")</a></code></p></li>
@@ -254,9 +254,9 @@ with subsetting via <code>getPrevalent</code> or
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="https://rdrr.io/pkg/mia/man/getPrevalence.html" class="external-link">getPrevalence</a></code>,
-<code><a href="https://rdrr.io/pkg/mia/man/getPrevalence.html" class="external-link">agglomerateByPrevalence</a></code>,
-<code><a href="https://rdrr.io/pkg/mia/man/agglomerate-methods.html" class="external-link">agglomerateByRank</a></code></p></div>
+    <div class="dont-index"><p><code><a href="https://microbiome.github.io/mia/reference/getPrevalence.html" class="external-link">getPrevalence</a></code>,
+<code><a href="https://microbiome.github.io/mia/reference/getPrevalence.html" class="external-link">agglomerateByPrevalence</a></code>,
+<code><a href="https://microbiome.github.io/mia/reference/agglomerate-methods.html" class="external-link">agglomerateByRank</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -264,7 +264,7 @@ with subsetting via <code>getPrevalent</code> or
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Apply relative transformation</span></span></span>
-<span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">GlobalPatterns</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plotting N of prevalence exceeding taxa on the Phylum level</span></span></span>
 <span class="r-in"><span><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>

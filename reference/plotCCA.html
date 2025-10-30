@@ -46,13 +46,13 @@ for supervised ordination of microbiome data."><!-- mathjax --><script src="http
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot RDA or CCA object</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/devel/R/plotCCA.R" class="external-link"><code>R/plotCCA.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/prda/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/prda/R/plotCCA.R" class="external-link"><code>R/plotCCA.R</code></a></small>
     <div class="hidden name"><code>plotCCA.Rd</code></div>
     </div>
 
     <div class="ref-description">
     <p><code>plotRDA</code> and <code>plotCCA</code> create an RDA/CCA plot starting from the
-output of <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">CCA and RDA</a></code> functions, two common methods
+output of <code><a href="https://microbiome.github.io/mia/reference/runCCA.html" class="external-link">CCA and RDA</a></code> functions, two common methods
 for supervised ordination of microbiome data.</p>
     </div>
 
@@ -82,7 +82,7 @@ for supervised ordination of microbiome data.</p>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-constructor.html" class="external-link">TreeSummarizedExperiment</a></code>
 or a matrix of weights. The latter is returned as output from
-<code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></code>.</p></dd>
+<code><a href="https://microbiome.github.io/mia/reference/runCCA.html" class="external-link">getRDA</a></code>.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -141,7 +141,7 @@ scores be added. (Default: <code>FALSE</code>)</p></li>
 <dt id="arg-dimred">dimred<a class="anchor" aria-label="anchor" href="#arg-dimred"></a></dt>
 <dd><p><code>Character scalar</code> or <code>integer scalar</code>. Determines
 the reduced dimension to
-plot. This is the output of <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">addRDA</a></code> and resides in
+plot. This is the output of <code><a href="https://microbiome.github.io/mia/reference/runCCA.html" class="external-link">addRDA</a></code> and resides in
 <code>reducedDim(tse, dimred)</code>.</p></dd>
 
 </dl></div>
@@ -152,7 +152,7 @@ plot. This is the output of <code><a href="https://rdrr.io/pkg/mia/man/runCCA.ht
     <div id="details">
     <h2>Details</h2>
     <p><code>plotRDA</code> and <code>plotCCA</code> create an RDA/CCA plot starting from the
-output of <code><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">CCA and RDA</a></code> functions, two common methods
+output of <code><a href="https://microbiome.github.io/mia/reference/runCCA.html" class="external-link">CCA and RDA</a></code> functions, two common methods
 for supervised ordination of microbiome data. Either a
 <code><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-constructor.html" class="external-link">TreeSummarizedExperiment</a></code>
 or a matrix object is supported as input. When the input is a
@@ -167,13 +167,12 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
     <div id="ref-examples">
     <h2>Examples</h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Load dataset</span></span></span>
-<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/miaViz" class="external-link">miaViz</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"enterotype"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">enterotype</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Run RDA and store results into TreeSE</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">addRDA</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/runCCA.html" class="external-link">addRDA</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>,</span></span>
 <span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>    formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
@@ -198,7 +197,7 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, add.vectors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate RDA as a separate object</span></span></span>
-<span class="r-in"><span><span class="va">rda_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/mia/man/runCCA.html" class="external-link">getRDA</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span><span class="va">rda_mat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/runCCA.html" class="external-link">getRDA</a></span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>,</span></span>
 <span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>    formula <span class="op">=</span> <span class="va">assay</span> <span class="op">~</span> <span class="va">ClinicalStatus</span> <span class="op">+</span> <span class="va">Gender</span> <span class="op">+</span> <span class="va">Age</span>,</span></span>
