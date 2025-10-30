@@ -270,12 +270,6 @@ plotColGraph(
 
 # Plotting of serial data
 
-```{r load_miatime, eval=FALSE}
-if(!requireNamespace("miaTime", quietly = TRUE)){
-    remotes::install_github("microbiome/miaTime", upgrade = "never")
-}
-```
-
 ```{r plotseries, eval=FALSE}
 # Load data from miaTime package
 library("miaTime")

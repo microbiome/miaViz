@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.17.9
+Version: 1.17.10
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -68,17 +68,16 @@ Suggests:
     ComplexHeatmap,
     ggh4x,
     knitr,
+    mediation,
+    miaTime,
     patchwork,
     rmarkdown,
     shadowtext,
     testthat,
     vegan,
     vipor
-Remotes:
-    github::microbiome/miaTime
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 URL: https://github.com/microbiome/miaViz
 BugReports: https://github.com/microbiome/miaViz/issues
-
