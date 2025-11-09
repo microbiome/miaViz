@@ -434,11 +434,12 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
         warning("All variables in RDA/CCA results must be present in ",
                 "colData(x).", call. = FALSE)
+    } else{
+        # Add group names to vector data
+        name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
+        name_map <- name_map[, seq_len(2)]
+        vector_data <- cbind(vector_data, name_map)
     }
-    # Add group names to vector data
-    name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
-    name_map <- name_map[, seq_len(2)]
-    vector_data <- cbind(vector_data, name_map)
     return(vector_data)
 }
 
