@@ -330,8 +330,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # name might be merged. Get the original variable names and
     # groups.
     if( !is.null(vector_data) ){
-        vector_data <- .get_variable_mapping_from_coldata(tse, vector_data, 
-                                                          reduced_dim)
+        vector_data <- .get_variable_mapping_from_coldata(
+            tse, vector_data, reduced_dim)
     }
     vars_found <- all(c("var", "levels") %in% colnames(vector_data))
     # Make the vector labels tidier. For instance, covriate name and value
@@ -377,70 +377,68 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # group. This function matches those modified names with the original data.
 .get_variable_mapping_from_coldata <- function(
         tse, vector_data, reduced_dim, ...){
-    # Extract formula from RDA/CCA object
+    # Extract covariate names from RDA/CCA object
     rda_obj <- .get_rda_attribute(reduced_dim, "obj")
-    rda_terms <- rda_obj$terms
-    term_labels <- .get_rda_attribute(rda_terms, "term.labels")
+    rda_terms <- rda_obj[["terms"]]
     factors_mat <- .get_rda_attribute(rda_terms, "factors")
-    orders <- .get_rda_attribute(rda_terms, "order")
     # Build name_map from terms in the RDA/CCA model
-    name_map_list <- lapply(seq_along(term_labels), function(i){
-        term <- term_labels[i]
-        order <- orders[i]
+    name_map <- lapply(factors_mat |> ncol() |> seq_len(), function(i){
+        # Get all variables in term
         vars_in_term <- rownames(factors_mat)[factors_mat[, i] != 0]
-
-        if( order == 1 ) {
+        # If covariate is not interaction term
+        if( length(vars_in_term) == 1L ) {
             # main effect
-            var <- vars_in_term
-            if( is.factor(tse[[var]]) || is.character(tse[[var]]) ){
-                lvls <- levels(as.factor(tse[[var]]))
-                data.frame(var = var, levels = lvls, 
-                           name = paste0(var, lvls),
-                           stringsAsFactors = FALSE)
-            } else{
-                data.frame(var = var, levels = NA_character_, name = var,
-                           stringsAsFactors = FALSE)
+            values <- tse[[vars_in_term]]
+            lvls <- NA_character_
+            nams <- vars_in_term
+            if( is.factor(values) || is.character(values) ){
+                lvls <- values |> as.factor() |> levels()
+                nams <- paste0(vars_in_term, lvls)
             }
+            res <- data.frame(
+                var = vars_in_term, levels = lvls, name = nams,
+                stringsAsFactors = FALSE)
         } else{
-            # interaction
-            lvls_list <- lapply(vars_in_term, function(v){
-                if( is.factor(tse[[v]]) || is.character(tse[[v]]) ) {
-                    levels(as.factor(tse[[v]]))
-                } else NA_character_
+            # If the term includes interaction between multiple variables
+            # Get interaction terms. Categorical values are handled differently
+            # as they create levels.
+            combos <- lapply(vars_in_term, function(var_name){
+                if( tse[[var_name]] |> is.numeric() ){
+                    temp <- var_name
+                } else{
+                    temp <- tse[[var_name]] |> unique()
+                }
+                return(temp)
+            }) |> expand.grid(stringsAsFactors = FALSE)
+            # Parse level names from values
+            level_names <- apply(combos, 1L, paste, collapse = ":")
+            # Parse interaction term name from variable names
+            var_name <- paste(vars_in_term, collapse = ":")
+            # Create final term name that was used in vegan::dbrda. It is
+            # combination of variable name and levels (if categorical)
+            name <- apply(combos, 1L, function(x){
+                temp <- mapply(function(var, val){
+                    if( tse[[var]] |> is.numeric() ) var else paste0(var, val)
+                }, vars_in_term, x)
+                temp <- temp |> paste0(collapse = ":")
+                return(temp)
             })
-            combos <- expand.grid(lvls_list, stringsAsFactors = FALSE)
-            varname <- paste(vars_in_term, collapse = ":")
-            levelnames <- apply(combos, 1, paste, collapse=":")
-            name <- apply(combos, 1, function(x) {
-                paste0(
-                    mapply(function(var, val) {
-                        if( is.numeric(tse[[var]]) ){
-                            var
-                        } else{
-                            paste0(var, val)
-                        }
-                    }, vars_in_term, x),
-                    collapse = ":"
-                )
-            })
-            data.frame(var = varname, levels = levelnames, name = name,
-                       stringsAsFactors = FALSE)
+            res <- data.frame(
+                var = var_name, levels = level_names, name = name,
+                stringsAsFactors = FALSE)
         }
+        return(res)
     })
-    name_map <- do.call(rbind, name_map_list)
+    name_map <- do.call(rbind, name_map)
     # Check that all variables can be found from colData
-    # Only proceed if name_map is not NULL
-    if (!is.null(name_map)) {  
-        if (!all(rownames(vector_data) %in% name_map[["name"]])) {
-            warning("All variables in RDA/CCA results must be present in ",
-                    "colData(x).", call. = FALSE)
-        }  
-        # Add group names to vector data
-        name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
-        name_map <- name_map[, seq_len(2)]
-        vector_data <- cbind(vector_data, name_map)
+    if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
+        warning("All variables in RDA/CCA results must be present in ",
+                "colData(x).", call. = FALSE)
     }
-
+    # Add group names to vector data
+    name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
+    name_map <- name_map[, seq_len(2)]
+    vector_data <- cbind(vector_data, name_map)
     return(vector_data)
 }
 
@@ -554,6 +552,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # we can build the the plot. The idea is that the theme is similar in all
 # ordination plots.
 #' @importFrom scater plotReducedDim
+#' @importFrom ggplot2 xlab ylab
 .create_rda_baseplot <- function(
         tse, dimred, reduced_dim, ncomponents = 2L,
         add.expl.var = FALSE, expl.var = expl_var, expl_var = NULL,
@@ -583,10 +582,11 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         # Convert to explained variance and take only first two components
         expl_var <- eigen_vals / sum(eigen_vals)
         expl_var <- expl_var[seq_len(ncomponents)]*100
+        expl.var <- expl_var |> round(digits = 1)
     }
     # Create argument list
     args <- c(list(object = tse, dimred = dimred, ncomponents = ncomponents,
-        colour_by = colour_by, percentVar = expl_var), list(...))
+        colour_by = colour_by, percentVar = expl.var), list(...))
     # Remove additional arguments since plotReducedDim fails if we feed
     # values that are not recognized
     remove <- names(args) %in% c(
@@ -602,18 +602,14 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Get scatter plot with plotReducedDim --> keep theme similar between
     # ordination methods
     p <- do.call(plotReducedDim, args)
-    # Get axis names from the original RDA "sites" attribute
-    col_names <- colnames(.get_rda_attribute(reduced_dim, "sites")
-                          )[seq_len(ncomponents)]
-    # extract existing labels (they include % already from plotReducedDim)
-    old_labs <- ggplot2::ggplot_build(p)$plot$labels
-    # build new labels by swapping only the axis name
-    new_xlab <- sub("^[^ (]+\\s+\\d+", col_names[1], old_labs$x)
-    new_ylab <- sub("^[^ (]+\\s+\\d+", col_names[2], old_labs$y)
-    # Replace axis labels in the plot
-    if( !is.null(col_names) ){
-        p <- p + ggplot2::labs(x = new_xlab, y =new_ylab)
+    # Replace axis titles with names from result matrix
+    xlab <- colnames(reducedDim(tse, dimred))[[1L]]
+    ylab <- colnames(reducedDim(tse, dimred))[[2L]]
+    if( !is.null(expl.var) ){
+        xlab <- paste0(xlab, " (", expl.var[[1L]], "%)")
+        ylab <- paste0(ylab, " (", expl.var[[2L]], "%)")
     }
+    p <- p + xlab(xlab) + ylab(ylab)
     return(p)
 }
 
