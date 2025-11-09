@@ -433,7 +433,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # Check that all variables can be found from colData
     if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
         warning("All variables in RDA/CCA results must be present in ",
-                "colData(x).", call. = FALSE)
+            "colData(x).", call. = FALSE)
     } else{
         # Add group names to vector data
         name_map <- name_map[match(rownames(vector_data), name_map[["name"]]), ]
