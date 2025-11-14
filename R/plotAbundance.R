@@ -603,7 +603,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
             ncol = ncol,
             scales = scales)
     }
-    # This is also for facetting based on sample metadata, however, this allows
+    # This is also for faceting based on sample metadata, however, this allows
     # user to facet columns based on multiple sample metadata variables, e.g.
     # time point and sample type.
     if( length(col.var) > 1L && facet.cols ){

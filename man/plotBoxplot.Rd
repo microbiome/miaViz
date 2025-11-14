@@ -34,7 +34,7 @@ for offsetting points. The available options include:
 \code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
 (see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
 for details), \code{"jitter"}, and \code{"none"},
-If \code{"none"}, ofsetting is not applied. (Default: \code{"jitter"})
+If \code{"none"}, offsetting is not applied. (Default: \code{"jitter"})
 
 \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} or \code{rowData(x)} which is used to
@@ -60,7 +60,7 @@ or group observations. (Default: \code{NULL})
 variable from \code{colData(x)} which is used to pair observation points.
 (Default: \code{NULL})
 
-\item \code{add.chance}: \code{Logical scalar}. Whether to visualize chance
+\item \code{add.change}: \code{Logical scalar}. Whether to visualize chance
 of paired observations by the color of line. (Default: \code{FALSE})
 
 \item \code{add.box}: \code{Logical scalar}. Whether to add a boxplot
@@ -76,6 +76,20 @@ barplot layout denoting the proportion of observations above
 \item \code{add.threshold}: \code{Logical scalar}. Whether to add a
 \code{threshold} as horizontal line when \code{add.proportion = TRUE} is
 specified. (Default: \code{TRUE})
+
+\item \code{add.significance}: \code{Logical scalar}. Whether to
+automatically compute statistical significance and add p-value annotations
+to the plot. Ignored if \code{p.value} is provided. (Default: \code{FALSE})
+
+\item \code{mark.significance}: \code{Logical scalar}. Whether to display
+the computed or supplied p-values on the plot as significance asterisks.
+Has no effect if neither \code{add.significance} nor #'   \code{p.value} is
+used. (Default: \code{FALSE})
+
+\item \code{p.value}: \code{NULL} or \code{data.frame} with columns
+\code{group1}, \code{group2}, and \code{p}. If supplied, these are used
+as user-defined p-values for group comparisons, overriding any computed
+significance. (Default: \code{NULL})
 
 \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 barplots. (Default: \code{0})
@@ -129,6 +143,14 @@ layer. (Default: \code{0.5})
 \item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
 By default, it is calculated based so that the width matches with the
 width of boxes.
+
+\item \code{ncol}: \code{Integer scalar}. Number of columns in the
+\code{facet_wrap} layout. (Default: \code{NULL}, which lets ggplot2 decide the
+optimal layout)
+
+\item \code{nrow}: \code{Integer scalar}. Number of rows in the
+\code{facet_wrap} layout. (Default: \code{NULL}, which lets ggplot2 decide the
+optimal layout)
 }}
 
 \item{assay.type}{\code{NULL} or \code{character scalar}. Specifies the
@@ -166,6 +188,110 @@ such as abundance, between categorical values, such as sample groups.
 multiple options for visualization.
 }
 \examples{
+\dontrun{
+# This example shows how to plot Boxplots from intervention studies or a 
+# similar study design with repeated measures across multiple timepoints
+# with two or more interventions.
+# the Kumaraswamy2024 data has four Interventions(A-D) over three timepoints
+# (summer-autumn-winter)
+ 
+data(Kumaraswamy2024)
+tse <- Kumaraswamy2024
+
+# Visualize alpha diversity
+# We already have computed 'shannon' values.
+# Between group comparisons
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "group", x = "season"
+    )
+# with pvalues
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "group", x = "season", a
+    dd.significance = T
+    )
+# Within group comparisons
+# simple plot
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "season", x = "group"
+    )
+# Link points across timepoints
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "season", x = "group", 
+    pair.by = "subject"
+    )
+# Indicate change in diversity across timepoints
+# First filter tse to have measurements for each timepoint
+multiple_samples_df <- as.data.frame(colData(tse)) \%>\% 
+    group_by(subject) \%>\% 
+    filter(n() == 3) \%>\% 
+    ungroup()
+multiple_samples <- multiple_samples_df$sample
+# subset tse by valid samples
+tse <- tse[, multiple_samples]
+
+# Plot with change
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "season", x = "group", 
+    pair.by = "subject", add.change = TRUE
+    )
+# Add significance
+plotBoxplot(
+    tse, col.var = "shannon", 
+    fill.by = "season", x = "group", 
+    pair.by = "subject", add.change = TRUE, 
+    add.significance = TRUE
+    )
+    
+# Visualize relative abundance
+# For interested features e.g :
+interest <- c("Bifidobacterium", 
+    "Dialister", "Veillonella", "Collinsella")
+
+# Between groups
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "group", x = "season", 
+    features = interest, facet.by = "rownames", scales = "free"
+    )
+# Add significance
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "group", x = "season", features = c("Bifidobacterium"), 
+    facet.by = "rownames", scales = "free", 
+    add.significance = TRUE
+    )
+    
+# Within groups
+
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "season", x = "group", 
+    features = interest, facet.by = "rownames", scales = "free"
+    )
+# Add pvalues
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "season", x = "group", 
+    features = c("Bifidobacterium"), facet.by = "rownames", 
+    add.significance = TRUE
+    )
+# Add change
+plotBoxplot(
+    tse, assay.type = "relabundance", 
+    fill.by = "season", x = "group", 
+    features = c("Bifidobacterium"), 
+    facet.by = "rownames", add.significance = TRUE, 
+    pair.by = "subject", add.change = TRUE)
+
+}
+
+# Other Examples
+
 data("Tito2024QMP")
 tse <- Tito2024QMP
 
@@ -209,20 +335,20 @@ plotBoxplot(
     add.points = FALSE
 )
 
-\dontrun{
-library(microbiomeDataSets)
+# With pre-calculated pvalues
+df <- meltSE(tse, assay.type = "relabundance", add.col = TRUE)
 
-mae <- microbiomeDataSets::peerj32()
-tse <- getWithColData(mae, 1)
-tse[["time_point"]] <- as.character(tse[["time"]])
-# Create a plot showing chance between time points in abundance of
-# Akkermansia
-plotBoxplot(
-    tse, x = "time_point", assay.type = "counts", fill.by = "group",
-    features = "Akkermansia", pair.by = "subject",
-    add.chance = TRUE, scales = "free"
-)
-}
+# Calculate the pvalues
+library(rstatix)
+res <- df |> 
+    group_by(FeatureID) |> 
+    wilcox_test(relabundance ~ diagnosis) |> 
+    adjust_pvalue()
+
+# Plot with pvalue dataframe    
+plotBoxplot(tse, features = rownames(tse), 
+    x = "diagnosis", assay.type = "relabundance", 
+    p.value = res, facet.by = "rownames")
 
 }
 \seealso{
