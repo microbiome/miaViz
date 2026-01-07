@@ -274,7 +274,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.chance = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
-        add.proportion = FALSE, add.threshold = FALSE, scales = "fixed"
+        add.proportion = FALSE, add.threshold = FALSE, scales = "fixed",
         p.value = NULL, add.significance = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
