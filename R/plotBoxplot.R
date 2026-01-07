@@ -194,6 +194,31 @@
 #'     add.points = FALSE
 #' )
 #'
+#' # Calculate statistical significance with Wilcoxon test
+#' plotBoxplot(
+#'     tse,
+#'     col.var = "shannon",
+#'     fill.by = "diagnosis",
+#'     add.significance = TRUE
+#' )
+#'
+#' \dontrun{
+#' # Add pre-calculated p-values
+#' # Calculate p-values
+#' df <- meltSE(tse, add.col = TRUE)
+#' pvals <- df |>
+#'     rstatix::t_test(shannon ~ diagnosis) |>
+#'     ungroup() |>
+#'     as.data.frame()
+#' # Add them with p.value argument
+#' plotBoxplot(
+#'     tse,
+#'     x = "diagnosis",
+#'     col.var = "shannon",
+#'     p.value = pvals
+#' )
+#' }
+#'
 #' \dontrun{
 #' library(microbiomeDataSets)
 #'
@@ -383,7 +408,18 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             "' and one of the following columns: '",
             paste0(p_cols, collapse = "', '"), "'", call. = FALSE)
     }
-
+    # Check that grouping was correctly specified, i.e., the same grouping that
+    # will be applied to boxplot can be found from p-values.
+    grouping_vars <- c(facet.by, x)
+    comparison_vars <- c(fill.by, group.by) |> unique()
+    if( is.null(comparison_vars) ){
+        comparison_vars <- x
+    }
+    grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
+    if( is.data.frame(p.value) && !all(grouping_vars %in% colnames(p.value)) ){
+        stop("'p.value' must include the following columns: '",
+            paste0(grouping_vars, collapse = "', '"), "'", call. = FALSE)
+    }
     return(NULL)
 }
 
@@ -471,6 +507,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         x <- "x_axis"
         df[[x]] <- 0
         remove.x.axis <- TRUE
+        p.value[[x]] <- 0
     }
     # We add jitter to points manually. The problem is that ggplot evaluates
     # jitter for each layer separately when rendering the plot. We could specify
@@ -485,7 +522,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
     # Add p-values placement
     if( !is.null(p.value) ){
-        p.value <- .add_p_value_position(p.value, x, c(assay.type, col.var, row.var), group.by, fill.by, facet.by, df, ...)
+        p.value <- .add_p_value_position(
+            p.value, x, c(assay.type, col.var, row.var), group.by, fill.by,
+            facet.by, df, ...)
     }
 
     # Check that p.value data.frame has the correct grouping variables. If
@@ -795,6 +834,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function calculates significance between the groups
+#' @importFrom dplyr group_by across all_of arrange ungroup
 .calculate_significance <- function(
         df, y, x, facet.by, fill.by, group.by, pair.by, features,
         paired = !is.null(pair.by),
@@ -876,6 +916,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # Add positions of p-values to the data.frame
+#' @importFrom dplyr group_by across all_of summarise rename mutate
 .add_p_value_position <- function(
         pvals, x, y, group.by, fill.by, facet.by, df, dodge.width = 0.8,
         step.increase = 0.12, ...){
@@ -897,28 +938,63 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         # Calculate y axis positions. They are defined based on maximum y axis
         # values for each comparison. Each facet gets its own value.
         ypos <- df |>
-            group_by(across(all_of(c(grouping_vars)))) |>
+            group_by(across(all_of(c(x, grouping_vars, comparison_vars)))) |>
             summarise(
                 y.position = max(y_point, na.rm = TRUE) * (1+step.increase),
                 .groups = "drop")
-        # If the p values include only single comparison
-        if( nrow(ypos) == 1L ){
-            pvals <- cbind(pvals, ypos)
-        } else{
-            pvals <- dplyr::left_join(pvals, ypos, by = grouping_vars)
-        }
+        # Add the positions to p values
+        pvals <- pvals |>
+            dplyr::left_join(ypos, by = setNames(
+                c(comparison_vars, grouping_vars), c("group1", grouping_vars))
+                ) |>
+            rename(y1 = y.position) |>
+            dplyr::left_join(ypos, by = setNames(
+                c(comparison_vars, grouping_vars), c("group2", grouping_vars))
+                ) |>
+            rename(y2 = y.position) |>
+            mutate(
+                y.position = pmax(y1, y2)
+            ) |>
+            dplyr::select(-y1, -y2)
+
+        # Avoid overlapping. Add some random deviation.
+        cols_to_group <- intersect(
+            c(x, grouping_vars, comparison_vars),
+            colnames(pvals)
+        )
+        pvals <- pvals |>
+            group_by(across(all_of(cols_to_group))) |>
+            mutate(
+                y.position = y.position +
+                    (seq_along(y.position) - 1) * 0.05 * max(y.position)
+            ) |>
+            ungroup()
 
         # Calculate x axis positions. They are defined based on x axis and
         # grouping. Each facet gets own positions.
-        n_groups <- df[[comparison_vars]] |> unique() |> length()
-        if( x %in% colnames(pvals) ){
-            pvals[["x_numeric"]] <- factor(pvals[[x]]) |> as.numeric()
-            pvals[["xmin"]] <- pvals[["x_numeric"]] - dodge.width/2/n_groups
-            pvals[["xmax"]] <- pvals[["x_numeric"]] + dodge.width/2/n_groups
-        } else{
-            pvals[["xmin"]] <- 1
-            pvals[["xmax"]] <- n_groups
-        }
+        # Determine dodge grouping variable, if any
+        dodge_var <- if (!is.null(fill.by)) fill.by else group.by
+        # Convert categorical x-axis to numeric
+        xpos <- .categorical_x_to_numeric(df, x, facet.by)
+        # Apply dodge to get position of center of box
+        xpos <- .apply_dodge(xpos, x, dodge_var, dodge.width)
+        # Add x position to p-balues
+        variables <- c(x, grouping_vars, comparison_vars, "x_point") |> unique()
+        xpos <- xpos[, variables] |> unique()
+        pvals <- pvals |>
+            dplyr::left_join(xpos, by = setNames(
+                c(comparison_vars, grouping_vars), c("group1", grouping_vars))
+                ) |>
+            rename(x1 = x_point) |>
+            dplyr::left_join(xpos, by = setNames(
+                c(comparison_vars, grouping_vars), c("group2", grouping_vars))
+                ) |>
+            rename(x2 = x_point) |>
+            mutate(
+                xmin = pmin(x1, x2),
+                xmax = pmax(x1, x2)
+            ) |>
+            dplyr::select(-x1, -x2)
     }
     return(pvals)
 }
