@@ -481,7 +481,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !is.null(features) ){
         df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
         if( !is.null(p.value) ){
-            p.value <- p.value[p.value[["rownames"]] %in% features, , drop = FALSE]
+            p.value <- p.value[
+                p.value[["rownames"]] %in% features, , drop = FALSE]
         }
     }
 
@@ -623,8 +624,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         "tukey", "tukeyDense")
     jitter_methods <- c("jitter", "none")
     if( !(.is_a_string(point.offset) &&
-          point.offset %in% c(
-              beeswarm_methods, vipor_methods, jitter_methods)) ){
+            point.offset %in% c(
+                beeswarm_methods, vipor_methods, jitter_methods)) ){
         stop("'point.offset' must be a single character value from the ",
             "following options: '",
             paste0(
@@ -846,7 +847,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     supported_methods <- c("wilcox.test", "wilcoxon", "t-test", "t.test")
     if( !(.is_a_string(significance.method) &&
-          significance.method %in% supported_methods) ){
+            significance.method %in% supported_methods) ){
         stop("'significance.method' must be a single character value from the ",
             "the following options: '",
             paste0(supported_methods, collapse = "', '"), "'", call. = FALSE)
