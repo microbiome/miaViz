@@ -28,7 +28,8 @@
 #' @param ... additional parameters for plotting.
 #' \itemize{
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
-#'   Applicable when \code{layout="barplot"}. (Default: \code{10}))
+#'   Applicable when \code{layout="barplot"}.
+#'   (Default: \code{min(nrow(x), 10L)}))
 #'
 #'   \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
 #'   Specifies whether a barplot or a lollipop plot should be visualized in
@@ -61,11 +62,11 @@
 #' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 #'
-#' # Plotting feature loadings with tree
-#' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = TRUE) |>
+#' # Plotting feature loadings
+#' plotLoadings(tse, dimred = "PCA", layout = "heatmap", add.tree = FALSE) |>
 #'     # Remove this line to see messages
 #'     suppressMessages()
-#' 
+#'
 #'
 #' # Plotting matrix as a barplot
 #' loadings_matrix <- attr(reducedDim(tse, "PCA"), "rotation")
@@ -206,7 +207,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 }
 
 # This functions checks that loadings matrix is correct
-.check_loadings_matrix <- function(mat, layout, ncomponents, n = 10, ...) {
+.check_loadings_matrix <- function(
+        mat, layout, ncomponents, n = min(nrow(mat), 10L), ...) {
     # Check layout
     if( !(.is_a_string(layout) && layout %in%
             c("barplot", "heatmap", "lollipop")) ){
@@ -232,7 +234,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # is data.frame in long format directly usable for ggplot.
 #' @importFrom tibble rownames_to_column
 #' @importFrom tidyr pivot_longer
-.get_loadings_plot_data <- function(df, layout, ncomponents, n = 10, ...) {
+.get_loadings_plot_data <- function(
+        df, layout, ncomponents, n = min(nrow(df), 10L), ...) {
     # Transform into a dataframe
     df <- as.data.frame(df)
     # Keep only the number of components needed
