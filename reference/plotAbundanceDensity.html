@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.1</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.2</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot abundance density</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/plotcol/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/plotcol/R/plotAbundanceDensity.R" class="external-link"><code>R/plotAbundanceDensity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/pvals_simple/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/pvals_simple/R/plotAbundanceDensity.R" class="external-link"><code>R/plotAbundanceDensity.R</code></a></small>
     <div class="hidden name"><code>plotAbundanceDensity.Rd</code></div>
     </div>
 
@@ -64,7 +64,6 @@
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">25L</span><span class="op">)</span>,</span>
 <span>  colour.by <span class="op">=</span> <span class="va">colour_by</span>,</span>
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour.features <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shape.by <span class="op">=</span> <span class="va">shape_by</span>,</span>
 <span>  shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  size.by <span class="op">=</span> <span class="va">size_by</span>,</span>
@@ -143,12 +142,6 @@ taxa to show. (Default: <code>min(nrow(x), 25L)</code>)</p></dd>
 
 <dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
 <dd><p>Deprecated. Use <code>colour.by</code> instead.</p></dd>
-
-
-<dt id="arg-colour-features">colour.features<a class="anchor" aria-label="anchor" href="#arg-colour-features"></a></dt>
-<dd><p><code>Character vector</code>. A named vector of colors
-for features. Names should match feature names. Useful for matching
-colors across multiple plots. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-shape-by">shape.by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
