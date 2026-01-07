@@ -514,7 +514,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         x <- "x_axis"
         df[[x]] <- 0
         remove.x.axis <- TRUE
-        p.value[[x]] <- 0
+        if( !is.null(p.value) ){
+            p.value[[x]] <- 0
+        }
     }
     # We add jitter to points manually. The problem is that ggplot evaluates
     # jitter for each layer separately when rendering the plot. We could specify
