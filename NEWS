@@ -50,3 +50,4 @@ Changes in version 1.17.x
 
 Changes in version 1.19.x
 + plotRDA: Now plotting works with interaction term (2025-11-09)
++ plotBoxplot: Added option to add p-values (2026-01-07)
