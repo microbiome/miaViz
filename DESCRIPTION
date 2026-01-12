@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.17.10
+Version: 1.19.2
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -68,11 +68,13 @@ Suggests:
     ComplexHeatmap,
     GenomeInfoDb,
     ggh4x,
+    ggpubr,
     knitr,
     mediation,
     miaTime,
     patchwork,
     rmarkdown,
+    rstatix,
     shadowtext,
     testthat,
     vegan,
