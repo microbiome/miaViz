@@ -507,7 +507,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     plot_out <- ggtree(tree, layout = "circular")
     # Add first inner circle (features)
     plot_out <- gheatmap(
-        p = plot_out, data = features, width = 0.1, colnames_angle = 90)
+        p = plot_out, data = features, width = 0.1,
+        colnames_angle = 90, hjust = 1)
     # Adjust color scale for discrete feature values
     plot_out <- plot_out +
         scale_fill_viridis_d(option = "D", name = rank.title)
@@ -515,7 +516,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     plot_out <- plot_out + new_scale_fill()
     plot_out <- gheatmap(
         p = plot_out, data = loadings, offset = 0.1, width = 0.3,
-        colnames_angle = 90
+        colnames_angle = 90, hjust = 1
         )
     # Adjust color scale in continuous scale
     plot_out <- plot_out +
