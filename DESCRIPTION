@@ -66,6 +66,7 @@ Suggests:
     bluster,
     circlize,
     ComplexHeatmap,
+    GenomeInfoDb,
     ggh4x,
     knitr,
     mediation,
