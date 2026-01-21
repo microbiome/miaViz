@@ -54,11 +54,13 @@ NULL
 #' @importFrom ggplot2 ggplot geom_text
 #' @importFrom SummarizedExperiment rowData colData
 plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRUE, ...){
-    # Select margin based on by
+    # Select data based on margin (by)
     FUN <- switch(by, rowData, colData)
-    tree.FUN <- switch(by, plotRowTree, plotColTree)
+    tree.FUN <- switch(by, rowTree, colTree)
+    treeplot.FUN <- switch(by, plotRowTree, plotColTree)
     # Extract side information from SE
     df <- as.data.frame(FUN(x))
+    tree.exists <- is(x, "TreeSummarizedExperiment") && !is.null(tree.FUN(x))
     # Check label.by
     if( !is.vector(label.by) &&
         (is.null(label.by) || is.na(label.by) || label.by == "") ){
@@ -82,9 +84,13 @@ plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRU
     if( !is.logical(show.tree) ){
         stop("'show.tree' must be TRUE or FALSE.", call. = FALSE)
     }
+    if( show.tree && !tree.exists ){
+        warning("'show.tree' is ignored when row/colTree(x) does not exist.",
+            call. = FALSE)
+    }
     # Check kwargs
     kwargs <- list(...)
-    if( !show.tree && lenght(kwargs) != 0 ){
+    if( !show.tree && length(kwargs) != 0 ){
         warning("Arguments in '...' are ignored when 'show.tree' is FALSE.",
             call. = FALSE)
     }
@@ -92,27 +98,29 @@ plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRU
         stop("'layout' and 'branch.length' cannot be modified for this plot.",
             call. = FALSE)
     }
-    # Plot tree
-    tree.plot <- tree.FUN(
-        x,
-        layout = "rectangular",
-        branch.length = "none",
-        show.label = TRUE
-    )
-    # Extract tip order from tree
-    tree.data <- ggplot_build(tree.plot)
-    tips <- tree.data[[1]][[5]][c("y", "label")]
-    tips <- tips[order(tips$y), ]
-    # Order rowData based on tree tips
-    tax.order <- match(tips$label, names(x))
-    df <- df[tax.order, , drop = FALSE]
+    if( tree.exists ){
+        # Plot tree
+        tree.plot <- treeplot.FUN(
+            x,
+            layout = "rectangular",
+            branch.length = "none",
+            show.label = TRUE
+        )
+        # Extract tip order from tree
+        tree.data <- ggplot_build(tree.plot)
+        tips <- tree.data[[1]][[5]][c("y", "label")]
+        tips <- tips[order(tips$y), ]
+        # Order rowData based on tree tips
+        tax.order <- match(tips$label, names(x))
+        df <- df[tax.order, , drop = FALSE]
+    }
     # Initialise plots and widths lists
     plots <- list()
     widths <- c()
     # If tree is plotted
-    if( show.tree ){
+    if( tree.exists && show.tree ){
         # Store tree plot
-        plots[[1]] <- tree.FUN(
+        plots[[1]] <- treeplot.FUN(
             x,
             layout = "rectangular",
             branch.length = "none",
@@ -189,3 +197,9 @@ plotForest(
   show.tree = TRUE,
   tip.colour.by = "Phylum"
 )
+
+tse2 <- SummarizedExperiment(assays = assays(tse),
+                             rowData = rowData(tse),
+                             colData = colData(tse))
+
+plotForest(tse2, show.tree = FALSE)
