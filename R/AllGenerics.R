@@ -44,6 +44,12 @@ setGeneric("plotDMNFit", signature = "x",
     function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
     standardGeneric("plotDMNFit"))
 
+#' @rdname plotForest
+#' @export
+setGeneric("plotForest", signature = "x",
+    function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRUE, ...)
+    standardGeneric("plotForest"))
+
 #' @rdname plotGraph
 #' @export
 setGeneric("plotColGraph", signature = c("x","y"),

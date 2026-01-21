@@ -8,7 +8,9 @@
 #' 
 #' @param x a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object.
+#' object, or a \code{data.frame} object containing statistical estimates, with
+#' rownames and the variables \code{"Estimate"}, \code{"Lower"} and
+#' \code{"Upper"} as described in the details.
 #' 
 #' @param by \code{Character scalar}. Determines whether features or samples
 #' data is used for the plot. (Default: \code{"rows"})
@@ -50,10 +52,13 @@
 #'@name plotForest
 NULL
 
+#' @rdname plotForest
+#' @export
 #' @importFrom patchwork wrap_plots plot_layout
 #' @importFrom ggplot2 ggplot geom_text
 #' @importFrom SummarizedExperiment rowData colData
-plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRUE, ...){
+setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
+    function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRUE, ...){
     # Select data based on margin (by)
     FUN <- switch(by, rowData, colData)
     tree.FUN <- switch(by, rowTree, colTree)
@@ -129,18 +134,37 @@ plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRU
         # Store tree width
         widths <- c(widths, 0.5)
     }
+    # Pass to PlotForest data.frame method
+    plots[[length(plots) + 1]] <- plotForest(
+        df,
+        group = group,
+        label.by = label.by
+    )
+    # Store widths for forest plot and label plots
+    widths <- c(widths, 2 + 1/3 * length(label.by))
+    # Make final plot
+    p <- wrap_plots(plots) +
+        plot_layout(widths = widths, guides = "collect")
+    return(p)
+})
+
+setMethod("plotForest", signature = c(x = "data.frame"),
+    function(x, group = NULL, label.by = "CI"){
+    # Initialise plots and widths lists
+    plots <- list()
+    widths <- c()
     # Convert feature names to factors
-    df$Feature <- factor(rownames(df), levels = rownames(df))
-    rownames(df) <- NULL
+    x$Feature <- factor(rownames(x), levels = rownames(x))
+    rownames(x) <- NULL
     # Find x-axis limits for forest plot
-    lim <- max(abs(df$Lower), df$Upper)
+    lim <- max(abs(x$Lower), x$Upper)
     # Make forest plot
-    plots[[length(plots) + 1]] <- ggplot(df, aes(x = .data$Estimate, y = .data$Feature)) +
+    plots[[length(plots) + 1]] <- ggplot(x, aes(x = .data$Estimate, y = .data$Feature)) +
         geom_vline(xintercept = 0, linetype = "dashed", colour = "gray") +
         geom_point() +
         geom_errorbar(aes(xmin = .data$Lower, xmax = .data$Upper),
-                      orientation = "y", width = 1e-2 * nrow(df)) +
-        coord_cartesian(clip = "off", xlim = c(-lim, lim), ylim = c(df$Feature[1], NA)) +
+                      orientation = "y", width = 1e-2 * nrow(x)) +
+        coord_cartesian(clip = "off", xlim = c(-lim, lim), ylim = c(x$Feature[1], NA)) +
         theme_bw() +
         theme(axis.title.y = element_blank(),
               panel.grid = element_blank())
@@ -148,11 +172,11 @@ plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRU
     widths <- c(widths, 2)
     # Construct CI label
     if( "CI" %in% label.by ){
-        df$CI <- paste0(round(df$Estimate, 2), " (", round(df$Lower, 2), "—", round(df$Upper, 2), ")")
+        x$CI <- paste0(round(x$Estimate, 2), " (", round(x$Lower, 2), "—", round(x$Upper, 2), ")")
     }
     # Construct P-Value label
     if( "P-Value" %in% label.by ){
-        df$`P-Value` <- paste0(round(df$Pval, 3), ifelse(df$Pval < 0.05, "*", ""))
+        x$`P-Value` <- paste0(round(x$Pval, 3), ifelse(x$Pval < 0.05, "*", ""))
     }
     # Initialise label plot list
     label.plots <- list()
@@ -167,11 +191,11 @@ plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRU
             xmax <- NA
         }
         # Make plot for current label
-        label.plots[[i]] <- ggplot(df, aes(x = .data$Estimate, y = .data$Feature)) +
+        label.plots[[i]] <- ggplot(x, aes(x = .data$Estimate, y = .data$Feature)) +
             geom_text(x = 0, aes(label = .data[[lab]]),
-                      hjust = 0, size = 150 / nrow(df)) +
+                      hjust = 0, size = 150 / nrow(x)) +
             annotate("text", x = 0, y = -1.5, label = lab, hjust = 0) +
-            coord_cartesian(xlim = c(0, xmax), ylim = c(df$Feature[1], NA),
+            coord_cartesian(xlim = c(0, xmax), ylim = c(x$Feature[1], NA),
                             expand = FALSE, clip = "off") +
             theme(axis.title = element_blank(),
                   axis.text = element_blank(),
@@ -187,19 +211,6 @@ plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRU
     }
     # Make final plot
     p <- wrap_plots(plots) +
-        plot_layout(widths = widths, guides = "collect")
+        plot_layout(widths = widths)
     return(p)
-}
-
-plotForest(
-  tse,
-  label.by = c("CI", "P-Value", "Prevalence"),
-  show.tree = TRUE,
-  tip.colour.by = "Phylum"
-)
-
-tse2 <- SummarizedExperiment(assays = assays(tse),
-                             rowData = rowData(tse),
-                             colData = colData(tse))
-
-plotForest(tse2, show.tree = FALSE)
+})
