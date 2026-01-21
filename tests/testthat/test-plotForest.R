@@ -14,3 +14,6 @@ plotForest(tse2, show.tree = FALSE)
 
 dfx <- as.data.frame(rowData(tse))
 plotForest(dfx)
+
+plotForest(tse, effect.var = "effect", ci.lower.var = "hi", label.by = c())
+plotForest(tse, effect.var = "effect", ci.lower.var = NULL, label.by = c())
