@@ -1,31 +1,99 @@
+#' Visualize estimated results with forest plots
+#' 
+#' \code{plotForest()} creates a feature- or sample-wise forest plot, showing
+#' estimated results from a statistical test with their confidence intervals.
+#' Additionally, the plot can be enriched with the tree structure and labelled
+#' with Confidence Intervals (CIs), p-values and other information from the
+#' metadata.
+#' 
+#' @param x a
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
+#' object.
+#' 
+#' @param by \code{Character scalar}. Determines whether features or samples
+#' data is used for the plot. (Default: \code{"rows"})
+#' 
+#' @param group \code{Character scalar}. Specifies the group for plotting. Must
+#' be a value from \code{names(rowData(x))} or \code{names(colData(x))}. If
+#' \code{NULL}, observations are not grouped. (Default: \code{NULL})
+#'
+#' @param label.by \code{Character vector}. Lists the variables from
+#' \code{rowData(x)} or \code{colData(x)} by which the plot should be labelled.
+#' \code{"CI"} and \code{"P-Value"} are special entries with requirements
+#' described in the details.
+#'
+#' @param show.tree \code{Logical scalar}. Should the tree structure of the data
+#' be shown next to the forest plot?
+#' 
+#' @param ... additional parameters from \code{plotRowTree}.
+#' 
+#' @details
+#' \code{plotForest} requires the following variables to be present in the
+#' \code{rowData(x)} or \code{colData(x)}:
+#' 
+#' \itemize{
+#'   \item \code{Estimate}: estimated results or statistics 
+#'   \item \code{Lower}: lower CI boundaries
+#'   \item \code{Upper}: upper CI boundaries
+#'   \item \code{Pval}: associated p-values
+#' }
+#' 
+#' When \code{label.by} includes \code{"CI"} or \code{"P-Value"}, those are
+#' constructed from the four variables above.
+#' 
+#' @return
+#' a \code{\link[ggplot2:ggplot]{ggplot}} object.
+#'
+#' @examples
+#'
+#'
+#'@name plotForest
+NULL
 
-plotForest <- function(x, group.by = NULL, label.by = "CI", show.tree = TRUE){
-    # Extract rowData from SE
-    df <- as.data.frame(rowData(x))
+#' @importFrom patchwork wrap_plots plot_layout
+#' @importFrom ggplot2 ggplot geom_text
+#' @importFrom SummarizedExperiment rowData colData
+plotForest <- function(x, by = 1, group = NULL, label.by = "CI", show.tree = TRUE, ...){
+    # Select margin based on by
+    FUN <- switch(by, rowData, colData)
+    tree.FUN <- switch(by, plotRowTree, plotColTree)
+    # Extract side information from SE
+    df <- as.data.frame(FUN(x))
     # Check label.by
     if( !is.vector(label.by) &&
         (is.null(label.by) || is.na(label.by) || label.by == "") ){
         label.by <- c()
     }
     if( !all(label.by %in% c("CI", "P-Value") | label.by %in% names(df)) ){
-        stop("All terms in 'label.by' must be in rowData(x).", call. = FALSE)
+        stop("All terms in 'label.by' must be in row/colData(x).",
+            call. = FALSE)
     }
     # Check CI
     if( "CI" %in% label.by && !all(c("Estimate", "Lower", "Upper") %in% names(df)) ){
-        stop("To show the 'CI' label, rowData(x) must include the variables ",
-            "'Estimate', 'Lower' and 'Upper'.", call. = FALSE)
+        stop("To show the 'CI' label, row/colData(x) must include the ",
+             "variables 'Estimate', 'Lower' and 'Upper'.", call. = FALSE)
     }
     # Check P-Value
     if( "P-Value" %in% label.by && !"Pval" %in% names(df) ){
-        stop("To show the 'P-Value' label, rowData(x) must include the ",
+        stop("To show the 'P-Value' label, row/colData(x) must include the ",
             "variable 'Pval'.", call. = FALSE)
     }
     # Check show.tree
     if( !is.logical(show.tree) ){
         stop("'show.tree' must be TRUE or FALSE.", call. = FALSE)
     }
+    # Check kwargs
+    kwargs <- list(...)
+    if( !show.tree && lenght(kwargs) != 0 ){
+        warning("Arguments in '...' are ignored when 'show.tree' is FALSE.",
+            call. = FALSE)
+    }
+    if( any(c("layout", "branch.length") %in% names(kwargs)) ){
+        stop("'layout' and 'branch.length' cannot be modified for this plot.",
+            call. = FALSE)
+    }
     # Plot tree
-    tree.plot <- plotRowTree(
+    tree.plot <- tree.FUN(
         x,
         layout = "rectangular",
         branch.length = "none",
@@ -41,14 +109,14 @@ plotForest <- function(x, group.by = NULL, label.by = "CI", show.tree = TRUE){
     # Initialise plots and widths lists
     plots <- list()
     widths <- c()
-    
+    # If tree is plotted
     if( show.tree ){
         # Store tree plot
-        plots[[1]] <- plotRowTree(
+        plots[[1]] <- tree.FUN(
             x,
             layout = "rectangular",
             branch.length = "none",
-            show.label = FALSE
+            ...
         )
         # Store tree width
         widths <- c(widths, 0.5)
@@ -111,8 +179,13 @@ plotForest <- function(x, group.by = NULL, label.by = "CI", show.tree = TRUE){
     }
     # Make final plot
     p <- wrap_plots(plots) +
-        plot_layout(widths = widths)
+        plot_layout(widths = widths, guides = "collect")
     return(p)
 }
 
-plotForest(tse, label.by = "CI", show.tree = FALSE)
+plotForest(
+  tse,
+  label.by = c("CI", "P-Value", "Prevalence"),
+  show.tree = TRUE,
+  tip.colour.by = "Phylum"
+)
