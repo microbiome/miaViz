@@ -209,6 +209,31 @@ plotBoxplot(
     add.points = FALSE
 )
 
+# Calculate statistical significance with Wilcoxon test
+plotBoxplot(
+    tse,
+    col.var = "shannon",
+    fill.by = "diagnosis",
+    add.significance = TRUE
+)
+
+\dontrun{
+# Add pre-calculated p-values
+# Calculate p-values
+df <- meltSE(tse, add.col = TRUE)
+pvals <- df |>
+    rstatix::t_test(shannon ~ diagnosis) |>
+    ungroup() |>
+    as.data.frame()
+# Add them with p.value argument
+plotBoxplot(
+    tse,
+    x = "diagnosis",
+    col.var = "shannon",
+    p.value = pvals
+)
+}
+
 \dontrun{
 library(microbiomeDataSets)
 
