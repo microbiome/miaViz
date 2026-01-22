@@ -3,6 +3,7 @@
 \name{plotForest}
 \alias{plotForest}
 \alias{plotForest,SummarizedExperiment-method}
+\alias{plotForest,data.frame-method}
 \title{Visualize estimated results with forest plots}
 \usage{
 plotForest(
@@ -33,6 +34,18 @@ plotForest(
   colour.by = NULL,
   show.tree = TRUE,
   ...
+)
+
+\S4method{plotForest}{data.frame}(
+  x,
+  effect.var = "effect",
+  id.var = "rownames",
+  ci.lower.var = "lower",
+  ci.upper.var = "upper",
+  pval.var = "pval",
+  label.by = NULL,
+  color.by = colour.by,
+  colour.by = NULL
 )
 }
 \arguments{
@@ -74,7 +87,7 @@ which observations are coloured. (Default: \code{NULL})}
 \item{show.tree}{\code{Logical scalar}. Should the tree structure of the data
 be shown next to the forest plot?}
 
-\item{...}{additional parameters from \code{\link{plotRowTree}}.}
+\item{...}{additional parameters passed to \code{\link{plotRowTree}}.}
 }
 \value{
 a \code{\link[ggplot2:ggplot]{ggplot}} object.

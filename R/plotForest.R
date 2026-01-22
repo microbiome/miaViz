@@ -43,7 +43,7 @@
 #' @param show.tree \code{Logical scalar}. Should the tree structure of the data
 #' be shown next to the forest plot?
 #' 
-#' @param ... additional parameters from \code{\link{plotRowTree}}.
+#' @param ... additional parameters passed to \code{\link{plotRowTree}}.
 #' 
 #' @return
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object.
@@ -208,6 +208,8 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     return(p)
 })
 
+#' @rdname plotForest
+#' @export
 #' @importFrom patchwork wrap_plots plot_layout
 setMethod("plotForest", signature = c(x = "data.frame"),
     function(x, effect.var = "effect", id.var = "rownames",
@@ -330,7 +332,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     if( "CI" %in% label.by ){
         x$CI <- paste0(
             round(x[[effect.var]], 2), " (",
-            round(x[[ci.lower.var]], 2), "—",
+            round(x[[ci.lower.var]], 2), "\u2014",
             round(x[[ci.upper.var]], 2), ")"
         )
     }
