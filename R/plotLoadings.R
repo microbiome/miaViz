@@ -125,7 +125,8 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         mat <- .get_loadings_matrix(x, dimred, ...)
         if( add.tree && layout == "heatmap" ){
             # Create dataframe for tree plotting
-            data_list <- .get_loadings_tree_data(mat, x, tree.name, row.var)
+            data_list <- .get_loadings_tree_data(
+                mat, x, tree.name, row.var, ncomponents, ...)
             tree <- data_list[["tree"]]
             mat <- data_list[["loadings"]]
             # Plot tree with feature loadings
