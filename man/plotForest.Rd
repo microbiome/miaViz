@@ -122,6 +122,9 @@ plotForest(
     show.tree = TRUE
 )
 
+# Quick fix for a colTree error
+colTree(tse) <- NULL
+
 # Make sample-wise forest plot
 plotForest(
     tse,
