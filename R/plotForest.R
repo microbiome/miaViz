@@ -69,6 +69,8 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
         label.by = "CI", color.by = colour.by, colour.by = NULL,
         show.tree = TRUE, ...){
+    # Check margin (by)
+    by <- .check_MARGIN(by)
     # Select data based on margin (by)
     FUN <- switch(by, rowData, colData)
     tree.FUN <- switch(by, rowTree, colTree)
@@ -125,9 +127,9 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         # Store tree width
         widths <- c(widths, 0.5)
     }
-    # Pass to PlotForest data.frame method
-    plots[[length(plots) + 1]] <- plotForest(
-        df,
+    # Generate forest plot components
+    plots <- c(plots, .plot_forest(
+        x = df,
         effect.var = effect.var,
         id.var = id.var,
         ci.lower.var = ci.lower.var,
@@ -135,9 +137,9 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         pval.var = pval.var,
         label.by = label.by,
         color.by = color.by
-    )
-    # Store widths for forest plot and label plots
-    widths <- c(widths, 2 + 2/5 * length(label.by))
+    ))
+    # Define plot widths
+    widths <- c(widths, 2, 2/5 * length(label.by))
     # Make final plot
     p <- wrap_plots(plots) +
         plot_layout(widths = widths, guides = "collect")
@@ -148,6 +150,27 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     function(x, effect.var = "effect", id.var = "rownames",
         ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
         label.by = NULL, color.by = colour.by, colour.by = NULL){
+    # Generate forest plot components
+    plots <- .plot_forest(
+        x = x,
+        effect.var = effect.var,
+        id.var = id.var,
+        ci.lower.var = ci.lower.var,
+        ci.upper.var = ci.upper.var,
+        pval.var = pval.var,
+        label.by = label.by,
+        color.by = color.by
+    )
+    # Define plot widths
+    widths <- c(2, 2/5 * length(label.by))
+    # Make final plot
+    p <- wrap_plots(plots) +
+        plot_layout(widths = widths, guides = "collect")
+    return(p)
+})
+
+.plot_forest <- function(x, effect.var, id.var, ci.lower.var,
+    ci.upper.var, pval.var, label.by, color.by){
     # Check main vars
     if( !effect.var %in% names(x) ){
         stop("'effect.var' must be a variable in x.", call. = FALSE)
@@ -185,7 +208,11 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Check P-Value
     if( "P-Value" %in% label.by && is.null(pval.var) ){
         stop("To show the 'P-Value' label, x must include the variable ",
-        "specified with 'pval.var'.", call. = FALSE)
+            "specified with 'pval.var'.", call. = FALSE)
+    }
+    # Check color.by
+    if( !is.null(color.by) && !color.by %in% names(x) ){
+        stop("'color.by' must be a variable of x.", call. = FALSE)
     }
     # Initialise plots and widths lists
     plots <- list()
@@ -289,15 +316,9 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     if( length(label.plots) != 0 ){
         # Wrap and store label plots
         plots[[length(plots) + 1]] <- wrap_plots(label.plots)
-        # Store label plots total width
-        widths <- c(widths, 2/5 * length(label.plots))
     }
-    # Make final plot
-    p <- wrap_plots(plots) +
-        plot_layout(widths = widths, guides = "collect")
-    return(p)
-})
-
+    return(plots)
+}
 
 nonlinear.textsize <- function(n, min.size = 3, max.size = 5) {
     # Scale size inversely but bounded between min_size and max_size
@@ -305,4 +326,27 @@ nonlinear.textsize <- function(n, min.size = 3, max.size = 5) {
     # Clamp between min and max
     size <- pmax(pmin(size, max.size), min.size)
     return(size)
+}
+
+# From https://github.com/microbiome/mia/blob/devel/R/utils.R
+# Check MARGIN parameters. Should be defining rows or columns.
+.check_MARGIN <- function(MARGIN, name = .get_name_in_parent(MARGIN)) {
+    # MARGIN must be one of the following options
+    if( !(length(MARGIN) == 1L && tolower(MARGIN) %in% c(
+            1, 2, "1", "2", "features", "samples", "columns", "col", "row",
+            "rows", "cols")) ) {
+        stop("'", name,"' must be 'rows' or 'cols'.", call. = FALSE)
+    }
+    # Convert MARGIN to numeric if it is not.
+    MARGIN <- ifelse(tolower(MARGIN) %in% c(
+        "samples", "columns", "col", 2, "cols"), 2, 1)
+    return(MARGIN)
+}
+
+was_called_by <- function(caller_name) {
+  calls <- sys.calls()
+  # Check if caller_name appears in any of the calls
+  any(sapply(calls, function(call) {
+    as.character(call[[1]]) == caller_name
+  }))
 }

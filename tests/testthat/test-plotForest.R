@@ -1,46 +1,46 @@
-data("Tengeler2020", package = "mia")
-tse <- Tengeler2020
+test_that("plotForest", {
 
-tse <- agglomerateByRank(tse, rank = "Genus")
+tse <- makeTSE(nrow = 10L, ncol = 10L)
 
 est <- rnorm(nrow(tse), mean = 0)
 conf.lower <- est - 0.1 * rpois(length(est), lambda = 3)
 conf.upper <- est + 0.1 * rpois(length(est), lambda = 3)
 p.val <- runif(est)
-prev <- sample(100, length(est))
+extra <- sample(100, length(est))
 
 df <- data.frame(
   effect = est,
   lower = conf.lower,
   upper = conf.upper,
   pval = p.val,
-  Prevalence = prev
+  extra = extra
 )
 
 rowData(tse) <- cbind(rowData(tse), df)
-
-est <- rnorm(ncol(tse), mean = 0)
-conf.lower <- est - 0.1 * rpois(length(est), lambda = 3)
-conf.upper <- est + 0.1 * rpois(length(est), lambda = 3)
-p.val <- runif(est)
-prev <- sample(100, length(est))
-
-df <- data.frame(
-  effect = est,
-  lower = conf.lower,
-  upper = conf.upper,
-  pval = p.val,
-  Prevalence = prev
-)
-
 colData(tse) <- cbind(colData(tse), df)
 
+p <- plotForest(tse, label.by = c("CI", "P-Value", "extra"))
+expect_s3_class(p, "ggplot")
+
+colTree(tse) <- NULL
+
+expect_warning(
+  p <- plotForest(tse, by = 2),
+  "'show.tree' is ignored when row/colTree(x) does not exist.",
+  fixed = TRUE
+)
+
+expect_s3_class(p, "ggplot")
+
+p <- plotForest(df, colour.by = "extra")
+expect_s3_class(p, "ggplot")
 
 plotForest(
   tse,
-  label.by = c("CI", "P-Value", "Prevalence"),
+  label.by = c("CI", "P-Value", "extra"),
   show.tree = TRUE,
-  tip.colour.by = "Phylum"
+  colour.by = "var1",
+  edge.colour.by = "var2"
 )
 
 tse2 <- SummarizedExperiment(assays = assays(tse),
@@ -68,3 +68,4 @@ dfx2$Group <- c(rep("A", nrow(dfx2) / 2), rep("B", nrow(dfx2) / 2))
 plotForest(dfx2, id.var = "sample_name", colour.by = "Group")
 plotForest(dfx2, id.var = "sample_name")
 
+})
