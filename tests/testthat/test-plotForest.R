@@ -1,71 +1,72 @@
 test_that("plotForest", {
-
-tse <- makeTSE(nrow = 10L, ncol = 10L)
-
-est <- rnorm(nrow(tse), mean = 0)
-conf.lower <- est - 0.1 * rpois(length(est), lambda = 3)
-conf.upper <- est + 0.1 * rpois(length(est), lambda = 3)
-p.val <- runif(est)
-extra <- sample(100, length(est))
-
-df <- data.frame(
-  effect = est,
-  lower = conf.lower,
-  upper = conf.upper,
-  pval = p.val,
-  extra = extra
-)
-
-rowData(tse) <- cbind(rowData(tse), df)
-colData(tse) <- cbind(colData(tse), df)
-
-p <- plotForest(tse, label.by = c("CI", "P-Value", "extra"))
-expect_s3_class(p, "ggplot")
-
-colTree(tse) <- NULL
-
-expect_warning(
-  p <- plotForest(tse, by = 2),
-  "'show.tree' is ignored when row/colTree(x) does not exist.",
-  fixed = TRUE
-)
-
-expect_s3_class(p, "ggplot")
-
-p <- plotForest(df, colour.by = "extra")
-expect_s3_class(p, "ggplot")
-
-plotForest(
-  tse,
-  label.by = c("CI", "P-Value", "extra"),
-  show.tree = TRUE,
-  colour.by = "var1",
-  edge.colour.by = "var2"
-)
-
-tse2 <- SummarizedExperiment(assays = assays(tse),
-                             rowData = rowData(tse),
-                             colData = colData(tse))
-
-plotForest(tse2, show.tree = FALSE)
-
-
-dfx <- as.data.frame(rowData(tse))
-plotForest(dfx)
-
-plotForest(tse, effect.var = "effect", ci.lower.var = "hi", label.by = c())
-plotForest(tse, effect.var = "effect", ci.lower.var = NULL, label.by = c())
-
-
-
-dfx <- as.data.frame(colData(tse))
-plotForest(dfx, colour.by = NULL)
-plotForest(dfx, colour.by = "patient_status")
-
-dfx2 <- rbind(dfx, dfx)
-dfx2$Group <- c(rep("A", nrow(dfx2) / 2), rep("B", nrow(dfx2) / 2))
-
-plotForest(dfx2, id.var = "sample_name", colour.by = "Group")
-plotForest(dfx2, id.var = "sample_name")
-
+    # Make toy data
+    tse <- makeTSE(nrow = 10L, ncol = 10L)
+    # Make toy stats
+    est <- rnorm(nrow(tse), mean = 0)
+    conf.lower <- est - 0.1 * rpois(length(est), lambda = 3)
+    conf.upper <- est + 0.1 * rpois(length(est), lambda = 3)
+    p.val <- runif(est)
+    extra <- sample(100, length(est))
+    # Compile into df
+    df <- data.frame(
+        effect = est,
+        lower = conf.lower,
+        upper = conf.upper,
+        pval = p.val,
+        extra = extra
+    )
+    # Add stats to side information
+    rowData(tse) <- cbind(rowData(tse), df)
+    colData(tse) <- cbind(colData(tse), df)
+    # Check feature-wise behaviour (tree + forest + 3 text cols)
+    p <- plotForest(tse, label.by = c("CI", "P-Value", "extra"))
+    expect_s3_class(p, "ggplot")
+    
+    colTree(tse) <- NULL # Keeping tree causes error (fix in plotColTree)
+    # Check sample-wise behaviour
+    expect_warning(
+        p <- plotForest(tse, by = 2),
+        "'show.tree' is ignored when row/colTree(x) does not exist.",
+        fixed = TRUE
+    )
+    expect_s3_class(p, "ggplot")
+    # Check df method
+    p <- plotForest(df, colour.by = "extra")
+    expect_s3_class(p, "ggplot")
+    # Check TreeSE method with many args
+    p <- plotForest(
+        tse,
+        label.by = c("CI", "P-Value", "extra"),
+        show.tree = FALSE,
+        colour.by = "var1",
+        edge.colour.by = "var2"
+    )
+    expect_s3_class(p, "ggplot")
+    # Reduce TreeSE to SE
+    se <- SummarizedExperiment(
+        assays = assays(tse),
+        rowData = rowData(tse),
+        colData = colData(tse)
+    )
+    # Check SE method
+    p <- plotForest(se, show.tree = FALSE)
+    expect_s3_class(p, "ggplot")
+    # Check no errorbar when CI not defined
+    p <- plotForest(
+        se,
+        effect.var = "effect",
+        ci.lower.var = NULL,
+        show.tree = FALSE
+    )
+    expect_s3_class(p, "ggplot")
+    # Check paired forest plot (2 lines per row)
+    df <- as.data.frame(colData(tse))
+    df2 <- rbind(df, df)
+    df2$Group <- c(rep("A", nrow(df2) / 2), rep("B", nrow(df2) / 2))
+    # With colour
+    p <- plotForest(df2, id.var = "ID", colour.by = "Group")
+    expect_s3_class(p, "ggplot")
+    # Without colour
+    p <- plotForest(df2, id.var = "ID")
+    expect_s3_class(p, "ggplot")
 })

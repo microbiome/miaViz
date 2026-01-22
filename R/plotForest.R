@@ -3,14 +3,11 @@
 #' \code{plotForest()} creates a feature- or sample-wise forest plot, showing
 #' estimated results from a statistical test with their confidence intervals.
 #' Additionally, the plot can be enriched with the tree structure and labelled
-#' with Confidence Intervals (CIs), p-values and other information from the
-#' metadata.
+#' with Confidence Intervals (CIs), p-values and other side information.
 #' 
 #' @param x a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
-#' object, or a \code{data.frame} object containing statistical estimates, with
-#' rownames and the variables \code{"Estimate"}, \code{"Lower"} and
-#' \code{"Upper"} as described in the details.
+#' object, or a \code{data.frame} object containing statistical estimates.
 #' 
 #' @param by \code{Character scalar}. Determines whether features or samples
 #' data is used for the plot. (Default: \code{"rows"})
@@ -19,7 +16,8 @@
 #' corresponds to the effects or estimated results. (Default: \code{"effect"})
 #' 
 #' @param id.var \code{Character scalar}. Specifies the variable of x which
-#' corresponds to the effects or estimated results. (Default: \code{"rownames"})
+#' corresponds to the observation identifiers. When \code{"rownames"}),
+#' the object rownames are used. (Default: \code{"rownames"})
 #' 
 #' @param ci.lower.var \code{Character scalar}. Specifies the variable of x
 #' which corresponds to the lower CI boundaries. (Default: \code{"lower"})
@@ -35,28 +33,87 @@
 #' row/colData(x) by which the plot should be labelled. \code{"CI"} and
 #' \code{"P-Value"} are special entries which require either \code{effect.var},
 #' \code{ci.lower.var} and \code{ci.upper.var} or \code{pval.var} to be
-#' specified, respectively.
+#' specified, respectively. (Default: \code{NULL})
 #' 
-#' @param colour.by \code{Character scalar}. Specifies the group for plotting. Must
-#' be a value from \code{names(rowData(x))} or \code{names(colData(x))}. If
-#' \code{NULL}, observations are not grouped. (Default: \code{NULL})
+#' @param colour.by \code{Character scalar}. Specifies the variable of x by
+#' which observations are coloured. (Default: \code{NULL})
 #'
-#' @param color.by \code{Character scalar}. Specifies the group for plotting. Must
-#' be a value from \code{names(rowData(x))} or \code{names(colData(x))}. If
-#' \code{NULL}, observations are not grouped. (Default: \code{NULL})
+#' @param color.by \code{Character scalar}. Alias to \code{colour.by}.
 #'
 #' @param show.tree \code{Logical scalar}. Should the tree structure of the data
 #' be shown next to the forest plot?
 #' 
-#' @param ... additional parameters from \code{plotRowTree}.
+#' @param ... additional parameters from \code{\link{plotRowTree}}.
 #' 
 #' @return
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object.
 #'
 #' @examples
+#' # Make toy data
+#' tse <- makeTSE(nrow = 20L, ncol = 20L)
 #' 
-#'
-#'@name plotForest
+#' # Make toy stats
+#' est <- rnorm(nrow(tse), mean = 0)
+#' conf.lower <- est - 0.1 * rpois(length(est), lambda = 3)
+#' conf.upper <- est + 0.1 * rpois(length(est), lambda = 3)
+#' p.val <- runif(est)
+#' extra <- sample(100, length(est))
+#' 
+#' # Compile into df
+#' df <- data.frame(
+#'     effect = est,
+#'     lower = conf.lower,
+#'     upper = conf.upper,
+#'     pval = p.val,
+#'     extra = extra
+#' )
+#' 
+#' # Make forest plot from stats data.frame
+#' plotForest(df)
+#' 
+#' # Colour by a variable
+#' plotForest(df, colour.by = "extra")
+#' 
+#' # Add stats to side information
+#' rowData(tse) <- cbind(rowData(tse), df)
+#' colData(tse) <- cbind(colData(tse), df)
+#' 
+#' # Make feature-wise forest plot
+#' plotForest(
+#'     tse,
+#'     by = "features",
+#'     show.tree = TRUE
+#' )
+#' 
+#' # Make sample-wise forest plot
+#' plotForest(
+#'     tse,
+#'     by = "samples",
+#'     show.tree = FALSE
+#' )
+#' 
+#' # Add labels
+#' plotForest(tse, label.by = c("CI", "P-Value", "extra"))
+#' 
+#' # Select tree and adjust its aesthetics
+#' plotForest(
+#'     tse,
+#'     tree.name = "phylo",
+#'     edge.colour.by = "var1",
+#'     tip.colour.by = "var2"
+#' )
+#' 
+#' # Make toy grouped data
+#' df <- as.data.frame(colData(tse))
+#' df2 <- rbind(df, df)
+#' df2$Group <- c(rep("A", nrow(df2) / 2), rep("B", nrow(df2) / 2))
+#' 
+#' # Make paired forest plot
+#' plotForest(df2, id.var = "ID", colour.by = "Group")
+#' 
+#' @author Giulio Benedetti
+#' 
+#' @name plotForest
 NULL
 
 #' @rdname plotForest
@@ -65,9 +122,9 @@ NULL
 #' @importFrom ggplot2 ggplot geom_text
 #' @importFrom SummarizedExperiment rowData colData
 setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
-    function(x, by = 1, effect.var = "effect", id.var = "rownames",
+    function(x, by = 1L, effect.var = "effect", id.var = "rownames",
         ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
-        label.by = "CI", color.by = colour.by, colour.by = NULL,
+        label.by = NULL, color.by = colour.by, colour.by = NULL,
         show.tree = TRUE, ...){
     # Check margin (by)
     by <- .check_MARGIN(by)
@@ -341,12 +398,4 @@ nonlinear.textsize <- function(n, min.size = 3, max.size = 5) {
     MARGIN <- ifelse(tolower(MARGIN) %in% c(
         "samples", "columns", "col", 2, "cols"), 2, 1)
     return(MARGIN)
-}
-
-was_called_by <- function(caller_name) {
-  calls <- sys.calls()
-  # Check if caller_name appears in any of the calls
-  any(sapply(calls, function(call) {
-    as.character(call[[1]]) == caller_name
-  }))
 }
