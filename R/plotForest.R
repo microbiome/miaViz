@@ -118,9 +118,11 @@ NULL
 
 #' @rdname plotForest
 #' @export
-#' @importFrom patchwork wrap_plots plot_layout
-#' @importFrom ggplot2 ggplot geom_text
 #' @importFrom SummarizedExperiment rowData colData
+#' @importFrom TreeSummarizedExperiment rowTree colTree
+#' @importFrom methods is
+#' @importFrom ggplot2 ggplot_build
+#' @importFrom patchwork wrap_plots plot_layout
 setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     function(x, by = 1L, effect.var = "effect", id.var = "rownames",
         ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
@@ -203,6 +205,7 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     return(p)
 })
 
+#' @importFrom patchwork wrap_plots plot_layout
 setMethod("plotForest", signature = c(x = "data.frame"),
     function(x, effect.var = "effect", id.var = "rownames",
         ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
@@ -226,6 +229,10 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     return(p)
 })
 
+#' @importFrom ggplot2 ggplot aes geom_vline geom_point geom_errorbar geom_text
+#'   annotate coord_cartesian theme_bw theme element_blank scale_x_continuous
+#'   expansion position_dodge2
+#' @importFrom patchwork wrap_plots
 .plot_forest <- function(x, effect.var, id.var, ci.lower.var,
     ci.upper.var, pval.var, label.by, color.by){
     # Check main vars
