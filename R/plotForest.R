@@ -15,18 +15,11 @@
 #' @param by \code{Character scalar}. Determines whether features or samples
 #' data is used for the plot. (Default: \code{"rows"})
 #' 
-#' @param group \code{Character scalar}. Specifies the group for plotting. Must
-#' be a value from \code{names(rowData(x))} or \code{names(colData(x))}. If
-#' \code{NULL}, observations are not grouped. (Default: \code{NULL})
-#'
-#' @param label.by \code{Character vector}. Specifies the variables of x or
-#' row/colData(x) by which the plot should be labelled. \code{"CI"} and
-#' \code{"P-Value"} are special entries which require either \code{effect.var},
-#' \code{ci.lower.var} and \code{ci.upper.var} or \code{pval.var} to be
-#' specified, respectively.
-#' 
 #' @param effect.var \code{Character scalar}. Specifies the variable of x which
 #' corresponds to the effects or estimated results. (Default: \code{"effect"})
+#' 
+#' @param id.var \code{Character scalar}. Specifies the variable of x which
+#' corresponds to the effects or estimated results. (Default: \code{"rownames"})
 #' 
 #' @param ci.lower.var \code{Character scalar}. Specifies the variable of x
 #' which corresponds to the lower CI boundaries. (Default: \code{"lower"})
@@ -37,6 +30,20 @@
 #' @param pval.var \code{Character scalar}. Specifies the variable of x which
 #' corrsponds to the p-values associated with \code{effect.var}.
 #' (Default: \code{"pval"})
+#' 
+#' @param label.by \code{Character vector}. Specifies the variables of x or
+#' row/colData(x) by which the plot should be labelled. \code{"CI"} and
+#' \code{"P-Value"} are special entries which require either \code{effect.var},
+#' \code{ci.lower.var} and \code{ci.upper.var} or \code{pval.var} to be
+#' specified, respectively.
+#' 
+#' @param colour.by \code{Character scalar}. Specifies the group for plotting. Must
+#' be a value from \code{names(rowData(x))} or \code{names(colData(x))}. If
+#' \code{NULL}, observations are not grouped. (Default: \code{NULL})
+#'
+#' @param color.by \code{Character scalar}. Specifies the group for plotting. Must
+#' be a value from \code{names(rowData(x))} or \code{names(colData(x))}. If
+#' \code{NULL}, observations are not grouped. (Default: \code{NULL})
 #'
 #' @param show.tree \code{Logical scalar}. Should the tree structure of the data
 #' be shown next to the forest plot?
@@ -58,8 +65,9 @@ NULL
 #' @importFrom ggplot2 ggplot geom_text
 #' @importFrom SummarizedExperiment rowData colData
 setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
-    function(x, by = 1, group = NULL, label.by = "CI", effect.var = "effect",
+    function(x, by = 1, effect.var = "effect", id.var = "rownames",
         ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
+        label.by = "CI", color.by = colour.by, colour.by = NULL,
         show.tree = TRUE, ...){
     # Select data based on margin (by)
     FUN <- switch(by, rowData, colData)
@@ -120,15 +128,16 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     # Pass to PlotForest data.frame method
     plots[[length(plots) + 1]] <- plotForest(
         df,
-        group = group,
-        label.by = label.by,
         effect.var = effect.var,
+        id.var = id.var,
         ci.lower.var = ci.lower.var,
         ci.upper.var = ci.upper.var,
-        pval.var = pval.var
+        pval.var = pval.var,
+        label.by = label.by,
+        color.by = color.by
     )
     # Store widths for forest plot and label plots
-    widths <- c(widths, 2 + 1/3 * length(label.by))
+    widths <- c(widths, 2 + 2/5 * length(label.by))
     # Make final plot
     p <- wrap_plots(plots) +
         plot_layout(widths = widths, guides = "collect")
@@ -136,12 +145,16 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
 })
 
 setMethod("plotForest", signature = c(x = "data.frame"),
-    function(x, group = NULL, label.by = "CI", effect.var = "effect",
-        ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval"){
+    function(x, effect.var = "effect", id.var = "rownames",
+        ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
+        label.by = NULL, color.by = colour.by, colour.by = NULL){
     # Check main vars
     if( !effect.var %in% names(x) ){
-        stop("'effect.var' must specify a variable in x.", call. = FALSE)
-    } 
+        stop("'effect.var' must be a variable in x.", call. = FALSE)
+    }
+    if( !id.var %in% c("rownames", names(x)) ){
+        stop("'id.var' must be 'rownames' or a variable in x.", call. = FALSE)
+    }
     if( any(!is.null(c(ci.lower.var, ci.upper.var))) &&
         any(!c(ci.lower.var, ci.upper.var) %in% names(x)) ){
         warning("'ci.lower.var' and 'ci.upper.var' are ignored when not found ",
@@ -178,7 +191,14 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     plots <- list()
     widths <- c()
     # Convert feature names to factors
-    x$Feature <- factor(rownames(x), levels = rownames(x))
+    if( id.var == "rownames" ){
+        x[[id.var]] <- factor(rownames(x), levels = rownames(x))
+    }else{
+        x[[id.var]] <- factor(x[[id.var]], levels = unique(x[[id.var]]))
+    }
+    # Store first name to set y origin
+    y0 <- x[[id.var]][1]
+    # Remove rownames to control row ordering
     rownames(x) <- NULL
     # Find x-axis limits for forest plot
     if( ci.exists ){
@@ -186,20 +206,26 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     }else{
         lim <- max(abs(x[[effect.var]]))
     }
+    # Account for group
+    if( is.null(color.by) ){
+        p <- ggplot(x, aes(x = .data[[effect.var]], y = .data[[id.var]]))
+    }else{
+        p <- ggplot(x, aes(x = .data[[effect.var]], y = .data[[id.var]],
+            colour = .data[[color.by]]))
+    }
     # Make forest plot
-    p <- ggplot(x, aes(x = .data[[effect.var]], y = .data$Feature)) +
-        geom_vline(xintercept = 0, linetype = "dashed", colour = "gray") +
-        geom_point() +
-        coord_cartesian(xlim = c(-lim, lim), ylim = c(x$Feature[1], NA), clip = "off") +
+    p <- p + geom_vline(xintercept = 0, linetype = "dashed", colour = "gray") +
+        geom_point(position = position_dodge2(width = 0.75)) +
+        coord_cartesian(xlim = c(-lim, lim), ylim = c(y0, NA), clip = "off") +
         theme_bw() +
-        theme(axis.title.y = element_blank(),
-              panel.grid = element_blank())
+        theme(axis.title.y = element_blank())
     # If CI is defined
     if( ci.exists ){
         # Add errorbars
         p <- p + geom_errorbar(
             aes(xmin = .data[[ci.lower.var]], xmax = .data[[ci.upper.var]]),
-            orientation = "y", width = 1e-2 * nrow(x)
+            orientation = "y", width = 1e-2 * nrow(x),
+            position = position_dodge2(width = 0.75)
         )
     }
     # Store forest plot
@@ -223,6 +249,17 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     }
     # Initialise label plot list
     label.plots <- list()
+    label.size <- nonlinear.textsize(nrow(x))
+    ann.ypos <- -nrow(x) / 30
+    
+    if( !is.null(color.by) && nrow(x) > length(unique(x[[id.var]])) ){
+        p <- ggplot(x, aes(x = .data[[effect.var]], y = .data[[id.var]],
+            colour = .data[[color.by]]))
+        # Adjust annotation y-position for grouped rows
+        ann.ypos <- ann.ypos / length(unique(x[[color.by]]))
+    }else{
+        p <- ggplot(x, aes(x = .data[[effect.var]], y = .data[[id.var]]))
+    }
     # Iterate over label.by terms
     for( i in seq_along(label.by) ){
         # Retrieve current label
@@ -233,27 +270,39 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         }else{
             xmax <- NA
         }
+        
         # Make plot for current label
-        label.plots[[i]] <- ggplot(x, aes(x = .data[[effect.var]], y = .data$Feature)) +
-            geom_text(x = 0, aes(label = .data[[lab]]),
-                      hjust = 0, size = 150 / nrow(x)) +
-            annotate("text", x = 0, y = -1.5, label = lab, hjust = 0) +
-            coord_cartesian(xlim = c(0, xmax), ylim = c(x$Feature[1], NA),
-                            expand = FALSE, clip = "off") +
+        label.plots[[i]] <- p +
+            geom_text(x = 0, aes(y = .data[[id.var]], label = .data[[lab]]),
+                      hjust = 0, position = position_dodge2(width = 0.75),
+                      size = label.size, show.legend = FALSE) +
+            annotate("text", x = 0, y = ann.ypos, label = lab, hjust = 0) +
+            scale_x_continuous(expand = expansion(mult = c(0, 0))) +
+            coord_cartesian(xlim = c(0, xmax), ylim = c(y0, NA), clip = "off") +
             theme(axis.title = element_blank(),
                   axis.text = element_blank(),
                   axis.ticks = element_blank(),
-                  panel.background = element_blank())
+                  panel.background = element_blank(),
+                  panel.grid = element_blank())
     }
     # For non-empty label plot lists
     if( length(label.plots) != 0 ){
         # Wrap and store label plots
         plots[[length(plots) + 1]] <- wrap_plots(label.plots)
         # Store label plots total width
-        widths <- c(widths, 1/3 * length(label.plots))
+        widths <- c(widths, 2/5 * length(label.plots))
     }
     # Make final plot
     p <- wrap_plots(plots) +
-        plot_layout(widths = widths)
+        plot_layout(widths = widths, guides = "collect")
     return(p)
 })
+
+
+nonlinear.textsize <- function(n, min.size = 3, max.size = 5) {
+    # Scale size inversely but bounded between min_size and max_size
+    size <- max.size - (log10(n) * (max.size - min.size) / log10(100))
+    # Clamp between min and max
+    size <- pmax(pmin(size, max.size), min.size)
+    return(size)
+}
