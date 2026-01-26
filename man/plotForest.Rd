@@ -6,23 +6,7 @@
 \alias{plotForest,data.frame-method}
 \title{Visualize estimated results with forest plots}
 \usage{
-plotForest(
-  x,
-  by = 1L,
-  effect.var = "effect",
-  ci.lower.var = "lower",
-  ci.upper.var = "upper",
-  err.var = NULL,
-  pval.var = "pval",
-  id.var = "rownames",
-  label.by = NULL,
-  order.by = NULL,
-  facet.by = NULL,
-  color.by = colour.by,
-  colour.by = NULL,
-  show.tree = TRUE,
-  ...
-)
+plotForest(x, ...)
 
 \S4method{plotForest}{SummarizedExperiment}(
   x,
@@ -38,6 +22,7 @@ plotForest(
   facet.by = NULL,
   color.by = colour.by,
   colour.by = NULL,
+  conf.level = 0.95,
   show.tree = TRUE,
   ...
 )
@@ -54,13 +39,16 @@ plotForest(
   order.by = NULL,
   facet.by = NULL,
   color.by = colour.by,
-  colour.by = NULL
+  colour.by = NULL,
+  conf.level = 0.95
 )
 }
 \arguments{
 \item{x}{a
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object, or a \code{data.frame} object containing statistical estimates.}
+
+\item{...}{additional parameters passed to \code{\link{plotRowTree}}.}
 
 \item{by}{\code{Character scalar}. Determines whether features or samples
 data is used for the plot. (Default: \code{"rows"})}
@@ -105,10 +93,13 @@ observations are divided into horizontal facets. (Default: \code{NULL})}
 \item{colour.by}{\code{Character scalar}. Specifies the variable of x by
 which observations are coloured. (Default: \code{NULL})}
 
+\item{conf.level}{\code{Numeric scalar}. Specifies the confidence level of
+the interval when inferred from \code{err.var}. It is ignored when
+\code{ci.lower.var} and \code{ci.upper.var} are defined.
+(Default: \code{0.95})}
+
 \item{show.tree}{\code{Logical scalar}. Should the tree structure of the data
 be shown next to the forest plot?}
-
-\item{...}{additional parameters passed to \code{\link{plotRowTree}}.}
 }
 \value{
 a \code{\link[ggplot2:ggplot]{ggplot}} object.

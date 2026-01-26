@@ -52,6 +52,11 @@
 #'
 #' @param color.by \code{Character scalar}. Alias to \code{colour.by}.
 #'
+#' @param conf.level \code{Numeric scalar}. Specifies the confidence level of
+#' the interval when inferred from \code{err.var}. It is ignored when
+#' \code{ci.lower.var} and \code{ci.upper.var} are defined.
+#' (Default: \code{0.95})
+#'
 #' @param show.tree \code{Logical scalar}. Should the tree structure of the data
 #' be shown next to the forest plot?
 #' 
@@ -151,7 +156,8 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     function(x, by = 1L, effect.var = "effect", ci.lower.var = "lower",
         ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
         id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
-        color.by = colour.by, colour.by = NULL, show.tree = TRUE, ...){
+        color.by = colour.by, colour.by = NULL, conf.level = 0.95,
+        show.tree = TRUE, ...){
     # Check margin (by)
     by <- .check_MARGIN(by)
     # Select data based on margin (by)
@@ -246,7 +252,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     function(x, effect.var = "effect",  ci.lower.var = "lower",
         ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
         id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
-        color.by = colour.by, colour.by = NULL){
+        color.by = colour.by, colour.by = NULL, conf.level = 0.95){
     # Check order.by
     if( !is.null(order.by) && order.by == "tree" ){
         warning("'order.by' can be set to tree only when 'x' is a ",
@@ -264,7 +270,8 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         label.by = label.by,
         order.by = order.by,
         facet.by = facet.by,
-        color.by = color.by
+        color.by = color.by,
+        conf.level = conf.level
     )
     # Define plot widths
     widths <- c(2, 2/5 * length(label.by))
@@ -274,12 +281,13 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     return(p)
 })
 
+#' @importFrom stats qt
+#' @importFrom patchwork wrap_plots
 #' @importFrom ggplot2 ggplot aes geom_vline geom_point geom_errorbar geom_text
 #'   annotate coord_cartesian theme_bw theme element_blank scale_x_continuous
-#'   expansion position_dodge2
-#' @importFrom patchwork wrap_plots
+#'   expansion position_dodge2 facet_wrap
 .plot_forest <- function(x, effect.var, ci.lower.var, ci.upper.var, err.var,
-    pval.var, id.var, label.by, order.by, facet.by, color.by){
+    pval.var, id.var, label.by, order.by, facet.by, color.by, conf.level){
     # Check main vars
     if( !effect.var %in% names(x) ){
         stop("'effect.var' must be a variable in x.", call. = FALSE)
@@ -289,8 +297,11 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     }
     # Derive CI from standard error
     if( !is.null(err.var) ){
-        x[[ci.lower.var]] <- x[[effect.var]] - x[[err.var]]
-        x[[ci.upper.var]] <- x[[effect.var]] + x[[err.var]]
+        # Compute corresponding quantile
+        z <- qt(1 - (1 - conf.level) / 2, df = ncol(x) - 1)
+        # Compute CI boarders
+        x[[ci.lower.var]] <- x[[effect.var]] - z * x[[err.var]]
+        x[[ci.upper.var]] <- x[[effect.var]] + z * x[[err.var]]
     }
     if( any(!is.null(c(ci.lower.var, ci.upper.var))) &&
         any(!c(ci.lower.var, ci.upper.var) %in% names(x)) ){
@@ -343,6 +354,10 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Check color.by
     if( !is.null(color.by) && !color.by %in% names(x) ){
         stop("'color.by' must be a variable of x.", call. = FALSE)
+    }
+    # Check conf.level
+    if( !is.numeric(conf.level) && conf.level >= 0 && conf.level <= 1){
+        stop("'conf.level' must be a number between 0 and 1.", call. = FALSE)
     }
     # Initialise plots and widths lists
     plots <- list()
