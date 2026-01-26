@@ -235,7 +235,8 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         label.by = label.by,
         order.by = order.by,
         facet.by = facet.by,
-        color.by = color.by
+        color.by = color.by,
+        conf.level = conf.level
     ))
     # Define plot widths
     widths <- c(widths, 2, 2/5 * length(label.by))
