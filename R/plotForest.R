@@ -15,25 +15,37 @@
 #' @param effect.var \code{Character scalar}. Specifies the variable of x which
 #' corresponds to the effects or estimated results. (Default: \code{"effect"})
 #' 
-#' @param id.var \code{Character scalar}. Specifies the variable of x which
-#' corresponds to the observation identifiers. When \code{"rownames"}),
-#' the object rownames are used. (Default: \code{"rownames"})
-#' 
 #' @param ci.lower.var \code{Character scalar}. Specifies the variable of x
 #' which corresponds to the lower CI boundaries. (Default: \code{"lower"})
 #'
 #' @param ci.upper.var \code{Character scalar}. Specifies the variable of x
 #' which corresponds to the upper CI boundaries. (Default: \code{"upper"})
+#' 
+#' @param err.var \code{Character scalar}. Specifies the variable of x which
+#' corresponds to the standard errors associated with \code{effect.var}.
+#' When defined, it overwrites \code{ci.lower.var} and \code{ci.upper.var}.
+#' (Default: \code{"pval"})
 #'
 #' @param pval.var \code{Character scalar}. Specifies the variable of x which
-#' corrsponds to the p-values associated with \code{effect.var}.
+#' corresponds to the p-values associated with \code{effect.var}.
 #' (Default: \code{"pval"})
+#' 
+#' @param id.var \code{Character scalar}. Specifies the variable of x which
+#' corresponds to the observation identifiers. When \code{"rownames"}),
+#' the object rownames are used. (Default: \code{"rownames"})
 #' 
 #' @param label.by \code{Character vector}. Specifies the variables of x or
 #' row/colData(x) by which the plot should be labelled. \code{"CI"} and
 #' \code{"P-Value"} are special entries which require either \code{effect.var},
 #' \code{ci.lower.var} and \code{ci.upper.var} or \code{pval.var} to be
 #' specified, respectively. (Default: \code{NULL})
+#' 
+#' @param order.by \code{Character scalar}. Specifies the variable of x by which
+#' observations are ordered. If \code{NULL}, the observations are ordered by
+#' the tree structure if available. (Default: \code{NULL})
+#' 
+#' @param facet.by \code{Character scalar}. Specifies the variable of x by which
+#' observations are divided into horizontal facets. (Default: \code{NULL})
 #' 
 #' @param colour.by \code{Character scalar}. Specifies the variable of x by
 #' which observations are coloured. (Default: \code{NULL})
@@ -49,70 +61,79 @@
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object.
 #'
 #' @examples
-#' # Make toy data
-#' tse <- makeTSE(nrow = 20L, ncol = 20L)
+#' library(mia)
+#' library(maaslin3)
 #' 
-#' # Make toy stats
-#' est <- rnorm(nrow(tse), mean = 0)
-#' conf.lower <- est - 0.1 * rpois(length(est), lambda = 3)
-#' conf.upper <- est + 0.1 * rpois(length(est), lambda = 3)
-#' p.val <- runif(est)
-#' extra <- sample(100, length(est))
-#' 
-#' # Compile into df
-#' df <- data.frame(
-#'     effect = est,
-#'     lower = conf.lower,
-#'     upper = conf.upper,
-#'     pval = p.val,
-#'     extra = extra
+#' # Import dataset
+#' data("Tengeler2020", package = "mia")
+#' tse <- Tengeler2020
+#'
+#' # Agglomerate by genus and subset by prevalence
+#' tse <- subsetByPrevalent(tse, rank = "Genus", prevalence = 10/100)
+#'
+#' # Transform count assay to relative abundances
+#' tse <- transformAssay(tse, assay.type = "counts", method = "relabundance")
+#'
+#' # Run maaslin3
+#' maaslin3_out <- maaslin3(
+#'     input_data = tse,
+#'     output = "maaslin_results",
+#'     formula = "~ patient_status",
 #' )
-#' 
-#' # Make forest plot from stats data.frame
-#' plotForest(df)
-#' 
-#' # Colour by a variable
-#' plotForest(df, colour.by = "extra")
-#' 
-#' # Add stats to side information
-#' rowData(tse) <- cbind(rowData(tse), df)
-#' colData(tse) <- cbind(colData(tse), df)
-#' 
-#' # Make feature-wise forest plot
+#'
+#' # Retrieve abundance results
+#' maaslin3_abund <- maaslin3_out$fit_data_abundance$results
+#' maaslin3_abund <- maaslin3_abund[!is.na(maaslin3_abund$coef), ]
+#'
+#' # Visualize abundance results
+#' plotForest(
+#'     maaslin3_abund,
+#'     effect.var = "coef",
+#'     err.var = "stderr",
+#'     pval.var = "qval_joint",
+#'     id.var = "feature",
+#'     label.by = c("CI", "P-Value"),
+#'     order.by = "coef"
+#' )
+#'
+#' # Add abundance results to TreeSE rowData
+#' rownames(maaslin3_abund) <- maaslin3_abund$feature
+#' tax.order <- match(rownames(tse), rownames(maaslin3_abund))
+#' rowData(tse) <- cbind(rowData(tse), maaslin3_abund[tax.order, ])
+#'
+#' # Visualise abundance results with tree structure
 #' plotForest(
 #'     tse,
-#'     by = "features",
-#'     show.tree = TRUE
+#'     effect.var = "coef",
+#'     err.var = "stderr",
+#'     pval.var = "qval_joint",
+#'     label.by = c("CI", "P-Value")
 #' )
-#' 
-#' # Quick fix for a colTree error
-#' colTree(tse) <- NULL
-#' 
-#' # Make sample-wise forest plot
+#'
+#' # Retrieve prevalence results
+#' maaslin3_prev <- maaslin3_out$fit_data_prevalence$results
+#' maaslin3_prev <- maaslin3_prev[!is.na(maaslin3_prev$coef), ]
+#'
+#' # Combine abundance and prevalence results
+#' maaslin3_res <- rbind(maaslin3_abund, maaslin3_prev)
+#'
+#' maaslin3_res$association <- c(
+#'     rep("Abundance", nrow(maaslin3_abund)),
+#'     rep("Prevalence", nrow(maaslin3_prev))
+#' )
+#'
+#' # Visualise combined results
 #' plotForest(
-#'     tse,
-#'     by = "samples",
-#'     show.tree = FALSE
+#'     maaslin3_res,
+#'     effect.var = "coef",
+#'     err.var = "stderr",
+#'     pval.var = "qval_joint",
+#'     id.var = "feature",
+#'     label.by = c("CI", "P-Value"),
+#'     order.by = "coef",
+#'     facet.by = "association",
+#'     colour.by = "association"
 #' )
-#' 
-#' # Add labels
-#' plotForest(tse, label.by = c("CI", "P-Value", "extra"))
-#' 
-#' # Select tree and adjust its aesthetics
-#' plotForest(
-#'     tse,
-#'     tree.name = "phylo",
-#'     edge.colour.by = "var1",
-#'     tip.colour.by = "var2"
-#' )
-#' 
-#' # Make toy grouped data
-#' df <- as.data.frame(colData(tse))
-#' df2 <- rbind(df, df)
-#' df2$Group <- c(rep("A", nrow(df2) / 2), rep("B", nrow(df2) / 2))
-#' 
-#' # Make paired forest plot
-#' plotForest(df2, id.var = "ID", colour.by = "Group")
 #' 
 #' @author Giulio Benedetti
 #' 
@@ -127,10 +148,10 @@ NULL
 #' @importFrom ggplot2 ggplot_build
 #' @importFrom patchwork wrap_plots plot_layout
 setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
-    function(x, by = 1L, effect.var = "effect", id.var = "rownames",
-        ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
-        label.by = NULL, color.by = colour.by, colour.by = NULL,
-        show.tree = TRUE, ...){
+    function(x, by = 1L, effect.var = "effect", ci.lower.var = "lower",
+        ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
+        id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
+        color.by = colour.by, colour.by = NULL, show.tree = TRUE, ...){
     # Check margin (by)
     by <- .check_MARGIN(by)
     # Select data based on margin (by)
@@ -148,6 +169,13 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         warning("'show.tree' is ignored when row/colTree(x) does not exist.",
             call. = FALSE)
     }
+    order.tree <- is.null(order.by)
+    if( !order.tree && show.tree ){
+        warning("'show.tree' is ignored when 'order.by' is not set to tree.",
+            call. = FALSE)
+        # Turn off show.tree
+        show.tree <- FALSE
+    }
     # Check kwargs
     kwargs <- list(...)
     if( !show.tree && length(kwargs) != 0 ){
@@ -158,7 +186,7 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         stop("'layout' and 'branch.length' cannot be modified for this plot.",
             call. = FALSE)
     }
-    if( tree.exists ){
+    if( tree.exists && order.tree ){
         # Plot tree
         tree.plot <- treeplot.FUN(
             x,
@@ -169,9 +197,9 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         # Extract tip order from tree
         tree.data <- ggplot_build(tree.plot)
         tips <- tree.data[[1]][[5]][c("y", "label")]
-        tips <- tips[order(tips$y), ]
+        tips <- tips[order(tips$y), , drop = FALSE]
         # Order rowData based on tree tips
-        tax.order <- match(tips$label, names(x))
+        tax.order <- match(tips$label, rownames(df))
         df <- df[tax.order, , drop = FALSE]
     }
     # Initialise plots and widths lists
@@ -193,11 +221,14 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     plots <- c(plots, .plot_forest(
         x = df,
         effect.var = effect.var,
-        id.var = id.var,
         ci.lower.var = ci.lower.var,
         ci.upper.var = ci.upper.var,
+        err.var = err.var,
         pval.var = pval.var,
+        id.var = id.var,
         label.by = label.by,
+        order.by = order.by,
+        facet.by = facet.by,
         color.by = color.by
     ))
     # Define plot widths
@@ -212,18 +243,27 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
 #' @export
 #' @importFrom patchwork wrap_plots plot_layout
 setMethod("plotForest", signature = c(x = "data.frame"),
-    function(x, effect.var = "effect", id.var = "rownames",
-        ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
-        label.by = NULL, color.by = colour.by, colour.by = NULL){
+    function(x, effect.var = "effect",  ci.lower.var = "lower",
+        ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
+        id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
+        color.by = colour.by, colour.by = NULL){
+    # Check order.by
+    if( !is.null(order.by) && order.by == "tree" ){
+        warning("'order.by' can be set to tree only when 'x' is a ",
+        "TreeSummarizedExperiment object.", call. = FALSE)
+    }
     # Generate forest plot components
     plots <- .plot_forest(
         x = x,
         effect.var = effect.var,
-        id.var = id.var,
         ci.lower.var = ci.lower.var,
         ci.upper.var = ci.upper.var,
+        err.var = err.var,
         pval.var = pval.var,
+        id.var = id.var,
         label.by = label.by,
+        order.by = order.by,
+        facet.by = facet.by,
         color.by = color.by
     )
     # Define plot widths
@@ -238,14 +278,19 @@ setMethod("plotForest", signature = c(x = "data.frame"),
 #'   annotate coord_cartesian theme_bw theme element_blank scale_x_continuous
 #'   expansion position_dodge2
 #' @importFrom patchwork wrap_plots
-.plot_forest <- function(x, effect.var, id.var, ci.lower.var,
-    ci.upper.var, pval.var, label.by, color.by){
+.plot_forest <- function(x, effect.var, ci.lower.var, ci.upper.var, err.var,
+    pval.var, id.var, label.by, order.by, facet.by, color.by){
     # Check main vars
     if( !effect.var %in% names(x) ){
         stop("'effect.var' must be a variable in x.", call. = FALSE)
     }
-    if( !id.var %in% c("rownames", names(x)) ){
-        stop("'id.var' must be 'rownames' or a variable in x.", call. = FALSE)
+    if( !is.null(err.var) && !err.var %in% names(x) ){
+        warning("'err.var' is ignored when not found in x.", call. = FALSE)
+    }
+    # Derive CI from standard error
+    if( !is.null(err.var) ){
+        x[[ci.lower.var]] <- x[[effect.var]] - x[[err.var]]
+        x[[ci.upper.var]] <- x[[effect.var]] + x[[err.var]]
     }
     if( any(!is.null(c(ci.lower.var, ci.upper.var))) &&
         any(!c(ci.lower.var, ci.upper.var) %in% names(x)) ){
@@ -254,9 +299,17 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         ci.lower.var <- NULL
         ci.upper.var <- NULL
     }
+    if( !is.null(err.var) &&
+        (ci.lower.var != "lower" || ci.upper.var != "upper") ){
+        warning("'ci.lower.var' and 'ci.upper.var' are ignored when 'err.var' ",
+            "is defined.", call. = FALSE)
+    }
     if( !is.null(pval.var) && !pval.var %in% names(x) ){
         warning("'pval.var' is ignored when not found in x.", call. = FALSE)
         pval.var <- NULL
+    }
+    if( !id.var %in% c("rownames", names(x)) ){
+        stop("'id.var' must be 'rownames' or a variable in x.", call. = FALSE)
     }
     # Check label.by
     if( !is.vector(label.by) &&
@@ -279,6 +332,14 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         stop("To show the 'P-Value' label, x must include the variable ",
             "specified with 'pval.var'.", call. = FALSE)
     }
+    # Check order.by
+    if( !is.null(order.by) && !order.by %in% names(x) ){
+        stop("'order.by' must be a variable of x.", call. = FALSE)
+    }
+    # Check order.by
+    if( !is.null(facet.by) && !facet.by %in% names(x) ){
+        stop("'facet.by' must be a variable of x.", call. = FALSE)
+    }
     # Check color.by
     if( !is.null(color.by) && !color.by %in% names(x) ){
         stop("'color.by' must be a variable of x.", call. = FALSE)
@@ -286,6 +347,10 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Initialise plots and widths lists
     plots <- list()
     widths <- c()
+    # Order features by effect size
+    if( !is.null(order.by) ){
+        x <- x[order(x[[order.by]]), , drop = FALSE]
+    }
     # Convert feature names to factors
     if( id.var == "rownames" ){
         x[[id.var]] <- factor(rownames(x), levels = rownames(x))
@@ -298,7 +363,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     rownames(x) <- NULL
     # Find x-axis limits for forest plot
     if( ci.exists ){
-        lim <- max(abs(x[[ci.lower.var]]), x[[ci.upper.var]])
+        lim <- max(abs(x[[ci.lower.var]]), x[[ci.upper.var]], na.rm = TRUE)
     }else{
         lim <- max(abs(x[[effect.var]]))
     }
@@ -323,6 +388,9 @@ setMethod("plotForest", signature = c(x = "data.frame"),
             orientation = "y", width = 1e-2 * nrow(x),
             position = position_dodge2(width = 0.75)
         )
+    }
+    if( !is.null(facet.by )){
+        p <- p + facet_wrap(as.formula(paste("~", facet.by)))
     }
     # Store forest plot
     plots[[length(plots) + 1]] <- p
@@ -360,13 +428,6 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     for( i in seq_along(label.by) ){
         # Retrieve current label
         lab <- label.by[i]
-        # Set xmax for improved positioning
-        if( i == 1 ){
-            xmax <- 1
-        }else{
-            xmax <- NA
-        }
-        
         # Make plot for current label
         label.plots[[i]] <- p +
             geom_text(x = 0, aes(y = .data[[id.var]], label = .data[[lab]]),
@@ -374,7 +435,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
                       size = label.size, show.legend = FALSE) +
             annotate("text", x = 0, y = ann.ypos, label = lab, hjust = 0) +
             scale_x_continuous(expand = expansion(mult = c(0, 0))) +
-            coord_cartesian(xlim = c(0, xmax), ylim = c(y0, NA), clip = "off") +
+            coord_cartesian(xlim = c(0, 1), ylim = c(y0, NA), clip = "off") +
             theme(axis.title = element_blank(),
                   axis.text = element_blank(),
                   axis.ticks = element_blank(),
@@ -389,7 +450,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     return(plots)
 }
 
-nonlinear.textsize <- function(n, min.size = 3, max.size = 5) {
+nonlinear.textsize <- function(n, min.size = 2, max.size = 5) {
     # Scale size inversely but bounded between min_size and max_size
     size <- max.size - (log10(n) * (max.size - min.size) / log10(100))
     # Clamp between min and max

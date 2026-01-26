@@ -47,10 +47,10 @@ setGeneric("plotDMNFit", signature = "x",
 #' @rdname plotForest
 #' @export
 setGeneric("plotForest", signature = "x",
-    function(x, by = 1L, effect.var = "effect", id.var = "rownames",
-        ci.lower.var = "lower", ci.upper.var = "upper", pval.var = "pval",
-        label.by = NULL, color.by = colour.by, colour.by = NULL,
-        show.tree = TRUE, ...)
+    function(x, by = 1L, effect.var = "effect", ci.lower.var = "lower",
+        ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
+        id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
+        color.by = colour.by, colour.by = NULL, show.tree = TRUE, ...)
     standardGeneric("plotForest"))
 
 #' @rdname plotGraph

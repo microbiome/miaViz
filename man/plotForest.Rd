@@ -10,11 +10,14 @@ plotForest(
   x,
   by = 1L,
   effect.var = "effect",
-  id.var = "rownames",
   ci.lower.var = "lower",
   ci.upper.var = "upper",
+  err.var = NULL,
   pval.var = "pval",
+  id.var = "rownames",
   label.by = NULL,
+  order.by = NULL,
+  facet.by = NULL,
   color.by = colour.by,
   colour.by = NULL,
   show.tree = TRUE,
@@ -25,11 +28,14 @@ plotForest(
   x,
   by = 1L,
   effect.var = "effect",
-  id.var = "rownames",
   ci.lower.var = "lower",
   ci.upper.var = "upper",
+  err.var = NULL,
   pval.var = "pval",
+  id.var = "rownames",
   label.by = NULL,
+  order.by = NULL,
+  facet.by = NULL,
   color.by = colour.by,
   colour.by = NULL,
   show.tree = TRUE,
@@ -39,11 +45,14 @@ plotForest(
 \S4method{plotForest}{data.frame}(
   x,
   effect.var = "effect",
-  id.var = "rownames",
   ci.lower.var = "lower",
   ci.upper.var = "upper",
+  err.var = NULL,
   pval.var = "pval",
+  id.var = "rownames",
   label.by = NULL,
+  order.by = NULL,
+  facet.by = NULL,
   color.by = colour.by,
   colour.by = NULL
 )
@@ -59,25 +68,37 @@ data is used for the plot. (Default: \code{"rows"})}
 \item{effect.var}{\code{Character scalar}. Specifies the variable of x which
 corresponds to the effects or estimated results. (Default: \code{"effect"})}
 
-\item{id.var}{\code{Character scalar}. Specifies the variable of x which
-corresponds to the observation identifiers. When \code{"rownames"}),
-the object rownames are used. (Default: \code{"rownames"})}
-
 \item{ci.lower.var}{\code{Character scalar}. Specifies the variable of x
 which corresponds to the lower CI boundaries. (Default: \code{"lower"})}
 
 \item{ci.upper.var}{\code{Character scalar}. Specifies the variable of x
 which corresponds to the upper CI boundaries. (Default: \code{"upper"})}
 
-\item{pval.var}{\code{Character scalar}. Specifies the variable of x which
-corrsponds to the p-values associated with \code{effect.var}.
+\item{err.var}{\code{Character scalar}. Specifies the variable of x which
+corresponds to the standard errors associated with \code{effect.var}.
+When defined, it overwrites \code{ci.lower.var} and \code{ci.upper.var}.
 (Default: \code{"pval"})}
+
+\item{pval.var}{\code{Character scalar}. Specifies the variable of x which
+corresponds to the p-values associated with \code{effect.var}.
+(Default: \code{"pval"})}
+
+\item{id.var}{\code{Character scalar}. Specifies the variable of x which
+corresponds to the observation identifiers. When \code{"rownames"}),
+the object rownames are used. (Default: \code{"rownames"})}
 
 \item{label.by}{\code{Character vector}. Specifies the variables of x or
 row/colData(x) by which the plot should be labelled. \code{"CI"} and
 \code{"P-Value"} are special entries which require either \code{effect.var},
 \code{ci.lower.var} and \code{ci.upper.var} or \code{pval.var} to be
 specified, respectively. (Default: \code{NULL})}
+
+\item{order.by}{\code{Character scalar}. Specifies the variable of x by which
+observations are ordered. If \code{NULL}, the observations are ordered by
+the tree structure if available. (Default: \code{NULL})}
+
+\item{facet.by}{\code{Character scalar}. Specifies the variable of x by which
+observations are divided into horizontal facets. (Default: \code{NULL})}
 
 \item{color.by}{\code{Character scalar}. Alias to \code{colour.by}.}
 
@@ -99,70 +120,79 @@ Additionally, the plot can be enriched with the tree structure and labelled
 with Confidence Intervals (CIs), p-values and other side information.
 }
 \examples{
-# Make toy data
-tse <- makeTSE(nrow = 20L, ncol = 20L)
+library(mia)
+library(maaslin3)
 
-# Make toy stats
-est <- rnorm(nrow(tse), mean = 0)
-conf.lower <- est - 0.1 * rpois(length(est), lambda = 3)
-conf.upper <- est + 0.1 * rpois(length(est), lambda = 3)
-p.val <- runif(est)
-extra <- sample(100, length(est))
+# Import dataset
+data("Tengeler2020", package = "mia")
+tse <- Tengeler2020
 
-# Compile into df
-df <- data.frame(
-    effect = est,
-    lower = conf.lower,
-    upper = conf.upper,
-    pval = p.val,
-    extra = extra
+# Agglomerate by genus and subset by prevalence
+tse <- subsetByPrevalent(tse, rank = "Genus", prevalence = 10/100)
+
+# Transform count assay to relative abundances
+tse <- transformAssay(tse, assay.type = "counts", method = "relabundance")
+
+# Run maaslin3
+maaslin3_out <- maaslin3(
+    input_data = tse,
+    output = "maaslin_results",
+    formula = "~ patient_status",
 )
 
-# Make forest plot from stats data.frame
-plotForest(df)
+# Retrieve abundance results
+maaslin3_abund <- maaslin3_out$fit_data_abundance$results
+maaslin3_abund <- maaslin3_abund[!is.na(maaslin3_abund$coef), ]
 
-# Colour by a variable
-plotForest(df, colour.by = "extra")
+# Visualize abundance results
+plotForest(
+    maaslin3_abund,
+    effect.var = "coef",
+    err.var = "stderr",
+    pval.var = "qval_joint",
+    id.var = "feature",
+    label.by = c("CI", "P-Value"),
+    order.by = "coef"
+)
 
-# Add stats to side information
-rowData(tse) <- cbind(rowData(tse), df)
-colData(tse) <- cbind(colData(tse), df)
+# Add abundance results to TreeSE rowData
+rownames(maaslin3_abund) <- maaslin3_abund$feature
+tax.order <- match(rownames(tse), rownames(maaslin3_abund))
+rowData(tse) <- cbind(rowData(tse), maaslin3_abund[tax.order, ])
 
-# Make feature-wise forest plot
+# Visualise abundance results with tree structure
 plotForest(
     tse,
-    by = "features",
-    show.tree = TRUE
+    effect.var = "coef",
+    err.var = "stderr",
+    pval.var = "qval_joint",
+    label.by = c("CI", "P-Value")
 )
 
-# Quick fix for a colTree error
-colTree(tse) <- NULL
+# Retrieve prevalence results
+maaslin3_prev <- maaslin3_out$fit_data_prevalence$results
+maaslin3_prev <- maaslin3_prev[!is.na(maaslin3_prev$coef), ]
 
-# Make sample-wise forest plot
+# Combine abundance and prevalence results
+maaslin3_res <- rbind(maaslin3_abund, maaslin3_prev)
+
+maaslin3_res$association <- c(
+    rep("Abundance", nrow(maaslin3_abund)),
+    rep("Prevalence", nrow(maaslin3_prev))
+)
+
+# Visualise combined results
 plotForest(
-    tse,
-    by = "samples",
-    show.tree = FALSE
+    maaslin3_res,
+    effect.var = "coef",
+    err.var = "stderr",
+    pval.var = "qval_joint",
+    id.var = "feature",
+    label.by = c("CI", "P-Value"),
+    order.by = "coef",
+    facet.by = "association",
+    colour.by = "association"
 )
-
-# Add labels
-plotForest(tse, label.by = c("CI", "P-Value", "extra"))
-
-# Select tree and adjust its aesthetics
-plotForest(
-    tse,
-    tree.name = "phylo",
-    edge.colour.by = "var1",
-    tip.colour.by = "var2"
-)
-
-# Make toy grouped data
-df <- as.data.frame(colData(tse))
-df2 <- rbind(df, df)
-df2$Group <- c(rep("A", nrow(df2) / 2), rep("B", nrow(df2) / 2))
-
-# Make paired forest plot
-plotForest(df2, id.var = "ID", colour.by = "Group")
 
 }
 \author{

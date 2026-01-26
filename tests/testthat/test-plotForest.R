@@ -21,14 +21,8 @@ test_that("plotForest", {
     # Check feature-wise behaviour (tree + forest + 3 text cols)
     p <- plotForest(tse, label.by = c("CI", "P-Value", "extra"))
     expect_s3_class(p, "ggplot")
-    
-    colTree(tse) <- NULL # Keeping tree causes error (fix in plotColTree)
     # Check sample-wise behaviour
-    expect_warning(
-        p <- plotForest(tse, by = 2),
-        "'show.tree' is ignored when row/colTree(x) does not exist.",
-        fixed = TRUE
-    )
+    p <- plotForest(tse, by = 2, colour.by = "group")
     expect_s3_class(p, "ggplot")
     # Check df method
     p <- plotForest(df, colour.by = "extra")
