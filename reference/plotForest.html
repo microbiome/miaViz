@@ -20,7 +20,7 @@ with Confidence Intervals (CIs), p-values and other side information."><!-- math
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.4</span>
       </span>
     </div>
 
@@ -63,11 +63,14 @@ with Confidence Intervals (CIs), p-values and other side information.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  by <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  effect.var <span class="op">=</span> <span class="st">"effect"</span>,</span>
-<span>  id.var <span class="op">=</span> <span class="st">"rownames"</span>,</span>
 <span>  ci.lower.var <span class="op">=</span> <span class="st">"lower"</span>,</span>
 <span>  ci.upper.var <span class="op">=</span> <span class="st">"upper"</span>,</span>
+<span>  err.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pval.var <span class="op">=</span> <span class="st">"pval"</span>,</span>
+<span>  id.var <span class="op">=</span> <span class="st">"rownames"</span>,</span>
 <span>  label.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color.by <span class="op">=</span> <span class="va">colour.by</span>,</span>
 <span>  colour.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  show.tree <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -79,11 +82,14 @@ with Confidence Intervals (CIs), p-values and other side information.</p>
 <span>  <span class="va">x</span>,</span>
 <span>  by <span class="op">=</span> <span class="fl">1L</span>,</span>
 <span>  effect.var <span class="op">=</span> <span class="st">"effect"</span>,</span>
-<span>  id.var <span class="op">=</span> <span class="st">"rownames"</span>,</span>
 <span>  ci.lower.var <span class="op">=</span> <span class="st">"lower"</span>,</span>
 <span>  ci.upper.var <span class="op">=</span> <span class="st">"upper"</span>,</span>
+<span>  err.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pval.var <span class="op">=</span> <span class="st">"pval"</span>,</span>
+<span>  id.var <span class="op">=</span> <span class="st">"rownames"</span>,</span>
 <span>  label.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color.by <span class="op">=</span> <span class="va">colour.by</span>,</span>
 <span>  colour.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  show.tree <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -94,11 +100,14 @@ with Confidence Intervals (CIs), p-values and other side information.</p>
 <span><span class="fu">plotForest</span><span class="op">(</span></span>
 <span>  <span class="va">x</span>,</span>
 <span>  effect.var <span class="op">=</span> <span class="st">"effect"</span>,</span>
-<span>  id.var <span class="op">=</span> <span class="st">"rownames"</span>,</span>
 <span>  ci.lower.var <span class="op">=</span> <span class="st">"lower"</span>,</span>
 <span>  ci.upper.var <span class="op">=</span> <span class="st">"upper"</span>,</span>
+<span>  err.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  pval.var <span class="op">=</span> <span class="st">"pval"</span>,</span>
+<span>  id.var <span class="op">=</span> <span class="st">"rownames"</span>,</span>
 <span>  label.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  order.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  facet.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color.by <span class="op">=</span> <span class="va">colour.by</span>,</span>
 <span>  colour.by <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -124,12 +133,6 @@ data is used for the plot. (Default: <code>"rows"</code>)</p></dd>
 corresponds to the effects or estimated results. (Default: <code>"effect"</code>)</p></dd>
 
 
-<dt id="arg-id-var">id.var<a class="anchor" aria-label="anchor" href="#arg-id-var"></a></dt>
-<dd><p><code>Character scalar</code>. Specifies the variable of x which
-corresponds to the observation identifiers. When <code>"rownames"</code>),
-the object rownames are used. (Default: <code>"rownames"</code>)</p></dd>
-
-
 <dt id="arg-ci-lower-var">ci.lower.var<a class="anchor" aria-label="anchor" href="#arg-ci-lower-var"></a></dt>
 <dd><p><code>Character scalar</code>. Specifies the variable of x
 which corresponds to the lower CI boundaries. (Default: <code>"lower"</code>)</p></dd>
@@ -140,10 +143,23 @@ which corresponds to the lower CI boundaries. (Default: <code>"lower"</code>)</p
 which corresponds to the upper CI boundaries. (Default: <code>"upper"</code>)</p></dd>
 
 
+<dt id="arg-err-var">err.var<a class="anchor" aria-label="anchor" href="#arg-err-var"></a></dt>
+<dd><p><code>Character scalar</code>. Specifies the variable of x which
+corresponds to the standard errors associated with <code>effect.var</code>.
+When defined, it overwrites <code>ci.lower.var</code> and <code>ci.upper.var</code>.
+(Default: <code>"pval"</code>)</p></dd>
+
+
 <dt id="arg-pval-var">pval.var<a class="anchor" aria-label="anchor" href="#arg-pval-var"></a></dt>
 <dd><p><code>Character scalar</code>. Specifies the variable of x which
-corrsponds to the p-values associated with <code>effect.var</code>.
+corresponds to the p-values associated with <code>effect.var</code>.
 (Default: <code>"pval"</code>)</p></dd>
+
+
+<dt id="arg-id-var">id.var<a class="anchor" aria-label="anchor" href="#arg-id-var"></a></dt>
+<dd><p><code>Character scalar</code>. Specifies the variable of x which
+corresponds to the observation identifiers. When <code>"rownames"</code>),
+the object rownames are used. (Default: <code>"rownames"</code>)</p></dd>
 
 
 <dt id="arg-label-by">label.by<a class="anchor" aria-label="anchor" href="#arg-label-by"></a></dt>
@@ -152,6 +168,17 @@ row/colData(x) by which the plot should be labelled. <code>"CI"</code> and
 <code>"P-Value"</code> are special entries which require either <code>effect.var</code>,
 <code>ci.lower.var</code> and <code>ci.upper.var</code> or <code>pval.var</code> to be
 specified, respectively. (Default: <code>NULL</code>)</p></dd>
+
+
+<dt id="arg-order-by">order.by<a class="anchor" aria-label="anchor" href="#arg-order-by"></a></dt>
+<dd><p><code>Character scalar</code>. Specifies the variable of x by which
+observations are ordered. If <code>NULL</code>, the observations are ordered by
+the tree structure if available. (Default: <code>NULL</code>)</p></dd>
+
+
+<dt id="arg-facet-by">facet.by<a class="anchor" aria-label="anchor" href="#arg-facet-by"></a></dt>
+<dd><p><code>Character scalar</code>. Specifies the variable of x by which
+observations are divided into horizontal facets. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-color-by">color.by<a class="anchor" aria-label="anchor" href="#arg-color-by"></a></dt>
@@ -183,88 +210,285 @@ be shown next to the forest plot?</p></dd>
 
     <div id="ref-examples">
     <h2>Examples</h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Make toy data</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/makeTSE.html" class="external-link">makeTSE</a></span><span class="op">(</span>nrow <span class="op">=</span> <span class="fl">20L</span>, ncol <span class="op">=</span> <span class="fl">20L</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://microbiome.github.io/mia/" class="external-link">mia</a></span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://huttenhower.sph.harvard.edu/maaslin3" class="external-link">maaslin3</a></span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Make toy stats</span></span></span>
-<span class="r-in"><span><span class="va">est</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, mean <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">conf.lower</span> <span class="op">&lt;-</span> <span class="va">est</span> <span class="op">-</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">est</span><span class="op">)</span>, lambda <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">conf.upper</span> <span class="op">&lt;-</span> <span class="va">est</span> <span class="op">+</span> <span class="fl">0.1</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/stats/Poisson.html" class="external-link">rpois</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">est</span><span class="op">)</span>, lambda <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">p.val</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">est</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">extra</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sample.html" class="external-link">sample</a></span><span class="op">(</span><span class="fl">100</span>, <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">est</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Import dataset</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="st">"Tengeler2020"</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">Tengeler2020</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Compile into df</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span></span></span>
-<span class="r-in"><span>    effect <span class="op">=</span> <span class="va">est</span>,</span></span>
-<span class="r-in"><span>    lower <span class="op">=</span> <span class="va">conf.lower</span>,</span></span>
-<span class="r-in"><span>    upper <span class="op">=</span> <span class="va">conf.upper</span>,</span></span>
-<span class="r-in"><span>    pval <span class="op">=</span> <span class="va">p.val</span>,</span></span>
-<span class="r-in"><span>    extra <span class="op">=</span> <span class="va">extra</span></span></span>
+<span class="r-in"><span><span class="co"># Agglomerate by genus and subset by prevalence</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/getPrevalence.html" class="external-link">subsetByPrevalent</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Genus"</span>, prevalence <span class="op">=</span> <span class="fl">10</span><span class="op">/</span><span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Transform count assay to relative abundances</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, method <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Run maaslin3</span></span></span>
+<span class="r-in"><span><span class="va">maaslin3_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/maaslin3/man/maaslin3.html" class="external-link">maaslin3</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    input_data <span class="op">=</span> <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    output <span class="op">=</span> <span class="st">"maaslin_results"</span>,</span></span>
+<span class="r-in"><span>    formula <span class="op">=</span> <span class="st">"~ patient_status"</span>,</span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.369732 INFO::Writing function arguments to log file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.390165 INFO::Verifying options selected are valid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.391446 INFO::Determining format of input files</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.392055 INFO::Input format is data samples as rows and metadata samples as rows</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.394192 INFO::Running selected normalization method: TSS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.396001 INFO::Creating output feature tables folder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.396642 INFO::Writing normalized data to file maaslin_results/features/data_norm.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.398698 INFO::Filter data based on min abundance, min prevalence, and max prevalence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.399261 INFO::Total samples in data: 27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.399744 INFO::Min samples required with min abundance for a feature not to be filtered: 0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.40024 INFO::Max samples allowed with min abundance for a feature not to be filtered: 27.270000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.405849 INFO::Total filtered features: 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.406547 INFO::Filtered feature names from abundance, min prevalence, and max prevalence filtering:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.407831 INFO::Total features filtered by non-zero variance filtering: 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.408421 INFO::Filtered feature names from variance filtering:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.408923 INFO::Writing filtered data to file maaslin_results/features/filtered_data.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.410533 INFO::Running selected transform method: LOG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.411819 INFO::Writing normalized, filtered, transformed data to file maaslin_results/features/data_transformed.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.413776 INFO::Applying z-score to standardize continuous metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.417582 INFO::Running the linear model component</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.430546 INFO::Fitting model to feature number 1, Akkermansia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.435145 INFO::Fitting model to feature number 2, Alistipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.43836 INFO::Fitting model to feature number 3, Anaerostipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.441506 INFO::Fitting model to feature number 4, Anaerotruncus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.444605 INFO::Fitting model to feature number 5, Bacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.447754 INFO::Fitting model to feature number 6, Barnesiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.450895 INFO::Fitting model to feature number 7, Blautia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.453918 INFO::Fitting model to feature number 8, Butyricicoccus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 04:46:04.455591 WARNING::Fitting problem for feature 8 returning NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.457229 INFO::Fitting model to feature number 9, Catabacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.460202 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.461926 INFO::Fitting model to feature number 11, Coprobacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.464989 INFO::Fitting model to feature number 12, Coprococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.468095 INFO::Fitting model to feature number 13, Dielma</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.471164 INFO::Fitting model to feature number 14, Eisenbergiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.47421 INFO::Fitting model to feature number 15, Epulopiscium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.477252 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.48036 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.483365 INFO::Fitting model to feature number 18, Eubacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.486341 INFO::Fitting model to feature number 19, Faecalibacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.489295 INFO::Fitting model to feature number 20, Flavonifractor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.492227 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.495177 INFO::Fitting model to feature number 22, Halomonas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.498113 INFO::Fitting model to feature number 23, Holdemania</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.501005 INFO::Fitting model to feature number 24, Hungatella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.503901 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.506845 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.509784 INFO::Fitting model to feature number 27, Odoribacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.512741 INFO::Fitting model to feature number 28, Parabacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.515673 INFO::Fitting model to feature number 29, Paraprevotella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.518571 INFO::Fitting model to feature number 30, Roseburia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.521471 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.5245 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.527445 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.530331 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.533183 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 04:46:04.534712 WARNING::Fitting problem for feature 35 returning NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.536138 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.53902 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.542096 INFO::Fitting model to feature number 38, Subdoligranulum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.545214 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.548273 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.551453 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.554564 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.55775 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.56088 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.564047 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.567203 INFO::Fitting model to feature number 46, uncultured</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.570373 INFO::Fitting model to feature number 47, uncultured_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.573533 INFO::Fitting model to feature number 48, uncultured_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.575361 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.581877 INFO::Performing tests against medians</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.948716 INFO::Counting total values for each feature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.950817 INFO::Running the logistic model component</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.960569 INFO::Fitting model to feature number 1, Akkermansia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.961983 INFO::Fitting model to feature number 2, Alistipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.963286 INFO::Fitting model to feature number 3, Anaerostipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.968471 INFO::Fitting model to feature number 4, Anaerotruncus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.973108 INFO::Fitting model to feature number 5, Bacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.977615 INFO::Fitting model to feature number 6, Barnesiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.982076 INFO::Fitting model to feature number 7, Blautia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.986554 INFO::Fitting model to feature number 8, Butyricicoccus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.991112 INFO::Fitting model to feature number 9, Catabacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.99554 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.000164 INFO::Fitting model to feature number 11, Coprobacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.004668 INFO::Fitting model to feature number 12, Coprococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.009172 INFO::Fitting model to feature number 13, Dielma</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.013742 INFO::Fitting model to feature number 14, Eisenbergiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.018298 INFO::Fitting model to feature number 15, Epulopiscium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.022823 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.027694 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.032326 INFO::Fitting model to feature number 18, Eubacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.036709 INFO::Fitting model to feature number 19, Faecalibacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.041095 INFO::Fitting model to feature number 20, Flavonifractor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.045663 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.050229 INFO::Fitting model to feature number 22, Halomonas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.054856 INFO::Fitting model to feature number 23, Holdemania</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.05943 INFO::Fitting model to feature number 24, Hungatella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.060746 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.06531 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.069774 INFO::Fitting model to feature number 27, Odoribacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.074228 INFO::Fitting model to feature number 28, Parabacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.078811 INFO::Fitting model to feature number 29, Paraprevotella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.083355 INFO::Fitting model to feature number 30, Roseburia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.087804 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.092321 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.096787 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.101217 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.102454 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.107101 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.111692 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.116154 INFO::Fitting model to feature number 38, Subdoligranulum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.120646 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.125196 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.129666 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.134054 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.138546 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.143054 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.147534 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.152019 INFO::Fitting model to feature number 46, uncultured</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.156562 INFO::Fitting model to feature number 47, uncultured_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.161147 INFO::Fitting model to feature number 48, uncultured_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.165742 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.177836 INFO::Counting total values for each feature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.180179 INFO::Re-running abundances for warn_prevalence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.18079 INFO::Running selected normalization method: TSS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.182905 INFO::Running selected transform method: LOG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.192749 INFO::Fitting model to feature number 1, Akkermansia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.196154 INFO::Fitting model to feature number 2, Alistipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.199336 INFO::Fitting model to feature number 3, Anaerostipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.202481 INFO::Fitting model to feature number 4, Anaerotruncus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.205524 INFO::Fitting model to feature number 5, Bacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.208521 INFO::Fitting model to feature number 6, Barnesiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.211555 INFO::Fitting model to feature number 7, Blautia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.214702 INFO::Fitting model to feature number 8, Butyricicoccus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 04:46:05.216329 WARNING::Fitting problem for feature 8 returning NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.217788 INFO::Fitting model to feature number 9, Catabacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.220795 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.222551 INFO::Fitting model to feature number 11, Coprobacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.225592 INFO::Fitting model to feature number 12, Coprococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.228646 INFO::Fitting model to feature number 13, Dielma</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.231629 INFO::Fitting model to feature number 14, Eisenbergiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.234555 INFO::Fitting model to feature number 15, Epulopiscium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.237456 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.24043 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.243396 INFO::Fitting model to feature number 18, Eubacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.246365 INFO::Fitting model to feature number 19, Faecalibacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.249251 INFO::Fitting model to feature number 20, Flavonifractor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.252163 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.25512 INFO::Fitting model to feature number 22, Halomonas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.257996 INFO::Fitting model to feature number 23, Holdemania</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.260998 INFO::Fitting model to feature number 24, Hungatella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.26397 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.266876 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.269856 INFO::Fitting model to feature number 27, Odoribacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.27278 INFO::Fitting model to feature number 28, Parabacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.275771 INFO::Fitting model to feature number 29, Paraprevotella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.278718 INFO::Fitting model to feature number 30, Roseburia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.281606 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.284503 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.287366 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.290311 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.293177 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 04:46:05.2947 WARNING::Fitting problem for feature 35 returning NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.2961 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.298955 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.301848 INFO::Fitting model to feature number 38, Subdoligranulum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.304892 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.307787 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.310685 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.313572 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.316483 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.319369 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.322435 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.325371 INFO::Fitting model to feature number 46, uncultured</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.32832 INFO::Fitting model to feature number 47, uncultured_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.331256 INFO::Fitting model to feature number 48, uncultured_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.33295 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.36166 INFO::Creating fits folder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.362483 INFO::Writing residuals to file maaslin_results/fits/residuals_linear.rds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.363513 INFO::Writing fitted values to file maaslin_results/fits/fitted_linear.rds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.364449 INFO::Writing residuals to file maaslin_results/fits/residuals_logistic.rds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.365527 INFO::Writing fitted values to file maaslin_results/fits/fitted_logistic.rds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.368056 INFO::Writing all the results to file (ordered </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             by increasing individual q-values): maaslin_results/all_results.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.369618 INFO::Writing the significant results without errors (those which have joint q-values less than or equal to the threshold of 0.100000 ) to file (ordered by increasing individual q-values): maaslin_results/significant_results.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.370726 INFO::Creating output figures folder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.371729 INFO::Writing summary plot of significant</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         results to file: maaslin_results/figures/summary_plot.pdf</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.582943 INFO::Writing association plots (one for each significant association) to output folder: maaslin_results/figures</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.584725 INFO::Plotting associations from most to least significant, grouped by metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.588978 INFO::Creating box plot for categorical data (linear), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         patient_status vs Coprobacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.652802 INFO::Creating box plot for categorical data (linear), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                         patient_status vs Faecalibacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.740051 INFO::Creating tile plot for categorical data (logistic), patient_status vs Erysipelatoclostridium</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Make forest plot from stats data.frame</span></span></span>
-<span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># Retrieve abundance results</span></span></span>
+<span class="r-in"><span><span class="va">maaslin3_abund</span> <span class="op">&lt;-</span> <span class="va">maaslin3_out</span><span class="op">$</span><span class="va">fit_data_abundance</span><span class="op">$</span><span class="va">results</span></span></span>
+<span class="r-in"><span><span class="va">maaslin3_abund</span> <span class="op">&lt;-</span> <span class="va">maaslin3_abund</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">maaslin3_abund</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Visualize abundance results</span></span></span>
+<span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">maaslin3_abund</span>,</span></span>
+<span class="r-in"><span>    effect.var <span class="op">=</span> <span class="st">"coef"</span>,</span></span>
+<span class="r-in"><span>    err.var <span class="op">=</span> <span class="st">"stderr"</span>,</span></span>
+<span class="r-in"><span>    pval.var <span class="op">=</span> <span class="st">"qval_joint"</span>,</span></span>
+<span class="r-in"><span>    id.var <span class="op">=</span> <span class="st">"feature"</span>,</span></span>
+<span class="r-in"><span>    label.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI"</span>, <span class="st">"P-Value"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    order.by <span class="op">=</span> <span class="st">"coef"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotForest-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Colour by a variable</span></span></span>
-<span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span><span class="va">df</span>, colour.by <span class="op">=</span> <span class="st">"extra"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotForest-2.png" alt="" width="3000" height="2100"></span>
+<span class="r-in"><span><span class="co"># Add abundance results to TreeSE rowData</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">maaslin3_abund</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="va">maaslin3_abund</span><span class="op">$</span><span class="va">feature</span></span></span>
+<span class="r-in"><span><span class="va">tax.order</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/match.html" class="external-link">match</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">maaslin3_abund</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="va">maaslin3_abund</span><span class="op">[</span><span class="va">tax.order</span>, <span class="op">]</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add stats to side information</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Make feature-wise forest plot</span></span></span>
+<span class="r-in"><span><span class="co"># Visualise abundance results with tree structure</span></span></span>
 <span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>,</span></span>
-<span class="r-in"><span>    by <span class="op">=</span> <span class="st">"features"</span>,</span></span>
-<span class="r-in"><span>    show.tree <span class="op">=</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span>    effect.var <span class="op">=</span> <span class="st">"coef"</span>,</span></span>
+<span class="r-in"><span>    err.var <span class="op">=</span> <span class="st">"stderr"</span>,</span></span>
+<span class="r-in"><span>    pval.var <span class="op">=</span> <span class="st">"qval_joint"</span>,</span></span>
+<span class="r-in"><span>    label.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI"</span>, <span class="st">"P-Value"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Tree includes ununique nodes. Making them unique.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>`aes_string()` was deprecated in ggplot2 3.0.0.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> Please use tidy evaluation idioms with `aes()`.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> See also `vignette("ggplot2-in-packages")` for more information.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span style="color: #00BBBB;">ℹ</span> The deprecated feature was likely used in the <span style="color: #0000BB;">miaViz</span> package.</span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span>   Please report the issue at <span style="color: #0000BB; font-style: italic;">&lt;https://github.com/microbiome/miaViz/issues&gt;</span>.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Tree includes ununique nodes. Making them unique.</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Removed 4 rows containing missing values or values outside the scale range</span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> (`geom_point()`).</span>
+<span class="r-plt img"><img src="plotForest-2.png" alt="" width="3000" height="2100"></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Retrieve prevalence results</span></span></span>
+<span class="r-in"><span><span class="va">maaslin3_prev</span> <span class="op">&lt;-</span> <span class="va">maaslin3_out</span><span class="op">$</span><span class="va">fit_data_prevalence</span><span class="op">$</span><span class="va">results</span></span></span>
+<span class="r-in"><span><span class="va">maaslin3_prev</span> <span class="op">&lt;-</span> <span class="va">maaslin3_prev</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">maaslin3_prev</span><span class="op">$</span><span class="va">coef</span><span class="op">)</span>, <span class="op">]</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Combine abundance and prevalence results</span></span></span>
+<span class="r-in"><span><span class="va">maaslin3_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">maaslin3_abund</span>, <span class="va">maaslin3_prev</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">maaslin3_res</span><span class="op">$</span><span class="va">association</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Abundance"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">maaslin3_abund</span><span class="op">)</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"Prevalence"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">maaslin3_prev</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Visualise combined results</span></span></span>
+<span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">maaslin3_res</span>,</span></span>
+<span class="r-in"><span>    effect.var <span class="op">=</span> <span class="st">"coef"</span>,</span></span>
+<span class="r-in"><span>    err.var <span class="op">=</span> <span class="st">"stderr"</span>,</span></span>
+<span class="r-in"><span>    pval.var <span class="op">=</span> <span class="st">"qval_joint"</span>,</span></span>
+<span class="r-in"><span>    id.var <span class="op">=</span> <span class="st">"feature"</span>,</span></span>
+<span class="r-in"><span>    label.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI"</span>, <span class="st">"P-Value"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>    order.by <span class="op">=</span> <span class="st">"coef"</span>,</span></span>
+<span class="r-in"><span>    facet.by <span class="op">=</span> <span class="st">"association"</span>,</span></span>
+<span class="r-in"><span>    colour.by <span class="op">=</span> <span class="st">"association"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotForest-3.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Quick fix for a colTree error</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/pkg/TreeSummarizedExperiment/man/TreeSummarizedExperiment-accessor.html" class="external-link">colTree</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="cn">NULL</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Make sample-wise forest plot</span></span></span>
-<span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
-<span class="r-in"><span>    by <span class="op">=</span> <span class="st">"samples"</span>,</span></span>
-<span class="r-in"><span>    show.tree <span class="op">=</span> <span class="cn">FALSE</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotForest-4.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Add labels</span></span></span>
-<span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span><span class="va">tse</span>, label.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI"</span>, <span class="st">"P-Value"</span>, <span class="st">"extra"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Tree includes ununique nodes. Making them unique.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Tree includes ununique nodes. Making them unique.</span>
-<span class="r-plt img"><img src="plotForest-5.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Select tree and adjust its aesthetics</span></span></span>
-<span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span></span></span>
-<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
-<span class="r-in"><span>    tree.name <span class="op">=</span> <span class="st">"phylo"</span>,</span></span>
-<span class="r-in"><span>    edge.colour.by <span class="op">=</span> <span class="st">"var1"</span>,</span></span>
-<span class="r-in"><span>    tip.colour.by <span class="op">=</span> <span class="st">"var2"</span></span></span>
-<span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Tree includes ununique nodes. Making them unique.</span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>Tree includes ununique nodes. Making them unique.</span>
-<span class="r-plt img"><img src="plotForest-6.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Make toy grouped data</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">df2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">df2</span><span class="op">$</span><span class="va">Group</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"A"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df2</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="st">"B"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df2</span><span class="op">)</span> <span class="op">/</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Make paired forest plot</span></span></span>
-<span class="r-in"><span><span class="fu">plotForest</span><span class="op">(</span><span class="va">df2</span>, id.var <span class="op">=</span> <span class="st">"ID"</span>, colour.by <span class="op">=</span> <span class="st">"Group"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotForest-7.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
