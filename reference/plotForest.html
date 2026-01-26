@@ -59,23 +59,7 @@ with Confidence Intervals (CIs), p-values and other side information.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotForest</span><span class="op">(</span></span>
-<span>  <span class="va">x</span>,</span>
-<span>  by <span class="op">=</span> <span class="fl">1L</span>,</span>
-<span>  effect.var <span class="op">=</span> <span class="st">"effect"</span>,</span>
-<span>  ci.lower.var <span class="op">=</span> <span class="st">"lower"</span>,</span>
-<span>  ci.upper.var <span class="op">=</span> <span class="st">"upper"</span>,</span>
-<span>  err.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  pval.var <span class="op">=</span> <span class="st">"pval"</span>,</span>
-<span>  id.var <span class="op">=</span> <span class="st">"rownames"</span>,</span>
-<span>  label.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  order.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  facet.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  color.by <span class="op">=</span> <span class="va">colour.by</span>,</span>
-<span>  colour.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  show.tree <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>  <span class="va">...</span></span>
-<span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">plotForest</span><span class="op">(</span><span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># S4 method for class 'SummarizedExperiment'</span></span>
 <span><span class="fu">plotForest</span><span class="op">(</span></span>
@@ -92,6 +76,7 @@ with Confidence Intervals (CIs), p-values and other side information.</p>
 <span>  facet.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color.by <span class="op">=</span> <span class="va">colour.by</span>,</span>
 <span>  colour.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  conf.level <span class="op">=</span> <span class="fl">0.95</span>,</span>
 <span>  show.tree <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span>
@@ -109,7 +94,8 @@ with Confidence Intervals (CIs), p-values and other side information.</p>
 <span>  order.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  facet.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  color.by <span class="op">=</span> <span class="va">colour.by</span>,</span>
-<span>  colour.by <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  colour.by <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  conf.level <span class="op">=</span> <span class="fl">0.95</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -121,6 +107,10 @@ with Confidence Intervals (CIs), p-values and other side information.</p>
 <dd><p>a
 <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">SummarizedExperiment</a></code>
 object, or a <code>data.frame</code> object containing statistical estimates.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>additional parameters passed to <code><a href="plotTree.html">plotRowTree</a></code>.</p></dd>
 
 
 <dt id="arg-by">by<a class="anchor" aria-label="anchor" href="#arg-by"></a></dt>
@@ -190,13 +180,16 @@ observations are divided into horizontal facets. (Default: <code>NULL</code>)</p
 which observations are coloured. (Default: <code>NULL</code>)</p></dd>
 
 
+<dt id="arg-conf-level">conf.level<a class="anchor" aria-label="anchor" href="#arg-conf-level"></a></dt>
+<dd><p><code>Numeric scalar</code>. Specifies the confidence level of
+the interval when inferred from <code>err.var</code>. It is ignored when
+<code>ci.lower.var</code> and <code>ci.upper.var</code> are defined.
+(Default: <code>0.95</code>)</p></dd>
+
+
 <dt id="arg-show-tree">show.tree<a class="anchor" aria-label="anchor" href="#arg-show-tree"></a></dt>
 <dd><p><code>Logical scalar</code>. Should the tree structure of the data
 be shown next to the forest plot?</p></dd>
-
-
-<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>additional parameters passed to <code><a href="plotTree.html">plotRowTree</a></code>.</p></dd>
 
 </dl></div>
     <div id="value">
@@ -229,202 +222,202 @@ be shown next to the forest plot?</p></dd>
 <span class="r-in"><span>    output <span class="op">=</span> <span class="st">"maaslin_results"</span>,</span></span>
 <span class="r-in"><span>    formula <span class="op">=</span> <span class="st">"~ patient_status"</span>,</span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.369732 INFO::Writing function arguments to log file</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.390165 INFO::Verifying options selected are valid</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.391446 INFO::Determining format of input files</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.392055 INFO::Input format is data samples as rows and metadata samples as rows</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.394192 INFO::Running selected normalization method: TSS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.396001 INFO::Creating output feature tables folder</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.396642 INFO::Writing normalized data to file maaslin_results/features/data_norm.tsv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.398698 INFO::Filter data based on min abundance, min prevalence, and max prevalence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.399261 INFO::Total samples in data: 27</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.399744 INFO::Min samples required with min abundance for a feature not to be filtered: 0.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.40024 INFO::Max samples allowed with min abundance for a feature not to be filtered: 27.270000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.405849 INFO::Total filtered features: 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.406547 INFO::Filtered feature names from abundance, min prevalence, and max prevalence filtering:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.407831 INFO::Total features filtered by non-zero variance filtering: 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.408421 INFO::Filtered feature names from variance filtering:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.408923 INFO::Writing filtered data to file maaslin_results/features/filtered_data.tsv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.410533 INFO::Running selected transform method: LOG</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.411819 INFO::Writing normalized, filtered, transformed data to file maaslin_results/features/data_transformed.tsv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.413776 INFO::Applying z-score to standardize continuous metadata</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.417582 INFO::Running the linear model component</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.430546 INFO::Fitting model to feature number 1, Akkermansia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.435145 INFO::Fitting model to feature number 2, Alistipes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.43836 INFO::Fitting model to feature number 3, Anaerostipes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.441506 INFO::Fitting model to feature number 4, Anaerotruncus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.444605 INFO::Fitting model to feature number 5, Bacteroides</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.447754 INFO::Fitting model to feature number 6, Barnesiella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.450895 INFO::Fitting model to feature number 7, Blautia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.453918 INFO::Fitting model to feature number 8, Butyricicoccus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 04:46:04.455591 WARNING::Fitting problem for feature 8 returning NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.457229 INFO::Fitting model to feature number 9, Catabacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.460202 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.461926 INFO::Fitting model to feature number 11, Coprobacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.464989 INFO::Fitting model to feature number 12, Coprococcus_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.468095 INFO::Fitting model to feature number 13, Dielma</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.471164 INFO::Fitting model to feature number 14, Eisenbergiella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.47421 INFO::Fitting model to feature number 15, Epulopiscium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.477252 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.48036 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.483365 INFO::Fitting model to feature number 18, Eubacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.486341 INFO::Fitting model to feature number 19, Faecalibacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.489295 INFO::Fitting model to feature number 20, Flavonifractor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.492227 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.495177 INFO::Fitting model to feature number 22, Halomonas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.498113 INFO::Fitting model to feature number 23, Holdemania</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.501005 INFO::Fitting model to feature number 24, Hungatella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.503901 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.506845 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.509784 INFO::Fitting model to feature number 27, Odoribacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.512741 INFO::Fitting model to feature number 28, Parabacteroides</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.515673 INFO::Fitting model to feature number 29, Paraprevotella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.518571 INFO::Fitting model to feature number 30, Roseburia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.521471 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.5245 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.527445 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.530331 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.533183 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 04:46:04.534712 WARNING::Fitting problem for feature 35 returning NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.536138 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.53902 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.542096 INFO::Fitting model to feature number 38, Subdoligranulum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.545214 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.548273 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.551453 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.554564 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.55775 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.56088 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.564047 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.567203 INFO::Fitting model to feature number 46, uncultured</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.570373 INFO::Fitting model to feature number 47, uncultured_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.573533 INFO::Fitting model to feature number 48, uncultured_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.575361 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.581877 INFO::Performing tests against medians</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.948716 INFO::Counting total values for each feature</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.950817 INFO::Running the logistic model component</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.960569 INFO::Fitting model to feature number 1, Akkermansia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.961983 INFO::Fitting model to feature number 2, Alistipes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.963286 INFO::Fitting model to feature number 3, Anaerostipes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.968471 INFO::Fitting model to feature number 4, Anaerotruncus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.973108 INFO::Fitting model to feature number 5, Bacteroides</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.977615 INFO::Fitting model to feature number 6, Barnesiella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.982076 INFO::Fitting model to feature number 7, Blautia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.986554 INFO::Fitting model to feature number 8, Butyricicoccus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.991112 INFO::Fitting model to feature number 9, Catabacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:04.99554 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.000164 INFO::Fitting model to feature number 11, Coprobacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.004668 INFO::Fitting model to feature number 12, Coprococcus_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.009172 INFO::Fitting model to feature number 13, Dielma</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.013742 INFO::Fitting model to feature number 14, Eisenbergiella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.018298 INFO::Fitting model to feature number 15, Epulopiscium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.022823 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.027694 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.032326 INFO::Fitting model to feature number 18, Eubacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.036709 INFO::Fitting model to feature number 19, Faecalibacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.041095 INFO::Fitting model to feature number 20, Flavonifractor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.045663 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.050229 INFO::Fitting model to feature number 22, Halomonas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.054856 INFO::Fitting model to feature number 23, Holdemania</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.05943 INFO::Fitting model to feature number 24, Hungatella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.060746 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.06531 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.069774 INFO::Fitting model to feature number 27, Odoribacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.074228 INFO::Fitting model to feature number 28, Parabacteroides</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.078811 INFO::Fitting model to feature number 29, Paraprevotella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.083355 INFO::Fitting model to feature number 30, Roseburia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.087804 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.092321 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.096787 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.101217 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.102454 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.107101 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.111692 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.116154 INFO::Fitting model to feature number 38, Subdoligranulum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.120646 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.125196 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.129666 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.134054 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.138546 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.143054 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.147534 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.152019 INFO::Fitting model to feature number 46, uncultured</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.156562 INFO::Fitting model to feature number 47, uncultured_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.161147 INFO::Fitting model to feature number 48, uncultured_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.165742 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.177836 INFO::Counting total values for each feature</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.180179 INFO::Re-running abundances for warn_prevalence</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.18079 INFO::Running selected normalization method: TSS</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.182905 INFO::Running selected transform method: LOG</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.192749 INFO::Fitting model to feature number 1, Akkermansia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.196154 INFO::Fitting model to feature number 2, Alistipes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.199336 INFO::Fitting model to feature number 3, Anaerostipes</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.202481 INFO::Fitting model to feature number 4, Anaerotruncus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.205524 INFO::Fitting model to feature number 5, Bacteroides</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.208521 INFO::Fitting model to feature number 6, Barnesiella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.211555 INFO::Fitting model to feature number 7, Blautia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.214702 INFO::Fitting model to feature number 8, Butyricicoccus</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 04:46:05.216329 WARNING::Fitting problem for feature 8 returning NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.217788 INFO::Fitting model to feature number 9, Catabacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.220795 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.222551 INFO::Fitting model to feature number 11, Coprobacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.225592 INFO::Fitting model to feature number 12, Coprococcus_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.228646 INFO::Fitting model to feature number 13, Dielma</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.231629 INFO::Fitting model to feature number 14, Eisenbergiella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.234555 INFO::Fitting model to feature number 15, Epulopiscium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.237456 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.24043 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.243396 INFO::Fitting model to feature number 18, Eubacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.246365 INFO::Fitting model to feature number 19, Faecalibacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.249251 INFO::Fitting model to feature number 20, Flavonifractor</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.252163 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.25512 INFO::Fitting model to feature number 22, Halomonas</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.257996 INFO::Fitting model to feature number 23, Holdemania</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.260998 INFO::Fitting model to feature number 24, Hungatella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.26397 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.266876 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.269856 INFO::Fitting model to feature number 27, Odoribacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.27278 INFO::Fitting model to feature number 28, Parabacteroides</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.275771 INFO::Fitting model to feature number 29, Paraprevotella</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.278718 INFO::Fitting model to feature number 30, Roseburia</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.281606 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.284503 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.287366 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.290311 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.293177 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 04:46:05.2947 WARNING::Fitting problem for feature 35 returning NA</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.2961 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.298955 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.301848 INFO::Fitting model to feature number 38, Subdoligranulum</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.304892 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.307787 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.310685 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.313572 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.316483 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.319369 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.322435 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.325371 INFO::Fitting model to feature number 46, uncultured</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.32832 INFO::Fitting model to feature number 47, uncultured_1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.331256 INFO::Fitting model to feature number 48, uncultured_2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.33295 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.36166 INFO::Creating fits folder</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.362483 INFO::Writing residuals to file maaslin_results/fits/residuals_linear.rds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.363513 INFO::Writing fitted values to file maaslin_results/fits/fitted_linear.rds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.364449 INFO::Writing residuals to file maaslin_results/fits/residuals_logistic.rds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.365527 INFO::Writing fitted values to file maaslin_results/fits/fitted_logistic.rds</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.368056 INFO::Writing all the results to file (ordered </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.594306 INFO::Writing function arguments to log file</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.614803 INFO::Verifying options selected are valid</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.615938 INFO::Determining format of input files</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.616535 INFO::Input format is data samples as rows and metadata samples as rows</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.618619 INFO::Running selected normalization method: TSS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.620362 INFO::Creating output feature tables folder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.62097 INFO::Writing normalized data to file maaslin_results/features/data_norm.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.622936 INFO::Filter data based on min abundance, min prevalence, and max prevalence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.623508 INFO::Total samples in data: 27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.624023 INFO::Min samples required with min abundance for a feature not to be filtered: 0.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.624516 INFO::Max samples allowed with min abundance for a feature not to be filtered: 27.270000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.630075 INFO::Total filtered features: 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.630723 INFO::Filtered feature names from abundance, min prevalence, and max prevalence filtering:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.631993 INFO::Total features filtered by non-zero variance filtering: 0</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.632584 INFO::Filtered feature names from variance filtering:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.633121 INFO::Writing filtered data to file maaslin_results/features/filtered_data.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.634646 INFO::Running selected transform method: LOG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.635885 INFO::Writing normalized, filtered, transformed data to file maaslin_results/features/data_transformed.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.637726 INFO::Applying z-score to standardize continuous metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.641319 INFO::Running the linear model component</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.653961 INFO::Fitting model to feature number 1, Akkermansia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.657889 INFO::Fitting model to feature number 2, Alistipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.660825 INFO::Fitting model to feature number 3, Anaerostipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.66387 INFO::Fitting model to feature number 4, Anaerotruncus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.667142 INFO::Fitting model to feature number 5, Bacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.67013 INFO::Fitting model to feature number 6, Barnesiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.673116 INFO::Fitting model to feature number 7, Blautia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.676099 INFO::Fitting model to feature number 8, Butyricicoccus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 15:47:12.677729 WARNING::Fitting problem for feature 8 returning NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.679421 INFO::Fitting model to feature number 9, Catabacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.682453 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.684242 INFO::Fitting model to feature number 11, Coprobacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.687297 INFO::Fitting model to feature number 12, Coprococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.69033 INFO::Fitting model to feature number 13, Dielma</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.693299 INFO::Fitting model to feature number 14, Eisenbergiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.696267 INFO::Fitting model to feature number 15, Epulopiscium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.699265 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.702241 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.705212 INFO::Fitting model to feature number 18, Eubacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.708163 INFO::Fitting model to feature number 19, Faecalibacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.711137 INFO::Fitting model to feature number 20, Flavonifractor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.714158 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.717129 INFO::Fitting model to feature number 22, Halomonas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.720102 INFO::Fitting model to feature number 23, Holdemania</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.723055 INFO::Fitting model to feature number 24, Hungatella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.72595 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.728962 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.731901 INFO::Fitting model to feature number 27, Odoribacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.734837 INFO::Fitting model to feature number 28, Parabacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.737787 INFO::Fitting model to feature number 29, Paraprevotella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.740852 INFO::Fitting model to feature number 30, Roseburia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.743839 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.746807 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.749847 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.752808 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.755715 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 15:47:12.757284 WARNING::Fitting problem for feature 35 returning NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.75865 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.761594 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.76454 INFO::Fitting model to feature number 38, Subdoligranulum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.767507 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.770463 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.773427 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.776386 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.779361 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.782321 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.785284 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.788221 INFO::Fitting model to feature number 46, uncultured</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.791191 INFO::Fitting model to feature number 47, uncultured_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.794128 INFO::Fitting model to feature number 48, uncultured_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.795848 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:12.802242 INFO::Performing tests against medians</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.168735 INFO::Counting total values for each feature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.170667 INFO::Running the logistic model component</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.180441 INFO::Fitting model to feature number 1, Akkermansia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.181729 INFO::Fitting model to feature number 2, Alistipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.182937 INFO::Fitting model to feature number 3, Anaerostipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.187839 INFO::Fitting model to feature number 4, Anaerotruncus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.192192 INFO::Fitting model to feature number 5, Bacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.196568 INFO::Fitting model to feature number 6, Barnesiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.200903 INFO::Fitting model to feature number 7, Blautia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.205218 INFO::Fitting model to feature number 8, Butyricicoccus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.209666 INFO::Fitting model to feature number 9, Catabacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.213986 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.218415 INFO::Fitting model to feature number 11, Coprobacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.222836 INFO::Fitting model to feature number 12, Coprococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.22957 INFO::Fitting model to feature number 13, Dielma</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.23564 INFO::Fitting model to feature number 14, Eisenbergiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.24016 INFO::Fitting model to feature number 15, Epulopiscium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.244567 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.248977 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.253458 INFO::Fitting model to feature number 18, Eubacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.257776 INFO::Fitting model to feature number 19, Faecalibacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.262057 INFO::Fitting model to feature number 20, Flavonifractor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.266284 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.27057 INFO::Fitting model to feature number 22, Halomonas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.274862 INFO::Fitting model to feature number 23, Holdemania</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.279174 INFO::Fitting model to feature number 24, Hungatella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.280393 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.284678 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.28895 INFO::Fitting model to feature number 27, Odoribacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.29321 INFO::Fitting model to feature number 28, Parabacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.297493 INFO::Fitting model to feature number 29, Paraprevotella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.301787 INFO::Fitting model to feature number 30, Roseburia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.30615 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.310422 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.314848 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.319211 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.320448 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.324824 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.329125 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.333377 INFO::Fitting model to feature number 38, Subdoligranulum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.337778 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.342183 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.346484 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.350803 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.355088 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.35933 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.363661 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.367924 INFO::Fitting model to feature number 46, uncultured</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.372286 INFO::Fitting model to feature number 47, uncultured_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.37666 INFO::Fitting model to feature number 48, uncultured_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.38111 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.392406 INFO::Counting total values for each feature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.394616 INFO::Re-running abundances for warn_prevalence</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.395227 INFO::Running selected normalization method: TSS</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.397276 INFO::Running selected transform method: LOG</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.407067 INFO::Fitting model to feature number 1, Akkermansia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.410053 INFO::Fitting model to feature number 2, Alistipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.41299 INFO::Fitting model to feature number 3, Anaerostipes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.415981 INFO::Fitting model to feature number 4, Anaerotruncus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.418991 INFO::Fitting model to feature number 5, Bacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.421958 INFO::Fitting model to feature number 6, Barnesiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.424938 INFO::Fitting model to feature number 7, Blautia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.427897 INFO::Fitting model to feature number 8, Butyricicoccus</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 15:47:13.42948 WARNING::Fitting problem for feature 8 returning NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.430885 INFO::Fitting model to feature number 9, Catabacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.43385 INFO::Fitting model to feature number 10, Clostridium_sensu_stricto_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.435604 INFO::Fitting model to feature number 11, Coprobacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.438552 INFO::Fitting model to feature number 12, Coprococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.441545 INFO::Fitting model to feature number 13, Dielma</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.444489 INFO::Fitting model to feature number 14, Eisenbergiella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.447425 INFO::Fitting model to feature number 15, Epulopiscium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.450364 INFO::Fitting model to feature number 16, Erysipelatoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.453326 INFO::Fitting model to feature number 17, Escherichia-Shigella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.456254 INFO::Fitting model to feature number 18, Eubacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.459199 INFO::Fitting model to feature number 19, Faecalibacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.462137 INFO::Fitting model to feature number 20, Flavonifractor</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.46507 INFO::Fitting model to feature number 21, Fusicatenibacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.468029 INFO::Fitting model to feature number 22, Halomonas</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.470972 INFO::Fitting model to feature number 23, Holdemania</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.473913 INFO::Fitting model to feature number 24, Hungatella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.476839 INFO::Fitting model to feature number 25, Lachnoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.479818 INFO::Fitting model to feature number 26, Lachnospiraceae_ND3007_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.482743 INFO::Fitting model to feature number 27, Odoribacter</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.485762 INFO::Fitting model to feature number 28, Parabacteroides</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.488807 INFO::Fitting model to feature number 29, Paraprevotella</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.492158 INFO::Fitting model to feature number 30, Roseburia</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.495722 INFO::Fitting model to feature number 31, Ruminiclostridium_5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.499274 INFO::Fitting model to feature number 32, Ruminiclostridium_9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.502469 INFO::Fitting model to feature number 33, Ruminococcaceae_UCG-004</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.505411 INFO::Fitting model to feature number 34, Ruminococcaceae_UCG-013</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.508337 INFO::Fitting model to feature number 35, Ruminococcaceae_UCG-014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> <span style="color: #FFAF00;">2026-01-26 15:47:13.509885 WARNING::Fitting problem for feature 35 returning NA</span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.511293 INFO::Fitting model to feature number 36, Ruminococcus_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.514327 INFO::Fitting model to feature number 37, Ruminococcus_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.517286 INFO::Fitting model to feature number 38, Subdoligranulum</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.520227 INFO::Fitting model to feature number 39, [Clostridium]_innocuum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.523171 INFO::Fitting model to feature number 40, [Eubacterium]_coprostanoligenes_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.5261 INFO::Fitting model to feature number 41, [Eubacterium]_fissicatena_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.529057 INFO::Fitting model to feature number 42, [Eubacterium]_rectale_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.53197 INFO::Fitting model to feature number 43, [Eubacterium]_xylanophilum_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.534903 INFO::Fitting model to feature number 44, [Ruminococcus]_gauvreauii_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.537852 INFO::Fitting model to feature number 45, [Ruminococcus]_gnavus_group</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.540802 INFO::Fitting model to feature number 46, uncultured</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.543757 INFO::Fitting model to feature number 47, uncultured_1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.546791 INFO::Fitting model to feature number 48, uncultured_2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.548545 INFO::Fitting model to feature number 49, uncultured_bacterium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.575825 INFO::Creating fits folder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.576496 INFO::Writing residuals to file maaslin_results/fits/residuals_linear.rds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.577482 INFO::Writing fitted values to file maaslin_results/fits/fitted_linear.rds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.57838 INFO::Writing residuals to file maaslin_results/fits/residuals_logistic.rds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.579406 INFO::Writing fitted values to file maaslin_results/fits/fitted_logistic.rds</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.581799 INFO::Writing all the results to file (ordered </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>             by increasing individual q-values): maaslin_results/all_results.tsv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.369618 INFO::Writing the significant results without errors (those which have joint q-values less than or equal to the threshold of 0.100000 ) to file (ordered by increasing individual q-values): maaslin_results/significant_results.tsv</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.370726 INFO::Creating output figures folder</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:05.371729 INFO::Writing summary plot of significant</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.583348 INFO::Writing the significant results without errors (those which have joint q-values less than or equal to the threshold of 0.100000 ) to file (ordered by increasing individual q-values): maaslin_results/significant_results.tsv</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.584432 INFO::Creating output figures folder</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:13.585393 INFO::Writing summary plot of significant</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         results to file: maaslin_results/figures/summary_plot.pdf</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.582943 INFO::Writing association plots (one for each significant association) to output folder: maaslin_results/figures</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.584725 INFO::Plotting associations from most to least significant, grouped by metadata</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.588978 INFO::Creating box plot for categorical data (linear), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:14.769959 INFO::Writing association plots (one for each significant association) to output folder: maaslin_results/figures</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:14.771602 INFO::Plotting associations from most to least significant, grouped by metadata</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:14.775676 INFO::Creating box plot for categorical data (linear), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         patient_status vs Coprobacter</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.652802 INFO::Creating box plot for categorical data (linear), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:14.836678 INFO::Creating box plot for categorical data (linear), </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         patient_status vs Faecalibacterium</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 04:46:06.740051 INFO::Creating tile plot for categorical data (logistic), patient_status vs Erysipelatoclostridium</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2026-01-26 15:47:14.92247 INFO::Creating tile plot for categorical data (logistic), patient_status vs Erysipelatoclostridium</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Retrieve abundance results</span></span></span>
 <span class="r-in"><span><span class="va">maaslin3_abund</span> <span class="op">&lt;-</span> <span class="va">maaslin3_out</span><span class="op">$</span><span class="va">fit_data_abundance</span><span class="op">$</span><span class="va">results</span></span></span>
