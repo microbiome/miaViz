@@ -56,6 +56,9 @@
 #' the interval when inferred from \code{err.var}. It is ignored when
 #' \code{ci.lower.var} and \code{ci.upper.var} are defined.
 #' (Default: \code{0.95})
+#' 
+#' @param tree.name \code{Character scalar}. Specifies a row/colTree from x.
+#' (Default: \code{"phylo"})
 #'
 #' @param show.tree \code{Logical scalar}. Should the tree structure of the data
 #' be shown next to the forest plot?
@@ -148,25 +151,31 @@ NULL
 #' @rdname plotForest
 #' @export
 #' @importFrom SummarizedExperiment rowData colData
-#' @importFrom TreeSummarizedExperiment rowTree colTree
-#' @importFrom methods is
+#' @importFrom TreeSummarizedExperiment rowTree colTree rowTreeNames
+#'   colTreeNames
 #' @importFrom ggplot2 ggplot_build
 #' @importFrom patchwork wrap_plots plot_layout
-setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
+setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
     function(x, by = 1L, effect.var = "effect", ci.lower.var = "lower",
         ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
         id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
         color.by = colour.by, colour.by = NULL, conf.level = 0.95,
-        show.tree = TRUE, ...){
+        tree.name = "phylo", show.tree = TRUE, ...){
     # Check margin (by)
     by <- .check_MARGIN(by)
     # Select data based on margin (by)
     FUN <- switch(by, rowData, colData)
     tree.FUN <- switch(by, rowTree, colTree)
+    treename.FUN <- switch(by, rowTreeNames, colTreeNames)
     treeplot.FUN <- switch(by, plotRowTree, plotColTree)
     # Extract side information from SE
     df <- as.data.frame(FUN(x))
-    tree.exists <- is(x, "TreeSummarizedExperiment") && !is.null(tree.FUN(x))
+    # Check tree.name
+    if( !.is_non_empty_string(tree.name) || !tree.name %in% treename.FUN(x)){
+        stop("'tree.name' must specify a tree from row/colTreeNames(x).",
+            call. = FALSE)
+    }
+    tree.exists <- !is.null(tree.FUN(x, tree.name))
     # Check show.tree
     if( !is.logical(show.tree) ){
         stop("'show.tree' must be TRUE or FALSE.", call. = FALSE)
@@ -177,7 +186,7 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     }
     order.tree <- is.null(order.by)
     if( !order.tree && show.tree ){
-        warning("'show.tree' is ignored when 'order.by' is not set to tree.",
+        warning("'show.tree' is ignored when 'order.by' is defined.",
             call. = FALSE)
         # Turn off show.tree
         show.tree <- FALSE
@@ -192,10 +201,12 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         stop("'layout' and 'branch.length' cannot be modified for this plot.",
             call. = FALSE)
     }
+    # If tree is available
     if( tree.exists && order.tree ){
         # Plot tree
         tree.plot <- treeplot.FUN(
             x,
+            tree.name = tree.name,
             layout = "rectangular",
             branch.length = "none",
             show.label = TRUE
@@ -216,6 +227,7 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
         # Store tree plot
         plots[[1]] <- treeplot.FUN(
             x,
+            tree.name = tree.name,
             layout = "rectangular",
             branch.length = "none",
             ...
@@ -243,6 +255,38 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     # Make final plot
     p <- wrap_plots(plots) +
         plot_layout(widths = widths, guides = "collect")
+    return(p)
+})
+
+#' @rdname plotForest
+#' @export
+#' @importFrom SummarizedExperiment rowData colData
+setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
+    function(x, by = 1L, effect.var = "effect", ci.lower.var = "lower",
+        ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
+        id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
+        color.by = colour.by, colour.by = NULL, conf.level = 0.95){
+    # Check margin (by)
+    by <- .check_MARGIN(by)
+    # Select data based on margin (by)
+    FUN <- switch(by, rowData, colData)
+    # Extract side information from SE
+    df <- as.data.frame(FUN(x))
+    # Generate forest plot components
+    p <- plotForest(
+        x = df,
+        effect.var = effect.var,
+        ci.lower.var = ci.lower.var,
+        ci.upper.var = ci.upper.var,
+        err.var = err.var,
+        pval.var = pval.var,
+        id.var = id.var,
+        label.by = label.by,
+        order.by = order.by,
+        facet.by = facet.by,
+        color.by = color.by,
+        conf.level = conf.level
+    )
     return(p)
 })
 
@@ -324,8 +368,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         stop("'id.var' must be 'rownames' or a variable in x.", call. = FALSE)
     }
     # Check label.by
-    if( !is.vector(label.by) &&
-        (is.null(label.by) || is.na(label.by) || label.by == "") ){
+    if( !is.vector(label.by) && .is_non_empty_string(label.by) ){
         label.by <- c()
     }
     if( !all(label.by %in% c("CI", "P-Value") | label.by %in% names(x)) ){
@@ -344,20 +387,23 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         stop("To show the 'P-Value' label, x must include the variable ",
             "specified with 'pval.var'.", call. = FALSE)
     }
-    # Check order.by
-    if( !is.null(order.by) && !order.by %in% names(x) ){
-        stop("'order.by' must be a variable of x.", call. = FALSE)
+    # Check aesthetics
+    aes.checks <- vapply(
+        list(order.by = order.by, facet.by = facet.by, color.by = color.by),
+        function(s) !is.null(s) && (length(s) != 1L || !s %in% names(x)),
+        FALSE
+    )
+    if( aes.checks["order.by"] ){
+        stop("'order.by' must be a single variable of x.", call. = FALSE)
     }
-    # Check order.by
-    if( !is.null(facet.by) && !facet.by %in% names(x) ){
-        stop("'facet.by' must be a variable of x.", call. = FALSE)
+    if( aes.checks["facet.by"] ){
+        stop("'facet.by' must be a single variable of x.", call. = FALSE)
     }
-    # Check color.by
-    if( !is.null(color.by) && !color.by %in% names(x) ){
-        stop("'color.by' must be a variable of x.", call. = FALSE)
+    if( aes.checks["color.by"] ){
+        stop("'color.by' must be a single variable of x.", call. = FALSE)
     }
     # Check conf.level
-    if( !is.numeric(conf.level) && conf.level >= 0 && conf.level <= 1){
+    if( !.is_a_numeric(conf.level) || !(conf.level >= 0 & conf.level <= 1) ){
         stop("'conf.level' must be a number between 0 and 1.", call. = FALSE)
     }
     # Initialise plots and widths lists
@@ -429,7 +475,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     }
     # Initialise label plot list
     label.plots <- list()
-    label.size <- nonlinear.textsize(nrow(x))
+    label.size <- .nonlinear_textsize(nrow(x))
     ann.ypos <- -nrow(x) / 30
     
     if( !is.null(color.by) && nrow(x) > length(unique(x[[id.var]])) ){
@@ -466,25 +512,10 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     return(plots)
 }
 
-nonlinear.textsize <- function(n, min.size = 2, max.size = 5) {
+.nonlinear_textsize <- function(n, min.size = 2, max.size = 5) {
     # Scale size inversely but bounded between min_size and max_size
     size <- max.size - (log10(n) * (max.size - min.size) / log10(100))
     # Clamp between min and max
     size <- pmax(pmin(size, max.size), min.size)
     return(size)
-}
-
-# From https://github.com/microbiome/mia/blob/devel/R/utils.R
-# Check MARGIN parameters. Should be defining rows or columns.
-.check_MARGIN <- function(MARGIN, name = .get_name_in_parent(MARGIN)) {
-    # MARGIN must be one of the following options
-    if( !(length(MARGIN) == 1L && tolower(MARGIN) %in% c(
-            1, 2, "1", "2", "features", "samples", "columns", "col", "row",
-            "rows", "cols")) ) {
-        stop("'", name,"' must be 'rows' or 'cols'.", call. = FALSE)
-    }
-    # Convert MARGIN to numeric if it is not.
-    MARGIN <- ifelse(tolower(MARGIN) %in% c(
-        "samples", "columns", "col", 2, "cols"), 2, 1)
-    return(MARGIN)
 }

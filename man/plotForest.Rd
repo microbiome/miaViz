@@ -2,11 +2,32 @@
 % Please edit documentation in R/AllGenerics.R, R/plotForest.R
 \name{plotForest}
 \alias{plotForest}
+\alias{plotForest,TreeSummarizedExperiment-method}
 \alias{plotForest,SummarizedExperiment-method}
 \alias{plotForest,data.frame-method}
 \title{Visualize estimated results with forest plots}
 \usage{
 plotForest(x, ...)
+
+\S4method{plotForest}{TreeSummarizedExperiment}(
+  x,
+  by = 1L,
+  effect.var = "effect",
+  ci.lower.var = "lower",
+  ci.upper.var = "upper",
+  err.var = NULL,
+  pval.var = "pval",
+  id.var = "rownames",
+  label.by = NULL,
+  order.by = NULL,
+  facet.by = NULL,
+  color.by = colour.by,
+  colour.by = NULL,
+  conf.level = 0.95,
+  tree.name = "phylo",
+  show.tree = TRUE,
+  ...
+)
 
 \S4method{plotForest}{SummarizedExperiment}(
   x,
@@ -22,9 +43,7 @@ plotForest(x, ...)
   facet.by = NULL,
   color.by = colour.by,
   colour.by = NULL,
-  conf.level = 0.95,
-  show.tree = TRUE,
-  ...
+  conf.level = 0.95
 )
 
 \S4method{plotForest}{data.frame}(
@@ -97,6 +116,9 @@ which observations are coloured. (Default: \code{NULL})}
 the interval when inferred from \code{err.var}. It is ignored when
 \code{ci.lower.var} and \code{ci.upper.var} are defined.
 (Default: \code{0.95})}
+
+\item{tree.name}{\code{Character scalar}. Specifies a row/colTree from x.
+(Default: \code{"phylo"})}
 
 \item{show.tree}{\code{Logical scalar}. Should the tree structure of the data
 be shown next to the forest plot?}

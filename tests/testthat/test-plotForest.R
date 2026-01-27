@@ -43,14 +43,13 @@ test_that("plotForest", {
         colData = colData(tse)
     )
     # Check SE method
-    p <- plotForest(se, show.tree = FALSE)
+    p <- plotForest(se)
     expect_s3_class(p, "ggplot")
     # Check no errorbar when CI not defined
     p <- plotForest(
         se,
         effect.var = "effect",
-        ci.lower.var = NULL,
-        show.tree = FALSE
+        ci.lower.var = NULL
     )
     expect_s3_class(p, "ggplot")
     # Check paired forest plot (2 lines per row)
