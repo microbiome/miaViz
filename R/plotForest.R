@@ -237,18 +237,8 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
     }
     # Generate forest plot components
     plots <- c(plots, .plot_forest(
-        x = df,
-        effect.var = effect.var,
-        ci.lower.var = ci.lower.var,
-        ci.upper.var = ci.upper.var,
-        err.var = err.var,
-        pval.var = pval.var,
-        id.var = id.var,
-        label.by = label.by,
-        order.by = order.by,
-        facet.by = facet.by,
-        color.by = color.by,
-        conf.level = conf.level
+        df, effect.var, ci.lower.var, ci.upper.var, err.var, pval.var, id.var,
+        label.by, order.by, facet.by, color.by, conf.level
     ))
     # Define plot widths
     widths <- c(widths, 2, 2/5 * length(label.by))
@@ -274,18 +264,8 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     df <- as.data.frame(FUN(x))
     # Generate forest plot components
     p <- plotForest(
-        x = df,
-        effect.var = effect.var,
-        ci.lower.var = ci.lower.var,
-        ci.upper.var = ci.upper.var,
-        err.var = err.var,
-        pval.var = pval.var,
-        id.var = id.var,
-        label.by = label.by,
-        order.by = order.by,
-        facet.by = facet.by,
-        color.by = color.by,
-        conf.level = conf.level
+        df, effect.var, ci.lower.var, ci.upper.var, err.var, pval.var, id.var,
+        label.by, order.by, facet.by, color.by, conf.level
     )
     return(p)
 })
@@ -305,18 +285,8 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     }
     # Generate forest plot components
     plots <- .plot_forest(
-        x = x,
-        effect.var = effect.var,
-        ci.lower.var = ci.lower.var,
-        ci.upper.var = ci.upper.var,
-        err.var = err.var,
-        pval.var = pval.var,
-        id.var = id.var,
-        label.by = label.by,
-        order.by = order.by,
-        facet.by = facet.by,
-        color.by = color.by,
-        conf.level = conf.level
+        x, effect.var, ci.lower.var, ci.upper.var, err.var, pval.var, id.var,
+        label.by, order.by, facet.by, color.by, conf.level
     )
     # Define plot widths
     widths <- c(2, 2/5 * length(label.by))
@@ -327,10 +297,6 @@ setMethod("plotForest", signature = c(x = "data.frame"),
 })
 
 #' @importFrom stats qt
-#' @importFrom patchwork wrap_plots
-#' @importFrom ggplot2 ggplot aes geom_vline geom_point geom_errorbar geom_text
-#'   annotate coord_cartesian theme_bw theme element_blank scale_x_continuous
-#'   expansion position_dodge2 facet_wrap
 .plot_forest <- function(x, effect.var, ci.lower.var, ci.upper.var, err.var,
     pval.var, id.var, label.by, order.by, facet.by, color.by, conf.level){
     # Check main vars
@@ -388,27 +354,28 @@ setMethod("plotForest", signature = c(x = "data.frame"),
             "specified with 'pval.var'.", call. = FALSE)
     }
     # Check aesthetics
-    aes.checks <- vapply(
-        list(order.by = order.by, facet.by = facet.by, color.by = color.by),
-        function(s) !is.null(s) && (length(s) != 1L || !s %in% names(x)),
-        FALSE
-    )
-    if( aes.checks["order.by"] ){
-        stop("'order.by' must be a single variable of x.", call. = FALSE)
-    }
-    if( aes.checks["facet.by"] ){
-        stop("'facet.by' must be a single variable of x.", call. = FALSE)
-    }
-    if( aes.checks["color.by"] ){
-        stop("'color.by' must be a single variable of x.", call. = FALSE)
-    }
+    aes.list <- list(order.by = order.by, facet.by = facet.by, color.by = color.by)
+    lapply(names(aes.list), function(s.name){
+        s <- aes.list[[s.name]]
+        if( !is.null(s) && (length(s) != 1L || !s %in% names(x)) ){
+            stop("'", s.name, "' must be a single variable of x.",
+                call. = FALSE)
+        }
+    })
     # Check conf.level
     if( !.is_a_numeric(conf.level) || !(conf.level >= 0 & conf.level <= 1) ){
         stop("'conf.level' must be a number between 0 and 1.", call. = FALSE)
     }
-    # Initialise plots and widths lists
-    plots <- list()
-    widths <- c()
+    plots <- .combine_forest_components(
+        x, effect.var, ci.lower.var, ci.upper.var, pval.var, id.var,
+        label.by, order.by, facet.by, color.by, ci.exists
+    )
+    return(plots)
+}
+
+#' @importFrom patchwork wrap_plots
+.combine_forest_components <- function(x, effect.var, ci.lower.var, ci.upper.var,
+    pval.var, id.var, label.by, order.by, facet.by, color.by, ci.exists){
     # Order features by effect size
     if( !is.null(order.by) ){
         x <- x[order(x[[order.by]]), , drop = FALSE]
@@ -419,10 +386,47 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     }else{
         x[[id.var]] <- factor(x[[id.var]], levels = unique(x[[id.var]]))
     }
-    # Store first name to set y origin
-    y0 <- x[[id.var]][1]
     # Remove rownames to control row ordering
     rownames(x) <- NULL
+    # Initialise plots list
+    plots <- list()
+    # Store forest plot
+    plots[[length(plots) + 1]] <- .add_forest_main_plot(
+        x, effect.var, ci.lower.var, ci.upper.var,
+        id.var, facet.by, color.by, ci.exists
+    )
+    # Construct CI label
+    if( "CI" %in% label.by ){
+        x$CI <- paste0(
+            round(x[[effect.var]], 2), " (",
+            round(x[[ci.lower.var]], 2), "\u2014",
+            round(x[[ci.upper.var]], 2), ")"
+        )
+    }
+    # Construct P-Value label
+    if( "P-Value" %in% label.by ){
+        x$`P-Value` <- paste0(
+            round(x[[pval.var]], 3),
+            ifelse(x[[pval.var]] < 0.05, "*", "")
+        )
+    }
+    # Make label plots
+    label.plots <- .add_forest_lab_plots(
+        x, effect.var, id.var, label.by, color.by
+    )
+    # For non-empty label plot lists
+    if( length(label.plots) != 0 ){
+        # Wrap and add label plots
+        plots[[length(plots) + 1]] <- wrap_plots(label.plots)
+    }
+    return(plots)
+}
+
+#' @importFrom ggplot2 ggplot aes geom_vline geom_point geom_errorbar geom_text
+#'   annotate coord_cartesian theme_bw theme element_blank scale_x_continuous
+#'   expansion position_dodge2 facet_wrap
+.add_forest_main_plot <- function(x, effect.var, ci.lower.var, ci.upper.var,
+    id.var, facet.by, color.by, ci.exists){
     # Find x-axis limits for forest plot
     if( ci.exists ){
         lim <- max(abs(x[[ci.lower.var]]), x[[ci.upper.var]], na.rm = TRUE)
@@ -439,7 +443,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Make forest plot
     p <- p + geom_vline(xintercept = 0, linetype = "dashed", colour = "gray") +
         geom_point(position = position_dodge2(width = 0.75)) +
-        coord_cartesian(xlim = c(-lim, lim), ylim = c(y0, NA), clip = "off") +
+        coord_cartesian(xlim = c(-lim, lim), ylim = c(x[[id.var]][1], NA), clip = "off") +
         theme_bw() +
         theme(axis.title.y = element_blank())
     # If CI is defined
@@ -454,25 +458,13 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     if( !is.null(facet.by )){
         p <- p + facet_wrap(as.formula(paste("~", facet.by)))
     }
-    # Store forest plot
-    plots[[length(plots) + 1]] <- p
-    # Store forest plot width
-    widths <- c(widths, 2)
-    # Construct CI label
-    if( "CI" %in% label.by ){
-        x$CI <- paste0(
-            round(x[[effect.var]], 2), " (",
-            round(x[[ci.lower.var]], 2), "\u2014",
-            round(x[[ci.upper.var]], 2), ")"
-        )
-    }
-    # Construct P-Value label
-    if( "P-Value" %in% label.by ){
-        x$`P-Value` <- paste0(
-            round(x[[pval.var]], 3),
-            ifelse(x[[pval.var]] < 0.05, "*", "")
-        )
-    }
+    return(p)
+}
+
+
+#' @importFrom ggplot2 geom_text annotate expansion  
+.add_forest_lab_plots <- function(x, effect.var, id.var, label.by, color.by){
+    
     # Initialise label plot list
     label.plots <- list()
     label.size <- .nonlinear_textsize(nrow(x))
@@ -497,20 +489,16 @@ setMethod("plotForest", signature = c(x = "data.frame"),
                       size = label.size, show.legend = FALSE) +
             annotate("text", x = 0, y = ann.ypos, label = lab, hjust = 0) +
             scale_x_continuous(expand = expansion(mult = c(0, 0))) +
-            coord_cartesian(xlim = c(0, 1), ylim = c(y0, NA), clip = "off") +
+            coord_cartesian(xlim = c(0, 1), ylim = c(x[[id.var]][1], NA), clip = "off") +
             theme(axis.title = element_blank(),
                   axis.text = element_blank(),
                   axis.ticks = element_blank(),
                   panel.background = element_blank(),
                   panel.grid = element_blank())
     }
-    # For non-empty label plot lists
-    if( length(label.plots) != 0 ){
-        # Wrap and store label plots
-        plots[[length(plots) + 1]] <- wrap_plots(label.plots)
-    }
-    return(plots)
+    return(label.plots)
 }
+
 
 .nonlinear_textsize <- function(n, min.size = 2, max.size = 5) {
     # Scale size inversely but bounded between min_size and max_size
