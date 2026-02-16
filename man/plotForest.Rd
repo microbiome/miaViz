@@ -170,8 +170,8 @@ plotForest(
 
 # Add abundance results to TreeSE rowData
 rownames(maaslin3_abund) <- maaslin3_abund$feature
-tax.order <- match(rownames(tse), rownames(maaslin3_abund))
-rowData(tse) <- cbind(rowData(tse), maaslin3_abund[tax.order, ])
+tax_order <- match(rownames(tse), rownames(maaslin3_abund))
+rowData(tse) <- cbind(rowData(tse), maaslin3_abund[tax_order, ])
 
 # Visualise abundance results with tree structure
 plotForest(
@@ -207,7 +207,4 @@ plotForest(
     colour.by = "association"
 )
 
-}
-\author{
-Giulio Benedetti
 }

@@ -106,8 +106,8 @@
 #'
 #' # Add abundance results to TreeSE rowData
 #' rownames(maaslin3_abund) <- maaslin3_abund$feature
-#' tax.order <- match(rownames(tse), rownames(maaslin3_abund))
-#' rowData(tse) <- cbind(rowData(tse), maaslin3_abund[tax.order, ])
+#' tax_order <- match(rownames(tse), rownames(maaslin3_abund))
+#' rowData(tse) <- cbind(rowData(tse), maaslin3_abund[tax_order, ])
 #'
 #' # Visualise abundance results with tree structure
 #' plotForest(
@@ -143,8 +143,6 @@
 #'     colour.by = "association"
 #' )
 #' 
-#' @author Giulio Benedetti
-#' 
 #' @name plotForest
 NULL
 
@@ -165,46 +163,30 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
     by <- .check_MARGIN(by)
     # Select data based on margin (by)
     FUN <- switch(by, rowData, colData)
-    tree.FUN <- switch(by, rowTree, colTree)
-    treename.FUN <- switch(by, rowTreeNames, colTreeNames)
-    treeplot.FUN <- switch(by, plotRowTree, plotColTree)
+    tree_FUN <- switch(by, rowTree, colTree)
+    treename_FUN <- switch(by, rowTreeNames, colTreeNames)
+    treeplot_FUN <- switch(by, plotRowTree, plotColTree)
     # Extract side information from SE
     df <- as.data.frame(FUN(x))
-    # Check tree.name
-    if( !.is_non_empty_string(tree.name) || !tree.name %in% treename.FUN(x)){
-        stop("'tree.name' must specify a tree from row/colTreeNames(x).",
-            call. = FALSE)
-    }
-    tree.exists <- !is.null(tree.FUN(x, tree.name))
     # Check show.tree
-    if( !is.logical(show.tree) ){
+    if( !.is_a_bool(show.tree) ){
         stop("'show.tree' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( show.tree && !tree.exists ){
-        warning("'show.tree' is ignored when row/colTree(x) does not exist.",
-            call. = FALSE)
-    }
-    order.tree <- is.null(order.by)
-    if( !order.tree && show.tree ){
+    order_tree <- is.null(order.by)
+    if( !order_tree && show.tree ){
         warning("'show.tree' is ignored when 'order.by' is defined.",
             call. = FALSE)
-        # Turn off show.tree
-        show.tree <- FALSE
     }
     # Check kwargs
     kwargs <- list(...)
-    if( !show.tree && length(kwargs) != 0 ){
-        warning("Arguments in '...' are ignored when 'show.tree' is FALSE.",
-            call. = FALSE)
-    }
     if( any(c("layout", "branch.length") %in% names(kwargs)) ){
         stop("'layout' and 'branch.length' cannot be modified for this plot.",
             call. = FALSE)
     }
     # If tree is available
-    if( tree.exists && order.tree ){
+    if( order_tree ){
         # Plot tree
-        tree.plot <- treeplot.FUN(
+        tree_plot <- treeplot_FUN(
             x,
             tree.name = tree.name,
             layout = "rectangular",
@@ -212,20 +194,20 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
             show.label = TRUE
         )
         # Extract tip order from tree
-        tree.data <- ggplot_build(tree.plot)
-        tips <- tree.data[[1]][[5]][c("y", "label")]
+        tree_data <- ggplot_build(tree_plot)
+        tips <- tree_data[[1]][[5]][c("y", "label")]
         tips <- tips[order(tips$y), , drop = FALSE]
         # Order rowData based on tree tips
-        tax.order <- match(tips$label, rownames(df))
-        df <- df[tax.order, , drop = FALSE]
+        tax_order <- match(tips$label, rownames(df))
+        df <- df[tax_order, , drop = FALSE]
     }
     # Initialise plots and widths lists
     plots <- list()
     widths <- c()
     # If tree is plotted
-    if( tree.exists && show.tree ){
+    if( show.tree && order_tree ){
         # Store tree plot
-        plots[[1]] <- treeplot.FUN(
+        plots[[1]] <- treeplot_FUN(
             x,
             tree.name = tree.name,
             layout = "rectangular",
@@ -305,6 +287,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     }
     if( !is.null(err.var) && !err.var %in% names(x) ){
         warning("'err.var' is ignored when not found in x.", call. = FALSE)
+        err.var <- NULL
     }
     # Derive CI from standard error
     if( !is.null(err.var) ){
@@ -354,9 +337,9 @@ setMethod("plotForest", signature = c(x = "data.frame"),
             "specified with 'pval.var'.", call. = FALSE)
     }
     # Check aesthetics
-    aes.list <- list(order.by = order.by, facet.by = facet.by, color.by = color.by)
-    lapply(names(aes.list), function(s.name){
-        s <- aes.list[[s.name]]
+    aes_list <- list(order.by = order.by, facet.by = facet.by, color.by = color.by)
+    lapply(names(aes_list), function(s.name){
+        s <- aes_list[[s.name]]
         if( !is.null(s) && (length(s) != 1L || !s %in% names(x)) ){
             stop("'", s.name, "' must be a single variable of x.",
                 call. = FALSE)
@@ -374,8 +357,9 @@ setMethod("plotForest", signature = c(x = "data.frame"),
 }
 
 #' @importFrom patchwork wrap_plots
-.combine_forest_components <- function(x, effect.var, ci.lower.var, ci.upper.var,
-    pval.var, id.var, label.by, order.by, facet.by, color.by, ci.exists){
+.combine_forest_components <- function(x, effect.var, ci.lower.var,
+    ci.upper.var, pval.var, id.var, label.by, order.by, facet.by, color.by,
+    ci.exists){
     # Order features by effect size
     if( !is.null(order.by) ){
         x <- x[order(x[[order.by]]), , drop = FALSE]
@@ -411,20 +395,20 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         )
     }
     # Make label plots
-    label.plots <- .add_forest_lab_plots(
+    label_plots <- .add_forest_lab_plots(
         x, effect.var, id.var, label.by, color.by
     )
     # For non-empty label plot lists
-    if( length(label.plots) != 0 ){
+    if( length(label_plots) != 0 ){
         # Wrap and add label plots
-        plots[[length(plots) + 1]] <- wrap_plots(label.plots)
+        plots[[length(plots) + 1]] <- wrap_plots(label_plots)
     }
     return(plots)
 }
 
 #' @importFrom ggplot2 ggplot aes geom_vline geom_point geom_errorbar geom_text
 #'   annotate coord_cartesian theme_bw theme element_blank scale_x_continuous
-#'   expansion position_dodge2 facet_wrap
+#'   expansion position_dodge position_dodge2 facet_wrap
 .add_forest_main_plot <- function(x, effect.var, ci.lower.var, ci.upper.var,
     id.var, facet.by, color.by, ci.exists){
     # Find x-axis limits for forest plot
@@ -442,7 +426,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     }
     # Make forest plot
     p <- p + geom_vline(xintercept = 0, linetype = "dashed", colour = "gray") +
-        geom_point(position = position_dodge2(width = 0.75)) +
+        geom_point(position = position_dodge(width = 0.75)) +
         coord_cartesian(xlim = c(-lim, lim), ylim = c(x[[id.var]][1], NA), clip = "off") +
         theme_bw() +
         theme(axis.title.y = element_blank())
@@ -452,7 +436,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         p <- p + geom_errorbar(
             aes(xmin = .data[[ci.lower.var]], xmax = .data[[ci.upper.var]]),
             orientation = "y", width = 1e-2 * nrow(x),
-            position = position_dodge2(width = 0.75)
+            position = position_dodge(width = 0.75)
         )
     }
     if( !is.null(facet.by )){
@@ -466,15 +450,15 @@ setMethod("plotForest", signature = c(x = "data.frame"),
 .add_forest_lab_plots <- function(x, effect.var, id.var, label.by, color.by){
     
     # Initialise label plot list
-    label.plots <- list()
-    label.size <- .nonlinear_textsize(nrow(x))
-    ann.ypos <- -nrow(x) / 30
+    label_plots <- list()
+    label_size <- .nonlinear_textsize(nrow(x))
+    ann_ypos <- -nrow(x) / 30
     
     if( !is.null(color.by) && nrow(x) > length(unique(x[[id.var]])) ){
         p <- ggplot(x, aes(x = .data[[effect.var]], y = .data[[id.var]],
             colour = .data[[color.by]]))
         # Adjust annotation y-position for grouped rows
-        ann.ypos <- ann.ypos / length(unique(x[[color.by]]))
+        ann_ypos <- ann_ypos / length(unique(x[[color.by]]))
     }else{
         p <- ggplot(x, aes(x = .data[[effect.var]], y = .data[[id.var]]))
     }
@@ -483,11 +467,11 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         # Retrieve current label
         lab <- label.by[i]
         # Make plot for current label
-        label.plots[[i]] <- p +
+        label_plots[[i]] <- p +
             geom_text(x = 0, aes(y = .data[[id.var]], label = .data[[lab]]),
                       hjust = 0, position = position_dodge2(width = 0.75),
-                      size = label.size, show.legend = FALSE) +
-            annotate("text", x = 0, y = ann.ypos, label = lab, hjust = 0) +
+                      size = label_size, show.legend = FALSE) +
+            annotate("text", x = 0, y = ann_ypos, label = lab, hjust = 0) +
             scale_x_continuous(expand = expansion(mult = c(0, 0))) +
             coord_cartesian(xlim = c(0, 1), ylim = c(x[[id.var]][1], NA), clip = "off") +
             theme(axis.title = element_blank(),
@@ -496,7 +480,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
                   panel.background = element_blank(),
                   panel.grid = element_blank())
     }
-    return(label.plots)
+    return(label_plots)
 }
 
 
