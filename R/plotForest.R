@@ -1,26 +1,26 @@
 #' Visualize estimated results with forest plots
-#' 
+#'
 #' \code{plotForest()} creates a feature- or sample-wise forest plot, showing
 #' estimated results from a statistical test with their confidence intervals.
 #' Additionally, the plot can be enriched with the tree structure and labelled
 #' with Confidence Intervals (CIs), p-values and other side information.
-#' 
+#'
 #' @param x a
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object, or a \code{data.frame} object containing statistical estimates.
-#' 
+#'
 #' @param by \code{Character scalar}. Determines whether features or samples
 #' data is used for the plot. (Default: \code{"rows"})
-#' 
+#'
 #' @param effect.var \code{Character scalar}. Specifies the variable of x which
 #' corresponds to the effects or estimated results. (Default: \code{"effect"})
-#' 
+#'
 #' @param ci.lower.var \code{Character scalar}. Specifies the variable of x
 #' which corresponds to the lower CI boundaries. (Default: \code{"lower"})
 #'
 #' @param ci.upper.var \code{Character scalar}. Specifies the variable of x
 #' which corresponds to the upper CI boundaries. (Default: \code{"upper"})
-#' 
+#'
 #' @param err.var \code{Character scalar}. Specifies the variable of x which
 #' corresponds to the standard errors associated with \code{effect.var}.
 #' When defined, it overwrites \code{ci.lower.var} and \code{ci.upper.var}.
@@ -29,24 +29,24 @@
 #' @param pval.var \code{Character scalar}. Specifies the variable of x which
 #' corresponds to the p-values associated with \code{effect.var}.
 #' (Default: \code{"pval"})
-#' 
+#'
 #' @param id.var \code{Character scalar}. Specifies the variable of x which
 #' corresponds to the observation identifiers. When \code{"rownames"}),
 #' the object rownames are used. (Default: \code{"rownames"})
-#' 
+#'
 #' @param label.by \code{Character vector}. Specifies the variables of x or
 #' row/colData(x) by which the plot should be labelled. \code{"CI"} and
 #' \code{"P-Value"} are special entries which require either \code{effect.var},
 #' \code{ci.lower.var} and \code{ci.upper.var} or \code{pval.var} to be
 #' specified, respectively. (Default: \code{NULL})
-#' 
+#'
 #' @param order.by \code{Character scalar}. Specifies the variable of x by which
 #' observations are ordered. If \code{NULL}, the observations are ordered by
 #' the tree structure if available. (Default: \code{NULL})
-#' 
+#'
 #' @param facet.by \code{Character scalar}. Specifies the variable of x by which
 #' observations are divided into horizontal facets. (Default: \code{NULL})
-#' 
+#'
 #' @param colour.by \code{Character scalar}. Specifies the variable of x by
 #' which observations are coloured. (Default: \code{NULL})
 #'
@@ -56,22 +56,22 @@
 #' the interval when inferred from \code{err.var}. It is ignored when
 #' \code{ci.lower.var} and \code{ci.upper.var} are defined.
 #' (Default: \code{0.95})
-#' 
+#'
 #' @param tree.name \code{Character scalar}. Specifies a row/colTree from x.
 #' (Default: \code{"phylo"})
 #'
 #' @param show.tree \code{Logical scalar}. Should the tree structure of the data
 #' be shown next to the forest plot?
-#' 
+#'
 #' @param ... additional parameters passed to \code{\link{plotRowTree}}.
-#' 
+#'
 #' @return
 #' a \code{\link[ggplot2:ggplot]{ggplot}} object.
 #'
 #' @examples
 #' library(mia)
 #' library(maaslin3)
-#' 
+#'
 #' # Import dataset
 #' data("Tengeler2020", package = "mia")
 #' tse <- Tengeler2020
@@ -130,7 +130,7 @@
 #'     rep("Prevalence", nrow(maaslin3_prev))
 #' )
 #'
-#' # Visualise combined results
+#' # Visualize combined results
 #' plotForest(
 #'     maaslin3_res,
 #'     effect.var = "coef",
@@ -142,7 +142,7 @@
 #'     facet.by = "association",
 #'     colour.by = "association"
 #' )
-#' 
+#'
 #' @name plotForest
 NULL
 
@@ -337,7 +337,8 @@ setMethod("plotForest", signature = c(x = "data.frame"),
             "specified with 'pval.var'.", call. = FALSE)
     }
     # Check aesthetics
-    aes_list <- list(order.by = order.by, facet.by = facet.by, color.by = color.by)
+    aes_list <- list(
+        order.by = order.by, facet.by = facet.by, color.by = color.by)
     lapply(names(aes_list), function(s.name){
         s <- aes_list[[s.name]]
         if( !is.null(s) && (length(s) != 1L || !s %in% names(x)) ){
@@ -375,10 +376,11 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Initialise plots list
     plots <- list()
     # Store forest plot
-    plots[[length(plots) + 1]] <- .add_forest_main_plot(
+    forest_plot <- .add_forest_main_plot(
         x, effect.var, ci.lower.var, ci.upper.var,
         id.var, facet.by, color.by, ci.exists
     )
+    plots <- c(plots, forest_plot)
     # Construct CI label
     if( "CI" %in% label.by ){
         x$CI <- paste0(
@@ -401,7 +403,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # For non-empty label plot lists
     if( length(label_plots) != 0 ){
         # Wrap and add label plots
-        plots[[length(plots) + 1]] <- wrap_plots(label_plots)
+        plots <- c(plots, wrap_plots(label_plots))
     }
     return(plots)
 }
@@ -427,7 +429,8 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Make forest plot
     p <- p + geom_vline(xintercept = 0, linetype = "dashed", colour = "gray") +
         geom_point(position = position_dodge(width = 0.75)) +
-        coord_cartesian(xlim = c(-lim, lim), ylim = c(x[[id.var]][1], NA), clip = "off") +
+        coord_cartesian(
+            xlim = c(-lim, lim), ylim = c(x[[id.var]][1], NA), clip = "off") +
         theme_bw() +
         theme(axis.title.y = element_blank())
     # If CI is defined
@@ -445,15 +448,14 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     return(p)
 }
 
-
-#' @importFrom ggplot2 geom_text annotate expansion  
+#' @importFrom ggplot2 geom_text annotate expansion
 .add_forest_lab_plots <- function(x, effect.var, id.var, label.by, color.by){
-    
+
     # Initialise label plot list
     label_plots <- list()
     label_size <- .nonlinear_textsize(nrow(x))
     ann_ypos <- -nrow(x) / 30
-    
+
     if( !is.null(color.by) && nrow(x) > length(unique(x[[id.var]])) ){
         p <- ggplot(x, aes(x = .data[[effect.var]], y = .data[[id.var]],
             colour = .data[[color.by]]))
@@ -468,21 +470,23 @@ setMethod("plotForest", signature = c(x = "data.frame"),
         lab <- label.by[i]
         # Make plot for current label
         label_plots[[i]] <- p +
-            geom_text(x = 0, aes(y = .data[[id.var]], label = .data[[lab]]),
-                      hjust = 0, position = position_dodge2(width = 0.75),
-                      size = label_size, show.legend = FALSE) +
+            geom_text(
+                x = 0, aes(y = .data[[id.var]], label = .data[[lab]]),
+                hjust = 0, position = position_dodge2(width = 0.75),
+                size = label_size, show.legend = FALSE) +
             annotate("text", x = 0, y = ann_ypos, label = lab, hjust = 0) +
             scale_x_continuous(expand = expansion(mult = c(0, 0))) +
-            coord_cartesian(xlim = c(0, 1), ylim = c(x[[id.var]][1], NA), clip = "off") +
-            theme(axis.title = element_blank(),
-                  axis.text = element_blank(),
-                  axis.ticks = element_blank(),
-                  panel.background = element_blank(),
-                  panel.grid = element_blank())
+            coord_cartesian(
+                xlim = c(0, 1), ylim = c(x[[id.var]][1], NA), clip = "off") +
+            theme(
+                axis.title = element_blank(),
+                axis.text = element_blank(),
+                axis.ticks = element_blank(),
+                panel.background = element_blank(),
+                panel.grid = element_blank())
     }
     return(label_plots)
 }
-
 
 .nonlinear_textsize <- function(n, min.size = 2, max.size = 5) {
     # Scale size inversely but bounded between min_size and max_size

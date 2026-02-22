@@ -194,7 +194,7 @@ maaslin3_res$association <- c(
     rep("Prevalence", nrow(maaslin3_prev))
 )
 
-# Visualise combined results
+# Visualize combined results
 plotForest(
     maaslin3_res,
     effect.var = "coef",
