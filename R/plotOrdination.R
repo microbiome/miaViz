@@ -345,6 +345,11 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     }
     # Adjust theme
     p <- .adjust_ordination_theme(p, df, ...)
+
+    # Enforce same scale to x and y axis. Without equal scale, the results and
+    # interpretations might be misleading
+    p <- p + coord_equal()
+
     return(p)
 }
 
