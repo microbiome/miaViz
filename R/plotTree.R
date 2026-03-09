@@ -197,7 +197,7 @@ NULL
 setMethod("plotColTree", signature = c(x = "TreeSummarizedExperiment"),
     function(x, tree.name = "phylo", ...){
         p <- .plot_row_column_tree(
-            x, tree.name = tree.name, type = "column", ...)
+            x, tree.name = tree.name, type = "col", ...)
         return(p)
     }
 )
@@ -221,7 +221,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     x <- .get_object_and_trimmed_tree(
         x, tree.name = tree.name, type = type, ...)
     # Get tree from TreeSE
-    tree_FUN <- switch(type, row = rowTree, column = colTree, stop("."))
+    tree_FUN <- switch(type, row = rowTree, col = colTree, stop("."))
     tree <- tree_FUN(x, tree.name)
     # Get tree as a table format
     df <- .get_tree_data(tree)
@@ -250,7 +250,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 .get_object_and_trimmed_tree <- function(
         x,
         tree.name = "phylo",
-        type = c("row", "column"),
+        type = c("row", "col"),
         relabel.tree = relabel, relabel = FALSE,
         order.tree = order, order = FALSE, ...
         ){
@@ -258,7 +258,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     type <- match.arg(type)
     # Check that tree exists
     check_FUN <- switch(
-        type, row = .check_rowTree_present, column = .check_colTree_present)
+        type, row = .check_rowTree_present, col = .check_colTree_present)
     temp <- check_FUN(tree.name, x)
     if(!.is_a_bool(relabel)){
         stop("'relabel.tree' must be either TRUE or FALSE.", call. = FALSE)
@@ -268,14 +268,14 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     }
     #
     # Get correct functions based on the margin/direction
-    tree_FUN <- switch(type, row = rowTree, column = colTree, stop("."))
-    links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
-    dimnames_FUN <- switch(type, row = rownames, column = colnames, stop("."))
+    tree_FUN <- switch(type, row = rowTree, col = colTree, stop("."))
+    links_FUN <- switch(type, row = rowLinks, col = colLinks, stop("."))
+    dimnames_FUN <- switch(type, row = rownames, col = colnames, stop("."))
     add_names_FUN <- switch(
-        type, row = `rownames<-`, column = `colnames<-`, stop("."))
+        type, row = `rownames<-`, col = `colnames<-`, stop("."))
     # Check that the tree is compatible with the data, i.e., rows are matched
     # with the tree.
-    links_FUN <- switch(type, row = rowLinks, column = colLinks, stop("."))
+    links_FUN <- switch(type, row = rowLinks, col = colLinks, stop("."))
     links <- links_FUN(x)
     ind <- links[["whichTree"]] == tree.name
     if( all(!ind) ){
@@ -656,7 +656,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     rowlinks_FUN <- switch(
         type,
         row = rowLinks,
-        column = colLinks
+        col = colLinks
     )
 
     # Retrieve info and create a table to add to tree data
@@ -683,12 +683,12 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     name_FUN <- switch(
         type,
         row = colnames,
-        column = rownames
+        col = rownames
     )
     rowdata_FUN <- switch(
         type,
         row = rowData,
-        column = colData
+        col = colData
     )
     # Check whether the variable is available in rowData or assay
     is_rowdata <- var %in% colnames(rowdata_FUN(x))
@@ -709,7 +709,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         # If not found, give error
         stop("The following variable cannot be found from ",
             ifelse(type == "row", "row", "col"), "Data(x) or from ",
-            ifelse(type == "row", "column", "row"),
+            ifelse(type == "row", "col", "row"),
             " names: '", var, "'", call. = FALSE)
     }
     return(res)

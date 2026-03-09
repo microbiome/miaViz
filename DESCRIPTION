@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.19.2
+Version: 1.19.4
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -48,6 +48,7 @@ Imports:
     ggrepel,
     ggtree,
     methods,
+    patchwork,
     rlang,
     S4Vectors,
     scales,
@@ -69,6 +70,7 @@ Suggests:
     ggh4x,
     ggpubr,
     knitr,
+    maaslin3,
     mediation,
     miaTime,
     patchwork,
