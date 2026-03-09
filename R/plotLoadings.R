@@ -274,7 +274,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Get order of loadings based on absolute value
     ind <- order(-abs(df[[i]]))
     # Get top n values
-    ind <- ind[seq_len(n)]
+    ind <- ind[seq_len(min(n, length(ind)))]
     # Get the sorted data of single PC
     df <- df[ind, i, drop = FALSE]
     # Add PC number to data.frame so that each row can be identified to belong
@@ -468,7 +468,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     if (any(!rowTree(x)[["tip.label"]] %in% rowLinks(x)[["nodeLab"]])) {
         x <- subsetByLeaf(x, rowLinks(x)[["nodeLab"]])
     }
-    
+
     # Sort the loading matrix
     df <- df[match(rownames(x), rownames(df)), ]
     # Convert loadings matrix to data.frame
@@ -533,9 +533,10 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         colnames_angle = 90, hjust = 1
         )
     # Adjust color scale in continuous scale
+    max_value <- loadings |> abs() |> max()
     plot_out <- plot_out +
         scale_fill_gradient2(
-            limits = c(-1, 1),
+            limits = c(-max_value, max_value),
             low = "darkslateblue", mid = "white", high = "darkred",
             name = "Value"
         )
