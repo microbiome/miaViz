@@ -18,7 +18,7 @@ colData."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.5</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.19.6</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ colData."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Create boxplot of <code>assay</code>, <code>rowData</code> or <code>colData</code>.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/devel/R/plotBoxplot.R" class="external-link"><code>R/plotBoxplot.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/facet_num/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/facet_num/R/plotBoxplot.R" class="external-link"><code>R/plotBoxplot.R</code></a></small>
     <div class="hidden name"><code>plotBoxplot.Rd</code></div>
     </div>
 
@@ -231,7 +231,8 @@ multiple options for visualization.</p>
 <span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>    x <span class="op">=</span> <span class="st">"diagnosis"</span>, fill.by <span class="op">=</span> <span class="st">"diagnosis"</span>,</span></span>
-<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, facet.by <span class="op">=</span> <span class="st">"rownames"</span></span></span>
+<span class="r-in"><span>    features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, facet.by <span class="op">=</span> <span class="st">"rownames"</span>,</span></span>
+<span class="r-in"><span>    ncol <span class="op">=</span> <span class="fl">2</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotBoxplot-2.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
