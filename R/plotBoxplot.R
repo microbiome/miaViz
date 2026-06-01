@@ -166,7 +166,8 @@
 #' plotBoxplot(
 #'     tse, assay.type = "relabundance",
 #'     x = "diagnosis", fill.by = "diagnosis",
-#'     features = rownames(tse), facet.by = "rownames"
+#'     features = rownames(tse), facet.by = "rownames",
+#'     ncol = 2
 #' )
 #'
 #' # Add proportion bar
@@ -1018,9 +1019,16 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function is the main plotter function
 .plot_boxplot <- function(
         df, add.box = TRUE, add.points = TRUE, scales = "fixed",
-        add.proportion = FALSE, add.threshold = FALSE, ...){
+        add.proportion = FALSE, add.threshold = FALSE,
+        nrow = NULL, ncol = NULL, ...){
     if( !.is_a_string(scales) ){
         stop("'scales' must be a string.", call. = FALSE)
+    }
+    if( !(is.null(nrow) || .is_an_integer(nrow)) ){
+        stop("'nrow' must be a single integer.", call. = FALSE)
+    }
+    if( !(is.null(ncol) || .is_an_integer(ncol)) ){
+        stop("'ncol' must be a single integer.", call. = FALSE)
     }
     #
     # Initialize the plot
@@ -1055,7 +1063,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         p <- p +
             facet_wrap(
                 as.formula(paste("~", attributes(df)[["facet.by"]])),
-                scales = scales
+                scales = scales,
+                nrow = nrow,
+                ncol = ncol
             )
     }
     # If user wants to add p values
