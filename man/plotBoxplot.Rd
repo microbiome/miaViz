@@ -181,7 +181,8 @@ tse <- tse[getTop(tse, 6), ]
 plotBoxplot(
     tse, assay.type = "relabundance",
     x = "diagnosis", fill.by = "diagnosis",
-    features = rownames(tse), facet.by = "rownames"
+    features = rownames(tse), facet.by = "rownames",
+    ncol = 2
 )
 
 # Add proportion bar

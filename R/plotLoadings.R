@@ -125,7 +125,8 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
         mat <- .get_loadings_matrix(x, dimred, ...)
         if( add.tree && layout == "heatmap" ){
             # Create dataframe for tree plotting
-            data_list <- .get_loadings_tree_data(mat, x, tree.name, row.var)
+            data_list <- .get_loadings_tree_data(
+                mat, x, tree.name, row.var, ncomponents, ...)
             tree <- data_list[["tree"]]
             mat <- data_list[["loadings"]]
             # Plot tree with feature loadings
@@ -273,7 +274,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Get order of loadings based on absolute value
     ind <- order(-abs(df[[i]]))
     # Get top n values
-    ind <- ind[seq_len(n)]
+    ind <- ind[seq_len(min(n, length(ind)))]
     # Get the sorted data of single PC
     df <- df[ind, i, drop = FALSE]
     # Add PC number to data.frame so that each row can be identified to belong
@@ -444,7 +445,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 # This function retrieves the data for tree + heatmap plotting. The output
 # is a list that includes tree and data.frame in wide format.
 #' @importFrom ggtree ggtree
-.get_loadings_tree_data <- function(df, x, tree.name, row.var){
+.get_loadings_tree_data <- function(
+    df, x, tree.name, row.var, ncomponents, n = min(nrow(df), 10L), ...){
     # Check that rownames of loading matrix match with rownames of TreeSE. It
     # might be that TreeSE is updated after calculating the reduced dimension
     # which is why rownames do not match.
@@ -455,6 +457,18 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
             "Features of loading matrix do not match with rownames(x)",
             call. = FALSE)
     }
+    df <- df[, seq_len(ncomponents), drop = FALSE]
+
+    # Select features with highest loadings
+    df <- df |> as.data.frame()
+    max_loads <- lapply(seq_len(ncomponents), .process_component, df = df, n = n)
+    max_loads <- do.call(rbind, max_loads)
+    df <- df[rownames(df) %in% max_loads[["Feature"]], ]
+    x <- x[rownames(x) %in% rownames(df), ]
+    if (any(!rowTree(x)[["tip.label"]] %in% rowLinks(x)[["nodeLab"]])) {
+        x <- subsetByLeaf(x, rowLinks(x)[["nodeLab"]])
+    }
+
     # Sort the loading matrix
     df <- df[match(rownames(x), rownames(df)), ]
     # Convert loadings matrix to data.frame
@@ -507,7 +521,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     plot_out <- ggtree(tree, layout = "circular")
     # Add first inner circle (features)
     plot_out <- gheatmap(
-        p = plot_out, data = features, width = 0.1, colnames_angle = 90)
+        p = plot_out, data = features, width = 0.1,
+        colnames_angle = 90, hjust = 1)
     # Adjust color scale for discrete feature values
     plot_out <- plot_out +
         scale_fill_viridis_d(option = "D", name = rank.title)
@@ -515,12 +530,13 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     plot_out <- plot_out + new_scale_fill()
     plot_out <- gheatmap(
         p = plot_out, data = loadings, offset = 0.1, width = 0.3,
-        colnames_angle = 90
+        colnames_angle = 90, hjust = 1
         )
     # Adjust color scale in continuous scale
+    max_value <- loadings |> abs() |> max()
     plot_out <- plot_out +
         scale_fill_gradient2(
-            limits = c(-1, 1),
+            limits = c(-max_value, max_value),
             low = "darkslateblue", mid = "white", high = "darkred",
             name = "Value"
         )
