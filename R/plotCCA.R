@@ -379,6 +379,13 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         tse, vector_data, reduced_dim, ...){
     # Extract covariate names from RDA/CCA object
     rda_obj <- .get_rda_attribute(reduced_dim, "obj")
+
+    # Check if rda object exists. By default, this is the case, but user can
+    # also remove it, e.g., to save memory. In that case, we cannot
+    # match the mapping bwteeen rda object and colData.
+    if( !(!is.null(rda_obj) && is(rda_obj, "cca")) ){
+        return(vector_data)
+    }
     rda_terms <- rda_obj[["terms"]]
     factors_mat <- .get_rda_attribute(rda_terms, "factors")
     # Build name_map from terms in the RDA/CCA model
@@ -737,7 +744,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
                 x = 0, y = 0, xend = .data[[xvar]], yend = .data[[yvar]],
                 group = .data[["group"]]),
                 arrow = arrow(length = unit(arrow.size, "cm")),
-                color = vec.color, linetype = vec.linetype, size = vec.size)
+                color = vec.color, linetype = vec.linetype,
+                linewidth = vec.size)
         # Add vector labels (text or label)
         # Make list of arguments for geom_text/geom_label
         label_args <- list(
