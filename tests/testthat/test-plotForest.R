@@ -95,7 +95,7 @@ test_that("plotForest", {
     )
     expect_error(
         plotForest(tse, layout = "circular", branch.length = "none"),
-        "'layout' and 'branch.length' cannot be modified for this plot.",
+        "'layout', 'levels.rm' and 'branch.length' cannot be modified for this plot.",
         fixed = TRUE
     )
     expect_warning(
