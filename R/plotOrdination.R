@@ -787,14 +787,20 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     }
 
     # Adjust colors
-    name <- if(!is.null(attributes(df)[["colour.by"]]))
-        attributes(df)[["colour.by"]] else attributes(df)[["fill.by"]]
-    vals <- if(!is.null(attributes(df)[["colour.by"]]))
-        df[[attributes(df)[["colour.by"]]]] else attributes(df)[["fill.by"]]
-    p <- .resolve_plot_colours(
-        p, vals, name,
-        fill = !is.null(attributes(df)[["fill.by"]])
-    )
+    if( !is.null(attributes(df)[["colour.by"]]) ){
+        name <- attributes(df)[["colour.by"]]
+        vals <- df[[name]]
+        p <- .resolve_plot_colours(
+            p, vals, name,
+        )
+    }
+    if( !is.null(attributes(df)[["fill.by"]]) ){
+        name <- attributes(df)[["fill.by"]]
+        vals <- df[[name]]
+        p <- .resolve_plot_colours(
+            p, vals, name, fill = TRUE
+        )
+    }
 
     return(p)
 }
