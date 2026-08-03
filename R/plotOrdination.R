@@ -392,8 +392,14 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 
     xlab <- x_var
     ylab <- y_var
-    eigen <- orig_attributes[["eig"]]
-    if( add.expl.var && !is.null(eigen) ){
+    eigen_names <- c("eig", "percentVar")
+    if( add.expl.var && any(eigen_names %in% names(orig_attributes)) ){
+        eigen_names <- eigen_names[
+            eigen_names %in% names(orig_attributes)][[1L]]
+        eigen <- orig_attributes[[eigen_names]]
+        if( eigen_names %in% c("eig") ){
+            eigen <- eigen * 100
+        }
         xlab <- paste0(
             xlab, " (",
             round(eigen[ncomponents][[1L]], 1),
