@@ -1112,8 +1112,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     x_point <- y_point <- NULL
     args <- list(
         mapping = aes(
-            x = .data[[x]],
-            y = .data[[y]],
+            x = x_point,
+            y = y_point,
             colour = if(!is.null(attributes(df)[["colour.by"]]))
                 .data[[attributes(df)[["colour.by"]]]],
             shape = if(!is.null(attributes(df)[["shape.by"]]))
