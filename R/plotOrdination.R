@@ -752,7 +752,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         xlab = attributes(df)[["xlab"]],
         ylab = attributes(df)[["ylab"]],
         coord.equal = TRUE,
-        panel.by.eigen = TRUE,
+        aspect.ratio = c("equal", "eigen", "free"),
         ...){
     if( !.is_a_string(xlab) ){
         stop("'xlab' must be a single character value.", call. = FALSE)
@@ -763,9 +763,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     if( !.is_a_bool(coord.equal) ){
         stop("'coord.equal' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( !.is_a_bool(panel.by.eigen) ){
-        stop("'panel.by.eigen' must be TRUE or FALSE.", call. = FALSE)
-    }
+    match.arg(aspect.ratio)
     #
     p <- p + theme_classic()
     p <- p + labs(x = xlab, y = ylab)
@@ -785,18 +783,22 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         p <- p + labs(linetype = attributes(df)[["linetype.by"]])
     }
 
-    # Use equal scaling on both axes so that one unit on the x-axis has the same
-    # physical length as one unit on the y-axis. This preserves distances and
-    # angles in the ordination and avoids visual distortion.
-    if( coord.equal ){
+    # Adjust axis length ratios
+    eigen_names <- c("eig", "percentVar")
+    if( aspect.ratio == "equal" ){
+        # Use equal scaling on both axes so that one unit on the x-axis has the
+        # same physical length as one unit on the y-axis. This preserves
+        # distances and angles in the ordination and avoids visual distortion.
         p <- p + coord_equal()
-    }
-    # Make the panel dimensions proportional to the eigenvalues so that the
-    # relative lengths of the axes reflect the variation explained by each
-    # ordination axis.
-    if( panel.by.eigen && !is.null(attributes(df)[["eigen"]]) ){
-        eig <- attributes(df)[["eigen"]]
-        p <- p + theme(aspect.ratio = eig[2] / eig[1])
+    } else if ( aspect.ratio == "eigen" &&
+            any(eigen_names %in% names(orig_attributes)) ){
+        # Make the panel dimensions proportional to the eigenvalues so that the
+        # relative lengths of the axes reflect the variation explained by each
+        # ordination axis.
+        eigen_names <- eigen_names[
+            eigen_names %in% names(orig_attributes)][[1L]]
+        eigen <- orig_attributes[[eigen_names]]
+        p <- p + theme(aspect.ratio = eigen[2] / eigen[1])
     }
 
     # Adjust colors
