@@ -155,3 +155,8 @@ setGeneric("plotBoxplot", signature = c("object"), function(object, ...)
 #' @export
 setGeneric("plotOrdination", signature = c("x"), function(x, ...)
     standardGeneric("plotOrdination"))
+
+#' @rdname plotJointRPCA
+#' @export
+setGeneric("plotJointRPCA", signature = c("x"), function(x, ...)
+    standardGeneric("plotJointRPCA"))

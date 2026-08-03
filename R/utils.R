@@ -24,6 +24,8 @@ TAXONOMY_RANKS <- mia:::TAXONOMY_RANKS
 .check_rowTree_present <- mia:::.check_rowTree_present
 .check_colTree_present <- mia:::.check_colTree_present
 .merge_features <- mia:::.merge_features
+.check_dimred_present <- mia:::.check_dimred_present
+.check_metadata_present <- mia:::.check_metadata_present
 
 .norm_label <- function(label, x){
     if(!is.null(label)){

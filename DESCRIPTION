@@ -48,6 +48,7 @@ Imports:
     ggnewscale,
     ggrepel,
     ggtree,
+    grid,
     methods,
     rlang,
     S4Vectors,
@@ -77,8 +78,7 @@ Suggests:
 Remotes:
     github::microbiome/miaTime
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 VignetteBuilder: knitr
 URL: https://github.com/microbiome/miaViz
 BugReports: https://github.com/microbiome/miaViz/issues
-

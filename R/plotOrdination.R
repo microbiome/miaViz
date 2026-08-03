@@ -17,20 +17,231 @@
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 #' object.
 #'
+#' @param dimred \code{character scalar}. Name of the reduced dimension result
+#' stored in \code{reducedDim(x)} to visualize.
+#'
 #' @param ... Additional parameters for plotting.
 #' \itemize{
+#'   \item \code{ncomponents}: \code{integer vector} of length 2 or
+#'   \code{integer scalar}. Specifies which ordination components are plotted.
+#'   If a scalar is provided, the first two components are used.
+#'   (Default: \code{2L})
+#'
 #'   \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
-#'   variable from \code{colData(x)} or \code{rowData(x)} which is used to
-#'   colour observations. (Default: \code{NULL})
+#'   variable from \code{colData(x)} or a feature from \code{rownames(x)} used
+#'   to colour observations. Feature abundances are taken from
+#'   \code{assay.type}. (Default: \code{NULL})
+#'
+#'   \item \code{fill.by}: \code{NULL} or \code{character scalar}. Specifies a
+#'   variable from \code{colData(x)} or a feature from \code{rownames(x)} used
+#'   to fill observations or ellipses. Feature abundances are taken from
+#'   \code{assay.type}. Cannot be used together with
+#'   \code{add.density = TRUE}. (Default: \code{NULL})
+#'
+#'   \item \code{shape.by}: \code{NULL} or \code{character scalar}. Specifies a
+#'   categorical variable from \code{colData(x)} used for point shapes.
+#'   (Default: \code{NULL})
+#'
+#'   \item \code{size.by}: \code{NULL} or \code{character scalar}. Specifies a
+#'   variable from \code{colData(x)} used for point sizes.
+#'   (Default: \code{NULL})
+#'
+#'   \item \code{group.by}: \code{NULL} or \code{character scalar}. Specifies a
+#'   categorical variable from \code{colData(x)} used for grouping when drawing
+#'   ellipses, centroids and centroid vectors. (Default: \code{NULL})
+#'
+#'   \item \code{linetype.by}: \code{NULL} or \code{character scalar}.
+#'   Specifies a categorical variable from \code{colData(x)} used for ellipse
+#'   line types. (Default: \code{NULL})
+#'
+#'   \item \code{pair.by}: \code{NULL} or \code{character scalar}. Specifies a
+#'   variable from \code{colData(x)} identifying observations that should be
+#'   connected by lines. (Default: \code{NULL})
+#'
+#'   \item \code{sort.by}: \code{NULL} or \code{character scalar}. Specifies a
+#'   variable from \code{colData(x)} used to order observations before drawing
+#'   connecting lines. (Default: \code{NULL})
+#'
+#'   \item \code{facet.by}: \code{NULL} or \code{character scalar}. Specifies a
+#'   categorical variable from \code{colData(x)} used to split the plot into
+#'   facets. (Default: \code{NULL})
+#'
+#'   \item \code{assay.type}: \code{character scalar}. Name of the assay used
+#'   when \code{colour.by} or \code{fill.by} specifies a feature.
+#'   (Default: \code{"counts"})
+#'
+#'   \item \code{add.points}: \code{logical scalar}. Whether to draw sample
+#'   points. (Default: \code{TRUE})
+#'
+#'   \item \code{add.ellipse}: \code{logical scalar}. Whether to draw confidence
+#'   ellipses around groups. (Default: \code{FALSE})
+#'
+#'   \item \code{add.density}: \code{logical scalar}. Whether to draw a
+#'   two-dimensional density estimate in the background.
+#'   (Default: \code{FALSE})
+#'
+#'   \item \code{add.centroids}: \code{logical scalar}. Whether to draw group
+#'   centroids. (Default: \code{FALSE})
+#'
+#'   \item \code{add.centroids.lines}: \code{logical scalar}. Whether to connect
+#'   observations to their group centroids. (Default: \code{FALSE})
+#'
+#'   \item \code{add.vectors}: \code{logical scalar}. Whether to draw vectors
+#'   from the global centroid to group centroids.
+#'   (Default: \code{FALSE})
+#'
+#'   \item \code{add.rotation}: \code{logical scalar}. Whether to draw rotation
+#'   (species score) coordinates if available in the ordination result.
+#'   (Default: \code{add.species})
+#'
+#'   \item \code{add.species}: \code{logical scalar}. Alias for
+#'   \code{add.rotation}. (Default: \code{FALSE})
+#'
+#'   \item \code{add.expl.var}: \code{logical scalar}. Whether to append the
+#'   percentage of explained variance to the axis labels when available.
+#'   (Default: \code{FALSE})
+#'
+#'   \item \code{scales}: \code{character scalar}. Scaling used for faceted
+#'   plots. Passed to \code{ggplot2::facet_wrap()}. (Default:
+#'   \code{"fixed"})
+#'
+#'   \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
+#'   Defaults to the ordination component names.
+#'
+#'   \item \code{panel.by.eigen}: \code{logical scalar}. Whether to scale the
+#'   panel aspect ratio according to the eigenvalues of the ordination when
+#'   available. (Default: \code{TRUE})
+#'
+#'   \item \code{point.shape}: Shape used for points.
+#'   (Default: \code{19})
+#'
+#'   \item \code{point.alpha}: \code{numeric scalar}. Transparency of points.
+#'   Must be between 0 and 1. (Default: \code{0.4})
+#'
+#'   \item \code{ellipse.alpha}: \code{numeric scalar}. Transparency of ellipse
+#'   fills. Must be between 0 and 1. (Default: \code{0.2})
+#'
+#'   \item \code{ellipse.linewidth}: \code{numeric scalar}. Line width of
+#'   ellipse borders. (Default: \code{0.5} or \code{0} when
+#'   \code{fill.by} is specified.)
+#'
+#'   \item \code{ellipse.linetype}: Integer specifying the ellipse line type.
+#'   (Default: \code{1})
+#'
+#'   \item \code{confidence.level}: \code{numeric scalar}. Confidence level used
+#'   for ellipse calculation. Must be between 0 and 1.
+#'   (Default: \code{0.95})
+#'
+#'   \item \code{adjust}: \code{numeric scalar}. Multiplicative adjustment for
+#'   the bandwidth used in the background density estimate.
+#'   (Default: \code{1})
 #' }
 #'
 #' @examples
 #' data("Tito2024QMP")
 #' tse <- Tito2024QMP
 #'
+#' # Compute relative abundances and an MDS ordination
+#' tse <- transformAssay(tse, method = "relabundance")
+#' tse <- addMDS(tse, assay.type = "relabundance", method = "bray", ncomponents = 50)
+#'
+#' # Basic ordination plot
+#' plotOrdination(tse, "MDS")
+#'
+#' # Colour samples by a sample-level variable
+#' plotOrdination(tse, "MDS", colour.by = "diagnosis")
+#'
+#' # Colour samples by the abundance of a single feature
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = rownames(tse)[1],
+#'     assay.type = "relabundance")
+#'
+#' # Use multiple aesthetics simultaneously
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = "diagnosis",
+#'     shape.by = "colonoscopy"
+#' )
+#'
+#' # Add confidence ellipses
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = "diagnosis",
+#'     group.by = "diagnosis",
+#'     add.ellipse = TRUE
+#' )
+#'
+#' # Fill ellipses instead of colouring them
+#' plotOrdination(
+#'     tse, "MDS",
+#'     fill.by = "diagnosis",
+#'     group.by = "diagnosis",
+#'     add.ellipse = TRUE
+#' )
+#'
+#' # Show explained variance in the axis labels
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = "diagnosis",
+#'     add.expl.var = TRUE
+#' )
+#'
+#' # Add group centroids
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = "diagnosis",
+#'     group.by = "diagnosis",
+#'     add.centroids = TRUE
+#' )
+#'
+#' # Connect samples to their group centroids
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = "diagnosis",
+#'     group.by = "diagnosis",
+#'     add.centroids.lines = TRUE
+#' )
+#'
+#' # Show vectors from the global centroid to each group centroid
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = "diagnosis",
+#'     group.by = "diagnosis",
+#'     add.vectors = TRUE
+#' )
+#'
+#' # Draw a background density estimate
+#' plotOrdination(
+#'     tse, "MDS",
+#'     add.density = TRUE
+#' )
+#'
+#' # Split the plot into facets
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = "diagnosis",
+#'     facet.by = "colonoscopy"
+#' )
+#'
+#' # Plot different ordination components
+#' plotOrdination(
+#'     tse, "MDS",
+#'     ncomponents = c(2, 3)
+#' )
+#'
+#' # Customize point appearance
+#' plotOrdination(
+#'     tse, "MDS",
+#'     colour.by = "diagnosis",
+#'     point.shape = 17,
+#'     point.alpha = 0.8
+#' )
+#'
 #' @seealso
 #' \itemize{
 #'   \item \code{\link[scater:plotReducedDim]{scater::plotReducedDim}}
+#'   \item \code{\link[=plotCCA]{plotCCA}}
 #' }
 #'
 NULL
@@ -64,21 +275,10 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         assay.type = "counts",
         add.points = TRUE, add.ellipse = FALSE, add.density = FALSE,
         add.centroids = FALSE, add.centroids.lines = FALSE, add.vectors = FALSE,
-        add.rotation = FALSE, add.expl.var = FALSE,
+        add.rotation = add.species, add.species = FALSE, add.expl.var = FALSE,
         ...){
-    # Check if there are any reduced dim present
-    if( length(reducedDims(x)) == 0L ){
-        stop("No data present in reducedDim(x).", call. = FALSE)
-    }
     # Check that dimred can be found
-    is_name <- .is_a_string(dimred) && dimred %in% reducedDimNames(x)
-    is_index <- .is_an_integer(dimred) && dimred > 0L &&
-        dimred <= length(reducedDims(x))
-    if( !(is_name || is_index) ){
-        stop("'dimred' must specify data from reducedDim(x). It must be one ",
-            "of the following options: '",
-            paste0(reducedDimNames(x), collapse = "', '"), "'", call. = FALSE)
-    }
+    .check_dimred_present(dimred, x)
     # Check that ncomponents is correct. We can only visualize 2 components.
     if( .is_an_integer(ncomponents) ){
         ncomponents <- seq_len(ncomponents)
@@ -91,16 +291,15 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     }
 
     # Check aesthetic variables
-    temp <- .check_metadata_variable(tse, colour.by, FALSE, TRUE, FALSE, TRUE)
-    temp <- .check_metadata_variable(tse, fill.by, FALSE, TRUE, FALSE, TRUE)
-    temp <- .check_metadata_variable(tse, shape.by, FALSE, TRUE, FALSE, FALSE)
-    temp <- .check_metadata_variable(tse, size.by, FALSE, TRUE, FALSE, FALSE)
-    temp <- .check_metadata_variable(
-        tse, linetype.by, FALSE, TRUE, FALSE, FALSE)
-    temp <- .check_metadata_variable(tse, group.by, FALSE, TRUE, FALSE, FALSE)
-    temp <- .check_metadata_variable(tse, pair.by, FALSE, TRUE, FALSE, FALSE)
-    temp <- .check_metadata_variable(tse, sort.by, FALSE, TRUE, FALSE, FALSE)
-    temp <- .check_metadata_variable(tse, facet.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(x, colour.by, FALSE, TRUE, FALSE, TRUE)
+    temp <- .check_metadata_variable(x, fill.by, FALSE, TRUE, FALSE, TRUE)
+    temp <- .check_metadata_variable(x, shape.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(x, size.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(x, linetype.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(x, group.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(x, pair.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(x, sort.by, FALSE, TRUE, FALSE, FALSE)
+    temp <- .check_metadata_variable(x, facet.by, FALSE, TRUE, FALSE, FALSE)
     # If colour.by specifies rowname, we check assay.type as the abundance
     # values are used for coloring
     if( !is.null(colour.by) && colour.by %in% rownames(x) ){
@@ -165,7 +364,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         add.expl.var = FALSE, ...){
     # Get data and store the original attributes that might include rotation
     # data, for instance
-    df <- reducedDim(x, dimred)
+    df <- reducedDim(x, dimred)[, ncomponents]
     orig_attributes <- attributes(df)
     orig_attributes <- orig_attributes[
         !names(orig_attributes) %in% c("dim", "dimnames") ]
@@ -176,25 +375,24 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     }
     df <- df |> as.data.frame()
     # Take only 2 specified columns
-    df <- df[, ncomponents]
     x_var <- colnames(df)[[1L]]
     y_var <- colnames(df)[[2L]]
 
-    # Get rotation data adnd put it in correct format
+    # Get rotation data and put it in correct format
     rotation <- NULL
-    rotation_names <- c("rotation")
+    rotation_names <- c("rotation", "species")
     if( any(rotation_names %in% names(orig_attributes)) ){
-        rotation_names <- rotation_names[[1L]]
+        rotation_names <- rotation_names[
+            rotation_names %in% names(orig_attributes)][[1L]]
         rotation <- orig_attributes[[rotation_names]] |> as.data.frame()
         rotation <- rotation[, ncomponents, drop = FALSE]
         colnames(rotation) <- colnames(df)
     }
 
-    expl_var_name <- c("eig")
     xlab <- x_var
     ylab <- y_var
-    if( add.expl.var && any(expl_var_name %in% names(orig_attributes)) ){
-        eigen <- orig_attributes[expl_var_name][[1L]]
+    eigen <- orig_attributes[["eig"]]
+    if( add.expl.var && !is.null(eigen) ){
         xlab <- paste0(
             xlab, " (",
             round(eigen[ncomponents][[1L]], 1),
@@ -284,6 +482,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     )
     attr(df, "rotation") <- rotation
     attr(df, "centroids") <- df_centroids
+    attr(df, "eigen") <- eigen
     return(df)
 }
 
@@ -291,7 +490,8 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 .ordination_plotter <- function(
         df, scales = "fixed", add.points = TRUE, add.ellipse = FALSE,
         add.density = FALSE, add.centroids = FALSE, add.centroids.lines = FALSE,
-        add.vectors = FALSE, add.rotation = FALSE, ...){
+        add.vectors = FALSE, add.rotation = add.species, add.species = FALSE,
+        ...){
     # Initialize the plot
     p <- ggplot(df, aes(
         x = .data[[attributes(df)[["x"]]]],
@@ -345,11 +545,6 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     }
     # Adjust theme
     p <- .adjust_ordination_theme(p, df, ...)
-
-    # Enforce same scale to x and y axis. Without equal scale, the results and
-    # interpretations might be misleading
-    p <- p + coord_equal()
-
     return(p)
 }
 
@@ -473,6 +668,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 
 # This methods creates vectors that start from global mean and ends to group
 # centroids. This shows how the covariate correlates with the ordination.
+#' @importFrom ggrepel geom_label_repel
 .add_centroids_vector <- function(p, df, grouping_var, ...){
     df_centroids <- attributes(df)[["centroids"]]
     # Visualize vectors
@@ -486,7 +682,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         size = 1
     )
     # Add label to denote which vector belongs to which group
-    p <- p + ggrepel::geom_label_repel(
+    p <- p + geom_label_repel(
         data = df_centroids,
         mapping = aes(
             x = x_centroid,
@@ -500,7 +696,6 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 # ordination.
 .add_rotation <- function(p, df){
     # The points are added only if the rotation is present in the data
-    rot_names <- c("rotation")
     if( !is.null(attributes(df)[["rotation"]]) ){
         df_species <- attributes(df)[["rotation"]]
         # Add points
@@ -549,12 +744,16 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         p, df,
         xlab = attributes(df)[["xlab"]],
         ylab = attributes(df)[["ylab"]],
+        panel.by.eigen = TRUE,
         ...){
     if( !.is_a_string(xlab) ){
         stop("'xlab' must be a single character value.", call. = FALSE)
     }
     if( !.is_a_string(ylab) ){
         stop("'ylab' must be a single character value.", call. = FALSE)
+    }
+    if( !.is_a_bool(panel.by.eigen) ){
+        stop("'panel.by.eigen' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     p <- p + theme_classic()
@@ -574,5 +773,28 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     if( !is.null(attributes(df)[["linetype.by"]]) ){
         p <- p + labs(linetype = attributes(df)[["linetype.by"]])
     }
+
+    # Use equal scaling on both axes so that one unit on the x-axis has the same
+    # physical length as one unit on the y-axis. This preserves distances and
+    # angles in the ordination and avoids visual distortion.
+    p <- p + coord_equal()
+    # Make the panel dimensions proportional to the eigenvalues so that the
+    # relative lengths of the axes reflect the variation explained by each
+    # ordination axis.
+    if( panel.by.eigen && !is.null(attributes(df)[["eigen"]]) ){
+        eig <- attributes(df)[["eigen"]]
+        p <- p + theme(aspect.ratio = eig[2] / eig[1])
+    }
+
+    # Adjust colors
+    name <- if(!is.null(attributes(df)[["colour.by"]]))
+        attributes(df)[["colour.by"]] else attributes(df)[["fill.by"]]
+    vals <- if(!is.null(attributes(df)[["colour.by"]]))
+        df[[attributes(df)[["colour.by"]]]] else attributes(df)[["fill.by"]]
+    p <- .resolve_plot_colours(
+        p, vals, name,
+        fill = !is.null(attributes(df)[["fill.by"]])
+    )
+
     return(p)
 }
