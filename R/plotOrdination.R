@@ -364,11 +364,11 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         add.expl.var = FALSE, ...){
     # Get data and store the original attributes that might include rotation
     # data, for instance
-    df <- reducedDim(x, dimred)[, ncomponents]
+    df <- reducedDim(x, dimred)
     orig_attributes <- attributes(df)
     orig_attributes <- orig_attributes[
         !names(orig_attributes) %in% c("dim", "dimnames") ]
-
+    df <- df[, ncomponents]
     # Add colnames if they are not present
     if( is.null(colnames(df)) ){
         colnames(df) <- paste0(dimred, ncomponents)
