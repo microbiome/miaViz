@@ -368,13 +368,14 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     orig_attributes <- attributes(df)
     orig_attributes <- orig_attributes[
         !names(orig_attributes) %in% c("dim", "dimnames") ]
+    # Subset the data to include specified columns to plot
     df <- df[, ncomponents]
     # Add colnames if they are not present
     if( is.null(colnames(df)) ){
         colnames(df) <- paste0(dimred, ncomponents)
     }
     df <- df |> as.data.frame()
-    # Take only 2 specified columns
+    # Take names of the columns that will be plotted
     x_var <- colnames(df)[[1L]]
     y_var <- colnames(df)[[2L]]
 
