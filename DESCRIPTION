@@ -1,28 +1,27 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.17.6
+Version: 1.21.1
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
              comment = c(ORCID = "0000-0002-8563-8884")), 
       person(given = "Felix G.M.", family = "Ernst", role = c("aut"),
-             email = "felix.gm.ernst@outlook.com",
              comment = c(ORCID = "0000-0001-5064-0928")),
       person(given = "Leo", family = "Lahti", role = c("aut"),
              email = "leo.lahti@iki.fi",
              comment = c(ORCID = "0000-0001-5537-637X")),
       person(given = "Basil", family = "Courbayre", role = c("ctb")),
       person(given = "Giulio", family = "Benedetti", role = c("ctb"),
-             email = "giulio.benedetti@utu.fi",
              comment = c(ORCID = "0000-0002-8732-7692")),
       person(given = "Théotime", family = "Pralas", role=c("ctb")),
-      person(given = "Nitesh", family = "Turaga", role=c("ctb")),
       person(given = "Chouaib", family = "Benchraka", role=c("ctb")),
       person(given = "Sam", family = "Hillman", role=c("ctb")),
-      person(given = "Muluh", family = "Muluh", role=c("ctb")),
+      person(given = "Geraldson", family = "Muluh", role=c("ctb")),
       person(given = "Noah", family = "De Gunst", role=c("ctb")),
       person(given = "Ely", family = "Seraidarian", role=c("ctb")),
       person(given = "Himmi", family = "Lindgren", role=c("ctb")),
+      person(given = "Akewak", family = "Jeba", role=c("ctb"),
+             comment = c(ORCID = "0009-0007-1347-7552")),
       person(given = "Vivian", family = "Ikeh", role=c("ctb")))
 Description: The miaViz package implements functions to visualize
     TreeSummarizedExperiment objects especially in the context of microbiome
@@ -50,6 +49,7 @@ Imports:
     ggtree,
     grid,
     methods,
+    patchwork,
     rlang,
     S4Vectors,
     scales,
@@ -69,14 +69,18 @@ Suggests:
     circlize,
     ComplexHeatmap,
     ggh4x,
+    ggpubr,
     knitr,
+    maaslin3,
+    mediation,
+    miaTime,
     patchwork,
     rmarkdown,
+    rstatix,
     shadowtext,
     testthat,
-    vegan
-Remotes:
-    github::microbiome/miaTime
+    vegan,
+    vipor
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.3
 VignetteBuilder: knitr

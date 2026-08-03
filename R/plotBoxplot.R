@@ -44,6 +44,17 @@
 #'
 #' @param ... Additional parameters for plotting.
 #' \itemize{
+#'   \item \code{point.offset}: \code{Character scalar}. Utilized method
+#'   for offsetting points. The available options include:
+#'   \code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
+#'   \code{"swarm"}
+#'   (see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
+#'   \code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
+#'   \code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
+#'   (see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
+#'   for details), \code{"jitter"}, and \code{"none"},
+#'   If \code{"none"}, ofsetting is not applied. (Default: \code{"jitter"})
+#'
 #'   \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
 #'   variable from \code{colData(x)} or \code{rowData(x)} which is used to
 #'   colour observations. (Default: \code{NULL})
@@ -88,20 +99,14 @@
 #'   \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 #'   barplots. (Default: \code{0})
 #'
-#'   \item \code{apply.beeswarm}: \code{Logical scalar}. Whether to apply
-#'   beeswarm layout for points. (Default: \code{FALSE})
-#'
 #'   \item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
-#'   (Default: \code{0.5})
+#'   (Default: \code{0.3})
 #'
 #'   \item \code{jitter.height}: \code{Numeric scalar}. Height of jitter.
 #'   (Default: \code{0})
 #'
 #'   \item \code{dodge.width}: \code{Numeric scalar}. Width of dodge. How far
 #'   apart the groups are plotted? (Default: \code{0})
-#'
-#'   \item \code{beeswarm.method}: \code{Character scalar}. Beeswarm method.
-#'   Fed to function \code{beeswarm::beeswarm()}. (Default: \code{"swarm"})
 #'
 #'   \item \code{beeswarm.corral}: \code{Character scalar}. Beeswarm's "corral"
 #'   method. Fed to function \code{beeswarm::beeswarm()}.
@@ -161,7 +166,8 @@
 #' plotBoxplot(
 #'     tse, assay.type = "relabundance",
 #'     x = "diagnosis", fill.by = "diagnosis",
-#'     features = rownames(tse), facet.by = "rownames"
+#'     features = rownames(tse), facet.by = "rownames",
+#'     ncol = 2
 #' )
 #'
 #' # Add proportion bar
@@ -178,7 +184,7 @@
 #'     x = "diagnosis", group.by = "diagnosis",
 #'     colour.by = "colonoscopy",
 #'     features = rownames(tse), facet.by = "rownames",
-#'     apply.beeswarm = TRUE, add.box = FALSE
+#'     point.offset = "swarm", add.box = FALSE
 #' )
 #'
 #' # Do not add points
@@ -188,6 +194,31 @@
 #'     features = rownames(tse), facet.by = "rownames",
 #'     add.points = FALSE
 #' )
+#'
+#' # Calculate statistical significance with Wilcoxon test
+#' plotBoxplot(
+#'     tse,
+#'     col.var = "shannon",
+#'     fill.by = "diagnosis",
+#'     add.significance = TRUE
+#' )
+#'
+#' \dontrun{
+#' # Add pre-calculated p-values
+#' # Calculate p-values
+#' df <- meltSE(tse, add.col = TRUE)
+#' pvals <- df |>
+#'     rstatix::t_test(shannon ~ diagnosis) |>
+#'     ungroup() |>
+#'     as.data.frame()
+#' # Add them with p.value argument
+#' plotBoxplot(
+#'     tse,
+#'     x = "diagnosis",
+#'     col.var = "shannon",
+#'     p.value = pvals
+#' )
+#' }
 #'
 #' \dontrun{
 #' library(microbiomeDataSets)
@@ -244,7 +275,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.chance = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
-        add.proportion = FALSE, ...){
+        add.proportion = FALSE, add.threshold = FALSE, scales = "fixed",
+        p.value = NULL, add.significance = FALSE, ...){
     # Either assay.type. row.var or col.var must be specified
     if( sum(c(is.null(assay.type), is.null(row.var), is.null(col.var))) != 2L ){
         stop("Please specify either 'assay.type', 'row.var', or 'col.var'.",
@@ -277,6 +309,12 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     if( !.is_a_bool(add.proportion) ){
         stop("'add.proportion' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(add.threshold) ){
+        stop("'add.threshold' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(add.significance) ){
+        stop("'add.significance' must be TRUE or FALSE.", call. = FALSE)
     }
     # Check colData/rowData variables
     temp <- .check_metadata_variable(tse, row.var, row = TRUE)
@@ -351,6 +389,44 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         stop("'facet.by' must not match with 'x', 'group.by' or 'fill.by'.",
             call. = FALSE)
     }
+    # scales is passed to faceting, but as we use it also to adjust the point
+    # positions, we have to test that it has correct value.
+    vals <- c("fixed", "free", "free_x", "free_y")
+    if( !(.is_a_string(scales) && scales %in% vals) ){
+        stop("'scales' must be a single character value from the following ",
+            "options: '", paste0(vals, collapse = "', '"), "'", call. = FALSE)
+    }
+    # p.value defines p-values to be plotted. It should be in specific format.
+    # It should have p-values and groups along with facetting variable
+    # if it was specified.
+    if( is.null(x) && !is.null(p.value) ){
+        stop("If 'x' is not specified, 'p.value' must be NULL.", call. = FALSE)
+    }
+    if( !(is.null(p.value) || is.data.frame(p.value)) ){
+        stop("'p.value' must be NULL or data.frame.", call. = FALSE)
+    }
+    cols <- c("group1", "group2")
+    p_cols <- c("p", "p.adj", "p.adj.signif")
+    if( is.data.frame(p.value) && (
+            !all(cols %in% colnames(p.value)) ||
+            sum(p_cols %in% colnames(p.value)) == 0L)
+        ){
+        stop("'p.value' must have columns '", paste0(cols, collapse = "', '"),
+            "' and one of the following columns: '",
+            paste0(p_cols, collapse = "', '"), "'", call. = FALSE)
+    }
+    # Check that grouping was correctly specified, i.e., the same grouping that
+    # will be applied to boxplot can be found from p-values.
+    grouping_vars <- c(facet.by, x)
+    comparison_vars <- c(fill.by, group.by) |> unique()
+    if( is.null(comparison_vars) ){
+        comparison_vars <- x
+    }
+    grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
+    if( is.data.frame(p.value) && !all(grouping_vars %in% colnames(p.value)) ){
+        stop("'p.value' must include the following columns: '",
+            paste0(grouping_vars, collapse = "', '"), "'", call. = FALSE)
+    }
     return(NULL)
 }
 
@@ -361,7 +437,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         pair.by = NULL, add.chance = FALSE,
         colour.by = color.by, color.by = NULL,
         size.by = NULL, shape.by = NULL, facet.by = NULL,
-        fill.by = NULL, add.proportion = FALSE,
+        fill.by = NULL, add.proportion = FALSE, p.value = NULL,
+        add.significance = FALSE,
         ...){
     # If assay.type is specified, get melted data
     all_vars <- c(x, group.by, colour.by, size.by, shape.by, facet.by, fill.by)
@@ -380,10 +457,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             add.row = c(row.var, row_vars)
         )
     }
-    # If features were specified, subset data
-    if( !is.null(features) ){
-        df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
-    }
     # If row.var was specified, get the data from rowData
     if( !is.null(row.var) ){
         df <- rowData(tse)[, c(row.var, all_vars), drop = FALSE]
@@ -399,6 +472,26 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # Prevalence can be added only if values are non-negative
     is_negative <- any(!is.na(df[[c(assay.type, col.var, row.var)]]) &
         df[[c(assay.type, col.var, row.var)]]<0)
+
+    # If user wants to add significance, but p-value was not defined, calculate
+    # them.
+    if( add.significance && is.null(p.value) ){
+        p.value <- .calculate_significance(
+            df, c(assay.type, col.var, row.var),
+            x, facet.by, fill.by, group.by, pair.by,
+            features, ...)
+    }
+
+    # If features were specified, subset data. The subsetting is done after
+    # calculating p-values to ensure that they are calculated for whole data
+    # instead of subset so that the correction is done correctly.
+    if( !is.null(features) ){
+        df <- df[ df[["FeatureID"]] %in% features, , drop = FALSE]
+        if( !is.null(p.value) ){
+            p.value <- p.value[
+                p.value[["rownames"]] %in% features, , drop = FALSE]
+        }
+    }
 
     # If user specified, calculate difference
     difference <- NULL
@@ -422,6 +515,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         x <- "x_axis"
         df[[x]] <- 0
         remove.x.axis <- TRUE
+        if( !is.null(p.value) ){
+            p.value[[x]] <- 0
+        }
     }
     # We add jitter to points manually. The problem is that ggplot evaluates
     # jitter for each layer separately when rendering the plot. We could specify
@@ -433,6 +529,41 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         ...)
     df <- df |>
         as.data.frame()
+
+    # Add p-values placement
+    if( !is.null(p.value) ){
+        p.value <- .add_p_value_position(
+            p.value, x, c(assay.type, col.var, row.var), group.by, fill.by,
+            facet.by, df, ...)
+    }
+
+    # Check that p.value data.frame has the correct grouping variables. If
+    # group.by or fill.by were specified the comparisons were made based on
+    # them. If they are not specified, the comparison were made based on x axis
+    # variable. Check that this is correct.
+    if( !is.null(p.value) && length(c(group.by, fill.by)) > 0L &&
+            !all(c(p.value[["group1"]], p.value[["group2"]]) %in%
+                df[[unique(fill.by, group.by)]]) ){
+        stop("Groups in p.value[['group1']] and p.value[['group2']] ",
+            "must match with 'fill.by'/'group.by'.", call. = FALSE)
+    } else if( !is.null(p.value) && length(c(group.by, fill.by)) == 0L &&
+            !all(c(p.value[["group1"]], p.value[["group2"]]) %in% df[[x]]) ){
+        stop("Groups in p.value[['group1']] and p.value[['group2']] ",
+            "must match with 'x'.", call. = FALSE)
+    }
+    # If grouping variables were specified, x was used as group_by variable and
+    # not as comparison variable.
+    if( !is.null(p.value) && !is.null(x) && !all(p.value[[x]] %in% df[[x]])){
+        stop("Groups in p.value[['", x, "']] ",
+            "must match with 'x'.", call. = FALSE)
+    }
+    # If facetting is specified in the plot, the same facet variable should be
+    # found from p values.
+    if( !is.null(facet.by) && !is.null(p.value) &&
+            !all(p.value[[facet.by]] %in% df[[facet.by]]) ){
+        stop("Groups in p.value[['", facet.by, "']] ",
+            "must match with 'facet.by'.", call. = FALSE)
+    }
 
     # Add plotting options to attributes of the data.frame. Now the data.frame
     # includes all the information for plotting.
@@ -452,6 +583,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         difference = difference,
         remove.x.axis = remove.x.axis
     )
+    attributes(df)[["p.value"]] <- p.value
     return(df)
 }
 
@@ -472,7 +604,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # first instance. Otherwise it would be time point 1 -> time point 2,
     # which is NA.
     df <- df |>
-        arrange(desc(across(all_of(c(pair.by, x)))))
+        arrange(desc(across(all_of(c("difference", pair.by, x)))))
     return(df)
 }
 
@@ -483,8 +615,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 #' @importFrom dplyr ungroup
 .add_fixed_jitterdodge <- function(
         df, x, y, group.by, fill.by, facet.by,
-        jitter.width = 0.5, jitter.height = 0, dodge.width = 0.8,
-        apply.beeswarm = FALSE, ...){
+        jitter.width = 0.3, jitter.height = 0, dodge.width = 0.8,
+        point.offset = "jitter", ...){
     if( !.is_a_numeric(jitter.width) ){
         stop("'jitter.width' must be numeric.", call. = FALSE)
     }
@@ -494,23 +626,44 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !(.is_a_numeric(dodge.width) && (dodge.width >=0 && dodge.width <=1)) ){
         stop("'dodge.width' must be numeric (0,1).", call. = FALSE)
     }
-    if( !.is_a_bool(apply.beeswarm) ){
-        stop("'apply.beeswarm' must be TRUE or FALSE.", call. = FALSE)
+    # Check that the offset method can be found from the supported methods
+    beeswarm_methods <- c("swarm", "compactswarm", "center", "hex", "square")
+    vipor_methods <- c(
+        "quasirandom", "pseudorandom", "smiley", "maxout", "frowney", "minout",
+        "tukey", "tukeyDense")
+    jitter_methods <- c("jitter", "none")
+    if( !(.is_a_string(point.offset) &&
+            point.offset %in% c(
+                beeswarm_methods, vipor_methods, jitter_methods)) ){
+        stop("'point.offset' must be a single character value from the ",
+            "following options: '",
+            paste0(
+                sort(c(beeswarm_methods, vipor_methods, jitter_methods)),
+                collapse = "', '"),
+            "'", call. = FALSE)
     }
-    #
+    # If user do not want to offset points, we disable jitter
+    if( point.offset == "none" ){
+        jitter.width <- jitter.height <- 0
+    }
     # Determine dodge grouping variable, if any
     dodge_var <- if (!is.null(fill.by)) fill.by else group.by
     # Convert categorical x-axis to numeric
-    df <- .categorical_x_to_numeric(df, x, facet.by)
+    df <- .categorical_x_to_numeric(df, x, facet.by, ...)
     # Apply dodge
     df <- .apply_dodge(df, x, dodge_var, dodge.width)
-    # Apply either jitter or beeswarm (or none)
-    if( !apply.beeswarm ){
+    # Apply offset based on specified method
+    if( point.offset %in% vipor_methods ){
+        df <- .apply_vipor_spread(
+            df, x, y, facet.by, dodge_var, dodge.width, jitter.width,
+            vipor.method = point.offset, ...)
+    } else if( point.offset %in% beeswarm_methods ){
+        df <- .apply_beeswarm(
+            df, x, y, facet.by, dodge_var, dodge.width, jitter.width,
+            beeswarm.method = point.offset, ...)
+    } else{
         df <- .apply_jitter(
             df, x, y, dodge_var, dodge.width, jitter.width, jitter.height)
-    } else{
-        df <- .apply_beeswarm(
-            df, x, y, facet.by, dodge_var, dodge.width, jitter.width, ...)
     }
     df <- df |> ungroup()
     return(df)
@@ -519,14 +672,21 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function converts categorical x axis values to numeric so that we can use
 # them to determine position of points
 #' @importFrom dplyr group_by across all_of mutate
-.categorical_x_to_numeric <- function(df, x, facet.by){
+.categorical_x_to_numeric <- function(df, x, facet.by, scales = "fixed", ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     x_point <- NULL
+
+    # Ensure that the data is in data.frame format
     df <- df |>
-        as.data.frame() |>
-        # If there are facets, we specify jitter and dodge for each one
-        # separately
-        group_by(across(all_of(facet.by))) |>
+        as.data.frame()
+    # If there are facets, we specify jitter and dodge for each one
+    # separately
+    if( scales %in% c("free", "free_x") ){
+        df <- df |>
+            group_by(across(all_of(facet.by)))
+    }
+    # Add point positions
+    df <- df |>
         mutate(
             # Get original x-axis position
             x_point = as.numeric(factor(.data[[x]])),
@@ -583,6 +743,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function calculates the jitter spread based on grouping and user-defined
 # jitter width.
+#' @importFrom dplyr n_distinct
 .get_jitter_spread <- function(df, x, dodge.var, dodge.width, jitter.width){
     # Get the number of groups. If the coloring/grouping is the same as x axis,
     # it is not taken into account as x axis already have separate placement for
@@ -599,7 +760,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function adds beeswarm to points.
 #' @importFrom utils getFromNamespace
-#' @importFrom dplyr group_by across all_of n_distinct group_modify
+#' @importFrom dplyr group_by across all_of group_modify arrange select
 #' @importFrom scales rescale
 .apply_beeswarm <- function(
         df, x, y, facet.by, dodge.var, dodge.width, jitter.width,
@@ -607,7 +768,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     .require_package("beeswarm")
     # To suppress cmdcheck warning:
     # '::' or ':::' import not declared from: ‘beeswarm’
-    beeswarm_fun <- getFromNamespace("beeswarm", "beeswarm")
+    point_fun <- getFromNamespace("beeswarm", "beeswarm")
+
+    # Add row IDs to preserve original order
+    df[[".row_id"]] <- seq_len(nrow(df))
 
     # Calculate spreading of beeswarm
     max_spread <- .get_jitter_spread(
@@ -620,7 +784,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         group_by(across(all_of(grouping_vars))) |>
         group_modify(~{
             # We calculate beeswarm with beeswarm::beeswarm()
-            swarm <- beeswarm_fun(
+            swarm <- point_fun(
                 .x[[y]],
                 method = beeswarm.method,
                 corral = beeswarm.corral,
@@ -633,16 +797,238 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             .x[["x_point"]] <- mean(.x[["x_point"]]) + x_scaled
             .x[["y_point"]] <- swarm[["y"]]
             return(.x)
-        })
+        }) |>
+        arrange(.row_id) |>
+        select(-.row_id)
     return(df)
+}
+
+#' @importFrom utils getFromNamespace
+#' @importFrom dplyr group_by across all_of group_modify arrange select
+#' @importFrom scales rescale
+.apply_vipor_spread <- function(
+        df, x, y, facet.by, dodge.var, dodge.width, jitter.width,
+        vipor.method, ...){
+    .require_package("vipor")
+    # To suppress cmdcheck warning:
+    # '::' or ':::' import not declared from: ‘vipor’
+    point_fun <- getFromNamespace("offsetSingleGroup", "vipor")
+    # vipor cannot be used with NA values as it calculates density, and density
+    # cannot be calculated if there are missing values
+    if( anyNA(df[[y]]) ){
+        stop("Please choose another offset method. The current option, ",
+            "point.offset='", vipor.method, "', cannot be used with ",
+            "missing values.", call. = FALSE)
+    }
+
+    # Add row IDs to preserve original order
+    df[[".row_id"]] <- seq_len(nrow(df))
+
+    # Calculate spreading of beeswarm
+    max_spread <- .get_jitter_spread(
+        df, x, dodge.var, dodge.width, jitter.width)
+    # We apply offset for each facet, x axis variable and group
+    grouping_vars <- c(facet.by, x, dodge.var) |> unique()
+    # Apply offset function from vipor package
+    df <- df |>
+        group_by(across(all_of(grouping_vars))) |>
+        group_modify(~{
+            # vipor offsets for swarm effect
+            x_offsets <- point_fun(
+                .x[[y]],
+                method = vipor.method
+            )
+            # Adjust x position based on dodge + jitter width
+            x_scaled <- rescale(
+                x_offsets, to = c(-max_spread/2, max_spread/2))
+            .x[["x_point"]] <- mean(.x[["x_point"]]) + x_scaled
+            .x[["y_point"]] <- .x[[y]]
+            return(.x)
+        }) |>
+        arrange(.row_id) |>
+        select(-.row_id)
+    return(df)
+}
+
+# This function calculates significance between the groups
+#' @importFrom dplyr group_by across all_of arrange ungroup
+.calculate_significance <- function(
+        df, y, x, facet.by, fill.by, group.by, pair.by, features,
+        paired = !is.null(pair.by),
+        significance.method = "wilcox.test", p.adjust.method = "fdr",
+        mark.significance = FALSE, digits = 3, ...){
+    #
+    if( !.is_a_bool(paired) ){
+        stop("'paired' must be TRUE or FALSE.", call. = FALSE)
+    }
+    supported_methods <- c("wilcox.test", "wilcoxon", "t-test", "t.test")
+    if( !(.is_a_string(significance.method) &&
+            significance.method %in% supported_methods) ){
+        stop("'significance.method' must be a single character value from the ",
+            "the following options: '",
+            paste0(supported_methods, collapse = "', '"), "'", call. = FALSE)
+    }
+    if( !.is_a_string(p.adjust.method) ){
+        stop("'p.adjust.method' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_bool(mark.significance) ){
+        stop("'mark.significance' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_an_integer(digits) ){
+        stop("'digits' must be a single integer value.", call. = FALSE)
+    }
+    .require_package("rstatix")
+    #
+    # Get correct test function
+    FUN <- if( significance.method %in% c("wilcox.test", "wilcoxon") )
+        rstatix::wilcox_test else rstatix::t_test
+    # Get variables. facet.by and x will specify the grouping variables, i.e.,
+    # we test the significance for these groups separately.
+    grouping_vars <- c(facet.by, x)
+    # fill.by. and group.by specify groups for comparison. If they are not
+    # specified, we make comparison between x axis groups.
+    comparison_vars <- c(fill.by, group.by) |> unique()
+    if( is.null(comparison_vars) ){
+        comparison_vars <- x
+    }
+    grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
+    # Run test
+    pvals <- df |>
+        as.data.frame() |>
+        # Create grouping to test these groups separately
+        group_by(across(all_of(grouping_vars))) |>
+        # If we calculate paired analysis, sort data so that correct samples
+        # are matched with correct subjects.
+        arrange(across(all_of(pair.by))) |>
+        # This runs pairwise comparisons automatically if there are more than 2
+        # groups
+        FUN(
+            as.formula(paste0(y, " ~ ", comparison_vars)),
+            paired = paired,
+            p.adjust.method = "none"
+            ) |>
+        ungroup() |>
+        rstatix::adjust_pvalue(method = p.adjust.method)
+    # If user wants to mark only significance levels with asterisks
+    if( mark.significance ){
+        pvals <- pvals |>
+            rstatix::add_significance()
+    } else{
+        # Otherwise we round p-values
+        pvals <- pvals |>
+            rstatix::p_round(digits = digits)
+    }
+
+    # If user specified features, subset the p-values
+    if( !is.null(features) ){
+        pvals <- pvals[pvals[["rownames"]] %in% features, , drop = FALSE]
+        # Subset also metadata as the data in there is used to define p-value
+        # placement
+        temp <- attributes(pvals)[["args"]][["data"]]
+        temp <- temp[temp[["rownames"]] %in% features, , drop = FALSE]
+        attributes(pvals)[["args"]][["data"]] <- temp
+    }
+
+    return(pvals)
+}
+
+# Add positions of p-values to the data.frame
+#' @importFrom dplyr group_by across all_of summarise rename mutate
+.add_p_value_position <- function(
+        pvals, x, y, group.by, fill.by, facet.by, df, dodge.width = 0.8,
+        step.increase = 0.12, ...){
+    if( any(!c("y.position", "xmin", "xmax") %in% colnames(pvals)) ){
+        # We could use rstatix::add_xy_position for calculating position for
+        # p-values. However, that approach would only work for p-values
+        # calculated with rstatix. That is why we calculate the positions
+        # manually; we know the positions, they are defined based on positions
+        # of box and points.
+        # In order to work, ggpubr::stat_pvalue_manual requires y.position
+        # and xmin and xmax.
+        grouping_vars <- c(facet.by, x)
+        comparison_vars <- c(fill.by, group.by) |> unique()
+        if( is.null(comparison_vars) ){
+            comparison_vars <- x
+        }
+        grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
+
+        # Calculate y axis positions. They are defined based on maximum y axis
+        # values for each comparison. Each facet gets its own value.
+        ypos <- df |>
+            group_by(across(all_of(c(x, grouping_vars, comparison_vars)))) |>
+            summarise(
+                y.position = max(y_point, na.rm = TRUE) * (1+step.increase),
+                .groups = "drop")
+        # Add the positions to p values
+        pvals <- pvals |>
+            dplyr::left_join(ypos, by = setNames(
+                c(comparison_vars, grouping_vars), c("group1", grouping_vars))
+                ) |>
+            rename(y1 = y.position) |>
+            dplyr::left_join(ypos, by = setNames(
+                c(comparison_vars, grouping_vars), c("group2", grouping_vars))
+                ) |>
+            rename(y2 = y.position) |>
+            mutate(
+                y.position = pmax(y1, y2)
+            ) |>
+            dplyr::select(-y1, -y2)
+
+        # Avoid overlapping. Add some random deviation.
+        cols_to_group <- intersect(
+            c(x, grouping_vars, comparison_vars),
+            colnames(pvals)
+        )
+        pvals <- pvals |>
+            group_by(across(all_of(cols_to_group))) |>
+            mutate(
+                y.position = y.position +
+                    (seq_along(y.position) - 1) * 0.05 * max(y.position)
+            ) |>
+            ungroup()
+
+        # Calculate x axis positions. They are defined based on x axis and
+        # grouping. Each facet gets own positions.
+        # Determine dodge grouping variable, if any
+        dodge_var <- if (!is.null(fill.by)) fill.by else group.by
+        # Convert categorical x-axis to numeric
+        xpos <- .categorical_x_to_numeric(df, x, facet.by)
+        # Apply dodge to get position of center of box
+        xpos <- .apply_dodge(xpos, x, dodge_var, dodge.width)
+        # Add x position to p-balues
+        variables <- c(x, grouping_vars, comparison_vars, "x_point") |> unique()
+        xpos <- xpos[, variables] |> unique()
+        pvals <- pvals |>
+            dplyr::left_join(xpos, by = setNames(
+                c(comparison_vars, grouping_vars), c("group1", grouping_vars))
+                ) |>
+            rename(x1 = x_point) |>
+            dplyr::left_join(xpos, by = setNames(
+                c(comparison_vars, grouping_vars), c("group2", grouping_vars))
+                ) |>
+            rename(x2 = x_point) |>
+            mutate(
+                xmin = pmin(x1, x2),
+                xmax = pmax(x1, x2)
+            ) |>
+            dplyr::select(-x1, -x2)
+    }
+    return(pvals)
 }
 
 # This function is the main plotter function
 .plot_boxplot <- function(
         df, add.box = TRUE, add.points = TRUE, scales = "fixed",
-        add.proportion = FALSE, ...){
+        add.proportion = FALSE, add.threshold = FALSE,
+        nrow = NULL, ncol = NULL, ...){
     if( !.is_a_string(scales) ){
         stop("'scales' must be a string.", call. = FALSE)
+    }
+    if( !(is.null(nrow) || .is_an_integer(nrow)) ){
+        stop("'nrow' must be a single integer.", call. = FALSE)
+    }
+    if( !(is.null(ncol) || .is_an_integer(ncol)) ){
+        stop("'ncol' must be a single integer.", call. = FALSE)
     }
     #
     # Initialize the plot
@@ -668,13 +1054,23 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( add.proportion ){
         p <- .add_prevalence_bar(p, df, scales, ...)
     }
+    # If user wants to add horizontal line to y-axis to denote threshold
+    if( add.threshold || add.proportion ){
+        p <- .add_threshold_line(p, ...)
+    }
     # If facetting was specified, split plot to separate panels
     if( !is.null(attributes(df)[["facet.by"]]) ){
         p <- p +
             facet_wrap(
-                ~ .data[[attributes(df)[["facet.by"]]]],
-                scales = scales
+                as.formula(paste("~", attributes(df)[["facet.by"]])),
+                scales = scales,
+                nrow = nrow,
+                ncol = ncol
             )
+    }
+    # If user wants to add p values
+    if( !is.null(attributes(df)[["p.value"]]) ){
+        p <- .add_pvalues_to_boxplot(p, df, ...)
     }
     # Adjust themes and titles
     p <- .adjust_boxplot_theme(p, df, add.box, ...)
@@ -710,8 +1106,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
 # This function adds points to plot
 .add_points_layer <- function(
-        p, df, x = "x_point", y = "y_point",
-        point.alpha = 0.65, point.size = 2, point.shape = 21,
+        p, df, point.alpha = 0.65, point.size = 2, point.shape = 19L,
         point.colour = point.color, point.color = "grey70", ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     x_point <- y_point <- NULL
@@ -775,8 +1170,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function adds bar under the boxplot to denote prevalence.
 #' @importFrom dplyr group_by across all_of mutate
 .add_prevalence_bar <- function(
-        p, df, scales, threshold = 0, dodge.width = 0.8, add.threshold = TRUE,
-        ...){
+        p, df, scales, threshold = 0, dodge.width = 0.8, ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     min_val <- max_val <- x_point <- width <- y_pos <- heigth <- prevalence <-
         NULL
@@ -785,9 +1179,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     if( !(.is_a_numeric(dodge.width) && (dodge.width >=0 && dodge.width <=1)) ){
         stop("'dodge.width' must be numeric (0,1).", call. = FALSE)
-    }
-    if( !(length(add.threshold) && is.logical(add.threshold)) ){
-        stop("'add.threshold' must be TRUE or FALSE.", call. = FALSE)
     }
     #
     # Get bar width based on box width
@@ -814,22 +1205,20 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             min_val = min(.data[[attributes(df)[["value"]]]], na.rm = TRUE),
             max_val = max(.data[[attributes(df)[["value"]]]], na.rm = TRUE),
             .groups = "keep"
-            )
-    # Calculate bars y-position. It is shared by facets.
-    grouping_var <- c(attributes(df)[["facet.by"]]) |> unique()
-    df_prev <- df_prev |>
-        group_by(across(all_of(grouping_var))) |>
-        mutate(
-            y_pos = min(min_val) - (max(max_val) - min(min_val))*0.1
-            )
+            ) |>
+        ungroup()
+
     # Depending on the scales, bar height can also be shared by facets. If the
     # y-axis is free, we adjust the height for each facet separately.
-    if( !scales %in% c("free", "free_y") ){
-        df_prev <- df_prev |> ungroup()
+    if( scales %in% c("free", "free_y") ){
+        grouping_var <- c(attributes(df)[["facet.by"]]) |> unique()
+        df_prev <- df_prev |>
+            group_by(across(all_of(grouping_var)))
     }
-    # Calculate height and width of the bar
+    # Calculate bars' y-position, height and width of the bar
     df_prev <- df_prev |>
         mutate(
+            y_pos = min(min_val) - (max(max_val) - min(min_val))*0.1,
             heigth = (max(max_val) - min(min_val))*0.025,
             width = bar_width
         )
@@ -854,12 +1243,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 ymin = y_pos - heigth / 2,
                 ymax = y_pos + heigth / 2),
             fill = "black", inherit.aes = FALSE)
-
-    # Finally add threshold as horizontal line
-    if( add.threshold ){
-        p <- p + geom_hline(yintercept = threshold, linetype = 2)
-    }
-
     return(p)
 }
 
@@ -890,6 +1273,23 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         bar.width <- bar.width / n_groups
     }
     return(bar.width)
+}
+
+# Add horizontal line to plot to denote threshold
+.add_threshold_line <- function(p, threshold = 0, ...){
+    if( !.is_a_numeric(threshold) ){
+        stop("'threshold' must be a single numeric value.", call. = FALSE)
+    }
+    p <- p + geom_hline(yintercept = threshold, linetype = 2)
+    return(p)
+}
+
+# This function adds user-defined p-values to the plot
+.add_pvalues_to_boxplot <- function(p, df, ...){
+    .require_package("ggpubr")
+    # Add p-values
+    p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], ...)
+    return(p)
 }
 
 # This function adjust the theme and titles of the plot

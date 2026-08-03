@@ -74,7 +74,15 @@ test_that("plot RDA/CCA", {
   # Vector or label text
   p_vec <- plotRDA(tse, "RDA", colour_by = "patient_status", vec.text = TRUE)
   p_lab <- plotRDA(tse, "RDA", colour_by = "patient_status", vec.text = FALSE)
-  # Column "fill" is present in p_vec and missing in p_lab, so length differs by 1
-  expect_length(ggplot_build(p_vec)[["data"]][[4]], 29)
-  expect_length(ggplot_build(p_lab)[["data"]][[4]], 28)
+  # There must be label column in both
+  expect_true( "label" %in% (ggplot_build(p_vec)[["data"]][[4]] |> names()) )
+  expect_true( "label" %in% (ggplot_build(p_lab)[["data"]][[4]] |> names()) )
+  # Check that the label texts match
+  for( i in seq_len(nrow(ggplot_build(p_vec)[["data"]][[4]]))){
+    expect_equal(
+        ggplot_build(p_lab)[["data"]][[4]][["label"]][[i]],
+        ggplot_build(p_vec)[["data"]][[4]][["label"]][[i]]
+    )
+  }
+
 })

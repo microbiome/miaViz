@@ -84,7 +84,7 @@ test_that("plotBoxplot handles NA values in data", {
     assayNames(tse) <- "counts"
     assay(tse, "counts")[1, 1] <- NA  # introduce NA
 
-    p <- plotBoxplot(tse, assay.type = "counts")
+    p <- plotBoxplot(tse, assay.type = "counts", point.offset = "jitter")
     expect_s3_class(p, "ggplot")
     expect_true(any(is.na(p$data$counts)))
 })

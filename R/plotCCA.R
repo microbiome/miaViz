@@ -107,7 +107,6 @@
 #'
 #' @examples
 #' # Load dataset
-#' library(miaViz)
 #' data("enterotype", package = "mia")
 #' tse <- enterotype
 #'
@@ -177,8 +176,6 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
             stop("reducedDim specified by 'dimred' must have at least 2 ",
                 "columns.", call. = FALSE)
         }
-        # Subset by taking only constrained axes
-        reduced_dim <- .subset_constrained_rda(reduced_dim)
         # Create an argument list. Only 2 dimensions are supported currently.
         args <- c(list(
             tse = x, dimred = dimred, reduced_dim = reduced_dim),
@@ -303,7 +300,8 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
     # name might be merged. Get the original variable names and
     # groups.
     if( !is.null(vector_data) ){
-        vector_data <- .get_variable_mapping_from_coldata(tse, vector_data)
+        vector_data <- .get_variable_mapping_from_coldata(
+            tse, vector_data, reduced_dim)
     }
     vars_found <- all(c("var", "levels") %in% colnames(vector_data))
     # Make the vector labels tidier. For instance, covriate name and value
@@ -347,26 +345,71 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
 # The RDA/CCA modifies the variable names. Those variables that are factor or
 # character i.e., groups, they get variable names that tell the variable and
 # group. This function matches those modified names with the original data.
-.get_variable_mapping_from_coldata <- function(tse, vector_data, ...){
-    # Loop over each variable in colData. Get all the possible values that they
-    # can get in RDA/CCA methods.
-    name_map <- lapply(colnames(colData(tse)), function(col){
-        # If the value is factor, get all possible values
-        if( is.factor(tse[[col]]) || is.character(tse[[col]]) ){
-            levels <- levels(as.factor(tse[[col]]))
-            name <- paste0(col, levels)
-            var <- rep(col, length(levels))
-            res <- data.frame(var, levels, name)
+.get_variable_mapping_from_coldata <- function(
+        tse, vector_data, reduced_dim, ...){
+    # Extract covariate names from RDA/CCA object
+    rda_obj <- .get_rda_attribute(reduced_dim, "obj")
+
+    # Check if rda object exists. By default, this is the case, but user can
+    # also remove it, e.g., to save memory. In that case, we cannot
+    # match the mapping bwteeen rda object and colData.
+    if( !(!is.null(rda_obj) && is(rda_obj, "cca")) ){
+        return(vector_data)
+    }
+    rda_terms <- rda_obj[["terms"]]
+    factors_mat <- .get_rda_attribute(rda_terms, "factors")
+    # Build name_map from terms in the RDA/CCA model
+    name_map <- lapply(factors_mat |> ncol() |> seq_len(), function(i){
+        # Get all variables in term
+        vars_in_term <- rownames(factors_mat)[factors_mat[, i] != 0]
+        # If covariate is not interaction term
+        if( length(vars_in_term) == 1L ) {
+            # main effect
+            values <- tse[[vars_in_term]]
+            lvls <- NA_character_
+            nams <- vars_in_term
+            if( is.factor(values) || is.character(values) ){
+                lvls <- values |> as.factor() |> levels()
+                nams <- paste0(vars_in_term, lvls)
+            }
+            res <- data.frame(
+                var = vars_in_term, levels = lvls, name = nams,
+                stringsAsFactors = FALSE)
         } else{
-            # The name of numeric variables are not changed
-            res <- data.frame(var = col, levels = NA, name = col)
+            # If the term includes interaction between multiple variables
+            # Get interaction terms. Categorical values are handled differently
+            # as they create levels.
+            combos <- lapply(vars_in_term, function(var_name){
+                if( tse[[var_name]] |> is.numeric() ){
+                    temp <- var_name
+                } else{
+                    temp <- tse[[var_name]] |> unique()
+                }
+                return(temp)
+            }) |> expand.grid(stringsAsFactors = FALSE)
+            # Parse level names from values
+            level_names <- apply(combos, 1L, paste, collapse = ":")
+            # Parse interaction term name from variable names
+            var_name <- paste(vars_in_term, collapse = ":")
+            # Create final term name that was used in vegan::dbrda. It is
+            # combination of variable name and levels (if categorical)
+            name <- apply(combos, 1L, function(x){
+                temp <- mapply(function(var, val){
+                    if( tse[[var]] |> is.numeric() ) var else paste0(var, val)
+                }, vars_in_term, x)
+                temp <- temp |> paste0(collapse = ":")
+                return(temp)
+            })
+            res <- data.frame(
+                var = var_name, levels = level_names, name = name,
+                stringsAsFactors = FALSE)
         }
         return(res)
     })
     name_map <- do.call(rbind, name_map)
     # Check that all variables can be found from colData
     if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
-        warning("All variables in RDA/CCA rsults must be present in ",
+        warning("All variables in RDA/CCA results must be present in ",
             "colData(x).", call. = FALSE)
     } else{
         # Add group names to vector data
@@ -417,10 +460,16 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
         lab <- vector_data[i, "vector_label"]
         expl_var <- round(vector_data[i, "Explained variance"]*100, 1)
         p_value <- round(vector_data[i, "Pr(>F)"], 3)
-        temp <- paste(
-            !!lab, " (", !!format(expl_var, nsmall = 1), "%, ",
-            italic("P"), " = ",
-            !!gsub("0\\.","\\.", format( p_value, nsmall = 3)), ")") |> expr()
+        # Only valid significance information is labeled. Skip NAs.
+        temp <- if( !is.na(expl_var) || !is.na(p_value) ){
+            paste(
+                !!lab, " (", !!format(expl_var, nsmall = 1), "%, ",
+                italic("P"), " = ",
+                !!gsub("0\\.","\\.", format(p_value, nsmall = 3)), ")"
+            ) |> expr()
+        } else{
+            paste(!!lab) |> expr()
+        }
         return(temp)
         }
     ) |> unlist()
@@ -497,7 +546,8 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
                 x = 0, y = 0, xend = .data[[xvar]], yend = .data[[yvar]],
                 group = .data[["group"]]),
                 arrow = arrow(length = unit(arrow.size, "cm")),
-                color = vec.color, linetype = vec.linetype, linewidth = vec.size)
+                color = vec.color, linetype = vec.linetype,
+                linewidth = vec.size)
         # Add vector labels (text or label)
         # Make list of arguments for geom_text/geom_label
         label_args <- list(

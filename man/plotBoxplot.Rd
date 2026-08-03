@@ -25,6 +25,17 @@ object.}
 
 \item{...}{Additional parameters for plotting.
 \itemize{
+\item \code{point.offset}: \code{Character scalar}. Utilized method
+for offsetting points. The available options include:
+\code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
+\code{"swarm"}
+(see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
+\code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
+\code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
+(see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
+for details), \code{"jitter"}, and \code{"none"},
+If \code{"none"}, ofsetting is not applied. (Default: \code{"jitter"})
+
 \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} or \code{rowData(x)} which is used to
 colour observations. (Default: \code{NULL})
@@ -69,20 +80,14 @@ specified. (Default: \code{TRUE})
 \item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
 barplots. (Default: \code{0})
 
-\item \code{apply.beeswarm}: \code{Logical scalar}. Whether to apply
-beeswarm layout for points. (Default: \code{FALSE})
-
 \item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
-(Default: \code{0.5})
+(Default: \code{0.3})
 
 \item \code{jitter.height}: \code{Numeric scalar}. Height of jitter.
 (Default: \code{0})
 
 \item \code{dodge.width}: \code{Numeric scalar}. Width of dodge. How far
 apart the groups are plotted? (Default: \code{0})
-
-\item \code{beeswarm.method}: \code{Character scalar}. Beeswarm method.
-Fed to function \code{beeswarm::beeswarm()}. (Default: \code{"swarm"})
 
 \item \code{beeswarm.corral}: \code{Character scalar}. Beeswarm's "corral"
 method. Fed to function \code{beeswarm::beeswarm()}.
@@ -176,7 +181,8 @@ tse <- tse[getTop(tse, 6), ]
 plotBoxplot(
     tse, assay.type = "relabundance",
     x = "diagnosis", fill.by = "diagnosis",
-    features = rownames(tse), facet.by = "rownames"
+    features = rownames(tse), facet.by = "rownames",
+    ncol = 2
 )
 
 # Add proportion bar
@@ -193,7 +199,7 @@ plotBoxplot(
     x = "diagnosis", group.by = "diagnosis",
     colour.by = "colonoscopy",
     features = rownames(tse), facet.by = "rownames",
-    apply.beeswarm = TRUE, add.box = FALSE
+    point.offset = "swarm", add.box = FALSE
 )
 
 # Do not add points
@@ -203,6 +209,31 @@ plotBoxplot(
     features = rownames(tse), facet.by = "rownames",
     add.points = FALSE
 )
+
+# Calculate statistical significance with Wilcoxon test
+plotBoxplot(
+    tse,
+    col.var = "shannon",
+    fill.by = "diagnosis",
+    add.significance = TRUE
+)
+
+\dontrun{
+# Add pre-calculated p-values
+# Calculate p-values
+df <- meltSE(tse, add.col = TRUE)
+pvals <- df |>
+    rstatix::t_test(shannon ~ diagnosis) |>
+    ungroup() |>
+    as.data.frame()
+# Add them with p.value argument
+plotBoxplot(
+    tse,
+    x = "diagnosis",
+    col.var = "shannon",
+    p.value = pvals
+)
+}
 
 \dontrun{
 library(microbiomeDataSets)

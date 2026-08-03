@@ -121,7 +121,6 @@ arguments inherited from \code{\link[scater:plotReducedDim]{plotReducedDim}}.
 }
 \examples{
 # Load dataset
-library(miaViz)
 data("enterotype", package = "mia")
 tse <- enterotype
 
