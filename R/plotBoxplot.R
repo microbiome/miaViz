@@ -1332,5 +1332,16 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !is.null(attributes(df)[["size.by"]]) ){
         p <- p + labs(shape = attributes(df)[["size.by"]])
     }
+
+    # Adjust colors
+    name <- if(!is.null(attributes(df)[["colour.by"]]))
+        attributes(df)[["colour.by"]] else attributes(df)[["fill.by"]]
+    vals <- if(!is.null(attributes(df)[["colour.by"]]))
+        df[[attributes(df)[["colour.by"]]]] else attributes(df)[["fill.by"]]
+    p <- .resolve_plot_colours(
+        p, vals, name,
+        fill = !is.null(attributes(df)[["fill.by"]])
+    )
+
     return(p)
 }
