@@ -206,35 +206,6 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
     return(object)
 }
 
-# The data can include constrained and unconstrained axes. This function subsets
-# the data so that it includes only constrained axes.
-.subset_constrained_rda <- function(reduced_dim){
-    # Get only the indices of constrained ones, i.e., first set of axes.
-    # The colnames are in format, constrained_axis1, ca2, ca3..., unconstrained
-    # axis1, uca2, ...
-    comp_num <- as.numeric(gsub("\\D", "", colnames(reduced_dim)))
-    ind <- which( cumsum(comp_num == 1) <= 1 )
-    # If there were problems, it might be that the names are just arbitrary.
-    # Then take all the columns.
-    if( !(length(ind) > 0L && all(diff(ind) == 1L)) ){
-        ind <- seq_len(ncol(reduced_dim))
-    }
-    # Preserve attributes
-    attributes <- attributes(reduced_dim)
-    attributes <- attributes[ !names(attributes) %in% c("dim", "dimnames") ]
-    # Subset the data so that it includes only constrained axes
-    reduced_dim <- reduced_dim[ , ind, drop = FALSE]
-    if( "biplot" %in% names(attributes) ){
-        attributes[["biplot"]] <- attributes[["biplot"]][ , ind, drop = FALSE]
-    }
-    if( "eig" %in% names(attributes) ){
-        attributes[["eig"]] <- attributes[["eig"]][ind]
-    }
-    # Add attributes back
-    attributes(reduced_dim) <- c(attributes(reduced_dim), attributes)
-    return(reduced_dim)
-}
-
 # This function retrieves data for creating vectors. Moreover, it wrangles the
 # vector data and controls what information is added to vector text or labels.
 .get_rda_vector_data <- function(
