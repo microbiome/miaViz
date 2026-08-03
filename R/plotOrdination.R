@@ -751,6 +751,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         p, df,
         xlab = attributes(df)[["xlab"]],
         ylab = attributes(df)[["ylab"]],
+        coord.equal = TRUE,
         panel.by.eigen = TRUE,
         ...){
     if( !.is_a_string(xlab) ){
@@ -758,6 +759,9 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     }
     if( !.is_a_string(ylab) ){
         stop("'ylab' must be a single character value.", call. = FALSE)
+    }
+    if( !.is_a_bool(coord.equal) ){
+        stop("'coord.equal' must be TRUE or FALSE.", call. = FALSE)
     }
     if( !.is_a_bool(panel.by.eigen) ){
         stop("'panel.by.eigen' must be TRUE or FALSE.", call. = FALSE)
@@ -784,7 +788,9 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     # Use equal scaling on both axes so that one unit on the x-axis has the same
     # physical length as one unit on the y-axis. This preserves distances and
     # angles in the ordination and avoids visual distortion.
-    p <- p + coord_equal()
+    if( coord.equal ){
+        p <- p + coord_equal()
+    }
     # Make the panel dimensions proportional to the eigenvalues so that the
     # relative lengths of the axes reflect the variation explained by each
     # ordination axis.
