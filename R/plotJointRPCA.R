@@ -118,7 +118,7 @@ NULL
 #' @export
 setMethod("plotJointRPCA", signature = c(x = "MultiAssayExperiment"),
     function(x, dimred, ...){
-        mia:::.check_metadata_present(dimred, x)
+        .check_metadata_present(dimred, x)
         # Construct TreeSE from results so that we can use TreeSE function
         # (and thus plotOrdination)
         res <- metadata(x)[[dimred]]
