@@ -167,8 +167,7 @@ setMethod("plotJointRPCA", signature = c(x = "SingleCellExperiment"),
 # Get feature loadings that will be plotted as vectors
 #' @importFrom dplyr group_by slice_max ungroup
 .get_joint_rpca_vector_data <- function(
-        tse, reduced_dim, add.vectors, ignore.case = FALSE, ntop = 10,
-        ...){
+        tse, reduced_dim, add.vectors, ignore.case = FALSE, ntop = 10, ...){
     if( !.is_a_bool(ignore.case) ){
         stop("'ignore.case' must be TRUE or FALSE.", call. = FALSE)
     }
