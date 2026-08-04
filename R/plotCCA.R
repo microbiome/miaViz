@@ -193,19 +193,6 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
 
 ################################ HELP FUNCTIONS ################################
 
-# Construct TreeSE from matrix to pass it to downstream functions. It is useful
-# for instance if get* functios was used instead of add*.
-#' @importFrom S4Vectors SimpleList
-.rda2tse <- function(object) {
-    # Convert rda/cca object to TreeSE
-    object <- TreeSummarizedExperiment(
-        assays = SimpleList(counts = matrix(
-            ncol = nrow(object), dimnames = list(NULL, rownames(object)))),
-        reducedDims = list(RDA = object)
-    )
-    return(object)
-}
-
 # This function retrieves data for creating vectors. Moreover, it wrangles the
 # vector data and controls what information is added to vector text or labels.
 .get_rda_vector_data <- function(
