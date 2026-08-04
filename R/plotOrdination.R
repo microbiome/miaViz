@@ -763,7 +763,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     if( !.is_a_bool(coord.equal) ){
         stop("'coord.equal' must be TRUE or FALSE.", call. = FALSE)
     }
-    match.arg(aspect.ratio)
+    aspect.ratio <- match.arg(aspect.ratio)
     #
     p <- p + theme_classic()
     p <- p + labs(x = xlab, y = ylab)
