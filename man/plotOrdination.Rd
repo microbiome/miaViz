@@ -3,11 +3,11 @@
 \name{plotOrdination}
 \alias{plotOrdination}
 \alias{plotOrdination,SingleCellExperiment-method}
-\title{Create ordination plot}
+\title{Visualize ordination results}
 \usage{
 plotOrdination(x, ...)
 
-\S4method{plotOrdination}{SingleCellExperiment}(x, dimred, colour.by = color.by, color.by = NULL, ...)
+\S4method{plotOrdination}{SingleCellExperiment}(x, dimred, ...)
 }
 \arguments{
 \item{x}{a
@@ -138,10 +138,19 @@ stored in \code{reducedDim(x)} to visualize.}
 A \code{ggplot2} object.
 }
 \description{
-Ordinaton plotter
+Creates a two-dimensional ordination plot from a reduced dimension result
+stored in a
+\code{\link[SingleCellExperiment:reducedDims]{SingleCellExperiment}}
+object. Samples can be coloured, filled, shaped, sized, grouped or faceted
+using sample metadata or feature abundances, and additional graphical
+elements such as confidence ellipses, centroids, vectors and density
+estimates can be added.
 }
 \details{
-Creates ordination plot
+This function provides a unified interface for visualizing ordination methods
+such as PCA, PCoA, MDS, t-SNE, UMAP, RDA and CCA. The plotted coordinates are
+retrieved from a reduced dimension result stored in
+\code{reducedDim(x)}.
 }
 \examples{
 data("Tito2024QMP")

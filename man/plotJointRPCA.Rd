@@ -10,7 +10,7 @@ plotJointRPCA(x, ...)
 
 \S4method{plotJointRPCA}{MultiAssayExperiment}(x, dimred, ...)
 
-\S4method{plotJointRPCA}{SingleCellExperiment}(x, dimred, ...)
+\S4method{plotJointRPCA}{SingleCellExperiment}(x, dimred, add.vectors = TRUE, ...)
 }
 \arguments{
 \item{x}{A
@@ -24,16 +24,18 @@ object containing Joint-RPCA results.}
 plotting.
 Commonly used Joint-RPCA-specific arguments include:
 \itemize{
-\item \code{add.vectors}: \code{logical(1)} or \code{character}. If
-\code{TRUE}, feature loading vectors are added. Alternatively, a character
-vector can be supplied to display only features whose names match the given
-pattern(s). (Default: \code{TRUE})
 \item \code{ntop}: \code{integer(1)} or \code{NULL}. Maximum number of
 loading vectors shown per data layer. The vectors with the largest lengths
 are retained. Set to \code{NULL} to display all vectors. (Default: \code{10})
 }}
 
-\item{dimred}{\code{character(1)} specifying the name of the Joint-RPCA result to plot.}
+\item{dimred}{\code{character(1)}: Specifies the name of the Joint-RPCA
+result to plot.}
+
+\item{add.vectors:}{\code{logical(1)} or \code{character}. If
+\code{TRUE}, feature loading vectors are added. Alternatively, a character
+vector can be supplied to display only features whose names match the given
+pattern(s). (Default: \code{TRUE})}
 }
 \value{
 A \code{ggplot2} object.
@@ -98,14 +100,14 @@ plotJointRPCA(
     ntop = NULL
 )
 
-## Display only selected feature vectors
+# Display only selected feature vectors
 plotJointRPCA(
     mae,
     "JointRPCA",
     add.vectors = c("Bacteroides", "Roseburia")
 )
 
-## Use boxed labels without repelling
+# Use boxed labels without repelling
 plotJointRPCA(
     mae,
     "JointRPCA",

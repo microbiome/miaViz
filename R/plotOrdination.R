@@ -2,13 +2,23 @@
 #' plotOrdination
 #'
 #' @title
-#' Create ordination plot
+#' Visualize ordination results
 #'
 #' @description
-#' Ordinaton plotter
+#' Creates a two-dimensional ordination plot from a reduced dimension result
+#' stored in a
+#' \code{\link[SingleCellExperiment:reducedDims]{SingleCellExperiment}}
+#' object. Samples can be coloured, filled, shaped, sized, grouped or faceted
+#' using sample metadata or feature abundances, and additional graphical
+#' elements such as confidence ellipses, centroids, vectors and density
+#' estimates can be added.
 #'
 #' @details
-#' Creates ordination plot
+#' This function provides a unified interface for visualizing ordination methods
+#' such as PCA, PCoA, MDS, t-SNE, UMAP, RDA and CCA. The plotted coordinates are
+#' retrieved from a reduced dimension result stored in
+#' \code{reducedDim(x)}.
+#'
 #'
 #' @return
 #' A \code{ggplot2} object.
@@ -249,8 +259,8 @@ NULL
 #' @rdname plotOrdination
 #' @export
 setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, colour.by = color.by, color.by = NULL, ...){
-        args <- .check_ordination_input(x, dimred, colour.by = colour.by, ...)
+    function(x, dimred, ...){
+        args <- .check_ordination_input(x, dimred, ...)
         df <- do.call(.get_ordination_data, args)
         p <- .ordination_plotter(df, ...)
         return(p)
