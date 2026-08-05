@@ -32,7 +32,7 @@ are retained. Set to \code{NULL} to display all vectors. (Default: \code{10})
 \item{dimred}{\code{character(1)}: Specifies the name of the Joint-RPCA
 result to plot.}
 
-\item{add.vectors:}{\code{logical(1)} or \code{character}. If
+\item{add.vectors}{\code{logical(1)} or \code{character}. If
 \code{TRUE}, feature loading vectors are added. Alternatively, a character
 vector can be supplied to display only features whose names match the given
 pattern(s). (Default: \code{TRUE})}

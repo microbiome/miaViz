@@ -33,7 +33,7 @@
 #' @param dimred \code{character(1)}: Specifies the name of the Joint-RPCA
 #' result to plot.
 #'
-#' @param add.vectors: \code{logical(1)} or \code{character}. If
+#' @param add.vectors \code{logical(1)} or \code{character}. If
 #' \code{TRUE}, feature loading vectors are added. Alternatively, a character
 #' vector can be supplied to display only features whose names match the given
 #' pattern(s). (Default: \code{TRUE})
