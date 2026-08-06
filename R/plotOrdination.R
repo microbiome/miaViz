@@ -403,6 +403,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     xlab <- x_var
     ylab <- y_var
     eigen_names <- c("eig", "percentVar")
+    eigen <- NULL
     if( add.expl.var && any(eigen_names %in% names(orig_attributes)) ){
         eigen_names <- eigen_names[
             eigen_names %in% names(orig_attributes)][[1L]]
@@ -800,14 +801,11 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         # same physical length as one unit on the y-axis. This preserves
         # distances and angles in the ordination and avoids visual distortion.
         p <- p + coord_equal()
-    } else if ( aspect.ratio == "eigen" &&
-            any(eigen_names %in% names(orig_attributes)) ){
+    } else if ( aspect.ratio == "eigen" && "eigen" %in% attributes(df) ){
         # Make the panel dimensions proportional to the eigenvalues so that the
         # relative lengths of the axes reflect the variation explained by each
         # ordination axis.
-        eigen_names <- eigen_names[
-            eigen_names %in% names(orig_attributes)][[1L]]
-        eigen <- orig_attributes[[eigen_names]]
+        eigen <- attributes(df)[["eigen"]]
         p <- p + theme(aspect.ratio = eigen[2] / eigen[1])
     }
 
