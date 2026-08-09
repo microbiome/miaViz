@@ -144,6 +144,14 @@ setMethod(
             # Check that the requested row tree is available
             .check_rowTree_present(tree.name, x)
 
+            # Subset tree similarly what plotRowTree does, i.e., take only tips
+            # that are in data.
+            x <- subsetByLeaf(
+                x,
+                rowLeaf = rowLinks(x)[["nodeLab"]],
+                whichRowTree = tree.name
+            )
+
             # Create a tree plot that we will use to extract order. We have to
             # create a plot, because exact top-to-bottom ordering of tips is
             # determined when the tree is plotted. For example, branches can be
@@ -160,15 +168,6 @@ setMethod(
             )
 
             x <- x[tax_order, ]
-            #
-            # # Keep only features represented by tree leaves
-            # x <- subsetByLeaf(x, whichRowTree = tree.name)
-            #
-            # # Reorder rows to match the tree tip order
-            # links <- rowLinks(x)
-            # keep <- links$whichTree == tree.name & links$isLeaf
-            # links <- links[keep, "nodeNum"] |> order()
-            # x <- x[links, ]
         }
 
         # Create the heatmap using the SummarizedExperiment method
