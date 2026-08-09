@@ -1231,14 +1231,16 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
             # add tip labels
             plot_out <- plot_out +
                 geom_tiplab(
-                    mapping = aes_string(subset = f_tip, label = "node_label"),
+                    data = data[f_tip, ],
+                    mapping = aes(label = .data[["node_label"]]),
                     offset = 0.01, size = label_font_size)
         }
         if(any(f_node)){
             # add node labels
             plot_out <- plot_out +
                 geom_nodelab(
-                    mapping = aes_string(subset = f_node, label = "node_label"),
+                    data = data[f_node, ],
+                    mapping = aes(label = .data[["node_label"]]),
                     size = label_font_size)
         }
     }

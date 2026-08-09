@@ -96,6 +96,13 @@
 #'     col.var = "SampleType"
 #' )
 #'
+#' # Add phylogeny
+#' plotHeatmap(
+#'     tse,
+#'     assay.type = "counts",
+#'     show.tree = TRUE
+#' )
+#'
 #' @seealso
 #' \code{\link[=plotRowTree]{plotRowTree}}
 #'
@@ -137,22 +144,19 @@ setMethod(
             # Check that the requested row tree is available
             .check_rowTree_present(tree.name, x)
 
-            tree_plot <- plotRowTree(
-                x,
-                tree.name = tree.name,
-                layout = "rectangular",
-                branch.length = "none",
-                show.label = TRUE,
-                levels.rm = TRUE
-            )
-
+            # Create a tree plot that we will use to extract order. We have to
+            # create a plot, because exact top-to-bottom ordering of tips is
+            # determined when the tree is plotted. For example, branches can be
+            # rotated around internal nodes without changing the tree.
+            tree <- rowTree(x, tree.name)
+            tree_plot <- ggtree(tree) + geom_tiplab()
             tree_data <- ggplot_build(tree_plot)
-            tips <- tree_data$data[[5]][, c("y", "label")]
-            tips <- tips[order(tips$y), , drop = FALSE]
+            tips <- tree_data[["data"]][[3]][, c("y", "label")]
+            tips <- tips[order(tips[["y"]]), , drop = FALSE]
 
             tax_order <- match(
-                tips$label,
-                rowLinks(x)$nodeLab
+                tips[["label"]],
+                rowLinks(x)[["nodeLab"]]
             )
 
             x <- x[tax_order, ]
