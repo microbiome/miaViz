@@ -54,4 +54,4 @@ Changes in version 1.19.x
 
 Changes in version 1.21.x
 + Added plotOrdination and plotJointRPCA (2026-08-04)
-+ Added plotHeatmap (2026-08-xx)
++ Added plotHeatmap (2026-08-10)
