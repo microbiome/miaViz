@@ -166,3 +166,8 @@ setGeneric("plotOrdination", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("plotJointRPCA", signature = c("x"), function(x, ...)
     standardGeneric("plotJointRPCA"))
+
+#' @rdname plotHeatmap
+#' @export
+setGeneric("plotHeatmap", signature = c("x"), function(x, ...)
+    standardGeneric("plotHeatmap"))
