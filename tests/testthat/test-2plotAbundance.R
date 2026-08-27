@@ -38,7 +38,7 @@ test_that("plot abundance", {
     expect_true(all(c("colour_by","X","Y") %in% colnames(plot$data)))
     plot <- plotAbundance(
         x, assay.type = "counts", group = "Phylum", col.var = "SampleType",
-        order.col.by = "SampleType")
+        order.col.by = "SampleType", facet.cols = FALSE)
     expect_true(is.list(plot))
     expect_s3_class(plot[[1]],"ggplot")
     # Check that the grouping is correct
@@ -47,7 +47,7 @@ test_that("plot abundance", {
     rowData(x)$Salame <- sample(letters[1:5], nrow(x), replace=TRUE)
     plot <- plotAbundance(
         x, assay.type="counts", group = "Salame", col.var = "SampleType",
-        order.col.by = "SampleType")
+        order.col.by = "SampleType", facet.cols = FALSE)
     expect_true(is.list(plot))
     expect_s3_class(plot[[1]],"ggplot")
     # Expect error since too many rows
