@@ -92,9 +92,7 @@ plotAbundance(
 ```
 
 The `features` argument is reused for plotting data along the different samples.
-In the next example the ~SampleType~ is plotted along the samples. In this case 
-the result is a list, which can combined using external tools, for example
-`patchwork`. 
+In the next example the ~SampleType~ is plotted along the samples. 
 
 ```{r plotabundance_sampletype}
 plotAbundance(
