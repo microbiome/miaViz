@@ -123,15 +123,9 @@
 #' plot <- plotAbundance(
 #'     tse, assay.type = "relabundance", group = "Phylum",
 #'     col.var = "SampleType")
-#' \donttest{
-#' # These two plots can be combined with wrap_plots function from patchwork
-#' # package
-#' library(patchwork)
-#' wrap_plots(plot, ncol = 1, heights = c(0.95, 0.05))
-#' }
 #'
-#' # Same plot as above but showing sample IDs as labels for the x axis on the
-#' # top plot. Moreover, we use facets.
+#' # Create a plot with sample grouping, and showing sample IDs as labels for
+#' # the x axis on the top plot.
 #' plot <- plotAbundance(
 #'     tse, assay.type = "relabundance",
 #'     group = "Phylum", col.var = "SampleType", add.legend = FALSE,

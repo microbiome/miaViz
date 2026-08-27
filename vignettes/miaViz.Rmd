@@ -97,13 +97,12 @@ the result is a list, which can combined using external tools, for example
 `patchwork`. 
 
 ```{r plotabundance_sampletype}
-library(patchwork)
-plots <- plotAbundance(
+plotAbundance(
     GlobalPatterns[rowData(GlobalPatterns)$Phylum %in% prev_phylum],
     features = "SampleType",
     rank = "Phylum",
-    assay.type = "relabundance")
-plots$abundance / plots$SampleType + plot_layout(heights = c(9, 1))
+    assay.type = "relabundance"
+)
 ```
 
 Further example about composition barplot can be found at Orchestrating
