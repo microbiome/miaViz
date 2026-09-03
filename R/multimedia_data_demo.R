@@ -1,37 +1,29 @@
 #' @title Multimedia example datasets
 #'
 #' @description
-#' Example microbiome data objects bundled together as `multimedia_data_demo`
-#' for use in demonstrations and examples across the miaViz package,
-#' especially those that involve multi-view / multi-omics visualization.
+#' Example microbiome data objects used for demonstrations and examples across
+#' the miaViz package, especially those that involve multi-view / multi-omics
+#' visualization.
 #'
-#' Loading `data(multimedia_data_demo)` makes three objects available:
+#' Two related objects are provided:
 #' \itemize{
 #'   \item \code{se_relative}: a \code{SummarizedExperiment} with relative
 #'         abundance data at the taxonomic level.
 #'   \item \code{tse_relative}: a \code{TreeSummarizedExperiment} with the same
 #'         relative abundance data as \code{se_relative}, together with a
 #'         phylogenetic tree.
-#'   \item \code{tse_pathway}: a \code{TreeSummarizedExperiment} containing
-#'         pathway-level functional abundance data.
 #' }
 #'
-#' All three objects share the same sample metadata columns (see
-#' \code{colData}) so they can be used together to demonstrate paired
-#' taxonomy / pathway visualizations.
+#' Both objects share the same sample metadata columns (see \code{colData}) so
+#' they can be used together to demonstrate paired visualizations at different
+#' levels of structure.
 #'
 #' @details
-#' \strong{se_relative} — \code{SummarizedExperiment} with 579 features x
-#' 44 samples. Assays: \code{relative_abundance}, \code{relabundance},
-#' \code{scaled}. Row names are taxa; column names are sample IDs.
+#' \strong{se_relative} — \code{SummarizedExperiment}. Assays:
+#' \code{relative_abundance}, \code{relabundance}, \code{scaled}.
 #'
-#' \strong{tse_relative} — \code{TreeSummarizedExperiment} with 579 features x
-#' 44 samples. Same assays as \code{se_relative} plus an attached
-#' \code{rowTree}.
-#'
-#' \strong{tse_pathway} — \code{TreeSummarizedExperiment} with 476 features x
-#' 36 samples. Assays: \code{pathway_abundance}, \code{scaled}. Row names are
-#' MetaCyc pathway identifiers.
+#' \strong{tse_relative} — \code{TreeSummarizedExperiment}. Same assays as
+#' \code{se_relative} plus an attached row tree.
 #'
 #' Shared \code{colData} columns include: \code{study_name},
 #' \code{subject_id}, \code{body_site}, \code{study_condition},
@@ -40,25 +32,15 @@
 #' \code{disease_binary}, \code{dysbiosis}, \code{Time_point},
 #' \code{treatment}, and others.
 #'
-#' @name multimedia_data_demo
-#' @aliases se_relative tse_relative tse_pathway
+#' @name multimedia-datasets
 #' @docType data
 #' @keywords datasets
-#' @usage data(multimedia_data_demo)
-#' @format
-#' A single \code{.rda} file that loads three objects: \code{se_relative}
-#' (\code{SummarizedExperiment}, 579 x 44), \code{tse_relative}
-#' (\code{TreeSummarizedExperiment}, 579 x 44), and \code{tse_pathway}
-#' (\code{TreeSummarizedExperiment}, 476 x 36).
 #' @examples
-#' data(multimedia_data_demo)
-#' se_relative
-#' tse_relative
-#' tse_pathway
+#' data(se_relative)
+#' data(tse_relative)
+#' @usage data(se_relative)
 "se_relative"
 
-#' @rdname multimedia_data_demo
+#' @name multimedia-datasets
+#' @usage data(tse_relative)
 "tse_relative"
-
-#' @rdname multimedia_data_demo
-"tse_pathway"
