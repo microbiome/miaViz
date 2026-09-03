@@ -11,6 +11,17 @@ An object of class \code{SummarizedExperiment} with 579 rows and 44 columns.
 
 An object of class \code{TreeSummarizedExperiment} with 579 rows and 44 columns.
 }
+\source{
+Derived from the \code{HMP_2019_ibdmdb.relative_abundance} dataset in the
+\pkg{curatedMetagenomicData} R/Bioconductor package (Lloyd-Price et al.,
+2019). The full preparation pipeline — download, dysbiosis-score
+computation, subsetting to paired baseline / post-treatment IBD samples,
+treatment-factor definition and assay standardization — is shipped with
+miaViz at \code{inst/scripts/multimedia_relative_data_prep.R}.
+
+Lloyd-Price J. et al. (2019). Multi-omics of the gut microbial ecosystem
+in inflammatory bowel diseases. \emph{Nature} 569, 655-662.
+}
 \usage{
 data(se_relative)
 
