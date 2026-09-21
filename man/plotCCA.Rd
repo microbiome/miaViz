@@ -4,9 +4,7 @@
 \alias{plotCCA}
 \alias{plotRDA}
 \alias{plotCCA,SingleCellExperiment-method}
-\alias{plotCCA,matrix-method}
 \alias{plotRDA,SingleCellExperiment-method}
-\alias{plotRDA,matrix-method}
 \title{Plot RDA or CCA object}
 \usage{
 plotCCA(x, ...)
@@ -15,17 +13,12 @@ plotRDA(x, ...)
 
 \S4method{plotCCA}{SingleCellExperiment}(x, dimred, ...)
 
-\S4method{plotCCA}{matrix}(x, ...)
-
 \S4method{plotRDA}{SingleCellExperiment}(x, dimred, ...)
-
-\S4method{plotRDA}{matrix}(x, ...)
 }
 \arguments{
 \item{x}{a
 \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-or a matrix of weights. The latter is returned as output from
-\code{\link[mia:runCCA]{getRDA}}.}
+object.}
 
 \item{...}{additional parameters for plotting, inherited from
 \code{\link[scater:plotReducedDim]{plotReducedDim}},
@@ -139,14 +132,17 @@ tse <- addRDA(
     formula = assay ~ ClinicalStatus + Gender + Age,
     distance = "bray",
     na.action = na.exclude
-    )
+)
 
 suppressWarnings({
 # Create RDA plot coloured by variable
 plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
 
-# Create RDA plot with empty ellipses
-plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.ellipse = "colour")
+# Create RDA plot with ellipses
+plotRDA(
+    tse, "RDA", colour.by = "ClinicalStatus", fill.by = "ClinicalStatus",
+    add.ellipse = TRUE
+)
 
 # Create RDA plot with text encased in labels
 plotRDA(tse, "RDA", colour.by = "ClinicalStatus", vec.text = FALSE)
@@ -156,18 +152,11 @@ plotRDA(tse, "RDA", colour.by = "ClinicalStatus", repel.labels = FALSE)
 
 # Create RDA plot without vectors
 plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.vectors = FALSE)
-
-# Calculate RDA as a separate object
-rda_mat <- getRDA(
-    tse,
-    assay.type = "relabundance",
-    formula = assay ~ ClinicalStatus + Gender + Age,
-    distance = "bray",
-    na.action = na.exclude
-    )
-
-# Create RDA plot from RDA matrix
-plotRDA(rda_mat)
 })
 
+}
+\seealso{
+\itemize{
+\item \code{\link[=plotOrdination]{plotOrdination}}
+}
 }

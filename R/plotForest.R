@@ -150,7 +150,7 @@ NULL
 #' @export
 #' @importFrom SummarizedExperiment rowData colData
 #' @importFrom TreeSummarizedExperiment rowTree colTree rowTreeNames
-#'   colTreeNames
+#'   colTreeNames rowLinks
 #' @importFrom ggplot2 ggplot_build
 #' @importFrom patchwork wrap_plots plot_layout
 setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
@@ -179,9 +179,9 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
     }
     # Check kwargs
     kwargs <- list(...)
-    if( any(c("layout", "branch.length") %in% names(kwargs)) ){
-        stop("'layout' and 'branch.length' cannot be modified for this plot.",
-            call. = FALSE)
+    if( any(c("layout", "levels.rm", "branch.length") %in% names(kwargs)) ){
+        stop("'layout', 'levels.rm' and 'branch.length' cannot be modified ",
+            "for this plot.", call. = FALSE)
     }
     # If tree is available
     if( order_tree ){
@@ -191,14 +191,15 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
             tree.name = tree.name,
             layout = "rectangular",
             branch.length = "none",
-            show.label = TRUE
+            show.label = TRUE,
+            levels.rm = TRUE
         )
         # Extract tip order from tree
         tree_data <- ggplot_build(tree_plot)
         tips <- tree_data[[1]][[5]][c("y", "label")]
         tips <- tips[order(tips$y), , drop = FALSE]
         # Order rowData based on tree tips
-        tax_order <- match(tips$label, rownames(df))
+        tax_order <- match(tips$label, rowLinks(x)$nodeLab)
         df <- df[tax_order, , drop = FALSE]
     }
     # Initialise plots and widths lists
@@ -212,6 +213,7 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
             tree.name = tree.name,
             layout = "rectangular",
             branch.length = "none",
+            levels.rm = TRUE,
             ...
         )
         # Store tree width
