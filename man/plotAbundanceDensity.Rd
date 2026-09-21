@@ -15,6 +15,7 @@ plotAbundanceDensity(x, ...)
   n = min(nrow(x), 25L),
   colour.by = colour_by,
   colour_by = NULL,
+  colour.features = NULL,
   shape.by = shape_by,
   shape_by = NULL,
   size.by = size_by,
@@ -86,6 +87,10 @@ taxa to show. (Default: \code{min(nrow(x), 25L)})}
 \code{colData()} function. (Default: \code{NULL})}
 
 \item{colour_by}{Deprecated. Use \code{colour.by} instead.}
+
+\item{colour.features}{\code{Character vector}. A named vector of colors
+for features. Names should match feature names. Useful for matching
+colors across multiple plots. (Default: \code{NULL})}
 
 \item{shape.by}{\code{Character scalar}. Defines a column from
 \code{colData}, that is used to group observations to different point shape
