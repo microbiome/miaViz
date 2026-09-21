@@ -311,7 +311,8 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         stop("'layout' must be from the following options: '",
             paste0(supported_layouts, collapse = "', '"), "'", call. = FALSE)
     }
-    geom_fun <- switch(layout, histogram = geom_histogram, density = geom_density)
+    geom_fun <- switch(
+        layout, histogram = geom_histogram, density = geom_density)
     .plot_hist_bar(df, geom_fun, layout == "histogram", color, fill,
         alpha, scales, position, ...)
 }
