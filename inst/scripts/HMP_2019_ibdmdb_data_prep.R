@@ -35,7 +35,6 @@ library(SummarizedExperiment)
 library(dplyr)
 library(vegan)
 library(tidyverse)
-library(multimedia)
 library(stringr)
 library(ggplot2)
 library(mia)
@@ -102,10 +101,10 @@ keep_subjects <- names(which(table(tse$subject_id) == 2))
 tse <- tse[, tse$subject_id %in% keep_subjects]
 
 # Define time point label
-tse$Time_point <- ifelse(tse$visit_number == 1, "T0", "T1")
+tse$time_point <- ifelse(tse$visit_number == 1, "T0", "T1")
 
 # Define treatment: Pre and Post (Baseline vs. Post-baseline)
-tse$treatment <- factor(tse$Time_point, levels = c("T0", "T1"))
+tse$treatment <- factor(tse$time_point, levels = c("T0", "T1"))
 
 #############################
 # Standardize the mediators #
@@ -115,24 +114,13 @@ tse <- transformAssay(
     tse, assay.type = "relabundance", method = "standardize", name = "scaled"
 )
 
-########################################
-# Build SummarizedExperiment companion #
-########################################
-
-# Convert the TreeSummarizedExperiment to be SummarizedExperiment
-se_relative <- as(tse, "SummarizedExperiment")
-if (is.null(rownames(se_relative))) {
-    rownames(se_relative) <- rownames(rowData(se_relative)) <-
-        make.names(rownames(tse), unique = TRUE)
-}
-
-tse_relative <- tse
+# Remove additional assay and columns from colData
+assays(tse) <- assays(tse)[2:3]
+tse$disease_binary <- NULL
+tse$SampleID <- NULL
 
 ################
 # Save as .rda #
 ################
-
-# One object per file, matching the layout of the other miaViz datasets
-# (col_graph.rda, row_graph.rda, ...).
-save(se_relative,  file = "data/se_relative.rda",  compress = "xz")
-save(tse_relative, file = "data/tse_relative.rda", compress = "xz")
+HMP_2019_ibdmdb <- tse
+save(HMP_2019_ibdmdb,  file = "data/HMP_2019_ibdmdb.rda",  compress = "xz")
