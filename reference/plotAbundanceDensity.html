@@ -64,7 +64,6 @@
 <span>  n <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">min</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">x</span><span class="op">)</span>, <span class="fl">25L</span><span class="op">)</span>,</span>
 <span>  colour.by <span class="op">=</span> <span class="va">colour_by</span>,</span>
 <span>  colour_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  colour.features <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  shape.by <span class="op">=</span> <span class="va">shape_by</span>,</span>
 <span>  shape_by <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  size.by <span class="op">=</span> <span class="va">size_by</span>,</span>
@@ -137,18 +136,13 @@ taxa to show. (Default: <code>min(nrow(x), 25L)</code>)</p></dd>
 
 <dt id="arg-colour-by">colour.by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
 <dd><p><code>Character scalar</code>. Defines a column from
-<code>colData</code>, that is used to color plot. Must be a value of
-<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> function. (Default: <code>NULL</code>)</p></dd>
+<code>colData</code>, that is used to color plot. If the column is not found
+from <code>colData</code>, it is searched from <code>rowData</code>, and the points
+are coloured by feature. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
 <dd><p>Deprecated. Use <code>colour.by</code> instead.</p></dd>
-
-
-<dt id="arg-colour-features">colour.features<a class="anchor" aria-label="anchor" href="#arg-colour-features"></a></dt>
-<dd><p><code>Character vector</code>. A named vector of colors
-for features. Names should match feature names. Useful for matching
-colors across multiple plots. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-shape-by">shape.by<a class="anchor" aria-label="anchor" href="#arg-shape-by"></a></dt>
