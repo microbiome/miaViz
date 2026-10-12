@@ -44,6 +44,12 @@ setGeneric("plotDMNFit", signature = "x",
     function(x, name = "DMN", type = c("laplace","AIC","BIC"), ...)
     standardGeneric("plotDMNFit"))
 
+#' @rdname plotForest
+#' @export
+setGeneric("plotForest", signature = "x",
+    function(x, ...)
+    standardGeneric("plotForest"))
+
 #' @rdname plotGraph
 #' @export
 setGeneric("plotColGraph", signature = c("x","y"),
@@ -150,3 +156,18 @@ setGeneric("plotBarplot", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("plotBoxplot", signature = c("object"), function(object, ...)
     standardGeneric("plotBoxplot"))
+
+#' @rdname plotOrdination
+#' @export
+setGeneric("plotOrdination", signature = c("x"), function(x, ...)
+    standardGeneric("plotOrdination"))
+
+#' @rdname plotJointRPCA
+#' @export
+setGeneric("plotJointRPCA", signature = c("x"), function(x, ...)
+    standardGeneric("plotJointRPCA"))
+
+#' @rdname plotHeatmap
+#' @export
+setGeneric("plotHeatmap", signature = c("x"), function(x, ...)
+    standardGeneric("plotHeatmap"))

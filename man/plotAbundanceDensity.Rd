@@ -186,6 +186,3 @@ plotExpression(tse, features = top, assay.type = "relabundance",
 \seealso{
 \code{\link[scater:plotExpression]{scater::plotExpression}}
 }
-\author{
-Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-}

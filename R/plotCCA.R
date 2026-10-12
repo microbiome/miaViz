@@ -6,8 +6,7 @@
 #'
 #' @param x a
 #' \code{\link[TreeSummarizedExperiment:TreeSummarizedExperiment-constructor]{TreeSummarizedExperiment}}
-#' or a matrix of weights. The latter is returned as output from
-#' \code{\link[mia:runCCA]{getRDA}}.
+#' object.
 #'
 #' @param dimred \code{Character scalar} or \code{integer scalar}. Determines
 #' the reduced dimension to
@@ -108,7 +107,6 @@
 #'
 #' @examples
 #' # Load dataset
-#' library(miaViz)
 #' data("enterotype", package = "mia")
 #' tse <- enterotype
 #'
@@ -120,14 +118,17 @@
 #'     formula = assay ~ ClinicalStatus + Gender + Age,
 #'     distance = "bray",
 #'     na.action = na.exclude
-#'     )
+#' )
 #'
 #' suppressWarnings({
 #' # Create RDA plot coloured by variable
 #' plotRDA(tse, "RDA", colour.by = "ClinicalStatus")
 #'
-#' # Create RDA plot with empty ellipses
-#' plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.ellipse = "colour")
+#' # Create RDA plot with ellipses
+#' plotRDA(
+#'     tse, "RDA", colour.by = "ClinicalStatus", fill.by = "ClinicalStatus",
+#'     add.ellipse = TRUE
+#' )
 #'
 #' # Create RDA plot with text encased in labels
 #' plotRDA(tse, "RDA", colour.by = "ClinicalStatus", vec.text = FALSE)
@@ -137,19 +138,12 @@
 #'
 #' # Create RDA plot without vectors
 #' plotRDA(tse, "RDA", colour.by = "ClinicalStatus", add.vectors = FALSE)
-#'
-#' # Calculate RDA as a separate object
-#' rda_mat <- getRDA(
-#'     tse,
-#'     assay.type = "relabundance",
-#'     formula = assay ~ ClinicalStatus + Gender + Age,
-#'     distance = "bray",
-#'     na.action = na.exclude
-#'     )
-#'
-#' # Create RDA plot from RDA matrix
-#' plotRDA(rda_mat)
 #' })
+#'
+#' @seealso
+#' \itemize{
+#'   \item \code{\link[=plotOrdination]{plotOrdination}}
+#' }
 #'
 NULL
 
@@ -160,16 +154,6 @@ setMethod("plotCCA", signature = c(x = "SingleCellExperiment"),
     function(x, dimred, ...){
         # Reproduce plotRDA function
         return(plotRDA(x, dimred, ...))
-    }
-)
-
-#' @rdname plotCCA
-#' @aliases plotRDA
-#' @export
-setMethod("plotCCA", signature = c(x = "matrix"),
-    function(x, ...){
-        # Reproduce plotRDA function
-        return(plotRDA(x, ...))
     }
 )
 
@@ -192,8 +176,6 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
             stop("reducedDim specified by 'dimred' must have at least 2 ",
                 "columns.", call. = FALSE)
         }
-        # Subset by taking only constrained axes
-        reduced_dim <- .subset_constrained_rda(reduced_dim)
         # Create an argument list. Only 2 dimensions are supported currently.
         args <- c(list(
             tse = x, dimred = dimred, reduced_dim = reduced_dim),
@@ -201,101 +183,15 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
         args[["ncomponents"]] <- 2L
         # Get data for plotting
         plot_args <- list()
-        plot_args[["ellipse_data"]] <- do.call(.get_rda_ellipse_data, args)
         plot_args[["vector_data"]] <- do.call(.get_rda_vector_data, args)
-        plot_args[["centroids"]] <- do.call(.get_rda_centroids_data, args)
-        plot_args[["species_scores"]] <- do.call(.get_rda_species_data, args)
-        plot_args[["plot"]] <- do.call(.create_rda_baseplot, args)
+        p <- plotOrdination(x, dimred = dimred, ...)
         # Create a final plot
-        p <- .rda_plotter(plot_args, ...)
-        return(p)
-    }
-)
-
-#' @rdname plotCCA
-#' @aliases plotCCA
-#' @export
-setMethod("plotRDA", signature = c(x = "matrix"),
-    function(x, ...){
-        # Construct TreeSE from rda/cca object
-        x <- .rda2tse(x)
-        # Run plotRDA method for TreeSE
-        p <- plotRDA(x, "RDA", ...)
+        p <- .rda_plotter_vector(p, plot_args, ...)
         return(p)
     }
 )
 
 ################################ HELP FUNCTIONS ################################
-
-# Construct TreeSE from matrix to pass it to downstream functions. It is useful
-# for instance if get* functios was used instead of add*.
-#' @importFrom S4Vectors SimpleList
-.rda2tse <- function(object) {
-    # Convert rda/cca object to TreeSE
-    object <- TreeSummarizedExperiment(
-        assays = SimpleList(counts = matrix(
-            ncol = nrow(object), dimnames = list(NULL, rownames(object)))),
-        reducedDims = list(RDA = object)
-    )
-    return(object)
-}
-
-# The data can include constrained and unconstrained axes. This function subsets
-# the data so that it includes only constrained axes.
-.subset_constrained_rda <- function(reduced_dim){
-    # Get only the indices of constrained ones, i.e., first set of axes.
-    # The colnames are in format, constrained_axis1, ca2, ca3..., unconstrained
-    # axis1, uca2, ...
-    comp_num <- as.numeric(gsub("\\D", "", colnames(reduced_dim)))
-    ind <- which( cumsum(comp_num == 1) <= 1 )
-    # If there were problems, it might be that the names are just arbitrary.
-    # Then take all the columns.
-    if( !(length(ind) > 0L && all(diff(ind) == 1L)) ){
-        ind <- seq_len(ncol(reduced_dim))
-    }
-    # Preserve attributes
-    attributes <- attributes(reduced_dim)
-    attributes <- attributes[ !names(attributes) %in% c("dim", "dimnames") ]
-    # Subset the data so that it includes only constrained axes
-    reduced_dim <- reduced_dim[ , ind, drop = FALSE]
-    if( "biplot" %in% names(attributes) ){
-        attributes[["biplot"]] <- attributes[["biplot"]][ , ind, drop = FALSE]
-    }
-    if( "eig" %in% names(attributes) ){
-        attributes[["eig"]] <- attributes[["eig"]][ind]
-    }
-    # Add attributes back
-    attributes(reduced_dim) <- c(attributes(reduced_dim), attributes)
-    return(reduced_dim)
-}
-
-# This function retrieves optional data that is used for creating an ellipses.
-#' @importFrom scater retrieveCellInfo
-.get_rda_ellipse_data <- function(
-        tse, reduced_dim, add.ellipse = TRUE, colour_by = color_by,
-        color_by = colour.by, colour.by = color.by, color.by = NULL, ...){
-    #
-    if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour") &&
-            length(add.ellipse) == 1L ) ){
-        stop("'add.ellipse' must be one of c(TRUE, FALSE, 'fill', ",
-            "'color').", call. = FALSE)
-    }
-    if( !(is.null(colour_by) || .is_a_string(colour_by) &&
-            colour_by %in% colnames(colData(tse)) ) ){
-        stop("'colour_by' must be NULL or name of column from colData(x).",
-            call. = FALSE)
-    }
-    #
-    ellipse_data <- NULL
-    if( add.ellipse != FALSE && !is.null(colour_by) ){
-        # Ellipse data is the same ordination data
-        ellipse_data <- as.data.frame(reduced_dim)
-        # Add sample metadata from colData
-        ellipse_data[[colour_by]] <- retrieveCellInfo(tse, colour_by)[["value"]]
-        attributes(ellipse_data)[["colour_by"]] <- colour_by
-    }
-    return(ellipse_data)
-}
 
 # This function retrieves data for creating vectors. Moreover, it wrangles the
 # vector data and controls what information is added to vector text or labels.
@@ -362,7 +258,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     # name might be merged. Get the original variable names and
     # groups.
     if( !is.null(vector_data) ){
-        vector_data <- .get_variable_mapping_from_coldata(tse, vector_data)
+        vector_data <- .get_variable_mapping_from_coldata(
+            tse, vector_data, reduced_dim)
     }
     vars_found <- all(c("var", "levels") %in% colnames(vector_data))
     # Make the vector labels tidier. For instance, covriate name and value
@@ -406,26 +303,71 @@ setMethod("plotRDA", signature = c(x = "matrix"),
 # The RDA/CCA modifies the variable names. Those variables that are factor or
 # character i.e., groups, they get variable names that tell the variable and
 # group. This function matches those modified names with the original data.
-.get_variable_mapping_from_coldata <- function(tse, vector_data, ...){
-    # Loop over each variable in colData. Get all the possible values that they
-    # can get in RDA/CCA methods.
-    name_map <- lapply(colnames(colData(tse)), function(col){
-        # If the value is factor, get all possible values
-        if( is.factor(tse[[col]]) || is.character(tse[[col]]) ){
-            levels <- levels(as.factor(tse[[col]]))
-            name <- paste0(col, levels)
-            var <- rep(col, length(levels))
-            res <- data.frame(var, levels, name)
+.get_variable_mapping_from_coldata <- function(
+        tse, vector_data, reduced_dim, ...){
+    # Extract covariate names from RDA/CCA object
+    rda_obj <- .get_rda_attribute(reduced_dim, "obj")
+
+    # Check if rda object exists. By default, this is the case, but user can
+    # also remove it, e.g., to save memory. In that case, we cannot
+    # match the mapping bwteeen rda object and colData.
+    if( !(!is.null(rda_obj) && is(rda_obj, "cca")) ){
+        return(vector_data)
+    }
+    rda_terms <- rda_obj[["terms"]]
+    factors_mat <- .get_rda_attribute(rda_terms, "factors")
+    # Build name_map from terms in the RDA/CCA model
+    name_map <- lapply(factors_mat |> ncol() |> seq_len(), function(i){
+        # Get all variables in term
+        vars_in_term <- rownames(factors_mat)[factors_mat[, i] != 0]
+        # If covariate is not interaction term
+        if( length(vars_in_term) == 1L ) {
+            # main effect
+            values <- tse[[vars_in_term]]
+            lvls <- NA_character_
+            nams <- vars_in_term
+            if( is.factor(values) || is.character(values) ){
+                lvls <- values |> as.factor() |> levels()
+                nams <- paste0(vars_in_term, lvls)
+            }
+            res <- data.frame(
+                var = vars_in_term, levels = lvls, name = nams,
+                stringsAsFactors = FALSE)
         } else{
-            # The name of numeric variables are not changed
-            res <- data.frame(var = col, levels = NA, name = col)
+            # If the term includes interaction between multiple variables
+            # Get interaction terms. Categorical values are handled differently
+            # as they create levels.
+            combos <- lapply(vars_in_term, function(var_name){
+                if( tse[[var_name]] |> is.numeric() ){
+                    temp <- var_name
+                } else{
+                    temp <- tse[[var_name]] |> unique()
+                }
+                return(temp)
+            }) |> expand.grid(stringsAsFactors = FALSE)
+            # Parse level names from values
+            level_names <- apply(combos, 1L, paste, collapse = ":")
+            # Parse interaction term name from variable names
+            var_name <- paste(vars_in_term, collapse = ":")
+            # Create final term name that was used in vegan::dbrda. It is
+            # combination of variable name and levels (if categorical)
+            name <- apply(combos, 1L, function(x){
+                temp <- mapply(function(var, val){
+                    if( tse[[var]] |> is.numeric() ) var else paste0(var, val)
+                }, vars_in_term, x)
+                temp <- temp |> paste0(collapse = ":")
+                return(temp)
+            })
+            res <- data.frame(
+                var = var_name, levels = level_names, name = name,
+                stringsAsFactors = FALSE)
         }
         return(res)
     })
     name_map <- do.call(rbind, name_map)
     # Check that all variables can be found from colData
     if( !all(rownames(vector_data) %in% name_map[["name"]]) ){
-        warning("All variables in RDA/CCA rsults must be present in ",
+        warning("All variables in RDA/CCA results must be present in ",
             "colData(x).", call. = FALSE)
     } else{
         # Add group names to vector data
@@ -476,52 +418,21 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         lab <- vector_data[i, "vector_label"]
         expl_var <- round(vector_data[i, "Explained variance"]*100, 1)
         p_value <- round(vector_data[i, "Pr(>F)"], 3)
-        temp <- paste(
-            !!lab, " (", !!format(expl_var, nsmall = 1), "%, ",
-            italic("P"), " = ",
-            !!gsub("0\\.","\\.", format( p_value, nsmall = 3)), ")") |> expr()
+        # Only valid significance information is labeled. Skip NAs.
+        temp <- if( !is.na(expl_var) || !is.na(p_value) ){
+            paste(
+                !!lab, " (", !!format(expl_var, nsmall = 1), "%, ",
+                italic("P"), " = ",
+                !!gsub("0\\.","\\.", format(p_value, nsmall = 3)), ")"
+            ) |> expr()
+        } else{
+            paste(!!lab) |> expr()
+        }
         return(temp)
         }
     ) |> unlist()
     vector_data[["vector_label"]] <- labs
     return(vector_data)
-}
-
-# This functions returns optional centroids for plotting.
-.get_rda_centroids_data <- function(
-        reduced_dim, add.centroids = FALSE, ncomponents = 2L, ...){
-    #
-    if( !.is_a_bool(add.centroids) ){
-        stop("'add.centroids' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !.is_an_integer(ncomponents) ){
-        stop("'ncomponents' must be an integer.", call. = FALSE)
-    }
-    #
-    res <- if(add.centroids) .get_rda_attribute(reduced_dim, "centroids")
-    if( !is.null(res) ){
-        res <- res[, seq_len(ncomponents), drop = FALSE] |> as.data.frame()
-        colnames(res) <- c("x", "y")
-    }
-    return(res)
-}
-
-# This functions returns optional species scores for plotting.
-.get_rda_species_data <- function(
-        reduced_dim, add.species = FALSE, ncomponents = 2L, ...){
-    if( !.is_a_bool(add.species) ){
-        stop("'add.species' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !.is_an_integer(ncomponents) ){
-        stop("'ncomponents' must be an integer.", call. = FALSE)
-    }
-    #
-    res <- if(add.species) .get_rda_attribute(reduced_dim, "species")
-    if( add.species ){
-        res <- res[, seq_len(ncomponents), drop = FALSE] |> as.data.frame()
-        colnames(res) <- c("x", "y")
-    }
-    return(res)
 }
 
 # This function is used to fetch specified datatype from attributes if it
@@ -536,127 +447,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
     return(res)
 }
 
-# This function utilizes scater::plotReducedDim to create "baseplot". To where
-# we can build the the plot. The idea is that the theme is similar in all
-# ordination plots.
-#' @importFrom scater plotReducedDim
-.create_rda_baseplot <- function(
-        tse, dimred, reduced_dim, ncomponents = 2L,
-        add.expl.var = FALSE, expl.var = expl_var, expl_var = NULL,
-        colour_by = color_by, color_by = colour.by,
-        colour.by = color.by, color.by = NULL, ...){
-    #
-    if( !.is_a_bool(add.expl.var) ){
-        stop("'add.expl.var' must be TRUE or FALSE.", call. = FALSE)
-    }
-    if( !.is_an_integer(ncomponents) ){
-        stop("'ncomponents' must be an integer.", call. = FALSE)
-    }
-    if( !( is.null(expl.var) || (is.numeric(expl.var) &&
-            length(expl.var) == ncomponents )) ){
-        stop("'expl.var' must be numeric vector with length ", ncomponents,
-            ".", call. = FALSE)
-    }
-    if( !(is.null(colour_by) || .is_a_string(colour_by) &&
-            colour_by %in% colnames(colData(tse)) ) ){
-        stop("'colour_by' must be NULL or name of column from colData(x).",
-            call. = FALSE)
-    }
-    #
-    # If specified, get explained variance
-    if( add.expl.var && is.null(expl.var) ){
-        eigen_vals <- attr(reduced_dim, "eig")
-        # Convert to explained variance and take only first two components
-        expl_var <- eigen_vals / sum(eigen_vals)
-        expl_var <- expl_var[seq_len(ncomponents)]*100
-    }
-    # Create argument list
-    args <- c(list(object = tse, dimred = dimred, ncomponents = ncomponents,
-        colour_by = colour_by, percentVar = expl_var), list(...))
-    # Remove additional arguments since plotReducedDim fails if we feed
-    # values that are not recognized
-    remove <- names(args) %in% c(
-        "add.significance", "add.expl.var", "add.ellipse", "add.vectors",
-        "vec.lab", "sep.group", "repl.underscore", "add.centroids",
-        "add.species", "ellipse.alpha", "ellipse.linewidth", "ellipse.linetype",
-        "confidence.level", "vec.size", "vec.color", "vec.colour",
-        "vec.linetype", "arrow.size", "min.segment.length", "label.color",
-        "label.colour", "label.size", "parse.labels", "vec.text",
-        "repel.labels", "position", "nudge_x", "nudge_y", "direction",
-        "max.overlaps", "check_overlap", "ignore.case")
-    args <- args[ !remove ]
-    # Get scatter plot with plotReducedDim --> keep theme similar between
-    # ordination methods
-    p <- do.call(plotReducedDim, args)
-    return(p)
-}
-
-# This function is used to create the plot.
-.rda_plotter <- function(plot_data, ...){
-    # Get the scatter plot
-    plot <- plot_data[["plot"]]
-    # Add ellipse
-    plot <- .rda_plotter_ellipse(plot, plot_data, ...)
-    # Add vectors
-    plot <- .rda_plotter_vector(plot, plot_data, ...)
-    # Add centroids
-    plot <- .rda_plotter_centroids_or_species(plot, plot_data, "centroids")
-    # Add species
-    plot <- .rda_plotter_centroids_or_species(plot, plot_data, "species_scores")
-    return(plot)
-}
-
-# This function adds ellipse visualization.
-.rda_plotter_ellipse <- function(
-        plot, plot_data, add.ellipse = TRUE, ellipse.alpha = 0.2,
-        ellipse.linewidth = 0.1, ellipse.linetype = 1, confidence.level = 0.95,
-        ...){
-    # To disable "no visible binding for global variable" message in cmdcheck
-    color <- NULL
-    #
-    if( !(add.ellipse %in% c(TRUE, FALSE, "fill", "color", "colour") &&
-            length(add.ellipse) == 1L ) ){
-        stop("'add.ellipse' must be one of c(TRUE, FALSE, 'fill', ",
-            "'color').", call. = FALSE)
-    }
-    if( !.are_whole_numbers(ellipse.linetype) ){
-        stop("'vec.linetype' must be a whole number.", call. = FALSE)
-    }
-    if ( !(is.numeric(ellipse.alpha) && ellipse.alpha > 0 &&
-            ellipse.alpha < 1 ) ) {
-        stop("'ellipse.alpha' must be a number between 0 and 1.", call. = FALSE)
-    }
-    if ( !(is.numeric(ellipse.linewidth) && ellipse.linewidth > 0) ) {
-        stop("'ellipse.linewidth' must be a positive number.", call. = FALSE)
-    }
-    if( !(is.numeric(confidence.level) && confidence.level > 0 &&
-            confidence.level < 1) ) {
-        stop("'confidence.level' must be a number between 0 and 1.",
-            call. = FALSE)
-    }
-    #
-    data <- plot_data[["ellipse_data"]]
-    if( !is.null(data) ){
-        xvar <- colnames(data)[[1]]
-        yvar <- colnames(data)[[2]]
-        colour_var <- attributes(data)[["colour_by"]]
-        # Add ellipses to plot (fill or colour the edge)
-        fill <- add.ellipse %in% c(TRUE, "fill")
-        plot <- plot + stat_ellipse(
-            data = data,
-            mapping = aes(
-                x = .data[[xvar]], y = .data[[yvar]],
-                color = .data[[colour_var]], fill = after_scale(color)),
-            geom = "polygon",
-            linewidth = ellipse.linewidth,
-            linetype = ellipse.linetype,
-            level = confidence.level,
-            alpha = if(fill) ellipse.alpha else 0
-            )
-    }
-    return(plot)
-}
-
 # This function adds vector and text layer to the plot.
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter_vector <- function(
@@ -666,7 +456,7 @@ setMethod("plotRDA", signature = c(x = "matrix"),
         vec.text = TRUE, repel.labels = TRUE, parse.labels = TRUE,
         add.significance = TRUE, vec.linetype = 1, min.segment.length = 5,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
-        max.overlaps = 10, check_overlap = FALSE, ...
+        max.overlaps = 10, ...
         ){
     #
     if ( !(is.numeric(vec.size) && vec.size > 0) ) {
@@ -714,7 +504,8 @@ setMethod("plotRDA", signature = c(x = "matrix"),
                 x = 0, y = 0, xend = .data[[xvar]], yend = .data[[yvar]],
                 group = .data[["group"]]),
                 arrow = arrow(length = unit(arrow.size, "cm")),
-                color = vec.color, linetype = vec.linetype, size = vec.size)
+                color = vec.color, linetype = vec.linetype,
+                linewidth = vec.size)
         # Add vector labels (text or label)
         # Make list of arguments for geom_text/geom_label
         label_args <- list(
@@ -734,8 +525,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
                 max.time = 0.5, max.iter = 10000, max.overlaps = max.overlaps,
                 direction = direction, seed = NA, verbose = FALSE
             )
-        } else if( !repel.labels && vec.text ){
-            label_args <- c(label_args, check_overlap = check_overlap)
         }
         # Choose right function and call it
         FUN <- if( repel.labels && vec.text ) geom_text_repel
@@ -743,22 +532,6 @@ setMethod("plotRDA", signature = c(x = "matrix"),
             else if( !repel.labels && vec.text ) geom_text
             else geom_label
         plot <- plot + do.call(FUN, label_args)
-    }
-    return(plot)
-}
-
-# This function adds centroids or species layer to the plot.
-.rda_plotter_centroids_or_species <- function(plot, plot_data, type){
-    # To disable "no visible binding for global variable" message in cmdcheck
-    x <- y <- NULL
-    data <- plot_data[[type]]
-    if( !is.null(data) ){
-        plot <- plot + geom_point(
-            data,
-            mapping = aes(x = x, y = y),
-            shape = if(type == "centroids") 10L else 4L,
-            color = if(type == "centroids") "blue" else "red",
-            )
     }
     return(plot)
 }

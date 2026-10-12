@@ -64,7 +64,7 @@
 #'   plot be spitted into facets? (Default: \code{FALSE})
 #'
 #'   \item \code{facet.cols}: \code{Logical scalar}. Should the columns in the
-#'   plot be spitted into facets? (Default: \code{FALSE})
+#'   plot be spitted into facets? (Default: \code{TRUE})
 #'
 #'   \item \code{ncol}: \code{Numeric scalar}. if facets are applied,
 #'   \code{ncol} defines many columns should be for plotting the different
@@ -72,7 +72,7 @@
 #'
 #'   \item \code{scales} \code{Character scalar}. Defines the behavior of the
 #'   scales of each facet. The value is passed into
-#'   \code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"fixed"})
+#'   \code{\link[ggplot2:facet_wrap]{facet_wrap}}. (Default: \code{"free_x"})
 #' }
 #' See \code{\link{mia-plot-args}} for more details i.e. call
 #' \code{help("mia-plot-args")}
@@ -123,19 +123,13 @@
 #' plot <- plotAbundance(
 #'     tse, assay.type = "relabundance", group = "Phylum",
 #'     col.var = "SampleType")
-#' \donttest{
-#' # These two plots can be combined with wrap_plots function from patchwork
-#' # package
-#' library(patchwork)
-#' wrap_plots(plot, ncol = 1, heights = c(0.95, 0.05))
-#' }
 #'
-#' # Same plot as above but showing sample IDs as labels for the x axis on the
-#' # top plot. Moreover, we use facets.
+#' # Create a plot with sample grouping, and showing sample IDs as labels for
+#' # the x axis on the top plot.
 #' plot <- plotAbundance(
 #'     tse, assay.type = "relabundance",
 #'     group = "Phylum", col.var = "SampleType", add.legend = FALSE,
-#'     add.x.text = TRUE, facet.cols = TRUE, scales = "free_x") +
+#'     add.x.text = TRUE) +
 #'     theme(axis.text.x = element_text(angle = 90))
 #' plot
 #'
@@ -557,8 +551,8 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 #' @importFrom stats formula
 .abund_plotter_incorporate_metadata <- function(
         plot_out, df, col.var = features, features = NULL,
-        facet.cols = FALSE, facet.rows = one.facet,
-        one.facet = one_facet, one_facet = FALSE, ncol = 2, scales = "fixed",
+        facet.cols = TRUE, facet.rows = one.facet,
+        one.facet = one_facet, one_facet = FALSE, ncol = 2, scales = "free_x",
         ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     X <- NULL
