@@ -29,8 +29,8 @@ details for more information.
 For \code{*_graph} data:
 \enumerate{
 \item \dQuote{Jaccard} distances were calculated via
-\code{calculateDistance(genus, FUN = vegan::vegdist, method = "jaccard",
-exprs_values = "relabundance")}, either using transposed assay data or not
+\code{getDissimilarity(genus, FUN = vegan::vegdist, method = "jaccard",
+assay.type = "relabundance")}, either using transposed assay data or not
 to calculate distances for samples or features. NOTE: the function
 mia::calculateDistance is now deprecated.
 \item \dQuote{Jaccard} dissimilarites were converted to similarities and values
