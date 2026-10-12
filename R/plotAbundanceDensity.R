@@ -12,14 +12,11 @@
 #' taxa to show. (Default: \code{min(nrow(x), 25L)})
 #'
 #' @param colour.by \code{Character scalar}. Defines a column from
-#'   \code{colData}, that is used to color plot. Must be a value of
-#'   \code{colData()} function. (Default: \code{NULL})
+#'   \code{colData}, that is used to color plot. If the column is not found
+#'   from \code{colData}, it is searched from \code{rowData}, and the points
+#'   are coloured by feature. (Default: \code{NULL})
 #'
 #' @param colour_by Deprecated. Use \code{colour.by} instead.
-#'
-#' @param colour.features \code{Character vector}. A named vector of colors
-#'   for features. Names should match feature names. Useful for matching
-#'   colors across multiple plots. (Default: \code{NULL})
 #'
 #' @param shape.by \code{Character scalar}. Defines a column from
 #'   \code{colData}, that is used to group observations to different point shape
@@ -169,7 +166,6 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
         assay.type = assay_name, assay_name = "counts",
         n = min(nrow(x), 25L), colour.by = colour_by,
         colour_by = NULL,
-        colour.features = NULL,
         shape.by = shape_by,
         shape_by = NULL,
         size.by = size_by,
@@ -224,7 +220,6 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
             layout = layout,
             xlab = assay.type,
             colour_by = colour_by,
-            colour_features = colour.features,
             shape_by = shape_by,
             size_by = size_by,
             ...)
@@ -251,8 +246,12 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
     density_data <- t(mat) %>%
         as.data.frame() %>%
         rownames_to_column("Sample")
+    # Variables that are not found from colData are searched from rowData
+    colour_by_row <- !is.null(colour_by) &&
+        !colour_by %in% colnames(colData(object)) &&
+        colour_by %in% colnames(rowData(object))
     # Gets coloring information if 'colour_by' is not NULL
-    if (!is.null(colour_by)) {
+    if (!is.null(colour_by) && !colour_by_row) {
         # Gets information from colData
         colour_out <- retrieveCellInfo(object, colour_by)
         # Mirrors back the variable name, if a partial match was used
@@ -276,6 +275,13 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
     cols <- cols[cols %in% colnames(density_data)]
     density_data <- density_data %>%
         pivot_longer(cols = !cols, names_to = "Y", values_to = "X")
+    # Gets coloring information for each feature from rowData
+    if (colour_by_row) {
+        colour_out <- retrieveFeatureInfo(object, colour_by, search = "rowData")
+        colour_by <- colour_out$name
+        density_data$colour_by <- colour_out$value[
+            match(density_data$Y, rownames(object))]
+    }
     # Converts taxa to factor. Order of levels is the opposite than in
     # 'top_taxa' so that taxa with highest abundance is on top
     if(is.na(order_descending)){
@@ -301,7 +307,6 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
         xlab,
         ylab = NULL,
         colour_by = NULL,
-        colour_features = NULL,
         shape_by = NULL,
         size_by = NULL,
         point_shape = point.shape,
@@ -363,9 +368,6 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
             size = point_size,
             colour = point_colour)
         point_args$args$mapping$y <- sym("Y")
-        if (!is.null(colour_features)) {
-            point_args$args$fill <- NULL
-        }
         if (layout == "point"){
             plot_out <- plot_out +
                 do.call(geom_point, point_args$args)
@@ -421,12 +423,6 @@ setMethod("plotAbundanceDensity", signature = c(x = "SummarizedExperiment"),
                     axis.title.y = element_blank(),
                     axis.line.y = element_blank()) # Removes y-axis
         }
-    }
-    # Apply custom feature colours if provided
-    if (!is.null(colour_features)) {
-        plot_out <- plot_out +
-            aes(fill = .data[["Y"]]) +
-            scale_fill_manual(values = colour_features, guide = "none")
     }
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
