@@ -93,8 +93,6 @@
 #'
 #' @name plotAbundanceDensity
 #'
-#' @author Leo Lahti and Tuomas Borman. Contact: \url{microbiome.github.io}
-#'
 #' @seealso
 #' \code{\link[scater:plotExpression]{scater::plotExpression}}
 #'
