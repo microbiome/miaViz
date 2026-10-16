@@ -17,7 +17,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.6</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.7</span>
       </span>
     </div>
 
@@ -44,7 +44,7 @@
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot abundance density</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/plotcol/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/plotcol/R/plotAbundanceDensity.R" class="external-link"><code>R/plotAbundanceDensity.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/fix_boxplot/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/fix_boxplot/R/plotAbundanceDensity.R" class="external-link"><code>R/plotAbundanceDensity.R</code></a></small>
     <div class="hidden name"><code>plotAbundanceDensity.Rd</code></div>
     </div>
 
@@ -136,9 +136,8 @@ taxa to show. (Default: <code>min(nrow(x), 25L)</code>)</p></dd>
 
 <dt id="arg-colour-by">colour.by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
 <dd><p><code>Character scalar</code>. Defines a column from
-<code>colData</code>, that is used to color plot. If the column is not found
-from <code>colData</code>, it is searched from <code>rowData</code>, and the points
-are coloured by feature. (Default: <code>NULL</code>)</p></dd>
+<code>colData</code>, that is used to color plot. Must be a value of
+<code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code> function. (Default: <code>NULL</code>)</p></dd>
 
 
 <dt id="arg-colour-by">colour_by<a class="anchor" aria-label="anchor" href="#arg-colour-by"></a></dt>
