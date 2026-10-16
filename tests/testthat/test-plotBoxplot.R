@@ -94,12 +94,17 @@ test_that("plotBoxplot can color, fill and specify x based on same column", {
     assayNames(tse) <- "counts"
     colData(tse)[["value"]] <- sample(c("A", "B"), ncol(tse), replace = TRUE)
 
-    p <- plotBoxplot(tse, assay.type = "counts", x = "value", colour.by = "value", fill.by = "value", point.offset = "none")
+    p <- plotBoxplot(
+        tse, assay.type = "counts", x = "value", colour.by = "value",
+        fill.by = "value", point.offset = "none")
     p_data <- ggplot_build(p)
 
     # Colour and fill should be the same
     coloring <- p_data@data[[2]][ , c("colour", "fill")]
     expect_equal(coloring[[1]], coloring[[2]])
-    # There is 2 groups, so there should be 2 unique rows (because jitter was not applied)
-    expect_true(p_data@data[[2]][, c("x", "colour", "fill")] |> unique() |> nrow() == 2)
+    # There is 2 groups, so there should be 2 unique rows (because jitter was
+    # not applied)
+    expect_true(
+        p_data@data[[2]][, c("x", "colour", "fill")] |> unique() |> nrow() == 2L
+    )
 })
