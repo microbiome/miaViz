@@ -459,11 +459,13 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     # If row.var was specified, get the data from rowData
     if( !is.null(row.var) ){
-        df <- rowData(tse)[, c(row.var, all_vars), drop = FALSE]
+        cols_to_select <- c(row.var, all_vars) |> unique()
+        df <- rowData(tse)[, cols_to_select, drop = FALSE]
     }
     # If col.var was specified, get the data from colData
     if( !is.null(col.var) ){
-        df <- colData(tse)[, c(col.var, pair.by, all_vars), drop = FALSE]
+        cols_to_select <- c(col.var, pair.by, all_vars) |> unique()
+        df <- colData(tse)[, cols_to_select, drop = FALSE]
     }
     # Check that y-axis is numeric
     if( !is.numeric(df[[c(assay.type, col.var, row.var)]]) ){
