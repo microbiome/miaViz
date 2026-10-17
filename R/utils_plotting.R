@@ -174,6 +174,25 @@
 #'   use for \code{NA} values. (Default: \code{"grey80"})}
 #' }
 #'
+#' @section {Rarefaction plotting}:
+#'
+#' \describe{
+#'   \item{\code{add.legend}: }{\code{Logical scalar}. Should legends be
+#'   plotted? (Default: \code{TRUE})}
+#'
+#'   \item{\code{line.alpha}: }{\code{Numeric scalar} in \code{[0, 1]}.
+#'   Specifies the transparency of the tree edges. (Default: \code{1})}
+#'
+#'   \item{\code{line.type}: }{\code{Numeric scalar}. Specifies the default line
+#'   type. (Default: \code{NULL}) to use default of the \code{ggplot2} package.}
+#'
+#'   \item{\code{line.width}: }{\code{Numeric scalar}. Specifies the default
+#'   width of a line. (Default: \code{NULL}) to use default of the
+#'   \code{ggplot2} package.}
+#'
+#'   \item{\code{line.width.range}: }{\code{Numeric vector}. The range for
+#'   plotting dynamic line widths in. (Default: \code{c(0.5,3)})}
+#'
 #' @name mia-plot-args
 NULL
 
