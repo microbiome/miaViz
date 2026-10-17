@@ -44,7 +44,7 @@
 #'   Must be either \code{"histogram"} or \code{"density"}.
 #'   (Default: \code{"histogram"})
 #'   \item \code{facet.by}: \code{Character vector}. Specifies variables from
-#'   \code{colData(x)} or \code{rowData(x)} used for facetting.
+#'   \code{colData(x)} or \code{rowData(x)} used for faceting.
 #'   (Default: \code{NULL})
 #'   \item \code{fill.by}: \code{Character scalar}. Specifies variable from
 #'   \code{colData(x)} or \code{rowData(x)} used for coloring.
@@ -103,7 +103,6 @@ setMethod("plotHistogram", signature = c(x = "SummarizedExperiment"),
             x = x, assay.type = assay.type, features = features,
             row.var = row.var, col.var = col.var)
         args <- c(args, list(...))
-        args[["fill"]] <- NULL  # avoid partial matching to fill.by
         temp <- do.call(.check_input_for_histogram, args)
         # Get the data from the object
         args[["mode"]] <- "histogram"
@@ -128,7 +127,6 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
             x = x, assay.type = assay.type, features = features,
             row.var = row.var, col.var = col.var)
         args <- c(args, list(...))
-        args[["fill"]] <- NULL  # avoid partial matching to fill.by
         temp <- do.call(.check_input_for_histogram, args)
         # Get the data from the object
         args[["mode"]] <- "barplot"
@@ -196,7 +194,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         stop("'feature' must specify features from rownames(x).",
             call. = FALSE)
     }
-    # Check that facetting and cooring variables can be found correctly from
+    # Check that faceting and cooring variables can be found correctly from
     # row or column metadata
     temp <- .check_metadata_variable(
         x, fill.by,
@@ -210,11 +208,11 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         col = length(c(col.var, assay.type))>0,
         multiple = TRUE
     )
-    # User cannot specify more than 2 variables for facetting
+    # User cannot specify more than 2 variables for faceting
     if( length(facet.by) > 2L ){
         stop("'facet.by' cannot specify more than 2 variables.", call. = FALSE)
     }
-    # It does not make sense to visualize same variable as used for facetting or
+    # It does not make sense to visualize same variable as used for faceting or
     # coloring
     if( !is.null(col.var) && col.var %in% c(facet.by, fill.by) ){
         stop("'col.var' must not equal to 'fill.by' or 'facet.by'.",
@@ -290,7 +288,7 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     if( !all(are_correct) ){
         stop("'fill.by' must specify categorical values.", call. = FALSE)
     }
-    # Add x-axis title, facetting, and coloring info to attributes so that we
+    # Add x-axis title, faceting, and coloring info to attributes so that we
     # can use it in plotting function.
     attributes(df)[["x"]] <- c(assay.type, col.var, row.var)
     attributes(df)[["facet.by"]] <- facet.by
@@ -305,16 +303,41 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         position = ifelse(
             !is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"),
         ...){
+    # To disable "no visible binding for global variable" message in cmdcheck
+    value <- facet_by <- NULL
     # Check layout
     supported_layouts <- c("histogram", "density")
     if( !(.is_a_string(layout) && all(layout %in% supported_layouts) ) ){
         stop("'layout' must be from the following options: '",
             paste0(supported_layouts, collapse = "', '"), "'", call. = FALSE)
     }
-    geom_fun <- switch(
-        layout, histogram = geom_histogram, density = geom_density)
-    .plot_hist_bar(df, geom_fun, layout == "histogram", color, fill,
-        alpha, scales, position, ...)
+    # Initialize a plot
+    p <- ggplot(df, aes(
+        x = value,
+        fill = if(!is.null(attributes(df)[["fill.by"]]))
+            .data[[attributes(df)[["fill.by"]]]] else fill
+        ))
+    # Either create histogram or density
+    if( layout == "density" ){
+        p <- p + geom_density(color = color, alpha = alpha, ...)
+    } else{
+        p <- p + geom_histogram(
+            color = color, alpha = alpha, position = position, ...)
+    }
+    # Apply faceting
+    if( length(attributes(df)[["facet.by"]]) > 0L ){
+        p <- p + facet_grid(attributes(df)[["facet.by"]], scales = scales)
+    }
+    # Adjust theme
+    p <- p + theme_classic()
+    # Adjust titles
+    p <- p + labs(x = attributes(df)[["x"]])
+    if( !is.null(attributes(df)[["fill.by"]]) ){
+        p <- p + labs(fill = attributes(df)[["fill.by"]])
+    } else{
+        p <- p + guides(fill = "none")
+    }
+    return(p)
 }
 
 # This function gets data.frame and creates a plot.
@@ -324,32 +347,17 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
         position = ifelse(
             !is.null(attributes(df)[["fill.by"]]), "dodge2", "identity"),
         ...){
-    .plot_hist_bar(df, geom_bar, TRUE, color, fill, alpha, scales,
-        position, ...)
-}
-
-# This function creates a histogram or bar plot from a data.frame.
-.plot_hist_bar <- function(df, geom_fun, use_position, color, fill,
-        alpha, scales, position, ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     value <- facet_by <- NULL
-    fill_by <- attributes(df)[["fill.by"]]
-    mapping <- aes(x = value)
-    if (!is.null(fill_by)) {
-        mapping <- aes(x = value, fill = .data[[fill_by]])
-    }
     # Initialize a plot
-    p <- ggplot(df, mapping)
-    layer_args <- list(color = color, alpha = alpha, ...)
-    if (is.null(fill_by)) {
-        layer_args$fill <- fill
-    }
-    if (use_position) {
-        layer_args$position <- position
-    }
-    # Either create histogram or density or barplot layer
-    p <- p + do.call(geom_fun, layer_args)
-    # Apply facetting
+    p <- ggplot(df, aes(
+        x = value,
+        fill = if(!is.null(attributes(df)[["fill.by"]]))
+            .data[[attributes(df)[["fill.by"]]]] else fill
+        ))
+    # Either create barplot
+    p <- p + geom_bar(color = color, alpha = alpha, position = position, ...)
+    # Apply faceting
     if( length(attributes(df)[["facet.by"]]) > 0L ){
         p <- p + facet_grid(attributes(df)[["facet.by"]], scales = scales)
     }
@@ -357,8 +365,8 @@ setMethod("plotBarplot", signature = c(x = "SummarizedExperiment"),
     p <- p + theme_classic()
     # Adjust titles
     p <- p + labs(x = attributes(df)[["x"]])
-    if( !is.null(fill_by) ){
-        p <- p + labs(fill = fill_by)
+    if( !is.null(attributes(df)[["fill.by"]]) ){
+        p <- p + labs(fill = attributes(df)[["fill.by"]])
     } else{
         p <- p + guides(fill = "none")
     }
