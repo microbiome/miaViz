@@ -38,9 +38,12 @@
 #'   \item \code{sort.method}: ("heatmap") \code{Character scalar} or
 #'   \code{BlusterParam} object. Specifies sorting method. If it specifies
 #'   column, i.e., principal coordinate, features are ordered in decreasing
-#'   order based on the specified coordinate. If \code{"neatsort"},
-#'   \code{getNeatOrder()} is utilized. If \code{BlusterParam} object, the
-#'   argument is passed to
+#'   order based on the specified coordinate. Other \code{character} values
+#'   specify a seriation method, e.g., \code{"PCA_angle"} or
+#'   \code{"Heatmap"}, that is passed to
+#'   \code{\link[seriation:seriate]{seriation::seriate()}} (see
+#'   \code{seriation::list_seriation_methods("matrix")} for available
+#'   methods). If \code{BlusterParam} object, the argument is passed to
 #'   \code{\link[bluster:clusterRows]{bluster:clusterRows()}} \code{BLUSPARAM}
 #'   parameter. (Default: \code{NULL})
 #' }
@@ -90,7 +93,7 @@
 #' # Plot with less components
 #' plotLoadings(
 #'     tse, "PCA", layout = "heatmap",
-#'     ncomponents = 2, sort.method = "neatsort"
+#'     ncomponents = 2, sort.method = "PCA_angle"
 #' )
 #'
 NULL
@@ -300,14 +303,10 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 .process_heatmap_component <- function(
         df, sort.method = BLUSPARAM, BLUSPARAM = NULL, ...){
     components <- colnames(df)
-    supported_methods <- c("neatsort", components)
-    if( !(is.null(sort.method) ||
-          (.is_a_string(sort.method) && sort.method %in% supported_methods) ||
+    if( !(is.null(sort.method) || .is_a_string(sort.method) ||
           is(sort.method, "BlusterParam") ) ){
-        stop("'sort.method' must be NULL, a single character value from the ",
-            "following options '", paste0(supported_methods, collapse = "', '"),
-            "' or a BlusterParam object (see bluster::clusterRows() for ",
-            "details).", call. = FALSE)
+        stop("'sort.method' must be NULL, a single character value or a ",
+            "BlusterParam object.", call. = FALSE)
     }
     #
     # Get feature order
@@ -331,16 +330,18 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 }
 
 # This function gets feature order based on clustering, principal component
-# values or neatsort.
+# values or seriation.
 .get_feature_order <- function(df, sort.method, ...){
     df <- as.matrix(df)
     # Get order based on single column
     if( .is_a_string(sort.method) && sort.method %in% colnames(df) ){
         feat_order <- order(df[, sort.method], decreasing = TRUE)
-    } else if( .is_a_string(sort.method) && sort.method == "neatsort" ){
-        # Get order based on neatsort. It can take only 2 columns as input.
-        feat_order <- getNeatOrder(
-            df[, seq_len(min(2, ncol(df))), drop = FALSE], ...)
+    } else if( .is_a_string(sort.method) ){
+        # Get order based on seriation
+        .require_package("seriation")
+        feat_order <- seriation::seriate(
+            df, method = sort.method, margin = 1L) |>
+            seriation::get_order()
     } else{
         # Get order based on clustering
         .require_package("bluster")

@@ -42,9 +42,12 @@ absolute scale. (Default: \code{TRUE})
 \item \code{sort.method}: ("heatmap") \code{Character scalar} or
 \code{BlusterParam} object. Specifies sorting method. If it specifies
 column, i.e., principal coordinate, features are ordered in decreasing
-order based on the specified coordinate. If \code{"neatsort"},
-\code{getNeatOrder()} is utilized. If \code{BlusterParam} object, the
-argument is passed to
+order based on the specified coordinate. Other \code{character} values
+specify a seriation method, e.g., \code{"PCA_angle"} or
+\code{"Heatmap"}, that is passed to
+\code{\link[seriation:seriate]{seriation::seriate()}} (see
+\code{seriation::list_seriation_methods("matrix")} for available
+methods). If \code{BlusterParam} object, the argument is passed to
 \code{\link[bluster:clusterRows]{bluster:clusterRows()}} \code{BLUSPARAM}
 parameter. (Default: \code{NULL})
 }}
@@ -116,7 +119,7 @@ plotLoadings(loadings_matrix, layout = "heatmap")
 # Plot with less components
 plotLoadings(
     tse, "PCA", layout = "heatmap",
-    ncomponents = 2, sort.method = "neatsort"
+    ncomponents = 2, sort.method = "PCA_angle"
 )
 
 }

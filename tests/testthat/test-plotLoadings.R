@@ -94,9 +94,13 @@ test_that("plotLoadings sorts features in heatmap", {
     expect_identical(
         levels(p$data[["Feature"]]),
         rownames(loadings)[order(loadings[, "PC2"], decreasing = TRUE)])
-    # Neatsort and clustering give an order for all features
-    p <- plotLoadings(tse, "PCA", layout = "heatmap", sort.method = "neatsort")
-    expect_setequal(levels(p$data[["Feature"]]), rownames(loadings))
+    # Features are sorted with seriation method
+    p <- plotLoadings(tse, "PCA", layout = "heatmap", sort.method = "PCA_angle")
+    ser <- seriation::seriate(loadings, method = "PCA_angle", margin = 1L)
+    expect_identical(
+        levels(p$data[["Feature"]]),
+        rownames(loadings)[seriation::get_order(ser)])
+    # Clustering gives an order for all features
     p <- plotLoadings(
         tse, "PCA", layout = "heatmap",
         sort.method = bluster::HclustParam())
