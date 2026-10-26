@@ -56,3 +56,4 @@ Changes in version 1.21.x
 + Added plotOrdination and plotJointRPCA (2026-08-04)
 + Added plotHeatmap (2026-08-10)
 + Added multimedia_data_demo example datasets (se_relative, tse_relative, tse_pathway) (2026-09-01)
++ plotBoxplot: paired lines follow the time order with more than two time points (2026-10-26)
