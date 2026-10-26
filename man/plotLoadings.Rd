@@ -40,10 +40,11 @@ Specifies whether a barplot or a lollipop plot should be visualized in
 absolute scale. (Default: \code{TRUE})
 
 \item \code{sort.method}: ("heatmap") \code{Character scalar} or
-\code{function}. Specifies sorting method. If it specifies column, i.e.,
-principal coordinate, features are ordered in dcreasing order based on the
-specified coordinate. If \code{"neatsort"}, \code{getNeatOrder()} is
-utilized. If \code{function}, the argument is passed to
+\code{BlusterParam} object. Specifies sorting method. If it specifies
+column, i.e., principal coordinate, features are ordered in decreasing
+order based on the specified coordinate. If \code{"neatsort"},
+\code{getNeatOrder()} is utilized. If \code{BlusterParam} object, the
+argument is passed to
 \code{\link[bluster:clusterRows]{bluster:clusterRows()}} \code{BLUSPARAM}
 parameter. (Default: \code{NULL})
 }}

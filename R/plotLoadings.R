@@ -36,10 +36,11 @@
 #'   absolute scale. (Default: \code{TRUE})
 #'
 #'   \item \code{sort.method}: ("heatmap") \code{Character scalar} or
-#'   \code{function}. Specifies sorting method. If it specifies column, i.e.,
-#'   principal coordinate, features are ordered in dcreasing order based on the
-#'   specified coordinate. If \code{"neatsort"}, \code{getNeatOrder()} is
-#'   utilized. If \code{function}, the argument is passed to
+#'   \code{BlusterParam} object. Specifies sorting method. If it specifies
+#'   column, i.e., principal coordinate, features are ordered in decreasing
+#'   order based on the specified coordinate. If \code{"neatsort"},
+#'   \code{getNeatOrder()} is utilized. If \code{BlusterParam} object, the
+#'   argument is passed to
 #'   \code{\link[bluster:clusterRows]{bluster:clusterRows()}} \code{BLUSPARAM}
 #'   parameter. (Default: \code{NULL})
 #' }
@@ -302,11 +303,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     supported_methods <- c("neatsort", components)
     if( !(is.null(sort.method) ||
           (.is_a_string(sort.method) && sort.method %in% supported_methods) ||
-          is.function(sort.method) ) ){
+          is(sort.method, "BlusterParam") ) ){
         stop("'sort.method' must be NULL, a single character value from the ",
             "following options '", paste0(supported_methods, collapse = "', '"),
-            "' or a BLUSPARAM function (please see bluster::clusterRows() for ",
-            "details.", call. = FALSE)
+            "' or a BlusterParam object (see bluster::clusterRows() for ",
+            "details).", call. = FALSE)
     }
     #
     # Get feature order
@@ -334,16 +335,17 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 .get_feature_order <- function(df, sort.method, ...){
     df <- as.matrix(df)
     # Get order based on single column
-    if( sort.method %in% colnames(df) ){
-        feat_order <- order(df[[sort.method]], decreasing = TRUE)
-    } else if( sort.method %in% c("neatsort") ){
+    if( .is_a_string(sort.method) && sort.method %in% colnames(df) ){
+        feat_order <- order(df[, sort.method], decreasing = TRUE)
+    } else if( .is_a_string(sort.method) && sort.method == "neatsort" ){
         # Get order based on neatsort. It can take only 2 columns as input.
         feat_order <- getNeatOrder(
             df[, seq_len(min(2, ncol(df))), drop = FALSE], ...)
     } else{
         # Get order based on clustering
         .require_package("bluster")
-        feat_order <- clusterRows(df, BLUSPARAM = sort.method) |> order()
+        feat_order <- bluster::clusterRows(df, BLUSPARAM = sort.method) |>
+            order()
     }
     # Now we have order as indices. Get the feature names in correct order.
     feat_order <- rownames(df)[ feat_order ]
