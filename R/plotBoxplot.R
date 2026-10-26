@@ -590,23 +590,20 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function calculates difference between paired samples.
-#' @importFrom dplyr arrange across all_of group_by mutate desc
+#' @importFrom dplyr arrange across all_of group_by mutate
 .calculate_paired_difference <- function(
         df, x, y, pair.by, group.by, fill.by, facet.by){
-    # Calculate difference between paired points
+    # Calculate difference from each point to the next point of the same pair.
+    # Lines are drawn in this order, and each segment gets the color of its
+    # start point, i.e., the difference to the next point.
     df <- df |>
         as.data.frame() |>
         arrange(across(all_of(c(pair.by, x, group.by, fill.by)))) |>
         group_by(across(all_of(c(pair.by, facet.by)))) |>
         mutate(
-            difference = .data[[y]] - dplyr::lag(.data[[y]])
+            difference = dplyr::lead(.data[[y]]) - .data[[y]]
         ) |>
         ungroup()
-    # Sort data so that last time point comes first. ggplot gets color from
-    # first instance. Otherwise it would be time point 1 -> time point 2,
-    # which is NA.
-    df <- df |>
-        arrange(desc(across(all_of(c("difference", pair.by, x)))))
     return(df)
 }
 

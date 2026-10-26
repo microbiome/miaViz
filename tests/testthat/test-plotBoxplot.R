@@ -108,3 +108,28 @@ test_that("plotBoxplot can color, fill and specify x based on same column", {
         p_data@data[[2]][, c("x", "colour", "fill")] |> unique() |> nrow() == 2L
     )
 })
+
+test_that("plotBoxplot draws paired lines in time order", {
+    tse <- makeTSE(nrow = 1L, ncol = 6L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["subject"]] <- rep(c("a", "b"), each = 3L)
+    colData(tse)[["time"]] <- rep(c("t1", "t2", "t3"), 2L)
+    colData(tse)[["score"]] <- c(1, 5, 2, 3, 3, 9)
+
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "time", pair.by = "subject",
+        add.chance = TRUE, point.offset = "none")
+    is_path <- vapply(
+        p$layers, function(l) inherits(l$geom, "GeomPath"), logical(1L))
+    lines <- layer_data(p, which(is_path))
+
+    # Each line follows the time points in order
+    for( g in unique(lines[["group"]]) ){
+        expect_equal(as.numeric(lines[lines[["group"]] == g, "x"]), c(1, 2, 3))
+    }
+    # Each segment is colored by the change to the next time point
+    expect_equal(
+        p$data[["difference"]][p$data[["subject"]] == "a"], c(4, -3, NA))
+    expect_equal(
+        p$data[["difference"]][p$data[["subject"]] == "b"], c(0, 6, NA))
+})
