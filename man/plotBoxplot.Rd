@@ -60,8 +60,8 @@ or group observations. (Default: \code{NULL})
 variable from \code{colData(x)} which is used to pair observation points.
 (Default: \code{NULL})
 
-\item \code{add.chance}: \code{Logical scalar}. Whether to visualize chance
-of paired observations by the color of line. (Default: \code{FALSE})
+\item \code{add.change}: \code{Logical scalar}. Whether to colour paired
+observations by the change between time points. (Default: \code{FALSE})
 
 \item \code{add.box}: \code{Logical scalar}. Whether to add a boxplot
 layout. (Default: \code{TRUE})
@@ -241,12 +241,12 @@ library(microbiomeDataSets)
 mae <- microbiomeDataSets::peerj32()
 tse <- getWithColData(mae, 1)
 tse[["time_point"]] <- as.character(tse[["time"]])
-# Create a plot showing chance between time points in abundance of
+# Create a plot showing the change between time points in abundance of
 # Akkermansia
 plotBoxplot(
     tse, x = "time_point", assay.type = "counts", fill.by = "group",
     features = "Akkermansia", pair.by = "subject",
-    add.chance = TRUE, scales = "free"
+    add.change = TRUE, scales = "free"
 )
 }
 
