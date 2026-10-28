@@ -79,8 +79,8 @@
 #'   variable from \code{colData(x)} which is used to pair observation points.
 #'   (Default: \code{NULL})
 #'
-#'   \item \code{add.chance}: \code{Logical scalar}. Whether to visualize chance
-#'   of paired observations by the color of line. (Default: \code{FALSE})
+#'   \item \code{add.change}: \code{Logical scalar}. Whether to colour paired
+#'   observations by the change between time points. (Default: \code{FALSE})
 #'
 #'   \item \code{add.box}: \code{Logical scalar}. Whether to add a boxplot
 #'   layout. (Default: \code{TRUE})
@@ -227,12 +227,12 @@
 #' tse <- getWithColData(mae, 1)
 #' tse[["time_point"]] <- as.character(tse[["time"]])
 
-#' # Create a plot showing chance between time points in abundance of
+#' # Create a plot showing the change between time points in abundance of
 #' # Akkermansia
 #' plotBoxplot(
 #'     tse, x = "time_point", assay.type = "counts", fill.by = "group",
 #'     features = "Akkermansia", pair.by = "subject",
-#'     add.chance = TRUE, scales = "free"
+#'     add.change = TRUE, scales = "free"
 #' )
 #' }
 #'
@@ -258,6 +258,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             row.var = row.var, col.var = col.var, x = x, group.by = group.by),
             list(...)
         )
+        # 'add.chance' is deprecated in favour of 'add.change'
+        if( "add.chance" %in% names(args) ){
+            warning(
+                "'add.chance' is deprecated. Use 'add.change' instead.",
+                call. = FALSE)
+            args[["add.change"]] <- args[["add.chance"]]
+            args[["add.chance"]] <- NULL
+        }
         temp <- do.call(.check_input_for_boxplot, args)
         # Get the data from the object
         df <- do.call(.get_data_for_boxplot, args)
@@ -272,7 +280,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function validates the input for boxplot plotter.
 .check_input_for_boxplot <- function(
         tse, assay.type, features, row.var, col.var, x, group.by,
-        pair.by = NULL, add.chance = FALSE, colour.by = color.by,
+        pair.by = NULL, add.change = FALSE, colour.by = color.by,
         color.by = NULL, fill.by = NULL, size.by = NULL, shape.by = NULL,
         facet.by = NULL, add.box = TRUE, add.points = TRUE,
         add.proportion = FALSE, add.threshold = FALSE, scales = "fixed",
@@ -356,11 +364,11 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     )
     temp <- .check_metadata_variable(tse, pair.by, col = TRUE)
     # Check that pairing variables are correct
-    if( !.is_a_bool(add.chance) ){
-        stop("'add.chance' must be TRUE or FALSE.", call. = FALSE)
+    if( !.is_a_bool(add.change) ){
+        stop("'add.change' must be TRUE or FALSE.", call. = FALSE)
     }
-    if( add.chance && is.null(pair.by) ){
-        stop("When 'add.chance' is specified, 'pair.by' must be specified.",
+    if( add.change && is.null(pair.by) ){
+        stop("When 'add.change' is specified, 'pair.by' must be specified.",
             call. = FALSE)
     }
     # We have to plot points in order to connect them
@@ -370,8 +378,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     # We can either color based on variable or the difference netween paired
     # samples. There cannot be multiple coloring schemes.
-    if( add.chance && !is.null(colour.by) ){
-        stop("Both 'add.chance' and 'colour.by' cannot be specified ",
+    if( add.change && !is.null(colour.by) ){
+        stop("Both 'add.change' and 'colour.by' cannot be specified ",
             "simultaneously.", call. = FALSE)
     }
     # x must be character or factor in box plots
@@ -434,7 +442,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # for the plotter function.
 .get_data_for_boxplot <- function(
         tse, x = NULL, assay.type, features, row.var, col.var, group.by,
-        pair.by = NULL, add.chance = FALSE,
+        pair.by = NULL, add.change = FALSE,
         colour.by = color.by, color.by = NULL,
         size.by = NULL, shape.by = NULL, facet.by = NULL,
         fill.by = NULL, add.proportion = FALSE, p.value = NULL,
@@ -497,7 +505,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 
     # If user specified, calculate difference
     difference <- NULL
-    if( add.chance ){
+    if( add.change ){
         df <- .calculate_paired_difference(
             df, x, c(assay.type, col.var, row.var), pair.by, group.by, fill.by,
             facet.by)
@@ -575,7 +583,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         x = x,
         group.by = group.by,
         pair.by = pair.by,
-        add.chance = add.chance,
+        add.change = add.change,
         colour.by = colour.by,
         fill.by = fill.by,
         size.by = size.by,
@@ -1327,7 +1335,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     if( !is.null(attributes(df)[["colour.by"]]) ){
         p <- p + labs(colour = attributes(df)[["colour.by"]])
     }
-    if( attributes(df)[["add.chance"]] ){
+    if( attributes(df)[["add.change"]] ){
         p <- p + labs(colour = "Difference")
     }
     if( !is.null(attributes(df)[["shape.by"]]) ){

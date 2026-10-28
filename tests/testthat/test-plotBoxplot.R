@@ -108,3 +108,23 @@ test_that("plotBoxplot can color, fill and specify x based on same column", {
         p_data@data[[2]][, c("x", "colour", "fill")] |> unique() |> nrow() == 2L
     )
 })
+
+test_that("plotBoxplot add.chance works as deprecated alias", {
+    tse <- makeTSE(nrow = 10L, ncol = 10L)
+    assayNames(tse) <- "counts"
+    # Five subjects, two time points each
+    colData(tse)[["subject"]] <- as.character(rep(seq_len(5L), each = 2L))
+    colData(tse)[["time_point"]] <- rep(c("A", "B"), times = 5L)
+
+    p <- plotBoxplot(
+        tse, x = "time_point", assay.type = "counts",
+        pair.by = "subject", add.change = TRUE)
+
+    # Deprecated alias must warn and give the same plot
+    expect_warning(
+        p_deprecated <- plotBoxplot(
+            tse, x = "time_point", assay.type = "counts",
+            pair.by = "subject", add.chance = TRUE),
+        "'add.chance' is deprecated")
+    expect_equal(p, p_deprecated)
+})
