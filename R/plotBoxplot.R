@@ -590,7 +590,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function calculates difference between paired samples.
-#' @importFrom dplyr arrange across all_of group_by mutate
+#' @importFrom dplyr arrange across all_of group_by mutate lead
 .calculate_paired_difference <- function(
         df, x, y, pair.by, group.by, fill.by, facet.by){
     # Calculate difference from each point to the next point of the same pair.
@@ -601,7 +601,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         arrange(across(all_of(c(pair.by, x, group.by, fill.by)))) |>
         group_by(across(all_of(c(pair.by, facet.by)))) |>
         mutate(
-            difference = dplyr::lead(.data[[y]]) - .data[[y]]
+            difference = lead(.data[[y]]) - .data[[y]]
         ) |>
         ungroup()
     return(df)
