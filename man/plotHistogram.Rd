@@ -40,7 +40,7 @@ object.}
 Must be either \code{"histogram"} or \code{"density"}.
 (Default: \code{"histogram"})
 \item \code{facet.by}: \code{Character vector}. Specifies variables from
-\code{colData(x)} or \code{rowData(x)} used for facetting.
+\code{colData(x)} or \code{rowData(x)} used for faceting.
 (Default: \code{NULL})
 \item \code{fill.by}: \code{Character scalar}. Specifies variable from
 \code{colData(x)} or \code{rowData(x)} used for coloring.
