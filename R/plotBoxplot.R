@@ -258,14 +258,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             row.var = row.var, col.var = col.var, x = x, group.by = group.by),
             list(...)
         )
-        # 'add.chance' is deprecated in favour of 'add.change'
-        if( "add.chance" %in% names(args) ){
-            warning(
-                "'add.chance' is deprecated. Use 'add.change' instead.",
-                call. = FALSE)
-            args[["add.change"]] <- args[["add.chance"]]
-            args[["add.chance"]] <- NULL
-        }
         temp <- do.call(.check_input_for_boxplot, args)
         # Get the data from the object
         df <- do.call(.get_data_for_boxplot, args)

@@ -118,7 +118,7 @@ test_that("plotBoxplot draws paired lines in time order", {
 
     p <- plotBoxplot(
         tse, col.var = "score", x = "time", pair.by = "subject",
-        add.chance = TRUE, point.offset = "none")
+        add.change = TRUE, point.offset = "none")
     is_path <- vapply(
         p$layers, function(l) inherits(l$geom, "GeomPath"), logical(1L))
     lines <- layer_data(p, which(is_path))
