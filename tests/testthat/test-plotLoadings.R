@@ -82,3 +82,32 @@ test_that("plot Loadings", {
   expect_s3_class(plot, "ggplot")
 })
 
+
+test_that("plotLoadings sorts features in heatmap", {
+    data("GlobalPatterns", package = "mia")
+    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Phylum")
+    tse <- transformAssay(tse, method = "clr", pseudocount = 1)
+    tse <- scater::runPCA(tse, ncomponents = 5, assay.type = "clr")
+    loadings <- attr(reducedDim(tse, "PCA"), "rotation")
+    # Features are sorted in decreasing order of the component
+    p <- plotLoadings(tse, "PCA", layout = "heatmap", sort.method = "PC2")
+    expect_identical(
+        levels(p$data[["Feature"]]),
+        rownames(loadings)[order(loadings[, "PC2"], decreasing = TRUE)])
+    # Features are sorted with seriation method
+    p <- plotLoadings(tse, "PCA", layout = "heatmap", sort.method = "PCA_angle")
+    ser <- seriation::seriate(loadings, method = "PCA_angle", margin = 1L)
+    expect_identical(
+        levels(p$data[["Feature"]]),
+        rownames(loadings)[seriation::get_order(ser)])
+    # Clustering gives an order for all features
+    p <- plotLoadings(
+        tse, "PCA", layout = "heatmap",
+        sort.method = bluster::HclustParam())
+    expect_setequal(levels(p$data[["Feature"]]), rownames(loadings))
+    # Unsupported values give an error
+    expect_error(
+        plotLoadings(tse, "PCA", layout = "heatmap", sort.method = "test"))
+    expect_error(
+        plotLoadings(tse, "PCA", layout = "heatmap", sort.method = mean))
+})
