@@ -109,22 +109,27 @@ test_that("plotBoxplot can color, fill and specify x based on same column", {
     )
 })
 
-test_that("plotBoxplot add.chance works as deprecated alias", {
-    tse <- makeTSE(nrow = 10L, ncol = 10L)
+test_that("plotBoxplot draws paired lines in time order", {
+    tse <- makeTSE(nrow = 1L, ncol = 6L)
     assayNames(tse) <- "counts"
-    # Five subjects, two time points each
-    colData(tse)[["subject"]] <- as.character(rep(seq_len(5L), each = 2L))
-    colData(tse)[["time_point"]] <- rep(c("A", "B"), times = 5L)
+    colData(tse)[["subject"]] <- rep(c("a", "b"), each = 3L)
+    colData(tse)[["time"]] <- rep(c("t1", "t2", "t3"), 2L)
+    colData(tse)[["score"]] <- c(1, 5, 2, 3, 3, 9)
 
     p <- plotBoxplot(
-        tse, x = "time_point", assay.type = "counts",
-        pair.by = "subject", add.change = TRUE)
+        tse, col.var = "score", x = "time", pair.by = "subject",
+        add.chance = TRUE, point.offset = "none")
+    is_path <- vapply(
+        p$layers, function(l) inherits(l$geom, "GeomPath"), logical(1L))
+    lines <- layer_data(p, which(is_path))
 
-    # Deprecated alias must warn and give the same plot
-    expect_warning(
-        p_deprecated <- plotBoxplot(
-            tse, x = "time_point", assay.type = "counts",
-            pair.by = "subject", add.chance = TRUE),
-        "'add.chance' is deprecated")
-    expect_equal(p, p_deprecated)
+    # Each line follows the time points in order
+    for( g in unique(lines[["group"]]) ){
+        expect_equal(as.numeric(lines[lines[["group"]] == g, "x"]), c(1, 2, 3))
+    }
+    # Each segment is colored by the change to the next time point
+    expect_equal(
+        p$data[["difference"]][p$data[["subject"]] == "a"], c(4, -3, NA))
+    expect_equal(
+        p$data[["difference"]][p$data[["subject"]] == "b"], c(0, 6, NA))
 })
