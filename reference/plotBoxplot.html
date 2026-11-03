@@ -18,7 +18,7 @@ colData."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.9</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.10</span>
       </span>
     </div>
 
@@ -109,8 +109,8 @@ or group observations. (Default: <code>NULL</code>)</p></li>
 <li><p><code>pair.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
 variable from <code>colData(x)</code> which is used to pair observation points.
 (Default: <code>NULL</code>)</p></li>
-<li><p><code>add.chance</code>: <code>Logical scalar</code>. Whether to visualize chance
-of paired observations by the color of line. (Default: <code>FALSE</code>)</p></li>
+<li><p><code>add.change</code>: <code>Logical scalar</code>. Whether to colour paired
+observations by the change between time points. (Default: <code>FALSE</code>)</p></li>
 <li><p><code>add.box</code>: <code>Logical scalar</code>. Whether to add a boxplot
 layout. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>add.points</code>: <code>Logical scalar</code>. Whether to add a point
@@ -298,12 +298,12 @@ multiple options for visualization.</p>
 <span class="r-in"><span><span class="va">mae</span> <span class="op">&lt;-</span> <span class="fu">microbiomeDataSets</span><span class="fu">::</span><span class="fu">peerj32</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://github.com/waldronlab/MultiAssayExperiment/reference/MultiAssayExperiment-helpers.html" class="external-link">getWithColData</a></span><span class="op">(</span><span class="va">mae</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span><span class="op">[[</span><span class="st">"time_point"</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/character.html" class="external-link">as.character</a></span><span class="op">(</span><span class="va">tse</span><span class="op">[[</span><span class="st">"time"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># Create a plot showing chance between time points in abundance of</span></span></span>
+<span class="r-in"><span><span class="co"># Create a plot showing the change between time points in abundance of</span></span></span>
 <span class="r-in"><span><span class="co"># Akkermansia</span></span></span>
 <span class="r-in"><span><span class="fu">plotBoxplot</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">tse</span>, x <span class="op">=</span> <span class="st">"time_point"</span>, assay.type <span class="op">=</span> <span class="st">"counts"</span>, fill.by <span class="op">=</span> <span class="st">"group"</span>,</span></span>
 <span class="r-in"><span>    features <span class="op">=</span> <span class="st">"Akkermansia"</span>, pair.by <span class="op">=</span> <span class="st">"subject"</span>,</span></span>
-<span class="r-in"><span>    add.chance <span class="op">=</span> <span class="cn">TRUE</span>, scales <span class="op">=</span> <span class="st">"free"</span></span></span>
+<span class="r-in"><span>    add.change <span class="op">=</span> <span class="cn">TRUE</span>, scales <span class="op">=</span> <span class="st">"free"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span> <span class="co"># }</span></span></span>
 <span class="r-in"><span></span></span>
