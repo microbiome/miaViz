@@ -82,8 +82,9 @@ use. (Default: \code{"relabundance"})}
 taxa to show. (Default: \code{min(nrow(x), 25L)})}
 
 \item{colour.by}{\code{Character scalar}. Defines a column from
-\code{colData}, that is used to color plot. Must be a value of
-\code{colData()} function. (Default: \code{NULL})}
+\code{colData}, that is used to color plot. If the column is not found
+from \code{colData}, it is searched from \code{rowData}, and the points
+are coloured by feature. (Default: \code{NULL})}
 
 \item{colour_by}{Deprecated. Use \code{colour.by} instead.}
 
