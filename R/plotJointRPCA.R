@@ -643,6 +643,10 @@ setMethod("plotJointRPCANetwork",
     # Row and column indices of the feature pairs that pass the threshold
     idx <- which(upper.tri(mat) & abs(mat) >= threshold, arr.ind = TRUE)
     edges <- data.frame(from = idx[, 1], to = idx[, 2], value = mat[idx])
+    # Edge attributes for plotting: the sign of the relationship (edge colour)
+    # and its strength (edge width)
+    edges[["Sign"]] <- ifelse(edges[["value"]] > 0, "positive", "negative")
+    edges[["Strength"]] <- abs(edges[["value"]])
     # Nodes are all selected features, also those without edges
     nodes <- data.frame(name = rownames(mat))
     graph <- tbl_graph(nodes = nodes, edges = edges, directed = FALSE)
@@ -654,30 +658,18 @@ setMethod("plotJointRPCANetwork",
 
 ################################ Visualization #################################
 #
-# The plots reuse .plot_heatmap() and plotRowGraph() and replace their default
-# colour scales. ggplot2 reports "Scale for fill is already present" when a
-# scale is replaced; suppressMessages() hides it. Colours are colour-blind
-# friendly: blue-orange from the colorblind10 palette for signed values and
-# viridis for proportions.
-
-# Diverging blue-white-orange scale for signed values (covariance or
-# correlation). FUN is the scale function, e.g., scale_fill_gradient2 for the
-# heatmap or scale_edge_colour_gradient2 for network edges.
-.jrpca_diverging_scale <- function(FUN, name, limits = NULL){
-    cols <- .get_palette("colorblind10")
-    FUN(low = cols[[1L]], mid = "white", high = cols[[6L]], name = name,
-        limits = limits)
-}
+# The plots reuse .plot_heatmap() and plotRowGraph() with their default colour
+# scales, which are colour-blind friendly: blue-white-red for signed values,
+# viridis for proportions, and blue-orange for the sign of network edges. The
+# legend title comes from the name of the plotted column, so the "value"
+# column is renamed before plotting.
 
 # Covariance heatmap
 .plot_jrpca_covariance <- function(df, correlation){
     name <- if( correlation ) "Correlation" else "Covariance"
-    # Symmetric limits so that zero is in the middle of the scale (white).
-    # Correlation always lies in [-1, 1].
-    lim <- c(-1, 1) * if( correlation ) 1 else max(abs(df[["value"]]))
-    p <- suppressMessages(
-        .plot_heatmap(df, fill = "value") +
-        .jrpca_diverging_scale(scale_fill_gradient2, name, lim))
+    colnames(df)[colnames(df) == "value"] <- name
+    # scale = TRUE gives a blue-white-red scale where zero is white
+    p <- .plot_heatmap(df, fill = name, scale = TRUE)
     # Split into layer blocks. space = "free" sizes each panel by its number
     # of features, so that all cells are equal size.
     p <- p +
@@ -688,14 +680,14 @@ setMethod("plotJointRPCANetwork",
 
 # Explained variance heatmap
 .plot_jrpca_explained_variance <- function(df, by){
-    # Proportions lie in [0, 1]
-    p <- suppressMessages(
-        .plot_heatmap(df, fill = "value") +
-        scale_fill_viridis_c(limits = c(0, 1), name = "Explained\nvariance"))
+    name <- "Explained variance"
+    colnames(df)[colnames(df) == "value"] <- name
+    # scale = FALSE gives a viridis scale
+    p <- .plot_heatmap(df, fill = name, scale = FALSE)
     if( by == "layer" ){
         # Few cells, so the percentages can be shown as text
         p <- p + geom_text(
-            aes(label = sprintf("%.0f%%", 100 * .data[["value"]])),
+            aes(label = sprintf("%.0f%%", 100 * .data[[name]])),
             colour = "white")
     } else{
         # Split features by layer
@@ -704,30 +696,15 @@ setMethod("plotJointRPCANetwork",
     return(p)
 }
 
-# Network
+# Network. Nodes are shaped by layer. Edges are coloured by the sign of the
+# relationship and their width shows its strength. Nodes are not coloured, so
+# that node and edge colours do not mix. Additional arguments, e.g.,
+# show.label, are passed to plotRowGraph().
 .plot_jrpca_network <- function(
         data, correlation, layout = "fr", edge.type = "link", ...){
-    name <- if( correlation ) "Correlation" else "Covariance"
-    # Nodes are coloured and shaped by layer, and edges are coloured by
-    # covariance (or correlation). Shape makes the layers distinguishable
-    # also without colour. Additional arguments, e.g., show.label, are passed
-    # to plotRowGraph().
     p <- plotRowGraph(
-        data[["graph"]], data[["se"]], colour.by = "Layer", shape.by = "Layer",
-        edge.colour.by = "value", layout = layout, edge.type = edge.type,
-        ...)
-    # Replace the default colours: blue-orange edges and grey nodes so that
-    # node colours do not mix with edge colours. With shape.by, plotRowGraph()
-    # maps colour.by to the colour of the nodes.
-    p <- suppressMessages(
-        p + .jrpca_diverging_scale(scale_edge_colour_gradient2, name) +
-        scale_colour_manual(
-            values = .get_palette("colorblind10")[c(4, 3, 7, 10)],
-            name = "Layer"))
-    # The colour and shape legends have different guide settings by default.
-    # Use the same guide for both so that they are merged into one legend.
-    p <- p + guides(
-        colour = guide_legend(title = "Layer"),
-        shape = guide_legend(title = "Layer"))
+        data[["graph"]], data[["se"]], shape.by = "Layer",
+        edge.colour.by = "Sign", edge.width.by = "Strength",
+        layout = layout, edge.type = edge.type, ...)
     return(p)
 }

@@ -426,16 +426,19 @@ test_that("network keeps edges above threshold", {
     expect_s3_class(
         plotJointRPCANetwork(.make_joint_cov(), "JointRPCA", threshold = 2),
         "ggplot")
-    # Nodes are coloured and shaped by layer, and layers get different
-    # colours and shapes
+    # Edge sign and strength are stored for plotting
+    data <- .get_jrpca_network_data(res, NULL, TRUE, threshold = 0.5)
+    edges <- as.data.frame(tidygraph::activate(data$graph, "edges"))
+    expect_equal(edges$Sign,
+        ifelse(edges$value > 0, "positive", "negative"))
+    expect_equal(edges$Strength, abs(edges$value))
+    # Nodes are shaped by layer, and the layers get different shapes
     p <- plotJointRPCANetwork(.make_joint_cov(), "JointRPCA",
-        show.label = TRUE)
-    node_layer <- Filter(function(l) inherits(l$geom, "GeomPoint"), p$layers)
-    expect_true(all(c("colour", "shape") %in%
-        names(node_layer[[1]]$mapping)))
-    node_data <- ggplot_build(p)$data[[which(vapply(
-        p$layers, function(l) inherits(l$geom, "GeomPoint"), logical(1)))]]
-    expect_length(unique(node_data$colour), 2)
+        threshold = 0.5, show.label = TRUE)
+    is_node <- vapply(
+        p$layers, function(l) inherits(l$geom, "GeomPoint"), logical(1))
+    expect_true("shape" %in% names(p$layers[[which(is_node)]]$mapping))
+    node_data <- ggplot_build(p)$data[[which(is_node)]]
     expect_length(unique(node_data$shape), 2)
 })
 
