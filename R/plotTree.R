@@ -80,6 +80,57 @@
 #'   \item \code{other.fields}: \code{Character vector}. Additional fields to
 #'   include in the node information without plotting them.
 #'   (Default: \code{NULL})
+#'
+#'   \item \code{heatmap.by}: \code{Character vector}. Specification of
+#'   \code{rowData} (\code{colData} for \code{plotColTree}) fields or
+#'   samples (features) whose values are shown as a heatmap next to the tree
+#'   tips. Each variable is drawn as one column, or as one ring in circular
+#'   layouts. The variables must be either all numeric or all categorical.
+#'   Logical variables are interpreted as presence/absence: \code{TRUE} is
+#'   coloured with the colour of the variable and \code{FALSE} is left blank.
+#'   When a heatmap is shown, tip labels are aligned and placed outside of it.
+#'   Heatmap is not supported in unrooted and inward circular layouts.
+#'   (Default: \code{NULL})
+#'
+#'   \item \code{heatmap.width}: \code{Numeric scalar}. Total width of the
+#'   heatmap relative to the depth of the tree. (Default: \code{0.3})
+#'
+#'   \item \code{heatmap.offset}: \code{Numeric scalar}. Gap between the
+#'   outermost tip and the heatmap relative to the depth of the tree.
+#'   (Default: \code{0.02})
+#'
+#'   \item \code{heatmap.colnames}: \code{Logical scalar}. Should the names of
+#'   the heatmap variables be shown? (Default: \code{TRUE})
+#'
+#'   \item \code{heatmap.colnames.angle}: \code{Numeric scalar}. Angle of the
+#'   heatmap variable names. (Default: \code{90})
+#'
+#'   \item \code{heatmap.font.size}: \code{Numeric scalar}. Font size of the
+#'   heatmap variable names. (Default: \code{label.font.size})
+#'
+#'   \item \code{heatmap.title}: \code{Character scalar}. Title of the heatmap
+#'   legend. If \code{NULL}, the variable name is used when single variable is
+#'   plotted, and \code{"value"} otherwise. (Default: \code{NULL})
+#'
+#'   \item \code{heatmap.colours}: \code{Character vector}. Colours of the
+#'   heatmap. For categorical and logical variables, a vector of colours that
+#'   is optionally named by the values. For numeric variables, three colours
+#'   (low, mid, high) for a diverging scale or two colours (low, high) for a
+#'   sequential scale. If \code{NULL}, default colours are used.
+#'   (Default: \code{NULL})
+#'
+#'   \item \code{heatmap.diverging}: \code{Logical scalar}. Should numeric
+#'   values be coloured with a diverging scale that is symmetric around zero?
+#'   If \code{NULL}, diverging scale is used when the values include negative
+#'   values, such as effect sizes or log fold changes. Set this explicitly to
+#'   keep the colour scale consistent across figures. (Default: \code{NULL})
+#'
+#'   \item \code{heatmap.border}: \code{Character scalar}. Colour of the
+#'   borders between heatmap cells. Use \code{NA} to remove the borders, for
+#'   instance, for trees with many tips. (Default: \code{"white"})
+#'
+#'   \item \code{heatmap.guides}: \code{Logical scalar}. Should dotted lines
+#'   connect the tips to the heatmap? (Default: \code{TRUE})
 #' }
 #'
 #' @details
@@ -134,6 +185,87 @@
 #'     show.label = labels,
 #'     layout = "rectangular"
 #' )
+#'
+#' ## Heatmap next to the tree
+#'
+#' # Per-taxon values in rowData can be shown as heatmap columns, or as rings
+#' # in circular layouts. Here, we use the 30 most abundant genera.
+#' y <- x[rownames(x) %in% top_genus[seq_len(30)], ]
+#'
+#' # Effect sizes, e.g., log2 fold changes from differential abundance
+#' # analysis of three comparisons. Effects that are not significant are set to
+#' # 0 so that they are shown as white. Values with negative and positive signs
+#' # get a diverging scale centered at zero.
+#' set.seed(1)
+#' for( group in c("A", "B", "C") ){
+#'     lfc <- rnorm(nrow(y))
+#'     lfc[ abs(lfc) < 0.5 ] <- 0
+#'     rowData(y)[[group]] <- lfc
+#' }
+#' plotRowTree(
+#'     y,
+#'     tip.colour.by = "Phylum",
+#'     heatmap.by = c("A", "B", "C"),
+#'     heatmap.title = "log2 FC",
+#'     show.label = rownames(y)
+#' )
+#'
+#' # Custom colours. Setting heatmap.diverging = TRUE keeps the scale
+#' # symmetric around zero even if the values happen to be all positive.
+#' plotRowTree(
+#'     y,
+#'     tip.colour.by = "Phylum",
+#'     heatmap.by = c("A", "B", "C"),
+#'     heatmap.colours = c("#0571b0", "white", "maroon4"),
+#'     heatmap.diverging = TRUE,
+#'     heatmap.title = "log2 FC",
+#'     show.label = rownames(y)
+#' )
+#'
+#' # Presence/absence, e.g., of antibiotic resistance genes, is given as
+#' # logical columns. Present genes are coloured with the colour of the gene
+#' # and absent genes are left blank. Here, cell borders, guide lines and column
+#' # names are removed, and tips are sized by the number of detected samples.
+#' rowData(y)$geneA <- runif(nrow(y)) < 0.3
+#' rowData(y)$geneB <- runif(nrow(y)) < 0.3
+#' rowData(y)$geneC <- runif(nrow(y)) < 0.3
+#' plotRowTree(
+#'     y,
+#'     tip.size.by = "detected",
+#'     heatmap.by = c("geneA", "geneB", "geneC"),
+#'     heatmap.colours = c(geneA = "steelblue", geneB = "darkorange",
+#'         geneC = "darkred"),
+#'     heatmap.title = "Gene",
+#'     heatmap.border = NA,
+#'     heatmap.guides = FALSE,
+#'     heatmap.colnames = FALSE,
+#'     heatmap.width = 0.15,
+#'     show.label = rownames(y)
+#' )
+#'
+#' # Categorical variable from rowData
+#' plotRowTree(
+#'     y,
+#'     heatmap.by = "Phylum",
+#'     heatmap.colnames = FALSE,
+#'     heatmap.width = 0.1,
+#'     show.label = rownames(y)
+#' )
+#'
+#' # Abundances in selected samples from an assay. These values are all
+#' # non-negative, so a sequential scale is used.
+#' y <- transformAssay(y, method = "log10", pseudocount = 1)
+#' plotRowTree(
+#'     y,
+#'     heatmap.by = colnames(y)[1:6],
+#'     assay.type = "log10",
+#'     heatmap.colours = c("white", "darkgreen"),
+#'     heatmap.title = "log10 counts",
+#'     layout = "rectangular",
+#'     show.label = rownames(y)
+#' ) +
+#'     # Make room for the tip labels
+#'     ggtree::hexpand(0.15)
 #'
 #' # plot with labeled edges
 #' plotRowTree(
@@ -620,8 +752,15 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         colour_highlights_by = color_highlights_by,
         color_highlights_by = NULL,
         other.fields = other_fields, other_fields = NULL,
+        heatmap.by = NULL,
         ...){
     # Input check
+    if( !(is.null(heatmap.by) || (is.character(heatmap.by) &&
+            length(heatmap.by) > 0L && !anyNA(heatmap.by) &&
+            !anyDuplicated(heatmap.by))) ){
+        stop("'heatmap.by' must be NULL or a character vector of unique ",
+            "values.", call. = FALSE)
+    }
     if( !(.is_a_string(edge.colour.by) || is.null(edge.colour.by)) ){
         stop("'edge.colour.by' must be a single character value.",
             call. = FALSE)
@@ -671,46 +810,95 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         df <- dplyr::left_join(
             df, metadata_df, by = "node", suffix = c("", ".y"))
     }
+    # Add variables that are visualized as a heatmap next to the tips
+    heatmap_cols <- NULL
+    if( !is.null(heatmap.by) ){
+        heatmap_df <- .get_tree_heatmap_data(x, heatmap.by, type, ...)
+        heatmap_cols <- colnames(heatmap_df)
+        heatmap_df[["node"]] <- rowlinks_FUN(x)[["nodeNum"]]
+        df <- dplyr::left_join(df, heatmap_df, by = "node")
+        names(heatmap_cols) <- heatmap.by
+    }
 
     # Create an argument list that is passed to plotting function
-    args <- c(list(df = df), variables, list(...))
+    args <- c(
+        list(df = df), variables, list(heatmap_by = heatmap_cols), list(...))
     return(args)
+}
+
+# This function fetches the variables that are shown as a heatmap next to the
+# tree. All the variables must be either numeric or categorical as they share
+# single fill scale.
+.get_tree_heatmap_data <- function(x, heatmap.by, type, ...){
+    res <- .retrieve_variables(x, heatmap.by, type, ...)
+    is_num <- vapply(res, is.numeric, logical(1L))
+    is_lgl <- vapply(res, is.logical, logical(1L))
+    if( any(is_num) && !all(is_num) ){
+        stop("Variables in 'heatmap.by' must be either all numeric or all ",
+            "categorical.", call. = FALSE)
+    }
+    if( any(is_lgl) && !all(is_lgl) ){
+        stop("Logical variables in 'heatmap.by' cannot be combined with ",
+            "other types.", call. = FALSE)
+    }
+    if( all(is_lgl) ){
+        # Logical variables represent presence/absence. Presence is shown with
+        # the colour of the variable and absence is left blank.
+        res <- lapply(seq_along(res), function(i){
+            factor(
+                ifelse(res[[i]] %in% TRUE, heatmap.by[[i]], NA_character_),
+                levels = heatmap.by)
+        })
+    } else if( !all(is_num) ){
+        # Categorical values are combined into single fill scale. Factor levels
+        # are kept so that the user-defined order is preserved in the legend.
+        lvls <- unique(unlist(lapply(res, function(v){
+            if( is.factor(v) ) levels(v) else sort(unique(as.character(v)))
+        })))
+        res <- lapply(res, function(v) factor(as.character(v), levels = lvls))
+    }
+    names(res) <- paste0("heatmap_by_", seq_along(heatmap.by))
+    res <- as.data.frame(res, check.names = FALSE)
+    return(res)
 }
 
 # This function gets single variable as input and it tries to fetch it from
 # rowData, colData or assay.
-.retrieve_variable <- function(x, var, type, assay.type = "counts", ...){
-    name_FUN <- switch(
-        type,
-        row = colnames,
-        col = rownames
-    )
-    rowdata_FUN <- switch(
-        type,
-        row = rowData,
-        col = colData
-    )
-    # Check whether the variable is available in rowData or assay
-    is_rowdata <- var %in% colnames(rowdata_FUN(x))
-    is_sample <- var %in% name_FUN(x)
-    # Get data from rowData (or colData if colTree)
-    if( is_rowdata ){
-        res <- rowdata_FUN(x)[[var]]
-    } else if( is_sample ){
-        # Get data from assay
-        .check_assay_present(assay.type, x)
-        res <- assay(x, assay.type)
-        if( type == "row" ){
-            res <- res[, var]
-        } else{
-            res <- res[var, ]
-        }
-    } else{
-        # If not found, give error
+.retrieve_variable <- function(x, var, type, ...){
+    .retrieve_variables(x, var, type, ...)[[1L]]
+}
+
+# This function fetches several variables at once from rowData (colData) or
+# from assay. The assay is accessed only once, even when several samples
+# (features) are requested.
+.retrieve_variables <- function(x, vars, type, assay.type = "counts", ...){
+    name_FUN <- switch(type, row = colnames, col = rownames)
+    rowdata_FUN <- switch(type, row = rowData, col = colData)
+    # Check whether the variables are available in rowData or assay
+    rd <- rowdata_FUN(x)
+    is_rowdata <- vars %in% colnames(rd)
+    is_sample <- !is_rowdata & vars %in% name_FUN(x)
+    # If not found, give error
+    if( any(!is_rowdata & !is_sample) ){
         stop("The following variable cannot be found from ",
             ifelse(type == "row", "row", "col"), "Data(x) or from ",
-            ifelse(type == "row", "col", "row"),
-            " names: '", var, "'", call. = FALSE)
+            ifelse(type == "row", "col", "row"), " names: '",
+            paste0(vars[!is_rowdata & !is_sample], collapse = "', '"), "'",
+            call. = FALSE)
+    }
+    res <- vector("list", length(vars))
+    # Get data from rowData (or colData if colTree)
+    res[is_rowdata] <- lapply(vars[is_rowdata], function(var) rd[[var]])
+    # Get data from assay
+    if( any(is_sample) ){
+        .check_assay_present(assay.type, x)
+        mat <- assay(x, assay.type)
+        if( type == "col" ){
+            mat <- t(mat[vars[is_sample], , drop = FALSE])
+        } else{
+            mat <- mat[, vars[is_sample], drop = FALSE]
+        }
+        res[is_sample] <- lapply(seq_len(ncol(mat)), function(j) mat[, j])
     }
     return(res)
 }
@@ -881,8 +1069,19 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         shape_by = NULL,
         size_by = NULL,
         colour_highlights_by = NULL,
+        heatmap_by = NULL,
         # These parameters are for modifying visuals of the tree plot
         layout = "circular",
+        heatmap.width = 0.3,
+        heatmap.offset = 0.02,
+        heatmap.colnames = TRUE,
+        heatmap.colnames.angle = 90,
+        heatmap.font.size = label.font.size,
+        heatmap.title = NULL,
+        heatmap.colours = heatmap.colors, heatmap.colors = NULL,
+        heatmap.diverging = NULL,
+        heatmap.border = "white",
+        heatmap.guides = TRUE,
         add.legend = TRUE,
         abbr.label = abbr_label, abbr_label = FALSE,
         order.tree = FALSE,
@@ -916,6 +1115,7 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         node_colour_by = NULL,
         node_shape_by = NULL,
         node_size_by = NULL,
+        assay.type = NULL,
         ...){
     # Check switches
     if(!.is_a_string(layout)){
@@ -923,6 +1123,14 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     }
     if(!.is_a_bool(add.legend)){
         stop("'add.legend' must be either TRUE or FALSE.", call. = FALSE)
+    }
+    # In unrooted layouts tips are not on a common axis, and in inward layouts
+    # the axis is reversed. Heatmap cannot be aligned with tips.
+    unsupported <- c(
+        "equal_angle", "daylight", "ape", "unrooted", "inward_circular")
+    if( !is.null(heatmap_by) && layout %in% unsupported ){
+        stop("'heatmap.by' is not supported with layout '", layout, "'.",
+            call. = FALSE)
     }
     if(!.is_a_bool(abbr.label)){
         if( (!is.logical(abbr.label) && !is.character(abbr.label) &&
@@ -958,9 +1166,25 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
     plot_out <- .plot_tree_node_points(
         plot_out, show_tips, show_nodes, colour_by, shape_by, size_by,
         point.alpha, point.size, point.size.range)
-    # add tip and node labels
+    # add heatmap next to tips
+    label_offset <- 0.01
+    if( !is.null(heatmap_by) ){
+        hm <- .plot_tree_heatmap(
+            plot_out, heatmap_by, width = heatmap.width,
+            offset = heatmap.offset, colnames = heatmap.colnames,
+            colnames.angle = heatmap.colnames.angle,
+            font.size = heatmap.font.size, title = heatmap.title,
+            colours = heatmap.colours, diverging = heatmap.diverging,
+            border = heatmap.border, guides = heatmap.guides)
+        plot_out <- hm[["plot"]]
+        label_offset <- hm[["label_offset"]]
+    }
+    # add tip and node labels. If heatmap is present, labels are placed outside
+    # of it.
     plot_out <- .plot_tree_node_labels(
-        plot_out, show_label, abbr.label, label.font.size)
+        plot_out, show_label, abbr.label, label.font.size,
+        offset = label_offset, align = !is.null(heatmap_by),
+        linetype = if( !is.null(heatmap_by) ) NA else "dotted")
     # add additional guides
     plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
     # add abbreviation guide
@@ -1214,7 +1438,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 
 #' @importFrom ggtree geom_tiplab geom_nodelab
 .plot_tree_node_labels <- function(
-        plot_out, show_label, abbr_label, label_font_size){
+        plot_out, show_label, abbr_label, label_font_size, offset = 0.01,
+        align = FALSE, linetype = "dotted"){
     if(show_label){
         data <- plot_out$data
         label_data <- plot_out$data |> drop_na(.data$node_label)
@@ -1233,7 +1458,8 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
                 geom_tiplab(
                     data = data[f_tip, ],
                     mapping = aes(label = .data[["node_label"]]),
-                    offset = 0.01, size = label_font_size)
+                    offset = offset, align = align, linetype = linetype,
+                    size = label_font_size)
         }
         if(any(f_node)){
             # add node labels
@@ -1245,6 +1471,193 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         }
     }
     plot_out
+}
+
+# This function adds a heatmap next to the tree tips. Each variable is drawn
+# as its own column (or ring in circular layouts).
+#' @importFrom ggplot2 geom_tile geom_text geom_segment
+#' @importFrom ggnewscale new_scale_fill
+.plot_tree_heatmap <- function(
+        plot_out, heatmap_by, width, offset, colnames, colnames.angle,
+        font.size, title, colours = NULL, diverging = NULL, border = "white",
+        guides = TRUE){
+    # Input check
+    if( !(.is_a_numeric(width) && width > 0) ){
+        stop("'heatmap.width' must be a positive numeric value.", call. = FALSE)
+    }
+    if( !(.is_a_numeric(offset) && offset >= 0) ){
+        stop("'heatmap.offset' must be a non-negative numeric value.",
+            call. = FALSE)
+    }
+    if( !.is_a_bool(colnames) ){
+        stop("'heatmap.colnames' must be TRUE or FALSE.", call. = FALSE)
+    }
+    if( !.is_a_numeric(colnames.angle) ){
+        stop("'heatmap.colnames.angle' must be a numeric value.", call. = FALSE)
+    }
+    if( !(.is_a_numeric(font.size) && font.size > 0) ){
+        stop("'heatmap.font.size' must be a positive numeric value.",
+            call. = FALSE)
+    }
+    if( !(is.null(title) || .is_a_string(title)) ){
+        stop("'heatmap.title' must be NULL or a single character value.",
+            call. = FALSE)
+    }
+    if( !(is.null(colours) || (is.character(colours) && length(colours) > 0L &&
+            !anyNA(colours))) ){
+        stop("'heatmap.colours' must be NULL or a character vector.",
+            call. = FALSE)
+    }
+    if( !(is.null(diverging) || .is_a_bool(diverging)) ){
+        stop("'heatmap.diverging' must be NULL, TRUE or FALSE.", call. = FALSE)
+    }
+    if( !(.is_a_string(border) ||
+            (length(border) == 1L && is.na(border))) ){
+        stop("'heatmap.border' must be a single colour or NA.", call. = FALSE)
+    }
+    if( !.is_a_bool(guides) ){
+        stop("'heatmap.guides' must be TRUE or FALSE.", call. = FALSE)
+    }
+    #
+    data <- plot_out$data
+    tips <- data[data[["isTip"]], , drop = FALSE]
+    # Widths and offsets are relative to the depth of the tree
+    tree_width <- diff(range(data[["x"]], na.rm = TRUE))
+    if( tree_width == 0 ){
+        tree_width <- 1
+    }
+    n <- length(heatmap_by)
+    col_width <- width * tree_width / n
+    start <- max(tips[["x"]], na.rm = TRUE) + offset * tree_width
+    centers <- start + (seq_len(n) - 0.5) * col_width
+    # Create a table in long format for plotting
+    vars <- names(heatmap_by)
+    n_tips <- nrow(tips)
+    hm_data <- data.frame(
+        x = rep(centers, each = n_tips),
+        y = rep(tips[["y"]], times = n),
+        variable = factor(rep(vars, each = n_tips), levels = vars),
+        # c() combines factors and keeps their levels
+        value = do.call(c, unname(as.list(tips[heatmap_by])))
+    )
+    if( is.null(title) ){
+        title <- if( n == 1L ) vars else "value"
+    }
+    # Dotted guide lines connect tips to the heatmap
+    if( guides ){
+        guide_data <- data.frame(
+            x = tips[["x"]], xend = start, y = tips[["y"]])
+        plot_out <- plot_out +
+            geom_segment(
+                data = guide_data,
+                mapping = aes(x = .data[["x"]], xend = .data[["xend"]],
+                    y = .data[["y"]], yend = .data[["y"]]),
+                linetype = "dotted", linewidth = 0.3, colour = "grey50",
+                inherit.aes = FALSE)
+    }
+    # Plot the heatmap. The fill scale of tree points is separated from the
+    # heatmap fill scale.
+    plot_out <- plot_out +
+        new_scale_fill() +
+        geom_tile(
+            data = hm_data,
+            mapping = aes(x = .data[["x"]], y = .data[["y"]],
+                fill = .data[["value"]]),
+            width = col_width, height = 1, colour = border,
+            inherit.aes = FALSE)
+    plot_out <- .add_tree_heatmap_scale(
+        plot_out, hm_data[["value"]], title, colours, diverging)
+    # Add column names
+    if( colnames ){
+        axis_data <- data.frame(x = centers, y = 0, label = vars)
+        plot_out <- plot_out +
+            geom_text(
+                data = axis_data,
+                mapping = aes(x = .data[["x"]], y = .data[["y"]],
+                    label = .data[["label"]]),
+                angle = colnames.angle, hjust = 1, size = font.size,
+                inherit.aes = FALSE)
+    }
+    # Tip labels are aligned and placed outside the heatmap. The offset is
+    # counted from the tip that is farthest from the root.
+    label_offset <- start + width * tree_width - max(tips[["x"]], na.rm = TRUE) +
+        0.02 * tree_width
+    res <- list(plot = plot_out, label_offset = label_offset)
+    return(res)
+}
+
+# This function adds the fill scale of the tree heatmap. Numeric values get
+# either diverging scale centered at zero or sequential scale. Categorical
+# values get discrete scale where missing values are left blank.
+#' @importFrom ggplot2 scale_fill_gradient scale_fill_gradient2
+#'   scale_fill_manual
+.add_tree_heatmap_scale <- function(
+        plot_out, values, title, colours, diverging){
+    if( !is.numeric(values) ){
+        if( isTRUE(diverging) ){
+            stop("'heatmap.diverging' can be used only with numeric ",
+                "variables.", call. = FALSE)
+        }
+        if( is.null(colours) ){
+            plot_out <- .resolve_plot_colours(
+                plot_out, values, title, fill = TRUE, na.translate = FALSE)
+            return(plot_out)
+        }
+        lvls <- if( is.factor(values) ) levels(values) else
+            sort(unique(values))
+        lvls <- lvls[ lvls %in% values ]
+        if( !is.null(names(colours)) && !all(lvls %in% names(colours)) ){
+            stop("'heatmap.colours' must include a colour for each value. ",
+                "Missing: '",
+                paste0(setdiff(lvls, names(colours)), collapse = "', '"), "'",
+                call. = FALSE)
+        }
+        if( is.null(names(colours)) && length(colours) < length(lvls) ){
+            stop("'heatmap.colours' must include at least ", length(lvls),
+                " colours.", call. = FALSE)
+        }
+        plot_out <- plot_out +
+            scale_fill_manual(
+                values = colours, name = title, na.translate = FALSE,
+                na.value = NA)
+        return(plot_out)
+    }
+    # By default, diverging scale is used when there are negative values,
+    # for instance, effect sizes or log fold changes.
+    if( is.null(diverging) ){
+        diverging <- any(values < 0, na.rm = TRUE)
+    }
+    if( diverging ){
+        if( is.null(colours) ){
+            colours <- c("darkslateblue", "white", "darkred")
+        }
+        if( length(colours) != 3L ){
+            stop("For diverging scale, 'heatmap.colours' must specify three ",
+                "colours: low, mid and high.", call. = FALSE)
+        }
+        max_value <- max(abs(values), na.rm = TRUE)
+        if( !is.finite(max_value) || max_value == 0 ){
+            max_value <- 1
+        }
+        plot_out <- plot_out +
+            scale_fill_gradient2(
+                low = colours[[1L]], mid = colours[[2L]], high = colours[[3L]],
+                midpoint = 0, limits = c(-max_value, max_value),
+                na.value = "grey90", name = title)
+    } else if( !is.null(colours) ){
+        if( length(colours) != 2L ){
+            stop("For sequential scale, 'heatmap.colours' must specify two ",
+                "colours: low and high.", call. = FALSE)
+        }
+        plot_out <- plot_out +
+            scale_fill_gradient(
+                low = colours[[1L]], high = colours[[2L]],
+                na.value = "grey90", name = title)
+    } else{
+        plot_out <- .resolve_plot_colours(
+            plot_out, values, title, fill = TRUE, na.value = "grey90")
+    }
+    return(plot_out)
 }
 
 .add_abbr_guide <- function(plot_out){

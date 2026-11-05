@@ -89,6 +89,57 @@ obtain expression values from, for use in point aesthetics.
 \item \code{other.fields}: \code{Character vector}. Additional fields to
 include in the node information without plotting them.
 (Default: \code{NULL})
+
+\item \code{heatmap.by}: \code{Character vector}. Specification of
+\code{rowData} (\code{colData} for \code{plotColTree}) fields or
+samples (features) whose values are shown as a heatmap next to the tree
+tips. Each variable is drawn as one column, or as one ring in circular
+layouts. The variables must be either all numeric or all categorical.
+Logical variables are interpreted as presence/absence: \code{TRUE} is
+coloured with the colour of the variable and \code{FALSE} is left blank.
+When a heatmap is shown, tip labels are aligned and placed outside of it.
+Heatmap is not supported in unrooted and inward circular layouts.
+(Default: \code{NULL})
+
+\item \code{heatmap.width}: \code{Numeric scalar}. Total width of the
+heatmap relative to the depth of the tree. (Default: \code{0.3})
+
+\item \code{heatmap.offset}: \code{Numeric scalar}. Gap between the
+outermost tip and the heatmap relative to the depth of the tree.
+(Default: \code{0.02})
+
+\item \code{heatmap.colnames}: \code{Logical scalar}. Should the names of
+the heatmap variables be shown? (Default: \code{TRUE})
+
+\item \code{heatmap.colnames.angle}: \code{Numeric scalar}. Angle of the
+heatmap variable names. (Default: \code{90})
+
+\item \code{heatmap.font.size}: \code{Numeric scalar}. Font size of the
+heatmap variable names. (Default: \code{label.font.size})
+
+\item \code{heatmap.title}: \code{Character scalar}. Title of the heatmap
+legend. If \code{NULL}, the variable name is used when single variable is
+plotted, and \code{"value"} otherwise. (Default: \code{NULL})
+
+\item \code{heatmap.colours}: \code{Character vector}. Colours of the
+heatmap. For categorical and logical variables, a vector of colours that
+is optionally named by the values. For numeric variables, three colours
+(low, mid, high) for a diverging scale or two colours (low, high) for a
+sequential scale. If \code{NULL}, default colours are used.
+(Default: \code{NULL})
+
+\item \code{heatmap.diverging}: \code{Logical scalar}. Should numeric
+values be coloured with a diverging scale that is symmetric around zero?
+If \code{NULL}, diverging scale is used when the values include negative
+values, such as effect sizes or log fold changes. Set this explicitly to
+keep the colour scale consistent across figures. (Default: \code{NULL})
+
+\item \code{heatmap.border}: \code{Character scalar}. Colour of the
+borders between heatmap cells. Use \code{NA} to remove the borders, for
+instance, for trees with many tips. (Default: \code{"white"})
+
+\item \code{heatmap.guides}: \code{Logical scalar}. Should dotted lines
+connect the tips to the heatmap? (Default: \code{TRUE})
 }}
 
 \item{tree.name}{\code{Character scalar}. Specifies a rowTree/colTree from
@@ -148,6 +199,87 @@ plotRowTree(
     show.label = labels,
     layout = "rectangular"
 )
+
+## Heatmap next to the tree
+
+# Per-taxon values in rowData can be shown as heatmap columns, or as rings
+# in circular layouts. Here, we use the 30 most abundant genera.
+y <- x[rownames(x) \%in\% top_genus[seq_len(30)], ]
+
+# Effect sizes, e.g., log2 fold changes from differential abundance
+# analysis of three comparisons. Effects that are not significant are set to
+# 0 so that they are shown as white. Values with negative and positive signs
+# get a diverging scale centered at zero.
+set.seed(1)
+for( group in c("A", "B", "C") ){
+    lfc <- rnorm(nrow(y))
+    lfc[ abs(lfc) < 0.5 ] <- 0
+    rowData(y)[[group]] <- lfc
+}
+plotRowTree(
+    y,
+    tip.colour.by = "Phylum",
+    heatmap.by = c("A", "B", "C"),
+    heatmap.title = "log2 FC",
+    show.label = rownames(y)
+)
+
+# Custom colours. Setting heatmap.diverging = TRUE keeps the scale
+# symmetric around zero even if the values happen to be all positive.
+plotRowTree(
+    y,
+    tip.colour.by = "Phylum",
+    heatmap.by = c("A", "B", "C"),
+    heatmap.colours = c("#0571b0", "white", "maroon4"),
+    heatmap.diverging = TRUE,
+    heatmap.title = "log2 FC",
+    show.label = rownames(y)
+)
+
+# Presence/absence, e.g., of antibiotic resistance genes, is given as
+# logical columns. Present genes are coloured with the colour of the gene
+# and absent genes are left blank. Here, cell borders, guide lines and column
+# names are removed, and tips are sized by the number of detected samples.
+rowData(y)$geneA <- runif(nrow(y)) < 0.3
+rowData(y)$geneB <- runif(nrow(y)) < 0.3
+rowData(y)$geneC <- runif(nrow(y)) < 0.3
+plotRowTree(
+    y,
+    tip.size.by = "detected",
+    heatmap.by = c("geneA", "geneB", "geneC"),
+    heatmap.colours = c(geneA = "steelblue", geneB = "darkorange",
+        geneC = "darkred"),
+    heatmap.title = "Gene",
+    heatmap.border = NA,
+    heatmap.guides = FALSE,
+    heatmap.colnames = FALSE,
+    heatmap.width = 0.15,
+    show.label = rownames(y)
+)
+
+# Categorical variable from rowData
+plotRowTree(
+    y,
+    heatmap.by = "Phylum",
+    heatmap.colnames = FALSE,
+    heatmap.width = 0.1,
+    show.label = rownames(y)
+)
+
+# Abundances in selected samples from an assay. These values are all
+# non-negative, so a sequential scale is used.
+y <- transformAssay(y, method = "log10", pseudocount = 1)
+plotRowTree(
+    y,
+    heatmap.by = colnames(y)[1:6],
+    assay.type = "log10",
+    heatmap.colours = c("white", "darkgreen"),
+    heatmap.title = "log10 counts",
+    layout = "rectangular",
+    show.label = rownames(y)
+) +
+    # Make room for the tip labels
+    ggtree::hexpand(0.15)
 
 # plot with labeled edges
 plotRowTree(
