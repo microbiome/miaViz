@@ -58,3 +58,4 @@ Changes in version 1.21.x
 + Added multimedia_data_demo example datasets (se_relative, tse_relative, tse_pathway) (2026-09-01)
 + plotBoxplot: paired lines follow the time order with more than two time points (1.21.8, 2026-11-02)
 + plotBoxplot, fix typo in argument name: add.chance -> add.change (1.21.10, 2026-11-03)
++ plotRowTree, plotColTree: Added heatmap.by option for showing per-taxon values as a heatmap or rings next to the tree tips (1.21.12, 2026-11-05)
