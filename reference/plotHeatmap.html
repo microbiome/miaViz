@@ -47,7 +47,7 @@ samples as columns."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Visualize assay values as a heatmap</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/joint-rpca/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/joint-rpca/R/plotHeatmap.R" class="external-link"><code>R/plotHeatmap.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/plotdissimilarity/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/plotdissimilarity/R/plotHeatmap.R" class="external-link"><code>R/plotHeatmap.R</code></a></small>
     <div class="hidden name"><code>plotHeatmap.Rd</code></div>
     </div>
 
@@ -103,6 +103,11 @@ object.</p></dd>
 Additional parameters include, for example:</p><ul><li><p><code>scales</code>: Facet scaling passed to
 <code><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">ggplot2::facet_grid()</a></code> or
 <code><a href="https://teunbrand.github.io/ggh4x/reference/facet_nested.html" class="external-link">ggh4x::facet_nested()</a></code>.
+(Default: <code>"free"</code>)</p></li>
+<li><p><code>space</code>: Facet panel sizes passed to
+<code><a href="https://ggplot2.tidyverse.org/reference/facet_grid.html" class="external-link">ggplot2::facet_grid()</a></code> or
+<code><a href="https://teunbrand.github.io/ggh4x/reference/facet_nested.html" class="external-link">ggh4x::facet_nested()</a></code>. With <code>"free"</code>, panels are sized by
+their number of rows and columns so that all cells are equal size.
 (Default: <code>"free"</code>)</p></li>
 <li><p><code>tree.width</code>: Relative width of the tree panel when
 <code>show.tree = TRUE</code>.
