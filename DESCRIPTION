@@ -74,6 +74,7 @@ Suggests:
     maaslin3,
     mediation,
     miaTime,
+    MultiAssayExperiment,
     patchwork,
     rmarkdown,
     rstatix,

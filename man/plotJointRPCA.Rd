@@ -2,15 +2,93 @@
 % Please edit documentation in R/AllGenerics.R, R/plotJointRPCA.R
 \name{plotJointRPCA}
 \alias{plotJointRPCA}
+\alias{plotJointRPCACovariance}
+\alias{plotJointRPCAExplainedVariance}
+\alias{plotJointRPCANetwork}
+\alias{plotJointRPCALoadings}
 \alias{plotJointRPCA,MultiAssayExperiment-method}
 \alias{plotJointRPCA,SingleCellExperiment-method}
+\alias{plotJointRPCACovariance,MultiAssayExperiment-method}
+\alias{plotJointRPCACovariance,SingleCellExperiment-method}
+\alias{plotJointRPCAExplainedVariance,MultiAssayExperiment-method}
+\alias{plotJointRPCAExplainedVariance,SingleCellExperiment-method}
+\alias{plotJointRPCANetwork,MultiAssayExperiment-method}
+\alias{plotJointRPCANetwork,SingleCellExperiment-method}
+\alias{plotJointRPCALoadings,MultiAssayExperiment-method}
+\alias{plotJointRPCALoadings,SingleCellExperiment-method}
 \title{Visualize Joint-RPCA results}
 \usage{
 plotJointRPCA(x, ...)
 
+plotJointRPCACovariance(x, ...)
+
+plotJointRPCAExplainedVariance(x, ...)
+
+plotJointRPCANetwork(x, ...)
+
+plotJointRPCALoadings(x, ...)
+
 \S4method{plotJointRPCA}{MultiAssayExperiment}(x, dimred, ...)
 
-\S4method{plotJointRPCA}{SingleCellExperiment}(x, dimred, add.vectors = TRUE, ...)
+\S4method{plotJointRPCA}{SingleCellExperiment}(x, dimred, ...)
+
+\S4method{plotJointRPCACovariance}{MultiAssayExperiment}(x, dimred, ntop = 20, correlation = FALSE, ...)
+
+\S4method{plotJointRPCACovariance}{SingleCellExperiment}(x, dimred, ntop = 20, correlation = FALSE, ...)
+
+\S4method{plotJointRPCAExplainedVariance}{MultiAssayExperiment}(
+  x,
+  dimred,
+  by = c("layer", "feature"),
+  ntop = 20,
+  add.total = FALSE,
+  ...
+)
+
+\S4method{plotJointRPCAExplainedVariance}{SingleCellExperiment}(
+  x,
+  dimred,
+  by = c("layer", "feature"),
+  ntop = 20,
+  add.total = FALSE,
+  ...
+)
+
+\S4method{plotJointRPCANetwork}{MultiAssayExperiment}(
+  x,
+  dimred,
+  ntop = 10,
+  correlation = TRUE,
+  threshold = 0.9,
+  ...
+)
+
+\S4method{plotJointRPCANetwork}{SingleCellExperiment}(
+  x,
+  dimred,
+  ntop = 10,
+  correlation = TRUE,
+  threshold = 0.9,
+  ...
+)
+
+\S4method{plotJointRPCALoadings}{MultiAssayExperiment}(
+  x,
+  dimred,
+  layout = "lollipop",
+  ncomponents = NULL,
+  n = 10,
+  ...
+)
+
+\S4method{plotJointRPCALoadings}{SingleCellExperiment}(
+  x,
+  dimred,
+  layout = "lollipop",
+  ncomponents = NULL,
+  n = 10,
+  ...
+)
 }
 \arguments{
 \item{x}{A
@@ -19,43 +97,129 @@ or
 \code{\link[MultiAssayExperiment:MultiAssayExperiment-class]{MultiAssayExperiment}}
 object containing Joint-RPCA results.}
 
-\item{...}{Additional arguments passed to
-\code{\link[=plotOrdination]{plotOrdination}} and to the feature-vector
-plotting.
-Commonly used Joint-RPCA-specific arguments include:
+\item{...}{Additional arguments.
 \itemize{
-\item \code{ntop}: \code{integer(1)} or \code{NULL}. Maximum number of
-loading vectors shown per data layer. The vectors with the largest lengths
-are retained. Set to \code{NULL} to display all vectors. (Default: \code{10})
+\item \code{plotJointRPCA}: passed to
+\code{\link[=plotOrdination]{plotOrdination}}.
+\item \code{plotJointRPCANetwork}: \code{layout}
+(\code{character(1)}; graph layout, see \code{\link[ggraph:ggraph]{ggraph}};
+default \code{"fr"}) and \code{show.label} (\code{logical(1)}; whether
+to label nodes with feature names; default \code{FALSE}).
+\item \code{plotJointRPCALoadings}: passed to
+\code{\link[=plotLoadings]{plotLoadings}}, for example
+\code{absolute.scale}, \code{show.color} and \code{show.sign}.
+\item \code{plotJointRPCACovariance} and
+\code{plotJointRPCAExplainedVariance}: currently not used.
 }}
 
 \item{dimred}{\code{character(1)}: Specifies the name of the Joint-RPCA
 result to plot.}
 
-\item{add.vectors}{\code{logical(1)} or \code{character}. If
-\code{TRUE}, feature loading vectors are added. Alternatively, a character
-vector can be supplied to display only features whose names match the given
-pattern(s). (Default: \code{TRUE})}
+\item{ntop}{\code{integer(1)} or \code{NULL}. Number of features shown from
+each data layer. The features with the largest variance are retained. Set
+to \code{NULL} to show all features. In \code{plotJointRPCAExplainedVariance}
+used only when \code{by = "feature"}.
+(Default: \code{20} for \code{plotJointRPCACovariance} and
+\code{plotJointRPCAExplainedVariance}, \code{10} for
+\code{plotJointRPCANetwork})}
+
+\item{correlation}{\code{logical(1)}. Should correlations be shown instead
+of covariances? (Default: \code{FALSE} for \code{plotJointRPCACovariance},
+\code{TRUE} for \code{plotJointRPCANetwork})}
+
+\item{by}{\code{character(1)}. Whether to show variance by data layer
+(\code{"layer"}) or by feature (\code{"feature"}).
+(Default: \code{"layer"})}
+
+\item{add.total}{\code{logical(1)}. Should the total variance of each layer
+be shown as a barplot? Used only when \code{by = "layer"}.
+(Default: \code{FALSE})}
+
+\item{threshold}{\code{numeric(1)}. Network edges with absolute value below
+the threshold are dropped. (Default: \code{0.9})}
+
+\item{layout}{\code{character(1)}. Layout of the loading plot, either
+\code{"lollipop"} or \code{"barplot"}. (Default: \code{"lollipop"})}
+
+\item{ncomponents}{\code{integer(1)} or \code{NULL}. Number of components
+to show. \code{NULL} shows all components. (Default: \code{NULL})}
+
+\item{n}{\code{integer(1)}. Number of features shown for each component
+and layer. (Default: \code{10})}
 }
 \value{
-A \code{ggplot2} object.
+A \code{ggplot2} object. \code{plotJointRPCALoadings()}, and
+\code{plotJointRPCAExplainedVariance()} with \code{add.total = TRUE},
+return a \code{patchwork} object.
 }
 \description{
-Creates a two-dimensional ordination plot from Joint-RPCA results stored in a
-\code{SingleCellExperiment} or \code{MultiAssayExperiment}. In addition to the
-sample ordination, feature loadings can be visualized as vectors.
+These functions visualize Joint-RPCA results stored in a
+\code{SingleCellExperiment} or \code{MultiAssayExperiment}.
+
+\itemize{
+\item \code{plotJointRPCA()} creates a two-dimensional ordination plot
+of the samples.
+\item \code{plotJointRPCACovariance()} creates a heatmap of the
+feature-feature covariance (or correlation), split into blocks by data
+layer.
+\item \code{plotJointRPCAExplainedVariance()} creates a heatmap showing
+how the variance of each data layer, or of each feature, is divided
+across the components.
+\item \code{plotJointRPCANetwork()} creates a network where nodes are
+features and edges connect features with strong covariance (or
+correlation).
+\item \code{plotJointRPCALoadings()} shows the joint feature loadings of
+each component separately for each data layer.
+}
 }
 \details{
-This function is a wrapper around \code{\link[=plotOrdination]{plotOrdination}}
-for Joint-RPCA results. Consequently, most graphical parameters are passed
-directly to \code{plotOrdination()}, including options for colouring,
-grouping, faceting and adding ellipses. See
+\code{plotJointRPCA()} is a wrapper around
+\code{\link[=plotOrdination]{plotOrdination}} for Joint-RPCA results.
+Consequently, most graphical parameters are passed directly to
+\code{plotOrdination()}, including options for colouring, grouping,
+faceting and adding ellipses. See
 \code{\link[=plotOrdination]{plotOrdination}} for a complete description of
 these arguments.
 
-Feature loadings are plotted as vectors originating from the origin. By
-default, only the longest loading vectors are shown for each data layer to
-improve readability.
+The feature covariance follows the gemelli implementation of Joint-RPCA:
+\deqn{\Sigma = V \textrm{diag}(s)^2 V^T,}
+where \eqn{V} are the joint feature loadings
+(\code{attr(res, "rotation")}) and \eqn{s} the singular values
+(\code{attr(res, "varExplained")}). The full matrix has one row and column
+per feature and can be very large. Therefore, it is calculated only for the
+\code{ntop} features with the largest variance (the diagonal of the
+covariance matrix) from each layer. Features are ordered by hierarchical
+clustering. The covariance is estimated from a low-rank representation.
+With a small number of components, correlations are often close to -1 or 1,
+and they reflect how features align in the Joint-RPCA space rather than
+correlations in the observed data. The network uses the same covariance.
+Edges connect features whose absolute covariance (or correlation) is at
+least \code{threshold}, and they are coloured by the covariance (or
+correlation). Nodes are shaped by data layer.
+
+In \code{plotJointRPCAExplainedVariance()}, the variance of feature
+\eqn{i} on component \eqn{j} is \eqn{s_j^2 V_{ij}^2}. For a layer, the
+values are summed over its features. Each row (layer or feature) is scaled
+to sum to one. The values describe the low-rank Joint-RPCA model, not the
+proportion of variance explained in the observed data. With
+\code{add.total = TRUE}, a barplot of the total variance of each layer is
+added next to the heatmap. The total of a
+layer is its share of the total variance of the Joint-RPCA model,
+\eqn{\sum_{i \in layer} \sum_j s_j^2 V_{ij}^2 / \sum_j s_j^2}, so the
+totals sum to one over the layers. Note that the total is a sum over the
+features of a layer, so it depends on the number of features and their
+scale: a layer with many features tends to have a large share even if its
+individual features are only weakly associated with the components. The
+heatmap is
+scaled within each layer, so it is not affected by the number of features.
+
+In \code{plotJointRPCALoadings()}, the joint feature loadings
+(\code{attr(res, "rotation")}) are split by data layer. As the sample scores
+are shared, the loadings show which features from each layer drive each
+shared component. The \code{n} features with the largest absolute loading
+are shown for each component and layer. The plot of each layer is created
+with \code{\link[=plotLoadings]{plotLoadings}}, and the layers are stacked
+into rows.
 }
 \examples{
 data("HintikkaXOData")
@@ -93,31 +257,38 @@ plotJointRPCA(
     add.ellipse = TRUE
 )
 
-# Show all loading vectors
-plotJointRPCA(
-    mae,
-    "JointRPCA",
-    ntop = NULL
-)
+# Covariance of the top 20 features from each layer
+plotJointRPCACovariance(mae, "JointRPCA")
 
-# Display only selected feature vectors
-plotJointRPCA(
-    mae,
-    "JointRPCA",
-    add.vectors = c("Bacteroides", "Roseburia")
-)
+# Correlation of the top 10 features from each layer
+plotJointRPCACovariance(mae, "JointRPCA", ntop = 10, correlation = TRUE)
 
-# Use boxed labels without repelling
-plotJointRPCA(
-    mae,
-    "JointRPCA",
-    text.labels = FALSE,
-    repel.labels = FALSE
-)
+# Variance explained by each component in each layer
+plotJointRPCAExplainedVariance(mae, "JointRPCA")
+
+# Add the total variance of each layer
+plotJointRPCAExplainedVariance(mae, "JointRPCA", add.total = TRUE)
+
+# Variance explained by each component in each feature
+plotJointRPCAExplainedVariance(mae, "JointRPCA", by = "feature")
+
+# Network of the top 10 features from each layer
+plotJointRPCANetwork(mae, "JointRPCA")
+
+# Stricter threshold and node labels
+plotJointRPCANetwork(mae, "JointRPCA", threshold = 0.97, show.label = TRUE)
+
+# Loadings of the shared components in each layer
+plotJointRPCALoadings(mae, "JointRPCA")
+
+# Barplot of the top 5 features, signed loadings
+plotJointRPCALoadings(
+    mae, "JointRPCA", layout = "barplot", n = 5, absolute.scale = FALSE)
 
 }
 \seealso{
 \itemize{
 \item \code{\link[=plotOrdination]{plotOrdination}}
+\item \code{\link[=plotLoadings]{plotLoadings}}
 }
 }
