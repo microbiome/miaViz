@@ -7,6 +7,7 @@ export(plotCCA)
 export(plotColGraph)
 export(plotColTile)
 export(plotDMNFit)
+export(plotDissimilarity)
 export(plotFeaturePrevalence)
 export(plotForest)
 export(plotHeatmap)
@@ -39,6 +40,7 @@ exportMethods(plotColGraph)
 exportMethods(plotColTile)
 exportMethods(plotColTree)
 exportMethods(plotDMNFit)
+exportMethods(plotDissimilarity)
 exportMethods(plotFeaturePrevalence)
 exportMethods(plotForest)
 exportMethods(plotHeatmap)
@@ -221,6 +223,7 @@ importFrom(scater,
 )
 importFrom(stats,
   formula,
+  hclust,
   median,
   qt,
   runif,

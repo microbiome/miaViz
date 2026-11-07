@@ -44,6 +44,11 @@ Additional parameters include, for example:
 \code{ggplot2::facet_grid()} or
 \code{ggh4x::facet_nested()}.
 (Default: \code{"free"})
+\item \code{space}: Facet panel sizes passed to
+\code{ggplot2::facet_grid()} or
+\code{ggh4x::facet_nested()}. With \code{"free"}, panels are sized by
+their number of rows and columns so that all cells are equal size.
+(Default: \code{"free"})
 \item \code{tree.width}: Relative width of the tree panel when
 \code{show.tree = TRUE}.
 (Default: \code{0.2})
