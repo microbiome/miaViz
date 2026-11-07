@@ -333,6 +333,14 @@ test_that("supports label without repel", {
     unclass(m)[levels(df$FeatureID), levels(df$SampleID), drop = FALSE]
 }
 
+test_that("explained variance by layer shows shadowed percentages", {
+    skip_if_not_installed("shadowtext")
+    p <- plotJointRPCAExplainedVariance(.make_joint_cov(), "JointRPCA")
+    expect_true(any(vapply(
+        p$layers, function(l) inherits(l$geom, "GeomShadowText"),
+        logical(1))))
+})
+
 test_that("Joint-RPCA feature plots return ggplot for SCE and MAE", {
     for (x in list(.make_joint_cov(), .make_joint_cov_mae())) {
         expect_s3_class(plotJointRPCACovariance(x, "JointRPCA"), "ggplot")
@@ -392,6 +400,24 @@ test_that("correlation is scaled covariance", {
         .get_jrpca_matrix(res, ntop = NULL, correlation = FALSE)))
 })
 
+test_that("component variance is loading^2 * s^2", {
+    # Small example calculated by hand: (loading * strength)^2
+    V <- matrix(c(0.5, 0.4, 0.1, -0.2), nrow = 2)
+    res <- structure(1, rotation = V, varExplained = c(3, 1))
+    expected <- matrix(c(2.25, 1.44, 0.01, 0.04), nrow = 2)
+    expect_equal(.get_jrpca_component_variance(res), expected)
+})
+
+test_that("component variance sums to feature variances and s^2", {
+    res <- reducedDim(.make_joint_cov(), "JointRPCA")
+    expl <- .get_jrpca_component_variance(res)
+    cov <- .get_jrpca_matrix(res, ntop = NULL, correlation = FALSE)
+    # Row sums are the feature variances
+    expect_equal(rowSums(expl), diag(cov))
+    # Column sums are s^2
+    expect_equal(colSums(expl), attr(res, "varExplained")^2)
+})
+
 test_that("explained variance sums to one per layer and feature", {
     res <- reducedDim(.make_joint_cov(), "JointRPCA")
     V <- attr(res, "rotation")
@@ -414,32 +440,36 @@ test_that("explained variance sums to one per layer and feature", {
 test_that("network keeps edges above threshold", {
     res <- reducedDim(.make_joint_cov(), "JointRPCA")
     m <- .get_jrpca_matrix(res, ntop = NULL, correlation = TRUE)
-    data <- .get_jrpca_network_data(res, NULL, TRUE, threshold = 0.5)
-    edges <- as.data.frame(tidygraph::activate(data$graph, "edges"))
+    graph <- .get_jrpca_network_data(res, NULL, TRUE, threshold = 0.5)
+    edges <- as.data.frame(tidygraph::activate(graph, "edges"))
+    nodes <- as.data.frame(tidygraph::activate(graph, "nodes"))
     expect_true(all(abs(edges$value) >= 0.5))
     expect_equal(nrow(edges), sum(abs(m[upper.tri(m)]) >= 0.5))
-    expect_equal(nrow(data$se), 9)
-    expect_equal(unname(rowData(data$se)$Layer), rep(c("A", "B"), c(5, 4)))
+    # Edge values are the matrix values of the connected features
+    expect_equal(edges$value, m[cbind(edges$from, edges$to)])
+    # All features are nodes, with their layer
+    expect_equal(nodes$name, rownames(m))
+    expect_equal(unname(nodes$Layer), rep(c("A", "B"), c(5, 4)))
     # No edges
-    data <- .get_jrpca_network_data(res, NULL, TRUE, threshold = 2)
-    expect_equal(igraph::ecount(data$graph), 0)
+    graph <- .get_jrpca_network_data(res, NULL, TRUE, threshold = 2)
+    expect_equal(igraph::ecount(graph), 0)
     expect_s3_class(
         plotJointRPCANetwork(.make_joint_cov(), "JointRPCA", threshold = 2),
         "ggplot")
-    # Edge sign and strength are stored for plotting
-    data <- .get_jrpca_network_data(res, NULL, TRUE, threshold = 0.5)
-    edges <- as.data.frame(tidygraph::activate(data$graph, "edges"))
-    expect_equal(edges$Sign,
-        ifelse(edges$value > 0, "positive", "negative"))
-    expect_equal(edges$Strength, abs(edges$value))
-    # Nodes are shaped by layer, and the layers get different shapes
+    # Edges are coloured by continuous value, nodes are shaped by layer
     p <- plotJointRPCANetwork(.make_joint_cov(), "JointRPCA",
-        threshold = 0.5, show.label = TRUE)
+        threshold = 0.5)
+    expect_s3_class(p$scales$get_scales("edge_colour"), "ScaleContinuous")
     is_node <- vapply(
         p$layers, function(l) inherits(l$geom, "GeomPoint"), logical(1))
-    expect_true("shape" %in% names(p$layers[[which(is_node)]]$mapping))
     node_data <- ggplot_build(p)$data[[which(is_node)]]
     expect_length(unique(node_data$shape), 2)
+    # Labels are optional
+    has_text <- function(p) any(vapply(
+        p$layers, function(l) grepl("Text", class(l$geom)[1]), logical(1)))
+    expect_false(has_text(p))
+    expect_true(has_text(plotJointRPCANetwork(
+        .make_joint_cov(), "JointRPCA", show.label = TRUE)))
 })
 
 test_that("Joint-RPCA feature plots check input", {
@@ -458,8 +488,66 @@ test_that("Joint-RPCA feature plots check input", {
         "arg")
     expect_error(
         plotJointRPCANetwork(tse, "JointRPCA", threshold = "a"), "threshold")
+    expect_error(
+        plotJointRPCANetwork(tse, "JointRPCA", show.label = 1), "show.label")
     reducedDim(tse, "PCA") <- matrix(rnorm(12), ncol = 2)
     expect_error(plotJointRPCACovariance(tse, "PCA"), "JointRPCA")
     expect_error(plotJointRPCAExplainedVariance(tse, "PCA"), "JointRPCA")
     expect_error(plotJointRPCANetwork(tse, "PCA"), "JointRPCA")
+})
+
+test_that("total variance of layers sums to one and is added as a bar", {
+    res <- reducedDim(.make_joint_cov(), "JointRPCA")
+    total <- .get_jrpca_total_variance_data(res)
+    V <- attr(res, "rotation")
+    s <- attr(res, "varExplained")
+    expected <- sum(sweep(V[1:5, ]^2, 2, s^2, "*")) / sum(s^2)
+    expect_equal(total$value[total$Layer == "A"], expected)
+    expect_equal(sum(total$value), 1)
+    #
+    # Not added by default
+    p <- plotJointRPCAExplainedVariance(.make_joint_cov(), "JointRPCA")
+    expect_false(inherits(p, "patchwork"))
+    p <- plotJointRPCAExplainedVariance(
+        .make_joint_cov(), "JointRPCA", add.total = TRUE)
+    expect_s3_class(p, "patchwork")
+    # Not added when plotting features
+    p <- plotJointRPCAExplainedVariance(
+        .make_joint_cov(), "JointRPCA", by = "feature", add.total = TRUE)
+    expect_false(inherits(p, "patchwork"))
+    expect_error(
+        plotJointRPCAExplainedVariance(
+            .make_joint_cov(), "JointRPCA", add.total = 1),
+        "add.total")
+})
+
+test_that("loadings are plotted per layer with plotLoadings", {
+    for (x in list(.make_joint_cov(), .make_joint_cov_mae())) {
+        p <- plotJointRPCALoadings(x, "JointRPCA")
+        expect_s3_class(p, "patchwork")
+        # One plot per layer, in layer order
+        expect_length(p$patches$plots, 1)
+        expect_equal(p$labels$title, "B")
+        expect_equal(p$patches$plots[[1]]$labels$title, "A")
+    }
+    tse <- .make_joint_cov()
+    # Default layout is lollipop
+    p <- plotJointRPCALoadings(tse, "JointRPCA")
+    expect_true(any(vapply(
+        p$layers, function(l) inherits(l$geom, "GeomPoint"), logical(1))))
+    p <- plotJointRPCALoadings(tse, "JointRPCA", layout = "barplot")
+    expect_true(any(vapply(
+        p$layers, function(l) inherits(l$geom, "GeomBar"), logical(1))))
+    # n is capped by the number of features in a layer
+    p <- plotJointRPCALoadings(tse, "JointRPCA", n = 3, ncomponents = 2)
+    expect_equal(nrow(p$data), 2 * 3)
+    expect_equal(sort(unique(p$data$PC)), c("PC1", "PC2"))
+    expect_no_error(plotJointRPCALoadings(tse, "JointRPCA", n = 100))
+    #
+    expect_error(
+        plotJointRPCALoadings(tse, "JointRPCA", layout = "heatmap"), "layout")
+    expect_error(
+        plotJointRPCALoadings(tse, "JointRPCA", ncomponents = 4),
+        "ncomponents")
+    expect_error(plotJointRPCALoadings(tse, "JointRPCA", n = 0), "'n'")
 })

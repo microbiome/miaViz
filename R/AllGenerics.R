@@ -182,6 +182,11 @@ setGeneric("plotJointRPCAExplainedVariance", signature = c("x"),
 setGeneric("plotJointRPCANetwork", signature = c("x"), function(x, ...)
     standardGeneric("plotJointRPCANetwork"))
 
+#' @rdname plotJointRPCA
+#' @export
+setGeneric("plotJointRPCALoadings", signature = c("x"), function(x, ...)
+    standardGeneric("plotJointRPCALoadings"))
+
 #' @rdname plotHeatmap
 #' @export
 setGeneric("plotHeatmap", signature = c("x"), function(x, ...)

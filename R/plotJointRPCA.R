@@ -20,6 +20,8 @@
 #'   \item \code{plotJointRPCANetwork()} creates a network where nodes are
 #'   features and edges connect features with strong covariance (or
 #'   correlation).
+#'   \item \code{plotJointRPCALoadings()} shows the joint feature loadings of
+#'   each component separately for each data layer.
 #' }
 #'
 #' @details
@@ -42,17 +44,39 @@
 #' clustering. The covariance is estimated from a low-rank representation.
 #' With a small number of components, correlations are often close to -1 or 1,
 #' and they reflect how features align in the Joint-RPCA space rather than
-#' correlations in the observed data. The network uses the same covariance and
-#' is plotted with \code{\link[=plotGraph]{plotRowGraph}}.
+#' correlations in the observed data. The network uses the same covariance.
+#' Edges connect features whose absolute covariance (or correlation) is at
+#' least \code{threshold}, and they are coloured by the covariance (or
+#' correlation). Nodes are shaped by data layer.
 #'
 #' In \code{plotJointRPCAExplainedVariance()}, the variance of feature
 #' \eqn{i} on component \eqn{j} is \eqn{s_j^2 V_{ij}^2}. For a layer, the
 #' values are summed over its features. Each row (layer or feature) is scaled
 #' to sum to one. The values describe the low-rank Joint-RPCA model, not the
-#' proportion of variance explained in the observed data.
+#' proportion of variance explained in the observed data. With
+#' \code{add.total = TRUE}, a barplot of the total variance of each layer is
+#' added next to the heatmap. The total of a
+#' layer is its share of the total variance of the Joint-RPCA model,
+#' \eqn{\sum_{i \in layer} \sum_j s_j^2 V_{ij}^2 / \sum_j s_j^2}, so the
+#' totals sum to one over the layers. Note that the total is a sum over the
+#' features of a layer, so it depends on the number of features and their
+#' scale: a layer with many features tends to have a large share even if its
+#' individual features are only weakly associated with the components. The
+#' heatmap is
+#' scaled within each layer, so it is not affected by the number of features.
+#'
+#' In \code{plotJointRPCALoadings()}, the joint feature loadings
+#' (\code{attr(res, "rotation")}) are split by data layer. As the sample scores
+#' are shared, the loadings show which features from each layer drive each
+#' shared component. The \code{n} features with the largest absolute loading
+#' are shown for each component and layer. The plot of each layer is created
+#' with \code{\link[=plotLoadings]{plotLoadings}}, and the layers are stacked
+#' into rows.
 #'
 #' @return
-#' A \code{ggplot2} object.
+#' A \code{ggplot2} object. \code{plotJointRPCALoadings()}, and
+#' \code{plotJointRPCAExplainedVariance()} with \code{add.total = TRUE},
+#' return a \code{patchwork} object.
 #'
 #' @param x A
 #' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
@@ -79,17 +103,34 @@
 #' (\code{"layer"}) or by feature (\code{"feature"}).
 #' (Default: \code{"layer"})
 #'
+#' @param add.total \code{logical(1)}. Should the total variance of each layer
+#' be shown as a barplot? Used only when \code{by = "layer"}.
+#' (Default: \code{FALSE})
+#'
 #' @param threshold \code{numeric(1)}. Network edges with absolute value below
 #' the threshold are dropped. (Default: \code{0.9})
+#'
+#' @param layout \code{character(1)}. Layout of the loading plot, either
+#' \code{"lollipop"} or \code{"barplot"}. (Default: \code{"lollipop"})
+#'
+#' @param ncomponents \code{integer(1)} or \code{NULL}. Number of components
+#' to show. \code{NULL} shows all components. (Default: \code{NULL})
+#'
+#' @param n \code{integer(1)}. Number of features shown for each component
+#' and layer. (Default: \code{10})
 #'
 #' @param ...
 #' Additional arguments.
 #' \itemize{
 #' \item \code{plotJointRPCA}: passed to
 #' \code{\link[=plotOrdination]{plotOrdination}}.
-#' \item \code{plotJointRPCANetwork}: passed to
-#' \code{\link[=plotGraph]{plotRowGraph}}, for example \code{layout} and
-#' \code{show.label}.
+#' \item \code{plotJointRPCANetwork}: \code{layout}
+#' (\code{character(1)}; graph layout, see \code{\link[ggraph:ggraph]{ggraph}};
+#' default \code{"fr"}) and \code{show.label} (\code{logical(1)}; whether
+#' to label nodes with feature names; default \code{FALSE}).
+#' \item \code{plotJointRPCALoadings}: passed to
+#' \code{\link[=plotLoadings]{plotLoadings}}, for example
+#' \code{absolute.scale}, \code{show.color} and \code{show.sign}.
 #' \item \code{plotJointRPCACovariance} and
 #' \code{plotJointRPCAExplainedVariance}: currently not used.
 #' }
@@ -139,6 +180,9 @@
 #' # Variance explained by each component in each layer
 #' plotJointRPCAExplainedVariance(mae, "JointRPCA")
 #'
+#' # Add the total variance of each layer
+#' plotJointRPCAExplainedVariance(mae, "JointRPCA", add.total = TRUE)
+#'
 #' # Variance explained by each component in each feature
 #' plotJointRPCAExplainedVariance(mae, "JointRPCA", by = "feature")
 #'
@@ -148,10 +192,17 @@
 #' # Stricter threshold and node labels
 #' plotJointRPCANetwork(mae, "JointRPCA", threshold = 0.97, show.label = TRUE)
 #'
+#' # Loadings of the shared components in each layer
+#' plotJointRPCALoadings(mae, "JointRPCA")
+#'
+#' # Barplot of the top 5 features, signed loadings
+#' plotJointRPCALoadings(
+#'     mae, "JointRPCA", layout = "barplot", n = 5, absolute.scale = FALSE)
+#'
 #' @seealso
 #' \itemize{
 #'   \item \code{\link[=plotOrdination]{plotOrdination}}
-#'   \item \code{\link[=plotGraph]{plotRowGraph}}
+#'   \item \code{\link[=plotLoadings]{plotLoadings}}
 #' }
 #'
 NULL
@@ -424,10 +475,11 @@ setMethod("plotJointRPCACovariance",
 #' @export
 setMethod("plotJointRPCAExplainedVariance",
     signature = c(x = "MultiAssayExperiment"),
-    function(x, dimred, by = c("layer", "feature"), ntop = 20, ...){
+    function(x, dimred, by = c("layer", "feature"), ntop = 20,
+            add.total = FALSE, ...){
         .check_metadata_present(dimred, x)
         res <- metadata(x)[[dimred]]
-        .plot_jrpca_explained_variance_main(res, by, ntop)
+        .plot_jrpca_explained_variance_main(res, by, ntop, add.total)
     }
 )
 
@@ -435,10 +487,11 @@ setMethod("plotJointRPCAExplainedVariance",
 #' @export
 setMethod("plotJointRPCAExplainedVariance",
     signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, by = c("layer", "feature"), ntop = 20, ...){
+    function(x, dimred, by = c("layer", "feature"), ntop = 20,
+            add.total = FALSE, ...){
         .check_dimred_present(dimred, x)
         res <- reducedDim(x, dimred)
-        .plot_jrpca_explained_variance_main(res, by, ntop)
+        .plot_jrpca_explained_variance_main(res, by, ntop, add.total)
     }
 )
 
@@ -461,6 +514,28 @@ setMethod("plotJointRPCANetwork",
         .check_dimred_present(dimred, x)
         res <- reducedDim(x, dimred)
         .plot_jrpca_network_main(res, ntop, correlation, threshold, ...)
+    }
+)
+
+#' @rdname plotJointRPCA
+#' @export
+setMethod("plotJointRPCALoadings",
+    signature = c(x = "MultiAssayExperiment"),
+    function(x, dimred, layout = "lollipop", ncomponents = NULL, n = 10, ...){
+        .check_metadata_present(dimred, x)
+        res <- metadata(x)[[dimred]]
+        .plot_jrpca_loadings_main(res, layout, ncomponents, n, ...)
+    }
+)
+
+#' @rdname plotJointRPCA
+#' @export
+setMethod("plotJointRPCALoadings",
+    signature = c(x = "SingleCellExperiment"),
+    function(x, dimred, layout = "lollipop", ncomponents = NULL, n = 10, ...){
+        .check_dimred_present(dimred, x)
+        res <- reducedDim(x, dimred)
+        .plot_jrpca_loadings_main(res, layout, ncomponents, n, ...)
     }
 )
 
@@ -489,11 +564,20 @@ setMethod("plotJointRPCANetwork",
 }
 
 # Explained variance heatmap: check input, prepare long data and plot
-.plot_jrpca_explained_variance_main <- function(res, by, ntop){
+.plot_jrpca_explained_variance_main <- function(res, by, ntop, add.total){
     by <- match.arg(by, c("layer", "feature"))
     .check_jrpca_input(res, ntop)
+    if( !.is_a_bool(add.total) ){
+        stop("'add.total' must be TRUE or FALSE.", call. = FALSE)
+    }
     df <- .get_jrpca_explained_variance_data(res, by, ntop)
-    .plot_jrpca_explained_variance(df, by)
+    p <- .plot_jrpca_explained_variance(df, by)
+    # The total is defined only for layers
+    if( add.total && by == "layer" ){
+        total <- .get_jrpca_total_variance_data(res)
+        p <- .add_jrpca_total_variance(p, total)
+    }
+    return(p)
 }
 
 # Network: check input, prepare graph and plot
@@ -502,8 +586,31 @@ setMethod("plotJointRPCANetwork",
     if( !.is_a_numeric(threshold) ){
         stop("'threshold' must be a single number.", call. = FALSE)
     }
-    data <- .get_jrpca_network_data(res, ntop, correlation, threshold)
-    .plot_jrpca_network(data, correlation, ...)
+    graph <- .get_jrpca_network_data(res, ntop, correlation, threshold)
+    .plot_jrpca_network(graph, correlation, ...)
+}
+
+# Loadings: check input, split loadings by layer and plot each layer with
+# plotLoadings(). Rows are layers and panels are components.
+.plot_jrpca_loadings_main <- function(res, layout, ncomponents, n, ...){
+    .check_jrpca_input(res, ntop = NULL)
+    if( !(.is_a_string(layout) && layout %in% c("lollipop", "barplot")) ){
+        stop("'layout' must be 'lollipop' or 'barplot'.", call. = FALSE)
+    }
+    rotation <- attr(res, "rotation")
+    if( is.null(ncomponents) ){
+        ncomponents <- ncol(rotation)
+    }
+    if( !(.is_an_integer(ncomponents) && ncomponents > 0 &&
+            ncomponents <= ncol(rotation)) ){
+        stop("'ncomponents' must be NULL or a positive integer less than or ",
+            "equal to the number of components.", call. = FALSE)
+    }
+    if( !(.is_an_integer(n) && n > 0) ){
+        stop("'n' must be a positive integer.", call. = FALSE)
+    }
+    mats <- .get_jrpca_loadings_data(res)
+    .plot_jrpca_loadings(mats, layout, ncomponents, n, ...)
 }
 
 # Checks shared by all Joint-RPCA feature plots
@@ -540,8 +647,12 @@ setMethod("plotJointRPCANetwork",
 # diagonal of the covariance matrix), and its column sums are s_j^2 because the
 # loadings are orthonormal.
 .get_jrpca_component_variance <- function(res){
+    V <- attr(res, "rotation")
     s <- attr(res, "varExplained")
-    sweep(attr(res, "rotation")^2, 2L, s^2, "*")
+    # Matrix of the same shape as V where every row is s^2
+    strength <- matrix(s^2, nrow = nrow(V), ncol = ncol(V), byrow = TRUE)
+    # Element-wise: loading^2 * strength^2
+    V^2 * strength
 }
 
 # Select the 'ntop' features with the largest variance from each layer.
@@ -631,38 +742,55 @@ setMethod("plotJointRPCANetwork",
     return(df)
 }
 
+# Data for the total variance barplot: share of the total model variance in
+# each layer. With orthonormal loadings the total is sum(s^2), but dividing by
+# the sum of the layer variances gives the same value and always sums to one.
+.get_jrpca_total_variance_data <- function(res){
+    # Variance of each feature, summed over the components
+    feature_var <- rowSums(.get_jrpca_component_variance(res))
+    # Variance of each layer
+    layer_var <- tapply(feature_var, .get_jrpca_layer(res), sum)
+    # Share of the total variance
+    data.frame(
+        Layer = names(layer_var),
+        value = as.vector(layer_var / sum(layer_var)))
+}
+
 # Data for the network. Edges are feature pairs whose absolute covariance (or
 # correlation) is at least 'threshold'. Only the upper triangle is used, so
-# each pair is included once and self-loops (the diagonal) are excluded.
-# plotRowGraph() takes node information from rowData, so the layers are
-# stored in a small TreeSE whose rows are the nodes.
+# each pair is included once and self-loops (the diagonal) are excluded. The
+# layer of each feature is stored as a node attribute.
 #' @importFrom tidygraph tbl_graph
-#' @importFrom S4Vectors DataFrame
 .get_jrpca_network_data <- function(res, ntop, correlation, threshold){
     mat <- .get_jrpca_matrix(res, ntop, correlation)
     # Row and column indices of the feature pairs that pass the threshold
     idx <- which(upper.tri(mat) & abs(mat) >= threshold, arr.ind = TRUE)
     edges <- data.frame(from = idx[, 1], to = idx[, 2], value = mat[idx])
-    # Edge attributes for plotting: the sign of the relationship (edge colour)
-    # and its strength (edge width)
-    edges[["Sign"]] <- ifelse(edges[["value"]] > 0, "positive", "negative")
-    edges[["Strength"]] <- abs(edges[["value"]])
     # Nodes are all selected features, also those without edges
-    nodes <- data.frame(name = rownames(mat))
+    layer <- .get_jrpca_layer(res)
+    nodes <- data.frame(name = rownames(mat), Layer = layer[rownames(mat)])
     graph <- tbl_graph(nodes = nodes, edges = edges, directed = FALSE)
-    se <- TreeSummarizedExperiment(rowData = DataFrame(
-        Layer = .get_jrpca_layer(res)[rownames(mat)],
-        row.names = rownames(mat)))
-    return(list(graph = graph, se = se))
+    return(graph)
+}
+
+# Data for the loading plot: list of loading matrices, one per layer.
+.get_jrpca_loadings_data <- function(res){
+    rotation <- attr(res, "rotation")
+    # Keep layers in the order they were given to Joint-RPCA
+    layer <- factor(
+        .get_jrpca_layer(res), levels = names(attr(res, "n_features")))
+    # Row indices of each layer, then the loadings of those rows
+    rows <- split(seq_len(nrow(rotation)), layer)
+    lapply(rows, function(i) rotation[i, , drop = FALSE])
 }
 
 ################################ Visualization #################################
 #
-# The plots reuse .plot_heatmap() and plotRowGraph() with their default colour
-# scales, which are colour-blind friendly: blue-white-red for signed values,
-# viridis for proportions, and blue-orange for the sign of network edges. The
-# legend title comes from the name of the plotted column, so the "value"
-# column is renamed before plotting.
+# The heatmaps reuse .plot_heatmap() with its default colour scales, which are
+# colour-blind friendly: blue-white-red for signed values and viridis for
+# proportions. The legend title comes from the name of the plotted column, so
+# the "value" column is renamed before plotting. The network is drawn with
+# ggraph and uses the same blue-white-red colours for the edges.
 
 # Covariance heatmap
 .plot_jrpca_covariance <- function(df, correlation){
@@ -685,10 +813,11 @@ setMethod("plotJointRPCANetwork",
     # scale = FALSE gives a viridis scale
     p <- .plot_heatmap(df, fill = name, scale = FALSE)
     if( by == "layer" ){
-        # Few cells, so the percentages can be shown as text
-        p <- p + geom_text(
-            aes(label = sprintf("%.0f%%", 100 * .data[[name]])),
-            colour = "white")
+        # Few cells, so the percentages can be shown as text. Shadowed text
+        # is readable on both dark and light cells.
+        .require_package("shadowtext")
+        p <- p + shadowtext::geom_shadowtext(
+            aes(label = sprintf("%.0f%%", 100 * .data[[name]])))
     } else{
         # Split features by layer
         p <- p + facet_grid(Layer ~ ., scales = "free", space = "free")
@@ -696,15 +825,73 @@ setMethod("plotJointRPCANetwork",
     return(p)
 }
 
-# Network. Nodes are shaped by layer. Edges are coloured by the sign of the
-# relationship and their width shows its strength. Nodes are not coloured, so
-# that node and edge colours do not mix. Additional arguments, e.g.,
-# show.label, are passed to plotRowGraph().
+# Add the total variance of each layer as a barplot next to the heatmap.
+# Layers are on the y axis
+# of the heatmap, so the bars are horizontal and placed on the right so that
+# they align with the heatmap rows.
+#' @importFrom patchwork wrap_plots plot_layout
+.add_jrpca_total_variance <- function(p, total){
+    # Use the same layer order as in the heatmap
+    total[["Layer"]] <- factor(
+        total[["Layer"]], levels = levels(p$data[["FeatureID"]]))
+    bar <- ggplot(total, aes(x = .data[["value"]], y = .data[["Layer"]])) +
+        geom_col(fill = "grey40") +
+        geom_text(
+            aes(label = sprintf("%.0f%%", 100 * .data[["value"]])),
+            hjust = -0.1) +
+        scale_x_continuous(
+            labels = scales::percent, breaks = c(0, 0.5, 1),
+            expand = expansion(mult = c(0, 0))) +
+        # Leave room for the labels of bars close to 100%
+        coord_cartesian(xlim = c(0, 1.4)) +
+        labs(x = "Total variance", y = NULL) +
+        theme_classic() +
+        theme(axis.text.y = element_blank(), axis.ticks.y = element_blank())
+    p <- wrap_plots(p, bar, nrow = 1L, widths = c(3, 1)) +
+        plot_layout(guides = "collect")
+    return(p)
+}
+
+# Network. Edges are coloured by covariance (or correlation): blue for
+# negative, red for positive, and the stronger the relationship, the darker
+# the colour. Nodes are black and shaped by layer, so that node and edge
+# colours do not mix. Optionally, nodes are labelled with feature names.
 .plot_jrpca_network <- function(
-        data, correlation, layout = "fr", edge.type = "link", ...){
-    p <- plotRowGraph(
-        data[["graph"]], data[["se"]], shape.by = "Layer",
-        edge.colour.by = "Sign", edge.width.by = "Strength",
-        layout = layout, edge.type = edge.type, ...)
+        graph, correlation, layout = "fr", show.label = FALSE, ...){
+    if( !.is_a_bool(show.label) ){
+        stop("'show.label' must be TRUE or FALSE.", call. = FALSE)
+    }
+    name <- if( correlation ) "Correlation" else "Covariance"
+    p <- ggraph(graph, layout = layout) +
+        # Edges
+        geom_edge_link(aes(edge_colour = .data[["value"]])) +
+        scale_edge_colour_gradient2(
+            low = "#2166AC", mid = "white", high = "#B2182B", midpoint = 0,
+            name = name) +
+        # Nodes
+        geom_node_point(aes(shape = .data[["Layer"]]), size = 3) +
+        theme_graph(base_family = "", background = NA)
+    # Feature names next to the nodes
+    if( show.label ){
+        p <- p + geom_node_text(
+            aes(label = .data[["name"]]), repel = TRUE, size = 3)
+    }
+    return(p)
+}
+
+# Loading plot. Each layer is plotted with plotLoadings() and the plots are
+# stacked so that each row is a layer and each panel a component. Layers with
+# fewer than n features show all of them.
+# Legends are identical across layers, so they are collected into one.
+#' @importFrom patchwork wrap_plots plot_layout
+.plot_jrpca_loadings <- function(mats, layout, ncomponents, n, ...){
+    plots <- lapply(names(mats), function(name){
+        mat <- mats[[name]]
+        plotLoadings(
+            mat, layout = layout, ncomponents = ncomponents,
+            n = min(n, nrow(mat)), ...) +
+            labs(title = name)
+    })
+    p <- wrap_plots(plots, ncol = 1L) + plot_layout(guides = "collect")
     return(p)
 }
