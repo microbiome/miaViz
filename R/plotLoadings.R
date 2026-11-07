@@ -11,8 +11,8 @@
 #' plot.
 #'
 #' @param layout \code{Character scalar}. Determines the layout of plot. Must be
-#' either \code{"barplot"}, \code{"heatmap"}, or \code{"lollipop"}.
-#' (Default: \code{"barplot"})
+#' either \code{"lollipop"}, \code{"heatmap"}, or \code{"barplot"}.
+#' (Default: \code{"lollipop"})
 #'
 #' @param ncomponents \code{Numeric scalar}. Number of components must be lower
 #' or equal to the number of components chosen in the reduction method.
@@ -28,7 +28,7 @@
 #' @param ... additional parameters for plotting.
 #' \itemize{
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
-#'   Applicable when \code{layout="barplot"}.
+#'   Applicable when \code{layout="barplot"} or \code{layout="lollipop"}.
 #'   (Default: \code{min(nrow(x), 10L)}))
 #'
 #'   \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
@@ -88,7 +88,7 @@ NULL
 #' @importFrom SingleCellExperiment reducedDims
 setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, dimred, layout = "barplot", ncomponents = 5, tree.name = "phylo",
+        x, dimred, layout = "lollipop", ncomponents = 5, tree.name = "phylo",
         row.var = NULL, add.tree = FALSE, ...) {
         # Check that there are reducedDim
         if( length(reducedDims(x)) == 0 ){
@@ -144,7 +144,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
 #' @export
 #' @importFrom SingleCellExperiment reducedDims
 setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, layout = "barplot", ncomponents = 5, ...){
+    function(x, dimred, layout = "lollipop", ncomponents = 5, ...){
         # Check that there are reducedDim
         if( length(reducedDims(x)) == 0 ){
             stop("No reducedDims found.", call. = FALSE)
@@ -168,7 +168,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
 #' @rdname plotLoadings
 #' @export
 setMethod("plotLoadings", signature = c(x = "matrix"),
-    function(x, layout = "barplot", ncomponents = 5, ...) {
+    function(x, layout = "lollipop", ncomponents = 5, ...) {
         # Input check
         .check_loadings_matrix(
             x, layout = layout, ncomponents = ncomponents, ...)
@@ -213,7 +213,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Check layout
     if( !(.is_a_string(layout) && layout %in%
             c("barplot", "heatmap", "lollipop")) ){
-        stop("'layout' must be 'barplot' or 'heatmap',", call. = FALSE)
+        stop("'layout' must be 'lollipop', 'barplot' or 'heatmap',",
+            call. = FALSE)
     }
     # Check n
     if( !(.is_an_integer(n) && n > 0 && n <= nrow(mat)) ){

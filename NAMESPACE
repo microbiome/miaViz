@@ -12,6 +12,10 @@ export(plotForest)
 export(plotHeatmap)
 export(plotHistogram)
 export(plotJointRPCA)
+export(plotJointRPCACovariance)
+export(plotJointRPCAExplainedVariance)
+export(plotJointRPCALoadings)
+export(plotJointRPCANetwork)
 export(plotLoadings)
 export(plotMediation)
 export(plotNMDS)
@@ -44,6 +48,10 @@ exportMethods(plotForest)
 exportMethods(plotHeatmap)
 exportMethods(plotHistogram)
 exportMethods(plotJointRPCA)
+exportMethods(plotJointRPCACovariance)
+exportMethods(plotJointRPCAExplainedVariance)
+exportMethods(plotJointRPCALoadings)
+exportMethods(plotJointRPCANetwork)
 exportMethods(plotLoadings)
 exportMethods(plotMediation)
 exportMethods(plotOrdination)
@@ -220,17 +228,22 @@ importFrom(scater,
   retrieveFeatureInfo
 )
 importFrom(stats,
+  cov2cor,
+  dist,
   formula,
+  hclust,
   median,
   qt,
   runif,
-  sd
+  sd,
+  setNames
 )
 importFrom(tibble,rownames_to_column)
 importFrom(tidygraph,
   activate,
   as_tbl_graph,
-  as_tibble
+  as_tibble,
+  tbl_graph
 )
 importFrom(tidyr,
   complete,
