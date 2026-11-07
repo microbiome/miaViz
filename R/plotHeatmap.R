@@ -64,6 +64,11 @@
 #'   \code{ggplot2::facet_grid()} or
 #'   \code{ggh4x::facet_nested()}.
 #'   (Default: \code{"free"})
+#'   \item \code{space}: Facet panel sizes passed to
+#'   \code{ggplot2::facet_grid()} or
+#'   \code{ggh4x::facet_nested()}. With \code{"free"}, panels are sized by
+#'   their number of rows and columns so that all cells are equal size.
+#'   (Default: \code{"free"})
 #'   \item \code{tree.width}: Relative width of the tree panel when
 #'   \code{show.tree = TRUE}.
 #'   (Default: \code{0.2})
@@ -408,6 +413,7 @@ setMethod(
         row.var = NULL,
         col.var = NULL,
         scales = "free",
+        space = "free",
         ...
 ) {
 
@@ -424,14 +430,16 @@ setMethod(
         p <- p +
             facet_grid(
                 form,
-                scales = scales
+                scales = scales,
+                space = space
             )
     } else {
         .require_package("ggh4x")
         p <- p +
             ggh4x::facet_nested(
                 form,
-                scales = scales
+                scales = scales,
+                space = space
             )
     }
 
@@ -469,5 +477,126 @@ setMethod(
             legend.position = "right"
         )
 
+    return(p)
+}
+
+################################ plotDissimilarity #############################
+
+#' @name
+#' plotDissimilarity
+#'
+#' @title
+#' Visualize a dissimilarity matrix as a heatmap
+#'
+#' @description
+#' Plots a sample dissimilarity matrix, stored in \code{metadata(x)}, as a
+#' heatmap. Samples are ordered by hierarchical clustering so that similar
+#' samples are next to each other.
+#'
+#' @return
+#' A \code{ggplot2} object.
+#'
+#' @param x A
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+#'
+#' @param name \code{Character scalar}. Name of the dissimilarity matrix in
+#' \code{metadata(x)}. The matrix must be a \code{dist} object, as returned by
+#' \code{\link[mia:getDissimilarity]{addDissimilarity}}, with one row per
+#' sample of \code{x}.
+#'
+#' @param col.var \code{NULL} or \code{character vector}. Variables from
+#' \code{colData(x)} used for facetting. Because both axes are samples, the
+#' same variables split both the rows and the columns.
+#' (Default: \code{NULL})
+#'
+#' @param ... Additional arguments passed to the facetting, for example
+#' \code{scales} and \code{space} (both default \code{"free"}).
+#'
+#' @examples
+#' data(GlobalPatterns)
+#' tse <- GlobalPatterns
+#' tse <- transformAssay(tse, method = "relabundance")
+#'
+#' # Calculate Bray-Curtis dissimilarity and store it in metadata
+#' tse <- addDissimilarity(tse, method = "bray", assay.type = "relabundance")
+#'
+#' plotDissimilarity(tse, "bray")
+#'
+#' # Split rows and columns by sample type
+#' plotDissimilarity(tse, "bray", col.var = "SampleType")
+#'
+#' @seealso
+#' \code{\link[=plotHeatmap]{plotHeatmap}}
+#'
+NULL
+
+#' @rdname plotDissimilarity
+#' @export
+setMethod("plotDissimilarity", signature = c(x = "SummarizedExperiment"),
+    function(x, name, col.var = NULL, ...){
+        .check_metadata_present(name, x)
+        .check_metadata_variable(x, col.var, col = TRUE, multiple = TRUE)
+        diss <- metadata(x)[[name]]
+        if( !is(diss, "dist") ){
+            stop("metadata(x)[[name]] must be a 'dist' object.", call. = FALSE)
+        }
+        # The dissimilarity matrix must have one row per sample of x
+        if( attr(diss, "Size") != ncol(x) ){
+            stop("The number of samples in metadata(x)[[name]] must equal ",
+                "ncol(x).", call. = FALSE)
+        }
+        # Without sample names, samples are assumed to be in the same order
+        if( is.null(labels(diss)) ){
+            attr(diss, "Labels") <- colnames(x)
+        }
+        if( !setequal(labels(diss), colnames(x)) ){
+            stop("Sample names in metadata(x)[[name]] must match ",
+                "colnames(x).", call. = FALSE)
+        }
+        df <- .get_dissimilarity_data(diss)
+        # Add sample variables for facetting. Columns are samples in
+        # "SampleID" and rows are samples in "FeatureID".
+        for( var in col.var ){
+            df[[var]] <- colData(x)[as.character(df[["SampleID"]]), var]
+        }
+        # The same variables split the rows. They get a suffix so that they
+        # do not overwrite the column variables.
+        row.var <- NULL
+        if( !is.null(col.var) ){
+            row.var <- paste0(col.var, "_row")
+            for( i in seq_along(col.var) ){
+                df[[row.var[[i]]]] <- colData(x)[
+                    as.character(df[["FeatureID"]]), col.var[[i]]]
+            }
+        }
+        .plot_dissimilarity(df, row.var, col.var, ...)
+    }
+)
+
+# Convert the dist object to the long format used by .plot_heatmap(). Samples
+# are ordered by hierarchical clustering on both axes.
+#' @importFrom stats hclust
+.get_dissimilarity_data <- function(diss){
+    mat <- as.matrix(diss)
+    df <- as.data.frame(as.table(mat), responseName = "Dissimilarity")
+    colnames(df)[1:2] <- c("FeatureID", "SampleID")
+    # Clustering needs at least two samples
+    ord <- rownames(mat)
+    if( nrow(mat) > 1L ){
+        ord <- ord[hclust(diss)$order]
+    }
+    df[["FeatureID"]] <- factor(df[["FeatureID"]], levels = ord)
+    df[["SampleID"]] <- factor(df[["SampleID"]], levels = ord)
+    return(df)
+}
+
+# Heatmap, optionally with rows and/or columns split by sample variables
+.plot_dissimilarity <- function(df, row.var = NULL, col.var = NULL, ...){
+    p <- .plot_heatmap(df, fill = "Dissimilarity") +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    if( !is.null(row.var) || !is.null(col.var) ){
+        p <- .resolve_heatmap_facets(
+            p, row.var = row.var, col.var = col.var, ...)
+    }
     return(p)
 }

@@ -191,3 +191,8 @@ setGeneric("plotJointRPCALoadings", signature = c("x"), function(x, ...)
 #' @export
 setGeneric("plotHeatmap", signature = c("x"), function(x, ...)
     standardGeneric("plotHeatmap"))
+
+#' @rdname plotDissimilarity
+#' @export
+setGeneric("plotDissimilarity", signature = c("x"), function(x, ...)
+    standardGeneric("plotDissimilarity"))
