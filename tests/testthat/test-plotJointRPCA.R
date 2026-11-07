@@ -452,7 +452,8 @@ test_that("network keeps edges above threshold", {
     expect_equal(unname(nodes$Layer), rep(c("A", "B"), c(5, 4)))
     # No edges
     graph <- .get_jrpca_network_data(res, NULL, TRUE, threshold = 2)
-    expect_equal(igraph::ecount(graph), 0)
+    edges <- as.data.frame(tidygraph::activate(graph, "edges"))
+    expect_equal(nrow(edges), 0)
     expect_s3_class(
         plotJointRPCANetwork(.make_joint_cov(), "JointRPCA", threshold = 2),
         "ggplot")
