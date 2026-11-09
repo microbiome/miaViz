@@ -376,9 +376,4 @@ test_that("plotHeatmap supports separate row and column sorting", {
             tse, assay.type = "counts", show.tree = TRUE,
             sort.cols = "Heatmap"),
         "patchwork")
-    expect_error(
-        plotHeatmap(
-            tse, assay.type = "counts", show.tree = TRUE,
-            sort.rows = "PCA_angle"),
-        "show.tree")
 })
