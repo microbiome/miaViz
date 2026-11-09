@@ -142,6 +142,11 @@ setGeneric("combineTreeData", signature = c("x"),
     function(x, other.fields = other_fields, other_fields = list())
     standardGeneric("combineTreeData"))
 
+#' @rdname plotRarefaction
+#' @export
+setGeneric("plotRarefaction", signature = c("x"), function(x, ...)
+    standardGeneric("plotRarefaction"))
+
 #' @rdname plotHistogram
 #' @export
 setGeneric("plotHistogram", signature = c("x"), function(x, ...)
