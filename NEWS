@@ -60,3 +60,4 @@ Changes in version 1.21.x
 + plotBoxplot, fix typo in argument name: add.chance -> add.change (1.21.10, 2026-11-03)
 + Added plotJointRPCACovariance, plotJointRPCAExplainedVariance and plotJointRPCANetwork (1.21.12, 2026-11-07)
 + Added plotDissimilarity (1.21.13, 2026-11-07)
++ Added getHeatmapOrder for sorting heatmaps; plotHeatmap and plotDissimilarity gain sort.method; getNeatOrder is deprecated (2026-11-09)

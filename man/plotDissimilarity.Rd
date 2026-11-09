@@ -7,7 +7,7 @@
 \usage{
 plotDissimilarity(x, ...)
 
-\S4method{plotDissimilarity}{SummarizedExperiment}(x, name, col.var = NULL, ...)
+\S4method{plotDissimilarity}{SummarizedExperiment}(x, name, col.var = NULL, sort.method = "MDS_angle", ...)
 }
 \arguments{
 \item{x}{A
@@ -25,14 +25,24 @@ sample of \code{x}.}
 \code{colData(x)} used for facetting. Because both axes are samples, the
 same variables split both the rows and the columns.
 (Default: \code{NULL})}
+
+\item{sort.method}{\code{NULL}, \code{Character scalar} or
+\code{BlusterParam} object. Specifies the method used to sort samples.
+Seriation methods for distances, such as \code{"MDS_angle"} (NeatMap-like
+angular ordering) or \code{"OLO"} (hierarchical clustering with optimal
+leaf ordering), are applied to the dissimilarities directly (see
+\code{seriation::list_seriation_methods("dist")}). Other methods are
+applied to the dissimilarity matrix. See \code{\link{getHeatmapOrder}}
+for details. If \code{NULL}, samples are shown in the order of \code{x}.
+(Default: \code{"MDS_angle"})}
 }
 \value{
 A \code{ggplot2} object.
 }
 \description{
 Plots a sample dissimilarity matrix, stored in \code{metadata(x)}, as a
-heatmap. Samples are ordered by hierarchical clustering so that similar
-samples are next to each other.
+heatmap. Samples can be sorted so that similar samples are next to each
+other. The same order is used for both axes.
 }
 \examples{
 data(GlobalPatterns)
@@ -44,10 +54,14 @@ tse <- addDissimilarity(tse, method = "bray", assay.type = "relabundance")
 
 plotDissimilarity(tse, "bray")
 
+# Sort with hierarchical clustering
+plotDissimilarity(tse, "bray", sort.method = "OLO")
+
 # Split rows and columns by sample type
 plotDissimilarity(tse, "bray", col.var = "SampleType")
 
 }
 \seealso{
-\code{\link[=plotHeatmap]{plotHeatmap}}
+\code{\link[=plotHeatmap]{plotHeatmap}},
+\code{\link[=getHeatmapOrder]{getHeatmapOrder}}
 }

@@ -35,17 +35,15 @@
 #'   Specifies whether a barplot or a lollipop plot should be visualized in
 #'   absolute scale. (Default: \code{TRUE})
 #'
-#'   \item \code{sort.method}: ("heatmap") \code{Character scalar} or
-#'   \code{BlusterParam} object. Specifies sorting method. If it specifies
-#'   column, i.e., principal coordinate, features are ordered in decreasing
-#'   order based on the specified coordinate. Other \code{character} values
-#'   specify a seriation method, e.g., \code{"PCA_angle"} or
-#'   \code{"Heatmap"}, that is passed to
-#'   \code{\link[seriation:seriate]{seriation::seriate()}} (see
-#'   \code{seriation::list_seriation_methods("matrix")} for available
-#'   methods). If \code{BlusterParam} object, the argument is passed to
-#'   \code{\link[bluster:clusterRows]{bluster:clusterRows()}} \code{BLUSPARAM}
-#'   parameter. (Default: \code{NULL})
+#'   \item \code{sort.method}: ("heatmap") \code{NULL}, \code{Character
+#'   scalar} or \code{BlusterParam} object. Specifies how features are
+#'   sorted. If it specifies a column, i.e., principal coordinate, features
+#'   are ordered in decreasing order based on the specified coordinate. Other
+#'   \code{character} values specify a seriation method, e.g.,
+#'   \code{"PCA_angle"} or \code{"Heatmap"}, and \code{BlusterParam}
+#'   objects specify a clustering method. See
+#'   \code{\link{getHeatmapOrder}} for details. If \code{NULL}, features are
+#'   not sorted. (Default: \code{NULL})
 #' }
 #'
 #' @details
@@ -313,8 +311,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Get feature order
     feat_order <- NULL
     if( !is.null(sort.method) ){
-        feat_order <- .get_feature_order(
-            df = df, sort.method = sort.method, ...)
+        feat_order <- .get_heatmap_order(df, method = sort.method)
+        feat_order <- rownames(df)[ feat_order ]
     }
     # Put data into long format
     res <- df |>
@@ -328,30 +326,6 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         res[["Feature"]] <- factor(res[["Feature"]], levels = feat_order)
     }
     return(res)
-}
-
-# This function gets feature order based on clustering, principal component
-# values or seriation.
-.get_feature_order <- function(df, sort.method, ...){
-    df <- as.matrix(df)
-    # Get order based on single column
-    if( .is_a_string(sort.method) && sort.method %in% colnames(df) ){
-        feat_order <- order(df[, sort.method], decreasing = TRUE)
-    } else if( .is_a_string(sort.method) ){
-        # Get order based on seriation
-        .require_package("seriation")
-        feat_order <- seriation::seriate(
-            df, method = sort.method, margin = 1L) |>
-            seriation::get_order()
-    } else{
-        # Get order based on clustering
-        .require_package("bluster")
-        feat_order <- bluster::clusterRows(df, BLUSPARAM = sort.method) |>
-            order()
-    }
-    # Now we have order as indices. Get the feature names in correct order.
-    feat_order <- rownames(df)[ feat_order ]
-    return(feat_order)
 }
 
 # This function calculates place for +/- sign in barplot/lollipop plot

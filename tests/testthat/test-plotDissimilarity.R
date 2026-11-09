@@ -35,3 +35,40 @@ test_that("plotDissimilarity", {
     metadata(tse)[["badlab"]] <- d
     expect_error(plotDissimilarity(tse, "badlab"), "colnames")
 })
+
+test_that("plotDissimilarity sorts samples", {
+    skip_if_not_installed("seriation")
+    tse <- makeTSE(nrow = 10, ncol = 6)
+    metadata(tse)[["diss"]] <- dist(t(assay(tse)))
+    d <- metadata(tse)[["diss"]]
+    # Same order on both axes
+    p <- plotDissimilarity(tse, "diss")
+    ord <- labels(d)[getHeatmapOrder(d, method = "MDS_angle")]
+    expect_identical(levels(p$data$SampleID), ord)
+    expect_identical(levels(p$data$FeatureID), ord)
+    p <- plotDissimilarity(tse, "diss", sort.method = "OLO")
+    ord <- labels(d)[getHeatmapOrder(d, method = "OLO")]
+    expect_identical(levels(p$data$SampleID), ord)
+    # Without sorting, samples follow the order of x
+    tse <- tse[, rev(colnames(tse))]
+    p <- plotDissimilarity(tse, "diss", sort.method = NULL)
+    expect_identical(levels(p$data$SampleID), colnames(tse))
+    expect_identical(levels(p$data$FeatureID), colnames(tse))
+    expect_error(plotDissimilarity(tse, "diss", sort.method = mean))
+})
+
+test_that("plotDissimilarity supports separate row and column sorting", {
+    skip_if_not_installed("seriation")
+    tse <- makeTSE(nrow = 10, ncol = 6)
+    d <- dist(t(assay(tse)))
+    metadata(tse)[["diss"]] <- d
+    p <- plotDissimilarity(tse, "diss", sort.cols = "OLO")
+    expect_identical(
+        levels(p$data$FeatureID), labels(d)[getHeatmapOrder(d)])
+    expect_identical(
+        levels(p$data$SampleID),
+        labels(d)[getHeatmapOrder(d, method = "OLO")])
+    p <- plotDissimilarity(tse, "diss", sort.rows = NULL)
+    expect_identical(levels(p$data$FeatureID), colnames(tse))
+    expect_error(plotDissimilarity(tse, "diss", sort.cols = mean), "sort.cols")
+})
