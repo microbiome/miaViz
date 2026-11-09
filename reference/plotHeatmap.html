@@ -20,7 +20,7 @@ samples as columns."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.13</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.14</span>
       </span>
     </div>
 
@@ -69,6 +69,7 @@ samples as columns.</p>
 <span>  col.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scale <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  center <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sort.method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  tree.name <span class="op">=</span> <span class="st">"phylo"</span>,</span>
 <span>  show.tree <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -82,6 +83,7 @@ samples as columns.</p>
 <span>  col.var <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  scale <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  center <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  sort.method <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
@@ -144,6 +146,14 @@ each feature across samples?
 (Default: <code>FALSE</code>)</p></dd>
 
 
+<dt id="arg-sort-method">sort.method<a class="anchor" aria-label="anchor" href="#arg-sort-method"></a></dt>
+<dd><p><code>NULL</code>, <code>Character scalar</code> or
+<code>BlusterParam</code> object. Specifies the method used to sort rows and
+columns, e.g., a seriation method such as <code>"PCA_angle"</code> or
+<code>"Heatmap"</code>. See <code><a href="getHeatmapOrder.html">getHeatmapOrder</a></code> for details. If
+<code>NULL</code>, rows and columns are not sorted. (Default: <code>NULL</code>)</p></dd>
+
+
 <dt id="arg-tree-name">tree.name<a class="anchor" aria-label="anchor" href="#arg-tree-name"></a></dt>
 <dd><p><code>Character scalar</code>. Name of the row tree to display
 when <code>x</code> is a <code>TreeSummarizedExperiment</code>.
@@ -174,10 +184,18 @@ provided, nested facets are created using
 <p>For <code>TreeSummarizedExperiment</code> objects, a row tree can be displayed
 alongside the heatmap. When a tree is shown, only leaf nodes are plotted
 and the heatmap rows are reordered to match the tree tip order.</p>
+<p>Rows and columns are shown in the order they appear in <code>x</code>. They can
+be sorted with <code>sort.method</code> so that similar features and similar
+samples are placed next to each other. The same method is used for both
+rows and columns. The order is determined with
+<code><a href="getHeatmapOrder.html">getHeatmapOrder</a></code> from the plotted values, i.e., after optional
+scaling and centering. Within facets, the same order is preserved. When the
+row tree is shown, rows follow the tree and only columns are sorted.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
-    <div class="dont-index"><p><code><a href="plotTree.html">plotRowTree</a></code></p></div>
+    <div class="dont-index"><p><code><a href="plotTree.html">plotRowTree</a></code>,
+<code><a href="getHeatmapOrder.html">getHeatmapOrder</a></code></p></div>
     </div>
 
     <div id="ref-examples">
@@ -210,6 +228,16 @@ and the heatmap rows are reordered to match the tree tip order.</p>
 <span class="r-in"><span>    col.var <span class="op">=</span> <span class="st">"SampleType"</span></span></span>
 <span class="r-in"><span><span class="op">)</span></span></span>
 <span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plotHeatmap(tse, assay.type = "counts", col.var = "SampleType"):</span> argument "features" is missing, with no default</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Sort features and samples with seriation</span></span></span>
+<span class="r-in"><span><span class="fu">plotHeatmap</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>,</span></span>
+<span class="r-in"><span>    assay.type <span class="op">=</span> <span class="st">"counts"</span>,</span></span>
+<span class="r-in"><span>    scale <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    center <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    sort.method <span class="op">=</span> <span class="st">"PCA_angle"</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in plotHeatmap(tse, assay.type = "counts", scale = TRUE, center = TRUE,     sort.method = "PCA_angle"):</span> argument "features" is missing, with no default</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Add phylogeny</span></span></span>
 <span class="r-in"><span><span class="fu">plotHeatmap</span><span class="op">(</span></span></span>
