@@ -307,3 +307,73 @@ test_that("row tree and heatmap use the same feature order", {
     )
 
 })
+
+test_that("plotHeatmap sorts rows and columns", {
+    skip_if_not_installed("seriation")
+    data(GlobalPatterns)
+    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+
+    # By default, the order of the object is kept
+    p <- plotHeatmap(tse, assay.type = "counts")
+    expect_identical(levels(p$data$FeatureID), rownames(tse))
+    expect_identical(levels(p$data$SampleID), colnames(tse))
+
+    # Same method sorts both rows and columns
+    p <- plotHeatmap(
+        tse, assay.type = "counts", scale = TRUE, center = TRUE,
+        sort.method = "PCA_angle")
+    mat <- t(scale(t(assay(tse, "counts"))))
+    mat[is.nan(mat)] <- 0
+    row_order <- getHeatmapOrder(mat, method = "PCA_angle")
+    col_order <- getHeatmapOrder(mat, method = "PCA_angle", MARGIN = "cols")
+    expect_identical(levels(p$data$FeatureID), rownames(tse)[row_order])
+    expect_identical(levels(p$data$SampleID), colnames(tse)[col_order])
+
+    expect_error(plotHeatmap(tse, assay.type = "counts", sort.method = mean))
+})
+
+test_that("plotHeatmap sorts only columns when tree is shown", {
+    skip_if_not_installed("seriation")
+    data(GlobalPatterns)
+    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    p_tree <- plotHeatmap(tse, assay.type = "counts", show.tree = TRUE)
+    p <- plotHeatmap(
+        tse, assay.type = "counts", show.tree = TRUE, sort.method = "Heatmap")
+    # Rows follow the tree
+    expect_identical(
+        levels(p[[2]]$data$FeatureID), levels(p_tree[[2]]$data$FeatureID))
+    col_order <- getHeatmapOrder(
+        tse, assay.type = "counts", method = "Heatmap", MARGIN = "cols")
+    expect_identical(levels(p[[2]]$data$SampleID), colnames(tse)[col_order])
+})
+
+test_that("plotHeatmap supports separate row and column sorting", {
+    skip_if_not_installed("seriation")
+    data(GlobalPatterns)
+    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    mat <- as.matrix(assay(tse, "counts"))
+    # sort.rows and sort.cols override sort.method
+    p <- plotHeatmap(
+        tse, assay.type = "counts", sort.method = "PCA_angle",
+        sort.cols = "Heatmap")
+    row_order <- getHeatmapOrder(mat, method = "PCA_angle")
+    col_order <- getHeatmapOrder(mat, method = "Heatmap", MARGIN = "cols")
+    expect_identical(levels(p$data$FeatureID), rownames(tse)[row_order])
+    expect_identical(levels(p$data$SampleID), colnames(tse)[col_order])
+    # Only rows sorted
+    p <- plotHeatmap(tse, assay.type = "counts", sort.rows = "PCA_angle")
+    expect_identical(levels(p$data$FeatureID), rownames(tse)[row_order])
+    expect_identical(levels(p$data$SampleID), colnames(tse))
+    # Disable column sorting
+    p <- plotHeatmap(
+        tse, assay.type = "counts", sort.method = "PCA_angle",
+        sort.cols = NULL)
+    expect_identical(levels(p$data$FeatureID), rownames(tse)[row_order])
+    expect_identical(levels(p$data$SampleID), colnames(tse))
+    # Tree defines row order
+    expect_s3_class(
+        plotHeatmap(
+            tse, assay.type = "counts", show.tree = TRUE,
+            sort.cols = "Heatmap"),
+        "patchwork")
+})

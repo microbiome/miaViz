@@ -15,6 +15,7 @@ plotHeatmap(x, ...)
   col.var = NULL,
   scale = FALSE,
   center = FALSE,
+  sort.method = NULL,
   tree.name = "phylo",
   show.tree = FALSE,
   ...
@@ -27,6 +28,7 @@ plotHeatmap(x, ...)
   col.var = NULL,
   scale = FALSE,
   center = FALSE,
+  sort.method = NULL,
   ...
 )
 }
@@ -73,6 +75,12 @@ feature across samples?
 each feature across samples?
 (Default: \code{FALSE})}
 
+\item{sort.method}{\code{NULL}, \code{Character scalar} or
+\code{BlusterParam} object. Specifies the method used to sort rows and
+columns, e.g., a seriation method such as \code{"PCA_angle"} or
+\code{"Heatmap"}. See \code{\link{getHeatmapOrder}} for details. If
+\code{NULL}, rows and columns are not sorted. (Default: \code{NULL})}
+
 \item{tree.name}{\code{Character scalar}. Name of the row tree to display
 when \code{x} is a \code{TreeSummarizedExperiment}.
 (Default: \code{"phylo"})}
@@ -105,6 +113,14 @@ provided, nested facets are created using
 For \code{TreeSummarizedExperiment} objects, a row tree can be displayed
 alongside the heatmap. When a tree is shown, only leaf nodes are plotted
 and the heatmap rows are reordered to match the tree tip order.
+
+Rows and columns are shown in the order they appear in \code{x}. They can
+be sorted with \code{sort.method} so that similar features and similar
+samples are placed next to each other. The same method is used for both
+rows and columns. The order is determined with
+\code{\link{getHeatmapOrder}} from the plotted values, i.e., after optional
+scaling and centering. Within facets, the same order is preserved. When the
+row tree is shown, rows follow the tree and only columns are sorted.
 }
 \examples{
 data(GlobalPatterns)
@@ -133,6 +149,15 @@ plotHeatmap(
     col.var = "SampleType"
 )
 
+# Sort features and samples with seriation
+plotHeatmap(
+    tse,
+    assay.type = "counts",
+    scale = TRUE,
+    center = TRUE,
+    sort.method = "PCA_angle"
+)
+
 # Add phylogeny
 plotHeatmap(
     tse,
@@ -142,5 +167,6 @@ plotHeatmap(
 
 }
 \seealso{
-\code{\link[=plotRowTree]{plotRowTree}}
+\code{\link[=plotRowTree]{plotRowTree}},
+\code{\link[=getHeatmapOrder]{getHeatmapOrder}}
 }

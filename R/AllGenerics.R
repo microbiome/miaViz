@@ -1,9 +1,10 @@
 # All generic methods are listed here
 
-#' @rdname getNeatOrder
-setGeneric("getNeatOrder", signature = c("x"),
-    function(x, centering = "mean", ...)
-    standardGeneric("getNeatOrder"))
+#' @rdname getHeatmapOrder
+#' @export
+setGeneric("getHeatmapOrder", signature = c("x"),
+    function(x, ...)
+    standardGeneric("getHeatmapOrder"))
 
 #' @rdname plotAbundance
 setGeneric("plotAbundance", signature = c("x"), function(x, ...)

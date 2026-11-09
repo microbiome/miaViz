@@ -34,6 +34,16 @@
 #'   \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
 #'   Specifies whether a barplot or a lollipop plot should be visualized in
 #'   absolute scale. (Default: \code{TRUE})
+#'
+#'   \item \code{sort.method}: ("heatmap") \code{NULL}, \code{Character
+#'   scalar} or \code{BlusterParam} object. Specifies how features are
+#'   sorted. If it specifies a column, i.e., principal coordinate, features
+#'   are ordered in decreasing order based on the specified coordinate. Other
+#'   \code{character} values specify a seriation method, e.g.,
+#'   \code{"PCA_angle"} or \code{"Heatmap"}, and \code{BlusterParam}
+#'   objects specify a clustering method. See
+#'   \code{\link{getHeatmapOrder}} for details. If \code{NULL}, features are
+#'   not sorted. (Default: \code{NULL})
 #' }
 #'
 #' @details
@@ -79,7 +89,10 @@
 #' plotLoadings(loadings_matrix, layout = "heatmap")
 #'
 #' # Plot with less components
-#' plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)
+#' plotLoadings(
+#'     tse, "PCA", layout = "heatmap",
+#'     ncomponents = 2, sort.method = "PCA_angle"
+#' )
 #'
 NULL
 
@@ -249,13 +262,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         res <- do.call(rbind, res)
     } else{
         # For heatmap, the whole data.frame is just converted into long format.
-        components <- colnames(df)
-        res <- df %>%
-            rownames_to_column(var = "Feature") %>%
-            pivot_longer(
-                cols = components,
-                names_to = "PC",
-                values_to = "Value")
+        res <- .process_heatmap_component(df, ...)
     }
     # Convert into data.frame
     res <- as.data.frame(res)
@@ -286,6 +293,39 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Add rownames
     df[["Feature"]] <- rownames(df)
     return(df)
+}
+
+# This function modifies the data so that it is ready to be plotted as
+# heatmap.
+#' @importFrom tibble rownames_to_column
+#' @importFrom tidyr pivot_longer
+.process_heatmap_component <- function(
+        df, sort.method = BLUSPARAM, BLUSPARAM = NULL, ...){
+    components <- colnames(df)
+    if( !(is.null(sort.method) || .is_a_string(sort.method) ||
+          is(sort.method, "BlusterParam") ) ){
+        stop("'sort.method' must be NULL, a single character value or a ",
+            "BlusterParam object.", call. = FALSE)
+    }
+    #
+    # Get feature order
+    feat_order <- NULL
+    if( !is.null(sort.method) ){
+        feat_order <- .get_heatmap_order(df, method = sort.method)
+        feat_order <- rownames(df)[ feat_order ]
+    }
+    # Put data into long format
+    res <- df |>
+        rownames_to_column(var = "Feature") |>
+        pivot_longer(
+            cols = components,
+            names_to = "PC",
+            values_to = "Value")
+    # Sort the data
+    if( !is.null(feat_order) ){
+        res[["Feature"]] <- factor(res[["Feature"]], levels = feat_order)
+    }
+    return(res)
 }
 
 # This function calculates place for +/- sign in barplot/lollipop plot

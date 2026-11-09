@@ -38,6 +38,16 @@ Applicable when \code{layout="barplot"} or \code{layout="lollipop"}.
 \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
 Specifies whether a barplot or a lollipop plot should be visualized in
 absolute scale. (Default: \code{TRUE})
+
+\item \code{sort.method}: ("heatmap") \code{NULL}, \code{Character
+  scalar} or \code{BlusterParam} object. Specifies how features are
+sorted. If it specifies a column, i.e., principal coordinate, features
+are ordered in decreasing order based on the specified coordinate. Other
+\code{character} values specify a seriation method, e.g.,
+\code{"PCA_angle"} or \code{"Heatmap"}, and \code{BlusterParam}
+objects specify a clustering method. See
+\code{\link{getHeatmapOrder}} for details. If \code{NULL}, features are
+not sorted. (Default: \code{NULL})
 }}
 
 \item{dimred}{\code{Character scalar}.  Determines the reduced dimension to
@@ -105,6 +115,9 @@ plotLoadings(tse, dimred = "PCA", ncomponents = 2, n = 12)
 plotLoadings(loadings_matrix, layout = "heatmap")
 
 # Plot with less components
-plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)
+plotLoadings(
+    tse, "PCA", layout = "heatmap",
+    ncomponents = 2, sort.method = "PCA_angle"
+)
 
 }
