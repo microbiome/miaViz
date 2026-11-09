@@ -13,7 +13,7 @@ plotLoadings(x, ...)
 \S4method{plotLoadings}{TreeSummarizedExperiment}(
   x,
   dimred,
-  layout = "barplot",
+  layout = "lollipop",
   ncomponents = 5,
   tree.name = "phylo",
   row.var = NULL,
@@ -21,9 +21,9 @@ plotLoadings(x, ...)
   ...
 )
 
-\S4method{plotLoadings}{SingleCellExperiment}(x, dimred, layout = "barplot", ncomponents = 5, ...)
+\S4method{plotLoadings}{SingleCellExperiment}(x, dimred, layout = "lollipop", ncomponents = 5, ...)
 
-\S4method{plotLoadings}{matrix}(x, layout = "barplot", ncomponents = 5, ...)
+\S4method{plotLoadings}{matrix}(x, layout = "lollipop", ncomponents = 5, ...)
 }
 \arguments{
 \item{x}{a
@@ -32,7 +32,7 @@ plotLoadings(x, ...)
 \item{...}{additional parameters for plotting.
 \itemize{
 \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
-Applicable when \code{layout="barplot"}.
+Applicable when \code{layout="barplot"} or \code{layout="lollipop"}.
 (Default: \code{min(nrow(x), 10L)}))
 
 \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
@@ -56,8 +56,8 @@ parameter. (Default: \code{NULL})
 plot.}
 
 \item{layout}{\code{Character scalar}. Determines the layout of plot. Must be
-either \code{"barplot"}, \code{"heatmap"}, or \code{"lollipop"}.
-(Default: \code{"barplot"})}
+either \code{"lollipop"}, \code{"heatmap"}, or \code{"barplot"}.
+(Default: \code{"lollipop"})}
 
 \item{ncomponents}{\code{Numeric scalar}. Number of components must be lower
 or equal to the number of components chosen in the reduction method.

@@ -167,7 +167,32 @@ setGeneric("plotOrdination", signature = c("x"), function(x, ...)
 setGeneric("plotJointRPCA", signature = c("x"), function(x, ...)
     standardGeneric("plotJointRPCA"))
 
+#' @rdname plotJointRPCA
+#' @export
+setGeneric("plotJointRPCACovariance", signature = c("x"), function(x, ...)
+    standardGeneric("plotJointRPCACovariance"))
+
+#' @rdname plotJointRPCA
+#' @export
+setGeneric("plotJointRPCAExplainedVariance", signature = c("x"),
+    function(x, ...) standardGeneric("plotJointRPCAExplainedVariance"))
+
+#' @rdname plotJointRPCA
+#' @export
+setGeneric("plotJointRPCANetwork", signature = c("x"), function(x, ...)
+    standardGeneric("plotJointRPCANetwork"))
+
+#' @rdname plotJointRPCA
+#' @export
+setGeneric("plotJointRPCALoadings", signature = c("x"), function(x, ...)
+    standardGeneric("plotJointRPCALoadings"))
+
 #' @rdname plotHeatmap
 #' @export
 setGeneric("plotHeatmap", signature = c("x"), function(x, ...)
     standardGeneric("plotHeatmap"))
+
+#' @rdname plotDissimilarity
+#' @export
+setGeneric("plotDissimilarity", signature = c("x"), function(x, ...)
+    standardGeneric("plotDissimilarity"))
