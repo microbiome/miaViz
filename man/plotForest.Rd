@@ -142,6 +142,8 @@ tse <- Tengeler2020
 
 # Agglomerate by genus and subset by prevalence
 tse <- subsetByPrevalent(tse, rank = "Genus", prevalence = 10/100)
+# Agglomeration drops the phylogenetic tree; add a tree based on taxonomy
+tse <- addHierarchyTree(tse)
 
 # Transform count assay to relative abundances
 tse <- transformAssay(tse, assay.type = "counts", method = "relabundance")
