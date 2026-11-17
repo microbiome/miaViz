@@ -18,7 +18,7 @@ available. These are described on this page."><!-- mathjax --><script src="https
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.15</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ available. These are described on this page."><!-- mathjax --><script src="https
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Additional arguments for plotting</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/utils_plotting.R" class="external-link"><code>R/utils_plotting.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/ggplot-palette-option/R/utils_plotting.R" class="external-link"><code>R/utils_plotting.R</code></a></small>
     <div class="hidden name"><code>mia-plot-args.Rd</code></div>
     </div>
 
@@ -55,6 +55,25 @@ available. These are described on this page.</p>
     </div>
 
 
+    <div id="colours">
+    <h2>Colours</h2>
+
+
+
+<p>Discrete variables are coloured with the palette set with the
+<code>ggplot2.discrete.colour</code> (or, for fills,
+<code>ggplot2.discrete.fill</code>) option, if it is set and has enough colours.
+As in <code>ggplot2</code>, the option can be a character vector of colours or a
+list of them, in which case the first one with enough colours is used.
+Otherwise, the Tableau palettes are used for up to 20 groups and viridis for
+more. Continuous variables are coloured with viridis.</p>
+<p>For example, the colour-blind-friendly Okabe-Ito palette can be used in all
+plots with:</p>
+<div class="sourceCode"><pre><code><span></span>
+<span><span class="va">pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/palette.html" class="external-link">palette.colors</a></span><span class="op">(</span>palette <span class="op">=</span> <span class="st">"Okabe-Ito"</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/options.html" class="external-link">options</a></span><span class="op">(</span>ggplot2.discrete.colour <span class="op">=</span> <span class="va">pal</span>, ggplot2.discrete.fill <span class="op">=</span> <span class="va">pal</span><span class="op">)</span></span></code></pre></div>
+
+    </div>
     <div id="tree-plotting">
     <h2>Tree plotting</h2>
 

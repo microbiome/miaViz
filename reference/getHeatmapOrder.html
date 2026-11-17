@@ -21,7 +21,7 @@ plotLoadings."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.14</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.15</span>
       </span>
     </div>
 
@@ -48,7 +48,7 @@ plotLoadings."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/li
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Order rows or columns for heatmap visualization</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/devel/R/getHeatmapOrder.R" class="external-link"><code>R/getHeatmapOrder.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/ggplot-palette-option/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/ggplot-palette-option/R/getHeatmapOrder.R" class="external-link"><code>R/getHeatmapOrder.R</code></a></small>
     <div class="hidden name"><code>getHeatmapOrder.Rd</code></div>
     </div>
 
@@ -107,7 +107,7 @@ or <code>"MDS_angle"</code> when <code>x</code> is a <code>dist</code> object)</
 
 <dt id="arg-control">control<a class="anchor" aria-label="anchor" href="#arg-control"></a></dt>
 <dd><p><code>NULL</code> or <code>list</code>. Control parameters passed to
-<code><a href="http://michael.hahsler.net/seriation/reference/seriate.html" class="external-link">seriation::seriate()</a></code>.
+<code><a href="https://michael.hahsler.net/seriation/reference/seriate.html" class="external-link">seriation::seriate()</a></code>.
 (Default: <code>NULL</code>)</p></dd>
 
 
@@ -137,7 +137,7 @@ features of a loadings matrix can be ordered based on a single principal
 component.</p></li>
 <li><p><strong>Seriation</strong>: Other <code>character</code> values specify a
 seriation method that is passed to
-<code><a href="http://michael.hahsler.net/seriation/reference/seriate.html" class="external-link">seriation::seriate()</a></code>. See
+<code><a href="https://michael.hahsler.net/seriation/reference/seriate.html" class="external-link">seriation::seriate()</a></code>. See
 <code>seriation::list_seriation_methods("matrix")</code> for available
 methods. For example, <code>"PCA_angle"</code> orders entities by their angle
 in the space of the first two principal components (NeatMap ordering,
