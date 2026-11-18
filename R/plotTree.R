@@ -99,6 +99,9 @@
 #' # preparation of some data
 #' data(GlobalPatterns)
 #' GlobalPatterns <- agglomerateByRanks(GlobalPatterns)
+#' # Agglomeration drops the phylogenetic tree; add a tree based on taxonomy
+#' altExp(GlobalPatterns,"Genus") <- addHierarchyTree(
+#'     altExp(GlobalPatterns,"Genus"))
 #' altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(
 #'     altExp(GlobalPatterns,"Genus"))
 #' rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- log(
@@ -126,7 +129,7 @@
 #'     show.label = TRUE
 #' )
 #' # plot with selected labels
-#' labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
+#' labels <- c("Genus:Providencia", "Genus:Morganella", "Family:Enterobacteriaceae")
 #' plotRowTree(
 #'     x[rownames(x) %in% top_genus,],
 #'     tip.colour.by = "log_mean",

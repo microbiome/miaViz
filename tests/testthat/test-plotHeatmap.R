@@ -145,6 +145,8 @@ test_that("plotHeatmap adds row tree", {
     data(GlobalPatterns)
 
     tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    # Agglomeration drops the tree; add one from the taxonomy
+    tse <- addHierarchyTree(tse)
 
     p <- plotHeatmap(
         tse,
@@ -276,6 +278,8 @@ test_that("row tree and heatmap use the same feature order", {
     data(GlobalPatterns)
 
     tse <- agglomerateByRank(GlobalPatterns, rank = "Family")
+    # Agglomeration drops the tree; add one from the taxonomy
+    tse <- addHierarchyTree(tse)
 
     p <- plotHeatmap(
         tse,
@@ -301,9 +305,14 @@ test_that("row tree and heatmap use the same feature order", {
 
     heatmap_order <- as.character(heatmap_data$FeatureID)
 
+    # Tips of the taxonomy tree are labelled as "Family:<name>"; map them to
+    # the feature names with rowLinks
+    links <- rowLinks(tse)
+    tip_features <- rownames(tse)[match(tree_tips$label, links$nodeLab)]
+
     expect_identical(
         heatmap_order,
-        tree_tips$label
+        tip_features
     )
 
 })
@@ -336,6 +345,8 @@ test_that("plotHeatmap sorts only columns when tree is shown", {
     skip_if_not_installed("seriation")
     data(GlobalPatterns)
     tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    # Agglomeration drops the tree; add one from the taxonomy
+    tse <- addHierarchyTree(tse)
     p_tree <- plotHeatmap(tse, assay.type = "counts", show.tree = TRUE)
     p <- plotHeatmap(
         tse, assay.type = "counts", show.tree = TRUE, sort.method = "Heatmap")
@@ -351,6 +362,8 @@ test_that("plotHeatmap supports separate row and column sorting", {
     skip_if_not_installed("seriation")
     data(GlobalPatterns)
     tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    # Agglomeration drops the tree; add one from the taxonomy
+    tse <- addHierarchyTree(tse)
     mat <- as.matrix(assay(tse, "counts"))
     # sort.rows and sort.cols override sort.method
     p <- plotHeatmap(
