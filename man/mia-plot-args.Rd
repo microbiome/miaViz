@@ -15,14 +15,15 @@ Discrete variables are coloured with the palette set with the
 \code{ggplot2.discrete.fill}) option, if it is set and has enough colours.
 As in \code{ggplot2}, the option can be a character vector of colours or a
 list of them, in which case the first one with enough colours is used.
-Otherwise, the Tableau palettes are used for up to 20 groups and viridis for
-more. Continuous variables are coloured with viridis.
+Otherwise, the colour-blind-friendly Okabe-Ito palette (without black) is
+used for up to 8 groups and viridis for more. Continuous variables are
+coloured with viridis, which is also colour-blind friendly.
 
-For example, the colour-blind-friendly Okabe-Ito palette can be used in all
-plots with:
+For example, the Tableau palette, which miaViz used by default before
+version 1.21.16, can be used in all plots with:
 
 \preformatted{
-pal <- palette.colors(palette = "Okabe-Ito")[-1]
+pal <- palette.colors(palette = "Tableau 10")
 options(ggplot2.discrete.colour = pal, ggplot2.discrete.fill = pal)
 }
 }

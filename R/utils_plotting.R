@@ -10,14 +10,15 @@
 #' \code{ggplot2.discrete.fill}) option, if it is set and has enough colours.
 #' As in \code{ggplot2}, the option can be a character vector of colours or a
 #' list of them, in which case the first one with enough colours is used.
-#' Otherwise, the Tableau palettes are used for up to 20 groups and viridis for
-#' more. Continuous variables are coloured with viridis.
+#' Otherwise, the colour-blind-friendly Okabe-Ito palette (without black) is
+#' used for up to 8 groups and viridis for more. Continuous variables are
+#' coloured with viridis, which is also colour-blind friendly.
 #'
-#' For example, the colour-blind-friendly Okabe-Ito palette can be used in all
-#' plots with:
+#' For example, the Tableau palette, which miaViz used by default before
+#' version 1.21.16, can be used in all plots with:
 #'
 #' \preformatted{
-#' pal <- palette.colors(palette = "Okabe-Ito")[-1]
+#' pal <- palette.colors(palette = "Tableau 10")
 #' options(ggplot2.discrete.colour = pal, ggplot2.discrete.fill = pal)
 #' }
 #'
@@ -195,7 +196,11 @@
 #' @name mia-plot-args
 NULL
 
-.get_palette <- scater:::.get_palette
+# Colour-blind-friendly Okabe-Ito palette without black (Okabe and Ito 2008),
+# the same as palette.colors(palette = "Okabe-Ito")[-1]
+.okabe_ito <- c(
+    "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00",
+    "#CC79A7", "#999999")
 # Adjusted function originally developed for scater package by Aaron Lun
 #' @importFrom viridis scale_fill_viridis scale_colour_viridis
 #' @importFrom ggplot2 scale_fill_manual scale_colour_manual
@@ -238,12 +243,13 @@ NULL
             name = colour_by_name, option = option, na.value = na.value, ...)
     }
     else {
-        nlevs_colour_by <- nlevels(as.factor(colour_by))
+        # Count only the groups present in the data
+        nlevs_colour_by <- nlevels(droplevels(as.factor(colour_by)))
         # Use the palette set with the ggplot2.discrete.colour or
-        # ggplot2.discrete.fill option, if it has enough colours for the
-        # groups present in the data
-        option_palette <- .get_option_palette(
-            fill, nlevels(droplevels(as.factor(colour_by))))
+        # ggplot2.discrete.fill option, if it has enough colours. Otherwise,
+        # use the colour-blind-friendly Okabe-Ito palette, or viridis if there
+        # are more groups than colours.
+        option_palette <- .get_option_palette(fill, nlevs_colour_by)
         if (!is.null(option_palette) && type == "normal") {
             plot_out <- plot_out + SCALEFUN(
                 values = option_palette,
@@ -251,29 +257,20 @@ NULL
                 na.translate = na.translate,
                 na.value = na.value)
         }
-        else if (nlevs_colour_by <= 10) {
+        else if (nlevs_colour_by <= length(.okabe_ito)) {
             plot_out <- plot_out + SCALEFUN(
-                values = .get_palette("tableau10medium"),
+                values = .okabe_ito,
                 name = colour_by_name,
                 na.translate = na.translate,
                 na.value = na.value)
         }
         else {
-            if (nlevs_colour_by > 10 && nlevs_colour_by <= 20) {
-                plot_out <- plot_out + SCALEFUN(
-                    values = .get_palette("tableau20"),
-                    name = colour_by_name,
-                    na.translate = na.translate,
-                    na.value = na.value)
-            }
-            else {
-                plot_out <- plot_out + VIRIDFUN(
-                    name = colour_by_name,
-                    discrete = TRUE,
-                    na.translate = na.translate,
-                    option = option,
-                    na.value = na.value)
-            }
+            plot_out <- plot_out + VIRIDFUN(
+                name = colour_by_name,
+                discrete = TRUE,
+                na.translate = na.translate,
+                option = option,
+                na.value = na.value)
         }
     }
     plot_out

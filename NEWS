@@ -62,3 +62,4 @@ Changes in version 1.21.x
 + Added plotDissimilarity (1.21.13, 2026-11-07)
 + Added getHeatmapOrder for sorting heatmaps; plotHeatmap and plotDissimilarity gain sort.method; getNeatOrder is deprecated (1.21.14, 2026-11-09)
 + Plots use the palette set with the ggplot2.discrete.colour or ggplot2.discrete.fill option, if it has enough colours, e.g. for colour-blind-friendly figures (1.21.15, 2026-11-17)
++ The default discrete palette is the colour-blind-friendly Okabe-Ito palette (up to 8 groups) instead of Tableau; viridis is used for more groups (1.21.16, 2026-11-18)

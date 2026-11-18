@@ -7,13 +7,15 @@ test_that("plots follow the ggplot2 discrete palette options", {
     tse <- tse[mia::getTop(tse, 4), ]
     pal <- unname(palette.colors(palette = "Okabe-Ito"))[-1]
     fills <- function(p) unique(ggplot2::ggplot_build(p)$data[[1]]$fill)
-    # Default: Tableau palette
+    # Default: Okabe-Ito palette
     old <- options(
         ggplot2.discrete.colour = NULL, ggplot2.discrete.fill = NULL)
     on.exit(options(old))
     p <- plotAbundance(tse, assay.type = "relabundance")
-    expect_true(all(fills(p) %in% scater:::.get_palette("tableau10medium")))
+    expect_true(all(fills(p) %in% miaViz:::.okabe_ito))
+    expect_identical(miaViz:::.okabe_ito, pal)
     # Character vector option
+    pal <- unname(palette.colors(palette = "Tableau 10"))
     options(ggplot2.discrete.colour = pal, ggplot2.discrete.fill = pal)
     p <- plotAbundance(tse, assay.type = "relabundance")
     expect_true(all(fills(p) %in% pal))
@@ -25,7 +27,7 @@ test_that("plots follow the ggplot2 discrete palette options", {
     # Too few colours: fall back to the default
     options(ggplot2.discrete.fill = pal[1:2])
     p <- plotAbundance(tse, assay.type = "relabundance")
-    expect_true(all(fills(p) %in% scater:::.get_palette("tableau10medium")))
+    expect_true(all(fills(p) %in% miaViz:::.okabe_ito))
     # Helper
     options(ggplot2.discrete.colour = pal)
     expect_identical(miaViz:::.get_option_palette(FALSE, 3), pal)
@@ -47,4 +49,18 @@ test_that("palette option counts only the groups present in the data", {
         tse, col.var = "shannon", x = "SampleType", fill.by = "SampleType")
     fills <- unique(ggplot2::ggplot_build(p)$data[[1]]$fill)
     expect_true(all(fills %in% pal))
+})
+
+test_that("default palette is viridis for more than 8 groups", {
+    data(GlobalPatterns, package = "mia")
+    tse <- mia::transformAssay(GlobalPatterns, method = "relabundance")
+    tse <- mia::agglomerateByRank(tse, rank = "Phylum")
+    tse <- tse[mia::getTop(tse, 9), ]
+    old <- options(
+        ggplot2.discrete.colour = NULL, ggplot2.discrete.fill = NULL)
+    on.exit(options(old))
+    p <- plotAbundance(tse, assay.type = "relabundance")
+    fills <- unique(ggplot2::ggplot_build(p)$data[[1]]$fill)
+    expect_length(fills, 9)
+    expect_false(any(fills %in% miaViz:::.okabe_ito))
 })
