@@ -14,7 +14,8 @@ Discrete variables are coloured with the palette set with the
 \code{ggplot2.discrete.colour} (or, for fills,
 \code{ggplot2.discrete.fill}) option, if it is set and has enough colours.
 As in \code{ggplot2}, the option can be a character vector of colours or a
-list of them, in which case the first one with enough colours is used.
+list of them. In a list, the first palette with enough colours is used, so
+the palettes can be given in order of preference.
 Otherwise, the Tableau palettes are used for up to 20 groups and viridis for
 more. Continuous variables are coloured with viridis.
 

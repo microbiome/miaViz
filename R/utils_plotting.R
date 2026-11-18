@@ -9,7 +9,8 @@
 #' \code{ggplot2.discrete.colour} (or, for fills,
 #' \code{ggplot2.discrete.fill}) option, if it is set and has enough colours.
 #' As in \code{ggplot2}, the option can be a character vector of colours or a
-#' list of them, in which case the first one with enough colours is used.
+#' list of them. In a list, the first palette with enough colours is used, so
+#' the palettes can be given in order of preference.
 #' Otherwise, the Tableau palettes are used for up to 20 groups and viridis for
 #' more. Continuous variables are coloured with viridis.
 #'
@@ -281,9 +282,13 @@ NULL
 
 # Get a discrete palette from the ggplot2.discrete.colour or
 # ggplot2.discrete.fill option. As in ggplot2, the option can be a character
-# vector of colours or a list of them, in which case the first one with enough
-# colours is used. Returns NULL if the option is not set or has too few
-# colours, so that the default palette is used.
+# vector of colours or a list of them. Unlike ggplot2, which uses the shortest
+# palette with enough colours
+# (https://github.com/tidyverse/ggplot2/blob/87a95d9103536296c8334e72f9f722855cd16bcb/R/scale-hue.R#L160-L162),
+# the first one in the list with enough colours is
+# used, so that the user controls the order of preference. Returns NULL if the
+# option is not set or has too few colours, so that the default palette is
+# used.
 .get_option_palette <- function(fill, n){
     opt <- getOption(
         if (fill) "ggplot2.discrete.fill" else "ggplot2.discrete.colour")
