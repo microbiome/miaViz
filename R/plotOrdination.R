@@ -408,8 +408,10 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         eigen_names <- eigen_names[
             eigen_names %in% names(orig_attributes)][[1L]]
         eigen <- orig_attributes[[eigen_names]]
+        # "eig" holds raw eigenvalues; convert them to the percentage of the
+        # total (positive) variance. "percentVar" is already a percentage.
         if( eigen_names %in% c("eig") ){
-            eigen <- eigen * 100
+            eigen <- eigen / sum(eigen[eigen > 0]) * 100
         }
         xlab <- paste0(
             xlab, " (",
