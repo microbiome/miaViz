@@ -226,3 +226,13 @@ test_that("all plotting flags can be enabled", {
     )
 
 })
+
+test_that("add.expl.var converts raw eigenvalues to percentages", {
+    tse <- .make_tse()
+    coords <- matrix(rnorm(ncol(tse) * 2), ncol = 2)
+    attr(coords, "eig") <- c(3, 1, 1, -0.5)
+    reducedDim(tse, "MDS") <- coords
+    p <- plotOrdination(tse, "MDS", add.expl.var = TRUE)
+    expect_match(p$labels$x, "(60%)", fixed = TRUE)
+    expect_match(p$labels$y, "(20%)", fixed = TRUE)
+})
