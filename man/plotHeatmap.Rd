@@ -158,7 +158,9 @@ plotHeatmap(
     sort.method = "PCA_angle"
 )
 
-# Add phylogeny
+# Add a tree. Agglomeration drops the phylogenetic tree, so we add a tree
+# based on the taxonomy.
+tse <- addHierarchyTree(tse)
 plotHeatmap(
     tse,
     assay.type = "counts",
