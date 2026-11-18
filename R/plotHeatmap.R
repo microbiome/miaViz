@@ -270,6 +270,20 @@ setMethod(
             ...
         )
 
+        # A variable used for both row and column facets would be duplicated
+        # when the data is melted. Give it a distinct name on each axis.
+        shared <- intersect(row.var, col.var)
+        if (length(shared) > 0L) {
+            i <- match(shared, colnames(rowData(x)))
+            colnames(rowData(x))[i] <- paste0(shared, "_row")
+            i <- match(shared, colnames(colData(x)))
+            colnames(colData(x))[i] <- paste0(shared, "_col")
+            row.var[row.var %in% shared] <- paste0(
+                row.var[row.var %in% shared], "_row")
+            col.var[col.var %in% shared] <- paste0(
+                col.var[col.var %in% shared], "_col")
+        }
+
         # Retrieve assay values together with the requested metadata
         df <- .get_heatmap_data(
             tse = x,

@@ -390,3 +390,16 @@ test_that("plotHeatmap supports separate row and column sorting", {
             sort.cols = "Heatmap"),
         "patchwork")
 })
+
+test_that("plotHeatmap facets rows and columns by a variable with the same name", {
+    data(GlobalPatterns)
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
+    tse <- tse[1:6, 1:6]
+    rowData(tse)$cluster <- factor(rep(c("a", "b"), each = 3))
+    tse$cluster <- factor(rep(c("c", "d", "e"), each = 2))
+    p <- plotHeatmap(
+        tse, assay.type = "counts", row.var = "cluster", col.var = "cluster")
+    layout <- ggplot2::ggplot_build(p)$layout$layout
+    expect_setequal(unique(as.character(layout$cluster_row)), c("a", "b"))
+    expect_setequal(unique(as.character(layout$cluster_col)), c("c", "d", "e"))
+})
