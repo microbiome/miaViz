@@ -108,11 +108,11 @@ Microbiome Analysis [@OMA].
 
 # Prevalence plotting
 
-To visualize prevalence within the dataset, two functions are available,
-`plotFeaturePrevalence`, `plotPrevalenceAbundance` and `plotPrevalence`.
+To visualize prevalence within the dataset, three functions are available,
+`plotRowPrevalence`, `plotPrevalenceAbundance` and `plotPrevalence`.
 
 
-`plotFeaturePrevalence` produces a so-called landscape plot, which
+`plotRowPrevalence` produces a so-called landscape plot, which
 visualizes the prevalence of samples across abundance thresholds.
 
 ```{r plotrowprevalence}

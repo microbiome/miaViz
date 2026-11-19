@@ -2,22 +2,10 @@
 % Please edit documentation in R/deprecate.R
 \name{deprecate}
 \alias{deprecate}
-\alias{plotTaxaPrevalence}
-\alias{plotTaxaPrevalence,ANY-method}
-\alias{plotFeaturePrevalence}
-\alias{plotFeaturePrevalence,ANY-method}
 \alias{getNeatOrder}
 \alias{getNeatOrder,matrix-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
-plotTaxaPrevalence(x, ...)
-
-\S4method{plotTaxaPrevalence}{ANY}(x, ...)
-
-plotFeaturePrevalence(x, ...)
-
-\S4method{plotFeaturePrevalence}{ANY}(x, ...)
-
 getNeatOrder(x, centering = "mean", ...)
 
 \S4method{getNeatOrder}{matrix}(x, centering = "mean", ...)
