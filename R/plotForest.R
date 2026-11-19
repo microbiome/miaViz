@@ -23,8 +23,11 @@
 #'
 #' @param err.var \code{Character scalar}. Specifies the variable of x which
 #' corresponds to the standard errors associated with \code{effect.var}.
-#' When defined, it overwrites \code{ci.lower.var} and \code{ci.upper.var}.
-#' (Default: \code{"pval"})
+#' When defined, it overwrites \code{ci.lower.var} and \code{ci.upper.var},
+#' and the confidence intervals are computed as
+#' \code{effect.var} ± quantile × \code{err.var}, where the quantile is taken
+#' from the t distribution with the degrees of freedom given by \code{df.var}
+#' or \code{df}. (Default: \code{NULL})
 #'
 #' @param pval.var \code{Character scalar}. Specifies the variable of x which
 #' corresponds to the p-values associated with \code{effect.var}.
@@ -56,6 +59,19 @@
 #' the interval when inferred from \code{err.var}. It is ignored when
 #' \code{ci.lower.var} and \code{ci.upper.var} are defined.
 #' (Default: \code{0.95})
+#'
+#' @param df.var \code{Character scalar}. Specifies the variable of x which
+#' corresponds to the degrees of freedom of each estimate, used with
+#' \code{err.var}. Rows with missing or non-positive degrees of freedom get no
+#' confidence interval. Use \code{Inf} for estimates based on the normal
+#' distribution (e.g. Wald z tests of logistic regression).
+#' (Default: \code{NULL})
+#'
+#' @param df \code{Numeric scalar}. Degrees of freedom used for all estimates
+#' with \code{err.var}, when they are not given per row with \code{df.var}.
+#' If neither \code{df.var} nor \code{df} is given, the normal distribution
+#' is used (\code{df = Inf}) with a warning, which gives too narrow intervals
+#' for small samples. (Default: \code{NULL})
 #'
 #' @param tree.name \code{Character scalar}. Specifies a row/colTree from x.
 #' (Default: \code{"phylo"})
@@ -96,11 +112,18 @@
 #' maaslin3_abund <- maaslin3_out$fit_data_abundance$results
 #' maaslin3_abund <- maaslin3_abund[!is.na(maaslin3_abund$coef), ]
 #'
+#' # Degrees of freedom of the linear model for each feature: the number of
+#' # samples with non-zero abundance minus the number of estimated
+#' # coefficients (including the intercept)
+#' n_coef <- 1 + ave(maaslin3_abund$coef, maaslin3_abund$feature, FUN = length)
+#' maaslin3_abund$df <- maaslin3_abund$N_not_zero - n_coef
+#'
 #' # Visualize abundance results
 #' plotForest(
 #'     maaslin3_abund,
 #'     effect.var = "coef",
 #'     err.var = "stderr",
+#'     df.var = "df",
 #'     pval.var = "qval_joint",
 #'     id.var = "feature",
 #'     label.by = c("CI", "P-Value"),
@@ -117,6 +140,7 @@
 #'     tse,
 #'     effect.var = "coef",
 #'     err.var = "stderr",
+#'     df.var = "df",
 #'     pval.var = "qval_joint",
 #'     label.by = c("CI", "P-Value")
 #' )
@@ -124,6 +148,9 @@
 #' # Retrieve prevalence results
 #' maaslin3_prev <- maaslin3_out$fit_data_prevalence$results
 #' maaslin3_prev <- maaslin3_prev[!is.na(maaslin3_prev$coef), ]
+#'
+#' # Logistic regression uses Wald z tests: normal distribution (df = Inf)
+#' maaslin3_prev$df <- Inf
 #'
 #' # Combine abundance and prevalence results
 #' maaslin3_res <- rbind(maaslin3_abund, maaslin3_prev)
@@ -143,7 +170,8 @@
 #'     label.by = c("CI", "P-Value"),
 #'     order.by = "coef",
 #'     facet.by = "association",
-#'     colour.by = "association"
+#'     colour.by = "association",
+#'     df.var = "df"
 #' )
 #'
 #' @name plotForest
@@ -161,7 +189,7 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
         ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
         id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
         color.by = colour.by, colour.by = NULL, conf.level = 0.95,
-        tree.name = "phylo", show.tree = TRUE, ...){
+        df.var = NULL, df = NULL, tree.name = "phylo", show.tree = TRUE, ...){
     # Check margin (by)
     by <- .check_MARGIN(by)
     # Select data based on margin (by)
@@ -170,7 +198,7 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
     treename_FUN <- switch(by, rowTreeNames, colTreeNames)
     treeplot_FUN <- switch(by, plotRowTree, plotColTree)
     # Extract side information from SE
-    df <- as.data.frame(FUN(x))
+    tab <- as.data.frame(FUN(x))
     # Check show.tree
     if( !.is_a_bool(show.tree) ){
         stop("'show.tree' must be TRUE or FALSE.", call. = FALSE)
@@ -203,7 +231,7 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
         tips <- tips[order(tips$y), , drop = FALSE]
         # Order rowData based on tree tips
         tax_order <- match(tips$label, rowLinks(x)$nodeLab)
-        df <- df[tax_order, , drop = FALSE]
+        tab <- tab[tax_order, , drop = FALSE]
     }
     # Initialise plots and widths lists
     plots <- list()
@@ -224,8 +252,8 @@ setMethod("plotForest", signature = c(x = "TreeSummarizedExperiment"),
     }
     # Generate forest plot components
     plots <- c(plots, .plot_forest(
-        df, effect.var, ci.lower.var, ci.upper.var, err.var, pval.var, id.var,
-        label.by, order.by, facet.by, color.by, conf.level
+        tab, effect.var, ci.lower.var, ci.upper.var, err.var, pval.var, id.var,
+        label.by, order.by, facet.by, color.by, conf.level, df.var, df
     ))
     # Define plot widths
     widths <- c(widths, 2, 2/5 * length(label.by))
@@ -242,17 +270,19 @@ setMethod("plotForest", signature = c(x = "SummarizedExperiment"),
     function(x, by = 1L, effect.var = "effect", ci.lower.var = "lower",
         ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
         id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
-        color.by = colour.by, colour.by = NULL, conf.level = 0.95){
+        color.by = colour.by, colour.by = NULL, conf.level = 0.95,
+        df.var = NULL, df = NULL){
     # Check margin (by)
     by <- .check_MARGIN(by)
     # Select data based on margin (by)
     FUN <- switch(by, rowData, colData)
     # Extract side information from SE
-    df <- as.data.frame(FUN(x))
+    tab <- as.data.frame(FUN(x))
     # Generate forest plot components
     p <- plotForest(
-        df, effect.var, ci.lower.var, ci.upper.var, err.var, pval.var, id.var,
-        label.by, order.by, facet.by, color.by, conf.level
+        tab, effect.var, ci.lower.var, ci.upper.var, err.var, pval.var, id.var,
+        label.by, order.by, facet.by, color.by, conf.level,
+        df.var = df.var, df = df
     )
     return(p)
 })
@@ -264,7 +294,8 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     function(x, effect.var = "effect",  ci.lower.var = "lower",
         ci.upper.var = "upper", err.var = NULL, pval.var = "pval",
         id.var = "rownames", label.by = NULL, order.by = NULL, facet.by = NULL,
-        color.by = colour.by, colour.by = NULL, conf.level = 0.95){
+        color.by = colour.by, colour.by = NULL, conf.level = 0.95,
+        df.var = NULL, df = NULL){
     # Check order.by
     if( !is.null(order.by) && order.by == "tree" ){
         warning("'order.by' can be set to tree only when 'x' is a ",
@@ -273,7 +304,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Generate forest plot components
     plots <- .plot_forest(
         x, effect.var, ci.lower.var, ci.upper.var, err.var, pval.var, id.var,
-        label.by, order.by, facet.by, color.by, conf.level
+        label.by, order.by, facet.by, color.by, conf.level, df.var, df
     )
     # Define plot widths
     widths <- c(2, 2/5 * length(label.by))
@@ -285,7 +316,8 @@ setMethod("plotForest", signature = c(x = "data.frame"),
 
 #' @importFrom stats qt
 .plot_forest <- function(x, effect.var, ci.lower.var, ci.upper.var, err.var,
-    pval.var, id.var, label.by, order.by, facet.by, color.by, conf.level){
+    pval.var, id.var, label.by, order.by, facet.by, color.by, conf.level,
+    df.var = NULL, df = NULL){
     # Check main vars
     if( !effect.var %in% names(x) ){
         stop("'effect.var' must be a variable in x.", call. = FALSE)
@@ -297,7 +329,7 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Derive CI from standard error
     if( !is.null(err.var) ){
         # Compute corresponding quantile
-        z <- qt(1 - (1 - conf.level) / 2, df = ncol(x) - 1)
+        z <- qt(1 - (1 - conf.level) / 2, df = .forest_df(x, df.var, df))
         # Compute CI boarders
         x[[ci.lower.var]] <- x[[effect.var]] - z * x[[err.var]]
         x[[ci.upper.var]] <- x[[effect.var]] + z * x[[err.var]]
@@ -499,4 +531,35 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     # Clamp between min and max
     size <- pmax(pmin(size, max.size), min.size)
     return(size)
+}
+
+# Degrees of freedom for confidence intervals computed from standard errors.
+# Taken per row from df.var, or from df for all rows. Without either, the
+# normal distribution is used (df = Inf) with a warning. Non-positive or
+# missing degrees of freedom give no interval (NA).
+.forest_df <- function(x, df.var, df){
+    if( !is.null(df.var) && !is.null(df) ){
+        stop("Give either 'df.var' or 'df', not both.", call. = FALSE)
+    }
+    if( !is.null(df.var) ){
+        if( length(df.var) != 1L || !df.var %in% names(x) ){
+            stop("'df.var' must be a single variable of x.", call. = FALSE)
+        }
+        d <- x[[df.var]]
+        if( !is.numeric(d) ){
+            stop("'df.var' must be a numeric variable.", call. = FALSE)
+        }
+    } else if( !is.null(df) ){
+        if( !is.numeric(df) || length(df) != 1L || is.na(df) || df <= 0 ){
+            stop("'df' must be a single positive number.", call. = FALSE)
+        }
+        d <- df
+    } else {
+        warning("No degrees of freedom given with 'df.var' or 'df'; ",
+            "confidence intervals use the normal distribution, which gives ",
+            "too narrow intervals for small samples.", call. = FALSE)
+        d <- Inf
+    }
+    d[!is.na(d) & d <= 0] <- NA
+    return(d)
 }
