@@ -56,7 +56,7 @@ test_that("plotForest", {
     # Check paired forest plot (2 lines per row)
     df <- as.data.frame(colData(tse))
     # Compute CI from standard error
-    p <- plotForest(df, err.var = "err", label.by = "CI")
+    p <- plotForest(df, err.var = "err", df = 10, label.by = "CI")
     expect_s3_class(p, "ggplot")
     # Combine df for grouped analysis
     df2 <- rbind(df, df)
@@ -114,7 +114,7 @@ test_that("plotForest", {
         fixed = TRUE
     )
     expect_warning(
-        plotForest(df, err.var = "err", ci.lower.var = "something"),
+        plotForest(df, err.var = "err", df = 10, ci.lower.var = "something"),
         "'ci.lower.var' and 'ci.upper.var' are ignored when 'err.var' is defined.",
         fixed = TRUE
     )
@@ -128,4 +128,41 @@ test_that("plotForest", {
         "'id.var' must be 'rownames' or a variable in x.",
         fixed = TRUE
     )
+})
+test_that("plotForest degrees of freedom for CIs from standard errors", {
+    df <- data.frame(
+        effect = c(1, -0.5, 0.2),
+        err = c(0.2, 0.3, 0.1),
+        dof = c(10, 25, 0),
+        pval = c(0.01, 0.2, 0.5),
+        row.names = c("a", "b", "c")
+    )
+    ci <- function(p) {
+        d <- p[[1]]$data
+        d[order(d$rownames), c("lower", "upper")]
+    }
+    # Per-row degrees of freedom; non-positive df gives no interval
+    p <- plotForest(df, err.var = "err", df.var = "dof")
+    res <- ci(p)
+    q <- qt(0.975, c(10, 25))
+    expect_equal(res$lower[1:2], df$effect[1:2] - q * df$err[1:2])
+    expect_equal(res$upper[1:2], df$effect[1:2] + q * df$err[1:2])
+    expect_true(all(is.na(res[3, ])))
+    # A single value for all rows
+    p <- plotForest(df, err.var = "err", df = 20)
+    expect_equal(ci(p)$upper, df$effect + qt(0.975, 20) * df$err)
+    # Without degrees of freedom: normal distribution with a warning
+    expect_warning(
+        p <- plotForest(df, err.var = "err"), "normal distribution")
+    expect_equal(ci(p)$upper, df$effect + qnorm(0.975) * df$err)
+    # Invalid input
+    expect_error(plotForest(df, err.var = "err", df.var = "dof", df = 5))
+    expect_error(plotForest(df, err.var = "err", df.var = "missing"))
+    expect_error(plotForest(df, err.var = "err", df = -1))
+    # SE method passes the degrees of freedom on
+    se <- SummarizedExperiment::SummarizedExperiment(
+        assays = list(counts = matrix(1, 3, 2,
+            dimnames = list(rownames(df), c("s1", "s2")))),
+        rowData = df)
+    expect_s3_class(plotForest(se, err.var = "err", df = 20), "ggplot")
 })
