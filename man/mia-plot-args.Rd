@@ -21,7 +21,7 @@ used for up to 8 groups and viridis for more. Continuous variables are
 coloured with viridis, which is also colour-blind friendly.
 
 For example, the Tableau palette, which miaViz used by default before
-version 1.21.17, can be used in all plots with:
+version 1.21.19, can be used in all plots with:
 
 \preformatted{
 pal <- palette.colors(palette = "Tableau 10")
