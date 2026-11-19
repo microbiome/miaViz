@@ -164,8 +164,7 @@ Agglomeration on different taxonomic levels is available through the
 \code{rank} argument.
 
 To exclude certain taxa, preprocess \code{x} to your liking, for example
-with subsetting via \code{getPrevalent} or
-\code{agglomerateByPrevalence}.
+with \code{subsetBy}.
 }
 \examples{
 data(GlobalPatterns, package = "mia")
@@ -201,6 +200,6 @@ plotPrevalentAbundance(
 }
 \seealso{
 \code{\link[mia:getPrevalence]{getPrevalence}},
-\code{\link[mia:getPrevalence]{agglomerateByPrevalence}},
+\code{\link[mia:subsetBy]{subsetBy}},
 \code{\link[mia:agglomerate-methods]{agglomerateByRank}}
 }

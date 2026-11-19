@@ -6,6 +6,8 @@
 \alias{plotTaxaPrevalence,ANY-method}
 \alias{plotFeaturePrevalence}
 \alias{plotFeaturePrevalence,ANY-method}
+\alias{getNeatOrder}
+\alias{getNeatOrder,matrix-method}
 \title{These functions will be deprecated. Please use other functions instead.}
 \usage{
 plotTaxaPrevalence(x, ...)
@@ -15,6 +17,10 @@ plotTaxaPrevalence(x, ...)
 plotFeaturePrevalence(x, ...)
 
 \S4method{plotFeaturePrevalence}{ANY}(x, ...)
+
+getNeatOrder(x, centering = "mean", ...)
+
+\S4method{getNeatOrder}{matrix}(x, centering = "mean", ...)
 }
 \arguments{
 \item{x}{\itemize{
@@ -22,6 +28,10 @@ plotFeaturePrevalence(x, ...)
 }}
 
 \item{...}{\itemize{
+\item 
+}}
+
+\item{centering}{\itemize{
 \item 
 }}
 }

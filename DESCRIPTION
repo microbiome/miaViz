@@ -1,6 +1,6 @@
 Package: miaViz
 Title: Microbiome Analysis Plotting and Visualization
-Version: 1.21.12
+Version: 1.21.17
 Authors@R: 
     c(person(given = "Tuomas", family = "Borman", role = c("aut", "cre"),
              email = "tuomas.v.borman@utu.fi",
@@ -34,7 +34,7 @@ Depends:
     R (>= 4.1),
     ggplot2,
     ggraph (>= 2.0),
-    mia (>= 1.13.0),
+    mia (>= 1.21.10),
     SummarizedExperiment,
     TreeSummarizedExperiment
 Imports:
@@ -74,9 +74,11 @@ Suggests:
     maaslin3,
     mediation,
     miaTime,
+    MultiAssayExperiment,
     patchwork,
     rmarkdown,
     rstatix,
+    seriation,
     shadowtext,
     testthat,
     vegan,
@@ -85,4 +87,4 @@ Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
 URL: https://github.com/microbiome/miaViz
 BugReports: https://github.com/microbiome/miaViz/issues
-Config/roxygen2/version: 8.1.0
+Config/roxygen2/version: 8.1.1

@@ -150,6 +150,9 @@
 #' # preparation of some data
 #' data(GlobalPatterns)
 #' GlobalPatterns <- agglomerateByRanks(GlobalPatterns)
+#' # Agglomeration drops the phylogenetic tree; add a tree based on taxonomy
+#' altExp(GlobalPatterns,"Genus") <- addHierarchyTree(
+#'     altExp(GlobalPatterns,"Genus"))
 #' altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(
 #'     altExp(GlobalPatterns,"Genus"))
 #' rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- log(
@@ -177,7 +180,7 @@
 #'     show.label = TRUE
 #' )
 #' # plot with selected labels
-#' labels <- c("Genus:Providencia", "Genus:Morganella", "0.961.60")
+#' labels <- c("Genus:Providencia", "Genus:Morganella", "Family:Enterobacteriaceae")
 #' plotRowTree(
 #'     x[rownames(x) %in% top_genus,],
 #'     tip.colour.by = "log_mean",
@@ -348,17 +351,26 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
 # This function is general function for creating a tree plot from TreeSE object.
 # It is utilized for both row and column trees.
 .plot_row_column_tree <- function(x, tree.name, type, ...){
+    # Store the original row/col names. Trimming the tree can rename the
+    # rows/cols (e.g. to the taxonomy labels of the tree), and the original
+    # names are needed to match labels given by the user.
+    x <- .store_original_names(x, type)
     # We want to visualize only tips that include data. That is why we subset
     # the data.
     x <- .get_object_and_trimmed_tree(
         x, tree.name = tree.name, type = type, ...)
+    original_names <- .pop_original_names(x, type)
+    x <- original_names[["x"]]
+    original_names <- original_names[["names"]]
     # Get tree from TreeSE
     tree_FUN <- switch(type, row = rowTree, col = colTree, stop("."))
     tree <- tree_FUN(x, tree.name)
     # Get tree as a table format
     df <- .get_tree_data(tree)
-    # If user wants, we add label information to the table.
-    df <- .add_tree_node_labels(df, ...)
+    # If user wants, we add label information to the table. Labels given as
+    # row (column) names are translated to the node labels of the tree.
+    args <- .names_to_node_labels(x, type, original_names, ...)
+    df <- do.call(.add_tree_node_labels, c(list(df), args))
     # User can add colors to highlight specific branches. This function adds the
     # info to the table.
     df <- .add_tree_highlights(df, ...)
@@ -523,6 +535,49 @@ setMethod("plotRowTree", signature = c(x = "TreeSummarizedExperiment"),
         labels <- gsub(paste0(rank,":"),"",labels,ignore.case = TRUE)
     }
     return(labels)
+}
+
+# The original row/col names are kept in a temporary rowData/colData column
+# while the tree is trimmed.
+.ORIGINAL_NAMES_COL <- ".miaViz_original_name"
+.store_original_names <- function(x, type){
+    if( type == "row" ){
+        rowData(x)[[.ORIGINAL_NAMES_COL]] <- rownames(x)
+    } else{
+        colData(x)[[.ORIGINAL_NAMES_COL]] <- colnames(x)
+    }
+    return(x)
+}
+.pop_original_names <- function(x, type){
+    if( type == "row" ){
+        nms <- rowData(x)[[.ORIGINAL_NAMES_COL]]
+        rowData(x)[[.ORIGINAL_NAMES_COL]] <- NULL
+    } else{
+        nms <- colData(x)[[.ORIGINAL_NAMES_COL]]
+        colData(x)[[.ORIGINAL_NAMES_COL]] <- NULL
+    }
+    return(list(x = x, names = nms))
+}
+
+# Translate labels given in 'show.label' as the original row (column) names
+# to the labels of the trimmed tree. Trimming renames the rows (columns)
+# when the tree labels do not match them, e.g. "Bacteroides" becomes
+# "Genus:Bacteroides" for a tree made with mia::addHierarchyTree(). Values
+# that are not original names are kept as they are, so tree labels can still
+# be used directly. Returns the arguments in a list.
+.names_to_node_labels <- function(x, type, original_names, ...){
+    args <- list(...)
+    arg <- intersect(c("show.label", "show_label"), names(args))
+    lab <- if( length(arg) > 0L ) args[[arg[[1L]]]] else NULL
+    if( is.character(lab) && !is.null(original_names) ){
+        names_FUN <- switch(type, row = rownames, col = colnames, stop("."))
+        current <- names_FUN(x)
+        ind <- match(lab, original_names)
+        found <- !is.na(ind) & !lab %in% current
+        lab[found] <- current[ind[found]]
+        args[[arg[[1L]]]] <- lab
+    }
+    return(args)
 }
 
 # This function controls how to show nodes. User can either show all nodes or

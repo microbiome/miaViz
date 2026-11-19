@@ -13,17 +13,23 @@ neatsort_matrix_indices <- matrix(c(10, 8,  2, 8,  3,
 
 test_that("Test getNeatOrder function", {
     # Test with valid inputs
-    result <- getNeatOrder(neatsort_matrix[, c(1,2)], centering = "mean")
+    expect_warning(
+        result <- getNeatOrder(neatsort_matrix[, c(1,2)], centering = "mean"),
+        "deprecated")
     expected <- c(4, 2, 3, 1)
     expect_equal(result, expected)
     
     # Test with no method input
-    result <- getNeatOrder(neatsort_matrix[, c(1,2)])
+    expect_warning(
+        result <- getNeatOrder(neatsort_matrix[, c(1,2)]),
+        "deprecated")
     expected <- c(4, 2, 3, 1)
     expect_equal(result, expected)
     
     # Test with indice matrix
-    result <- getNeatOrder(neatsort_matrix_indices[, c(1,2)], centering = "mean")
+    expect_warning(
+        result <- getNeatOrder(neatsort_matrix_indices[, c(1,2)], centering = "mean"),
+        "deprecated")
     expected <- c(4, 2, 3, 1)
     expect_equal(result, expected)
 })

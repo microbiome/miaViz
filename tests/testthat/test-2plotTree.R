@@ -19,6 +19,8 @@ test_that("plot tree", {
     library(mia)
     data(GlobalPatterns)
     altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus", make_unique = FALSE)
+    # Agglomeration drops the tree; add one from the taxonomy
+    altExp(GlobalPatterns,"genus") <- addHierarchyTree(altExp(GlobalPatterns,"genus"))
     altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
     rowData(altExp(GlobalPatterns,"genus"))$log_mean <- log(rowData(altExp(GlobalPatterns,"genus"))$mean)
     top_taxa <- getTop(altExp(GlobalPatterns,"genus"),
@@ -55,6 +57,8 @@ test_that("plot tree", {
 .hm_test_data <- function(n = 20L){
     data(GlobalPatterns, package = "mia")
     x <- mia::agglomerateByRank(GlobalPatterns, "Genus")
+    # Agglomeration drops the tree; add one from the taxonomy
+    x <- mia::addHierarchyTree(x)
     x <- x[mia::getTop(x, top = n), ]
     set.seed(1)
     rowData(x)$a <- rnorm(nrow(x))
@@ -67,6 +71,16 @@ test_that("plot tree", {
     rowData(x)$g1 <- rep(c(TRUE, FALSE), length.out = nrow(x))
     rowData(x)$g2 <- rep(c(FALSE, TRUE, NA), length.out = nrow(x))
     x
+}
+# Row names of x in the order of the plotted tips. plotRowTree() trims the
+# tree to the plotted rows, which can rename duplicated labels (e.g.
+# "Genus:Bacteroides_1" becomes "Genus:Bacteroides"), so the tips are matched
+# through the trimmed object, as in the plot.
+.hm_tip_rows <- function(x, tips){
+    rowData(x)$orig_name <- rownames(x)
+    y <- miaViz:::.get_object_and_trimmed_tree(
+        x, tree.name = "phylo", type = "row")
+    rowData(y)$orig_name[match(tips$label, rownames(y))]
 }
 .hm_layer <- function(p, geom = "GeomTile"){
     which(vapply(
@@ -102,7 +116,7 @@ test_that("plotRowTree heatmap: numeric values are aligned with tips", {
                 sub <- hm[hm$variable == var, ]
                 expect_equal(sub$y, tips$y)
                 expect_equal(
-                    sub$value, rowData(x)[[var]][match(tips$label, rownames(x))])
+                    sub$value, rowData(x)[.hm_tip_rows(x, tips), var])
             }
             # Columns are outside the tree, in the given order
             expect_true(all(hm$x > max(tips$x)))
@@ -161,7 +175,7 @@ test_that("plotRowTree heatmap: numeric colour scales", {
     tips <- p$data[p$data$isTip, ]
     expect_equal(
         hm$value[hm$variable == colnames(x)[1]],
-        unname(assay(x, "counts")[match(tips$label, rownames(x)), 1]))
+        unname(assay(x, "counts")[.hm_tip_rows(x, tips), 1]))
 })
 
 test_that("plotRowTree heatmap: categorical and logical values", {
@@ -188,11 +202,11 @@ test_that("plotRowTree heatmap: categorical and logical values", {
     hm <- .hm_tiles(p)
     tips <- p$data[p$data$isTip, ]
     expect_equal(levels(hm$value), c("g1", "g2"))
-    ord <- match(tips$label, rownames(x))
+    ord <- .hm_tip_rows(x, tips)
     expect_equal(
-        !is.na(hm$value[hm$variable == "g1"]), rowData(x)$g1[ord])
+        !is.na(hm$value[hm$variable == "g1"]), rowData(x)[ord, "g1"])
     expect_equal(
-        !is.na(hm$value[hm$variable == "g2"]), rowData(x)$g2[ord] %in% TRUE)
+        !is.na(hm$value[hm$variable == "g2"]), rowData(x)[ord, "g2"] %in% TRUE)
     expect_equal(.hm_limits(p), c("g1", "g2"))
     p <- plotRowTree(
         x, heatmap.by = c("g1", "g2"),
@@ -287,4 +301,17 @@ test_that("plotRowTree heatmap: input checks", {
     expect_error(plotRowTree(x, heatmap.by = "a", heatmap.diverging = "yes"))
     expect_error(plotRowTree(x, heatmap.by = "a", heatmap.border = c("a", "b")))
     expect_error(plotRowTree(x, heatmap.by = "a", heatmap.guides = NA))
+})
+
+test_that("plotRowTree: show.label accepts row names with a taxonomy tree", {
+    x <- .hm_test_data(n = 10L)
+    # Trimming renames the rows to the taxonomy labels of the tree, but the
+    # labels are still given with the original row names
+    p <- suppressWarnings(plotRowTree(x, show.label = rownames(x)[1:3]))
+    tips <- p$data[p$data$isTip, ]
+    shown <- .hm_tip_rows(x, tips)[!is.na(tips$node_label)]
+    expect_setequal(shown, rownames(x)[1:3])
+    # Tree labels can still be used directly
+    p <- suppressWarnings(plotRowTree(x, show.label = tips$label[1]))
+    expect_equal(sum(!is.na(p$data$node_label)), 1L)
 })

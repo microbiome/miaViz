@@ -3,6 +3,25 @@
 #' To be able to fine tune plotting, several additional plotting arguments are
 #' available. These are described on this page.
 #'
+#' @section Colours:
+#'
+#' Discrete variables are coloured with the palette set with the
+#' \code{ggplot2.discrete.colour} (or, for fills,
+#' \code{ggplot2.discrete.fill}) option, if it is set and has enough colours.
+#' As in \code{ggplot2}, the option can be a character vector of colours or a
+#' list of them. In a list, the first palette with enough colours is used, so
+#' the palettes can be given in order of preference.
+#' Otherwise, the Tableau palettes are used for up to 20 groups and viridis for
+#' more. Continuous variables are coloured with viridis.
+#'
+#' For example, the colour-blind-friendly Okabe-Ito palette can be used in all
+#' plots with:
+#'
+#' \preformatted{
+#' pal <- palette.colors(palette = "Okabe-Ito")[-1]
+#' options(ggplot2.discrete.colour = pal, ggplot2.discrete.fill = pal)
+#' }
+#'
 #' @section Tree plotting:
 #'
 #' \describe{
@@ -221,7 +240,19 @@ NULL
     }
     else {
         nlevs_colour_by <- nlevels(as.factor(colour_by))
-        if (nlevs_colour_by <= 10) {
+        # Use the palette set with the ggplot2.discrete.colour or
+        # ggplot2.discrete.fill option, if it has enough colours for the
+        # groups present in the data
+        option_palette <- .get_option_palette(
+            fill, nlevels(droplevels(as.factor(colour_by))))
+        if (!is.null(option_palette) && type == "normal") {
+            plot_out <- plot_out + SCALEFUN(
+                values = option_palette,
+                name = colour_by_name,
+                na.translate = na.translate,
+                na.value = na.value)
+        }
+        else if (nlevs_colour_by <= 10) {
             plot_out <- plot_out + SCALEFUN(
                 values = .get_palette("tableau10medium"),
                 name = colour_by_name,
@@ -247,6 +278,32 @@ NULL
         }
     }
     plot_out
+}
+
+# Get a discrete palette from the ggplot2.discrete.colour or
+# ggplot2.discrete.fill option. As in ggplot2, the option can be a character
+# vector of colours or a list of them. Unlike ggplot2, which uses the shortest
+# palette with enough colours
+# (https://github.com/tidyverse/ggplot2/blob/87a95d9103536296c8334e72f9f722855cd16bcb/R/scale-hue.R#L160-L162),
+# the first one in the list with enough colours is
+# used, so that the user controls the order of preference. Returns NULL if the
+# option is not set or has too few colours, so that the default palette is
+# used.
+.get_option_palette <- function(fill, n){
+    opt <- getOption(
+        if (fill) "ggplot2.discrete.fill" else "ggplot2.discrete.colour")
+    if (is.character(opt)) {
+        opt <- list(opt)
+    }
+    if (!is.list(opt)) {
+        return(NULL)
+    }
+    for (pal in opt) {
+        if (is.character(pal) && length(pal) >= n) {
+            return(pal)
+        }
+    }
+    return(NULL)
 }
 
 .add_extra_guide <- scater:::.add_extra_guide
