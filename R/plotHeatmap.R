@@ -92,7 +92,8 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #'
-#' tse <- agglomerateByPrevalence(tse, rank = "Class")
+#' tse <- agglomerateByRank(tse, rank = "Class")
+#' tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 #'
 #' # Plot raw counts
 #' plotHeatmap(
