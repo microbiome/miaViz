@@ -19,7 +19,7 @@ A tree from rowTree can be added to heatmap layout."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.17</span>
       </span>
     </div>
 
@@ -46,7 +46,7 @@ A tree from rowTree can be added to heatmap layout."><!-- mathjax --><script src
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot feature loadings for TreeSummarizedExperiment objects or feature loadings numeric matrix.</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/devel/R/plotLoadings.R" class="external-link"><code>R/plotLoadings.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/plotforest-df/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/plotforest-df/R/plotLoadings.R" class="external-link"><code>R/plotLoadings.R</code></a></small>
     <div class="hidden name"><code>plotLoadings.Rd</code></div>
     </div>
 
@@ -161,8 +161,11 @@ content in <code>reducedDim</code> slot calculated with standardized methods fro
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Calculate PCA</span></span></span>
-<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/agglomerateByPrevalence.html" class="external-link">agglomerateByPrevalence</a></span><span class="op">(</span><span class="va">tse</span>, rank<span class="op">=</span><span class="st">"Phylum"</span>, update.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">tse</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, update.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>The tree is removed because it cannot be agglomerated. Agglomeration requires that each group is monophyletic, i.e., the features of a group form a subtree of their own. 5 group(s) are not monophyletic: 'Bacteria_Actinobacteria', 'Bacteria_Proteobacteria', 'Bacteria_Chlorobi', 'Bacteria_Firmicutes', 'Bacteria_SC4'.</span>
+<span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/subsetBy.html" class="external-link">subsetBy</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">tse</span>, rows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">rowMeans</a></span><span class="op">(</span><span class="va">counts</span> <span class="op">&gt;</span> <span class="fl">0</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fl">0.5</span>, collapse <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>    update.tree <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse</span>, method <span class="op">=</span> <span class="st">"clr"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/BiocSingular/man/runPCA.html" class="external-link">runPCA</a></span><span class="op">(</span><span class="va">tse</span>, ncomponents <span class="op">=</span> <span class="fl">5</span>, assay.type <span class="op">=</span> <span class="st">"clr"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>

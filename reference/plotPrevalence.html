@@ -18,7 +18,7 @@ information."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.15</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.17</span>
       </span>
     </div>
 
@@ -45,7 +45,7 @@ information."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/lib
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Plot prevalence information</h1>
-    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/devel/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/devel/R/plotPrevalence.R" class="external-link"><code>R/plotPrevalence.R</code></a></small>
+    <small class="dont-index">Source: <a href="https://github.com/microbiome/miaViz/blob/plotforest-df/R/AllGenerics.R" class="external-link"><code>R/AllGenerics.R</code></a>, <a href="https://github.com/microbiome/miaViz/blob/plotforest-df/R/plotPrevalence.R" class="external-link"><code>R/plotPrevalence.R</code></a></small>
     <div class="hidden name"><code>plotPrevalence.Rd</code></div>
     </div>
 
@@ -249,13 +249,12 @@ returns a heatmap.</p>
 <p>Agglomeration on different taxonomic levels is available through the
 <code>rank</code> argument.</p>
 <p>To exclude certain taxa, preprocess <code>x</code> to your liking, for example
-with subsetting via <code>getPrevalent</code> or
-<code>agglomerateByPrevalence</code>.</p>
+with <code>subsetBy</code>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
     <div class="dont-index"><p><code><a href="https://microbiome.github.io/mia/reference/getPrevalence.html" class="external-link">getPrevalence</a></code>,
-<code><a href="https://microbiome.github.io/mia/reference/getPrevalence.html" class="external-link">agglomerateByPrevalence</a></code>,
+<code><a href="https://microbiome.github.io/mia/reference/subsetBy.html" class="external-link">subsetBy</a></code>,
 <code><a href="https://microbiome.github.io/mia/reference/agglomerate-methods.html" class="external-link">agglomerateByRank</a></code></p></div>
     </div>
 
