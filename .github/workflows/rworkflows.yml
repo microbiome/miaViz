@@ -55,7 +55,10 @@ jobs:
         run_vignettes: ${{ true }}
         has_testthat: ${{ true }}
         run_covr: ${{ true }}
-        run_pkgdown: ${{ true }}
+        # Build and deploy the website only for pushes, not for pull requests:
+        # a PR from a fork cannot push to gh-pages (the job fails with 403),
+        # and a PR from this repository would overwrite the website.
+        run_pkgdown: ${{ github.event_name == 'push' }}
         has_runit: ${{ false }}
         has_latex: ${{ false }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
