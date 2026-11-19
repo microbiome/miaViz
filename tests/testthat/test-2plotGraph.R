@@ -67,3 +67,30 @@ test_that("plot graph", {
                          show.label = TRUE)
     expect_true(all(plot$data == plot2$data))
 })
+
+test_that("colour.by works together with shape.by", {
+    # Shapes from shape.by cannot be filled, so colour must be used
+    args <- miaViz:::.get_point_args("colour_by", "shape_by", NULL)
+    expect_false(args$fill)
+    expect_true("colour" %in% names(args$args$mapping))
+    expect_false("fill" %in% names(args$args$mapping))
+    # Without shape.by, the default shape 21 is filled
+    args <- miaViz:::.get_point_args("colour_by", NULL, NULL)
+    expect_true(args$fill)
+    expect_true("fill" %in% names(args$args$mapping))
+    # Graph with 6 features in 2 groups
+    tse <- TreeSummarizedExperiment(
+        assays = list(counts = matrix(1, 6, 2,
+            dimnames = list(paste0("f", 1:6), c("s1", "s2")))),
+        rowData = DataFrame(group = rep(c("A", "B"), each = 3),
+            type = rep(c("x", "y"), 3)))
+    graph <- tidygraph::tbl_graph(
+        nodes = data.frame(name = rownames(tse)),
+        edges = data.frame(from = 1:5, to = 2:6), directed = FALSE)
+    p <- plotRowGraph(graph, tse, colour.by = "group", shape.by = "type")
+    node_layer <- Filter(function(l) inherits(l$geom, "GeomPoint"), p$layers)
+    expect_true(all(c("colour", "shape") %in%
+        names(node_layer[[1]]$mapping)))
+    # Colours are not all the same
+    expect_gt(length(unique(ggplot_build(p)$data[[2]]$colour)), 1)
+})

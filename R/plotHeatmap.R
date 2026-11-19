@@ -25,6 +25,14 @@
 #' alongside the heatmap. When a tree is shown, only leaf nodes are plotted
 #' and the heatmap rows are reordered to match the tree tip order.
 #'
+#' Rows and columns are shown in the order they appear in \code{x}. They can
+#' be sorted with \code{sort.method} so that similar features and similar
+#' samples are placed next to each other. The same method is used for both
+#' rows and columns. The order is determined with
+#' \code{\link{getHeatmapOrder}} from the plotted values, i.e., after optional
+#' scaling and centering. Within facets, the same order is preserved. When the
+#' row tree is shown, rows follow the tree and only columns are sorted.
+#'
 #' @return
 #' A \code{ggplot2} object. If \code{show.tree = TRUE}, the returned object is
 #' a combined \code{patchwork} object containing the row tree and the heatmap.
@@ -47,6 +55,12 @@
 #' each feature across samples?
 #' (Default: \code{FALSE})
 #'
+#' @param sort.method \code{NULL}, \code{Character scalar} or
+#' \code{BlusterParam} object. Specifies the method used to sort rows and
+#' columns, e.g., a seriation method such as \code{"PCA_angle"} or
+#' \code{"Heatmap"}. See \code{\link{getHeatmapOrder}} for details. If
+#' \code{NULL}, rows and columns are not sorted. (Default: \code{NULL})
+#'
 #' @param tree.name \code{Character scalar}. Name of the row tree to display
 #' when \code{x} is a \code{TreeSummarizedExperiment}.
 #' (Default: \code{"phylo"})
@@ -64,6 +78,11 @@
 #'   \code{ggplot2::facet_grid()} or
 #'   \code{ggh4x::facet_nested()}.
 #'   (Default: \code{"free"})
+#'   \item \code{space}: Facet panel sizes passed to
+#'   \code{ggplot2::facet_grid()} or
+#'   \code{ggh4x::facet_nested()}. With \code{"free"}, panels are sized by
+#'   their number of rows and columns so that all cells are equal size.
+#'   (Default: \code{"free"})
 #'   \item \code{tree.width}: Relative width of the tree panel when
 #'   \code{show.tree = TRUE}.
 #'   (Default: \code{0.2})
@@ -73,7 +92,8 @@
 #' data(GlobalPatterns)
 #' tse <- GlobalPatterns
 #'
-#' tse <- agglomerateByPrevalence(tse, rank = "Class")
+#' tse <- agglomerateByRank(tse, rank = "Class")
+#' tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 #'
 #' # Plot raw counts
 #' plotHeatmap(
@@ -96,7 +116,18 @@
 #'     col.var = "SampleType"
 #' )
 #'
-#' # Add phylogeny
+#' # Sort features and samples with seriation
+#' plotHeatmap(
+#'     tse,
+#'     assay.type = "counts",
+#'     scale = TRUE,
+#'     center = TRUE,
+#'     sort.method = "PCA_angle"
+#' )
+#'
+#' # Add a tree. Agglomeration drops the phylogenetic tree, so we add a tree
+#' # based on the taxonomy.
+#' tse <- addHierarchyTree(tse)
 #' plotHeatmap(
 #'     tse,
 #'     assay.type = "counts",
@@ -104,7 +135,8 @@
 #' )
 #'
 #' @seealso
-#' \code{\link[=plotRowTree]{plotRowTree}}
+#' \code{\link[=plotRowTree]{plotRowTree}},
+#' \code{\link[=getHeatmapOrder]{getHeatmapOrder}}
 #'
 NULL
 
@@ -120,6 +152,7 @@ setMethod(
         col.var = NULL,
         scale = FALSE,
         center = FALSE,
+        sort.method = NULL,
         tree.name = "phylo",
         show.tree = FALSE,
         ...
@@ -178,6 +211,9 @@ setMethod(
             col.var = col.var,
             scale = scale,
             center = center,
+            sort.method = sort.method,
+            # When the tree is shown, rows are ordered based on the tree
+            show.tree = show.tree,
             ...
         )
 
@@ -208,6 +244,7 @@ setMethod(
         col.var = NULL,
         scale = FALSE,
         center = FALSE,
+        sort.method = NULL,
         ...
     ) {
 
@@ -222,6 +259,30 @@ setMethod(
 
         if (!.is_a_bool(center)) {
             stop("'center' must be TRUE or FALSE.", call. = FALSE)
+        }
+
+        # Sort rows and columns
+        x <- .sort_heatmap(
+            tse = x,
+            assay.type = assay.type,
+            scale = scale,
+            center = center,
+            sort.method = sort.method,
+            ...
+        )
+
+        # A variable used for both row and column facets would be duplicated
+        # when the data is melted. Give it a distinct name on each axis.
+        shared <- intersect(row.var, col.var)
+        if (length(shared) > 0L) {
+            i <- match(shared, colnames(rowData(x)))
+            colnames(rowData(x))[i] <- paste0(shared, "_row")
+            i <- match(shared, colnames(colData(x)))
+            colnames(colData(x))[i] <- paste0(shared, "_col")
+            row.var[row.var %in% shared] <- paste0(
+                row.var[row.var %in% shared], "_row")
+            col.var[col.var %in% shared] <- paste0(
+                col.var[col.var %in% shared], "_col")
         }
 
         # Retrieve assay values together with the requested metadata
@@ -289,6 +350,17 @@ setMethod(
         add.col = col.var
     )
 
+    # meltSE() orders factor levels alphabetically. Keep the order of the
+    # object so that the heatmap follows sorting and the row tree.
+    if (!is.null(rownames(tse))) {
+        df[["FeatureID"]] <- factor(
+            df[["FeatureID"]], levels = unique(rownames(tse)))
+    }
+    if (!is.null(colnames(tse))) {
+        df[["SampleID"]] <- factor(
+            df[["SampleID"]], levels = unique(colnames(tse)))
+    }
+
     # Scale and/or center each feature across samples
     if (scale || center) {
         df <- df |>
@@ -306,6 +378,54 @@ setMethod(
     }
 
     return(df)
+}
+
+
+# Sort rows and columns of the data based on the plotted values.
+.sort_heatmap <- function(
+        tse,
+        assay.type,
+        scale = FALSE,
+        center = FALSE,
+        sort.method = NULL,
+        sort.rows = sort.method,
+        sort.cols = sort.method,
+        show.tree = FALSE,
+        ...
+) {
+
+    # When the row tree is shown, rows follow the tree
+    if (show.tree) {
+        sort.rows <- NULL
+    }
+
+    # Nothing to sort
+    if (is.null(sort.rows) && is.null(sort.cols)) {
+        return(tse)
+    }
+
+    # Get the values that are plotted
+    mat <- as.matrix(assay(tse, assay.type))
+    if (scale || center) {
+        mat <- t(scale(t(mat), center = center, scale = scale))
+        # Features with zero variance produce NaNs when scaled
+        mat[is.nan(mat)] <- 0
+    }
+
+    # Get the order of rows and columns
+    row_order <- seq_len(nrow(tse))
+    col_order <- seq_len(ncol(tse))
+    if (!is.null(sort.rows)) {
+        row_order <- .get_heatmap_order(
+            mat, method = sort.rows, MARGIN = "rows")
+    }
+    if (!is.null(sort.cols)) {
+        col_order <- .get_heatmap_order(
+            mat, method = sort.cols, MARGIN = "cols")
+    }
+
+    tse <- tse[row_order, col_order]
+    return(tse)
 }
 
 
@@ -408,6 +528,7 @@ setMethod(
         row.var = NULL,
         col.var = NULL,
         scales = "free",
+        space = "free",
         ...
 ) {
 
@@ -424,14 +545,16 @@ setMethod(
         p <- p +
             facet_grid(
                 form,
-                scales = scales
+                scales = scales,
+                space = space
             )
     } else {
         .require_package("ggh4x")
         p <- p +
             ggh4x::facet_nested(
                 form,
-                scales = scales
+                scales = scales,
+                space = space
             )
     }
 
@@ -448,6 +571,10 @@ setMethod(
         tree.name,
         layout = "rectangular",
         tree.width = 0.2,
+        # Sorting arguments are captured so that they are not passed to the
+        # tree
+        sort.rows = NULL,
+        sort.cols = NULL,
         ...
 ) {
 
@@ -469,5 +596,173 @@ setMethod(
             legend.position = "right"
         )
 
+    return(p)
+}
+
+################################ plotDissimilarity #############################
+
+#' @name
+#' plotDissimilarity
+#'
+#' @title
+#' Visualize a dissimilarity matrix as a heatmap
+#'
+#' @description
+#' Plots a sample dissimilarity matrix, stored in \code{metadata(x)}, as a
+#' heatmap. Samples can be sorted so that similar samples are next to each
+#' other. The same order is used for both axes.
+#'
+#' @return
+#' A \code{ggplot2} object.
+#'
+#' @param x A
+#' \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}.
+#'
+#' @param name \code{Character scalar}. Name of the dissimilarity matrix in
+#' \code{metadata(x)}. The matrix must be a \code{dist} object, as returned by
+#' \code{\link[mia:getDissimilarity]{addDissimilarity}}, with one row per
+#' sample of \code{x}.
+#'
+#' @param col.var \code{NULL} or \code{character vector}. Variables from
+#' \code{colData(x)} used for facetting. Because both axes are samples, the
+#' same variables split both the rows and the columns.
+#' (Default: \code{NULL})
+#'
+#' @param sort.method \code{NULL}, \code{Character scalar} or
+#' \code{BlusterParam} object. Specifies the method used to sort samples.
+#' Seriation methods for distances, such as \code{"MDS_angle"} (NeatMap-like
+#' angular ordering) or \code{"OLO"} (hierarchical clustering with optimal
+#' leaf ordering), are applied to the dissimilarities directly (see
+#' \code{seriation::list_seriation_methods("dist")}). Other methods are
+#' applied to the dissimilarity matrix. See \code{\link{getHeatmapOrder}}
+#' for details. If \code{NULL}, samples are shown in the order of \code{x}.
+#' (Default: \code{"MDS_angle"})
+#'
+#' @param ... Additional arguments passed to the facetting, for example
+#' \code{scales} and \code{space} (both default \code{"free"}).
+#'
+#' @examples
+#' data(GlobalPatterns)
+#' tse <- GlobalPatterns
+#' tse <- transformAssay(tse, method = "relabundance")
+#'
+#' # Calculate Bray-Curtis dissimilarity and store it in metadata
+#' tse <- addDissimilarity(tse, method = "bray", assay.type = "relabundance")
+#'
+#' plotDissimilarity(tse, "bray")
+#'
+#' # Sort with hierarchical clustering
+#' plotDissimilarity(tse, "bray", sort.method = "OLO")
+#'
+#' # Split rows and columns by sample type
+#' plotDissimilarity(tse, "bray", col.var = "SampleType")
+#'
+#' @seealso
+#' \code{\link[=plotHeatmap]{plotHeatmap}},
+#' \code{\link[=getHeatmapOrder]{getHeatmapOrder}}
+#'
+NULL
+
+#' @rdname plotDissimilarity
+#' @export
+setMethod("plotDissimilarity", signature = c(x = "SummarizedExperiment"),
+    function(x, name, col.var = NULL, sort.method = "MDS_angle", ...){
+        .check_metadata_present(name, x)
+        .check_metadata_variable(x, col.var, col = TRUE, multiple = TRUE)
+        diss <- metadata(x)[[name]]
+        if( !is(diss, "dist") ){
+            stop("metadata(x)[[name]] must be a 'dist' object.", call. = FALSE)
+        }
+        # The dissimilarity matrix must have one row per sample of x
+        if( attr(diss, "Size") != ncol(x) ){
+            stop("The number of samples in metadata(x)[[name]] must equal ",
+                "ncol(x).", call. = FALSE)
+        }
+        # Without sample names, samples are assumed to be in the same order
+        if( is.null(labels(diss)) ){
+            attr(diss, "Labels") <- colnames(x)
+        }
+        if( !setequal(labels(diss), colnames(x)) ){
+            stop("Sample names in metadata(x)[[name]] must match ",
+                "colnames(x).", call. = FALSE)
+        }
+        # Without sorting, samples follow the order of x
+        diss <- .reorder_dist(diss, colnames(x))
+        df <- .get_dissimilarity_data(diss, sort.method, ...)
+        # Add sample variables for facetting. Columns are samples in
+        # "SampleID" and rows are samples in "FeatureID".
+        for( var in col.var ){
+            df[[var]] <- colData(x)[as.character(df[["SampleID"]]), var]
+        }
+        # The same variables split the rows. They get a suffix so that they
+        # do not overwrite the column variables.
+        row.var <- NULL
+        if( !is.null(col.var) ){
+            row.var <- paste0(col.var, "_row")
+            for( i in seq_along(col.var) ){
+                df[[row.var[[i]]]] <- colData(x)[
+                    as.character(df[["FeatureID"]]), col.var[[i]]]
+            }
+        }
+        .plot_dissimilarity(df, row.var, col.var, ...)
+    }
+)
+
+# Reorder samples of a dist object
+#' @importFrom stats as.dist
+.reorder_dist <- function(diss, ord){
+    if( identical(labels(diss), ord) ){
+        return(diss)
+    }
+    mat <- as.matrix(diss)[ord, ord, drop = FALSE]
+    res <- as.dist(mat)
+    attr(res, "method") <- attr(diss, "method")
+    return(res)
+}
+
+# Convert the dist object to the long format used by .plot_heatmap(). By
+# default, the same sample order is used on both axes.
+.get_dissimilarity_data <- function(
+        diss, sort.method = NULL, sort.rows = sort.method,
+        sort.cols = sort.method, ...){
+    .check_sort_method(sort.method, "sort.method")
+    mat <- as.matrix(diss)
+    df <- as.data.frame(as.table(mat), responseName = "Dissimilarity")
+    colnames(df)[1:2] <- c("FeatureID", "SampleID")
+    row_ord <- .get_dist_order(diss, sort.rows, "sort.rows")
+    col_ord <- .get_dist_order(diss, sort.cols, "sort.cols")
+    df[["FeatureID"]] <- factor(df[["FeatureID"]], levels = row_ord)
+    df[["SampleID"]] <- factor(df[["SampleID"]], levels = col_ord)
+    return(df)
+}
+
+# Check that sorting method is NULL, a string or a BlusterParam
+.check_sort_method <- function(method, name){
+    if( !(is.null(method) || .is_a_string(method) ||
+            is(method, "BlusterParam")) ){
+        stop("'", name, "' must be NULL, a single character value or a ",
+            "BlusterParam object.", call. = FALSE)
+    }
+    return(NULL)
+}
+
+# Get sample names of a dist object in sorted order
+.get_dist_order <- function(diss, method, name){
+    .check_sort_method(method, name)
+    ord <- labels(diss)
+    if( !is.null(method) ){
+        ord <- ord[ getHeatmapOrder(diss, method = method) ]
+    }
+    return(ord)
+}
+
+# Heatmap, optionally with rows and/or columns split by sample variables
+.plot_dissimilarity <- function(df, row.var = NULL, col.var = NULL, ...){
+    p <- .plot_heatmap(df, fill = "Dissimilarity") +
+        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    if( !is.null(row.var) || !is.null(col.var) ){
+        p <- .resolve_heatmap_facets(
+            p, row.var = row.var, col.var = col.var, ...)
+    }
     return(p)
 }

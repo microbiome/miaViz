@@ -11,8 +11,8 @@
 #' plot.
 #'
 #' @param layout \code{Character scalar}. Determines the layout of plot. Must be
-#' either \code{"barplot"}, \code{"heatmap"}, or \code{"lollipop"}.
-#' (Default: \code{"barplot"})
+#' either \code{"lollipop"}, \code{"heatmap"}, or \code{"barplot"}.
+#' (Default: \code{"lollipop"})
 #'
 #' @param ncomponents \code{Numeric scalar}. Number of components must be lower
 #' or equal to the number of components chosen in the reduction method.
@@ -28,12 +28,22 @@
 #' @param ... additional parameters for plotting.
 #' \itemize{
 #'   \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
-#'   Applicable when \code{layout="barplot"}.
+#'   Applicable when \code{layout="barplot"} or \code{layout="lollipop"}.
 #'   (Default: \code{min(nrow(x), 10L)}))
 #'
 #'   \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
 #'   Specifies whether a barplot or a lollipop plot should be visualized in
 #'   absolute scale. (Default: \code{TRUE})
+#'
+#'   \item \code{sort.method}: ("heatmap") \code{NULL}, \code{Character
+#'   scalar} or \code{BlusterParam} object. Specifies how features are
+#'   sorted. If it specifies a column, i.e., principal coordinate, features
+#'   are ordered in decreasing order based on the specified coordinate. Other
+#'   \code{character} values specify a seriation method, e.g.,
+#'   \code{"PCA_angle"} or \code{"Heatmap"}, and \code{BlusterParam}
+#'   objects specify a clustering method. See
+#'   \code{\link{getHeatmapOrder}} for details. If \code{NULL}, features are
+#'   not sorted. (Default: \code{NULL})
 #' }
 #'
 #' @details
@@ -58,7 +68,10 @@
 #' tse <- GlobalPatterns
 #'
 #' # Calculate PCA
-#' tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
+#' tse <- agglomerateByRank(tse, rank = "Phylum", update.tree = TRUE)
+#' tse <- subsetBy(
+#'     tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE,
+#'     update.tree = TRUE)
 #' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 #'
@@ -79,7 +92,10 @@
 #' plotLoadings(loadings_matrix, layout = "heatmap")
 #'
 #' # Plot with less components
-#' plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)
+#' plotLoadings(
+#'     tse, "PCA", layout = "heatmap",
+#'     ncomponents = 2, sort.method = "PCA_angle"
+#' )
 #'
 NULL
 
@@ -88,7 +104,7 @@ NULL
 #' @importFrom SingleCellExperiment reducedDims
 setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
     function(
-        x, dimred, layout = "barplot", ncomponents = 5, tree.name = "phylo",
+        x, dimred, layout = "lollipop", ncomponents = 5, tree.name = "phylo",
         row.var = NULL, add.tree = FALSE, ...) {
         # Check that there are reducedDim
         if( length(reducedDims(x)) == 0 ){
@@ -144,7 +160,7 @@ setMethod("plotLoadings", signature = c(x = "TreeSummarizedExperiment"),
 #' @export
 #' @importFrom SingleCellExperiment reducedDims
 setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
-    function(x, dimred, layout = "barplot", ncomponents = 5, ...){
+    function(x, dimred, layout = "lollipop", ncomponents = 5, ...){
         # Check that there are reducedDim
         if( length(reducedDims(x)) == 0 ){
             stop("No reducedDims found.", call. = FALSE)
@@ -168,7 +184,7 @@ setMethod("plotLoadings", signature = c(x = "SingleCellExperiment"),
 #' @rdname plotLoadings
 #' @export
 setMethod("plotLoadings", signature = c(x = "matrix"),
-    function(x, layout = "barplot", ncomponents = 5, ...) {
+    function(x, layout = "lollipop", ncomponents = 5, ...) {
         # Input check
         .check_loadings_matrix(
             x, layout = layout, ncomponents = ncomponents, ...)
@@ -213,7 +229,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Check layout
     if( !(.is_a_string(layout) && layout %in%
             c("barplot", "heatmap", "lollipop")) ){
-        stop("'layout' must be 'barplot' or 'heatmap',", call. = FALSE)
+        stop("'layout' must be 'lollipop', 'barplot' or 'heatmap',",
+            call. = FALSE)
     }
     # Check n
     if( !(.is_an_integer(n) && n > 0 && n <= nrow(mat)) ){
@@ -248,13 +265,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         res <- do.call(rbind, res)
     } else{
         # For heatmap, the whole data.frame is just converted into long format.
-        components <- colnames(df)
-        res <- df %>%
-            rownames_to_column(var = "Feature") %>%
-            pivot_longer(
-                cols = components,
-                names_to = "PC",
-                values_to = "Value")
+        res <- .process_heatmap_component(df, ...)
     }
     # Convert into data.frame
     res <- as.data.frame(res)
@@ -285,6 +296,39 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Add rownames
     df[["Feature"]] <- rownames(df)
     return(df)
+}
+
+# This function modifies the data so that it is ready to be plotted as
+# heatmap.
+#' @importFrom tibble rownames_to_column
+#' @importFrom tidyr pivot_longer
+.process_heatmap_component <- function(
+        df, sort.method = BLUSPARAM, BLUSPARAM = NULL, ...){
+    components <- colnames(df)
+    if( !(is.null(sort.method) || .is_a_string(sort.method) ||
+          is(sort.method, "BlusterParam") ) ){
+        stop("'sort.method' must be NULL, a single character value or a ",
+            "BlusterParam object.", call. = FALSE)
+    }
+    #
+    # Get feature order
+    feat_order <- NULL
+    if( !is.null(sort.method) ){
+        feat_order <- .get_heatmap_order(df, method = sort.method)
+        feat_order <- rownames(df)[ feat_order ]
+    }
+    # Put data into long format
+    res <- df |>
+        rownames_to_column(var = "Feature") |>
+        pivot_longer(
+            cols = components,
+            names_to = "PC",
+            values_to = "Value")
+    # Sort the data
+    if( !is.null(feat_order) ){
+        res[["Feature"]] <- factor(res[["Feature"]], levels = feat_order)
+    }
+    return(res)
 }
 
 # This function calculates place for +/- sign in barplot/lollipop plot

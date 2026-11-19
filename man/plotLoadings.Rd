@@ -13,7 +13,7 @@ plotLoadings(x, ...)
 \S4method{plotLoadings}{TreeSummarizedExperiment}(
   x,
   dimred,
-  layout = "barplot",
+  layout = "lollipop",
   ncomponents = 5,
   tree.name = "phylo",
   row.var = NULL,
@@ -21,9 +21,9 @@ plotLoadings(x, ...)
   ...
 )
 
-\S4method{plotLoadings}{SingleCellExperiment}(x, dimred, layout = "barplot", ncomponents = 5, ...)
+\S4method{plotLoadings}{SingleCellExperiment}(x, dimred, layout = "lollipop", ncomponents = 5, ...)
 
-\S4method{plotLoadings}{matrix}(x, layout = "barplot", ncomponents = 5, ...)
+\S4method{plotLoadings}{matrix}(x, layout = "lollipop", ncomponents = 5, ...)
 }
 \arguments{
 \item{x}{a
@@ -32,20 +32,30 @@ plotLoadings(x, ...)
 \item{...}{additional parameters for plotting.
 \itemize{
 \item \code{n}: \code{Integer scalar}. Number of features to be plotted.
-Applicable when \code{layout="barplot"}.
+Applicable when \code{layout="barplot"} or \code{layout="lollipop"}.
 (Default: \code{min(nrow(x), 10L)}))
 
 \item \code{absolute.scale}: ("barplot", "lollipop") \code{Logical scalar}.
 Specifies whether a barplot or a lollipop plot should be visualized in
 absolute scale. (Default: \code{TRUE})
+
+\item \code{sort.method}: ("heatmap") \code{NULL}, \code{Character
+  scalar} or \code{BlusterParam} object. Specifies how features are
+sorted. If it specifies a column, i.e., principal coordinate, features
+are ordered in decreasing order based on the specified coordinate. Other
+\code{character} values specify a seriation method, e.g.,
+\code{"PCA_angle"} or \code{"Heatmap"}, and \code{BlusterParam}
+objects specify a clustering method. See
+\code{\link{getHeatmapOrder}} for details. If \code{NULL}, features are
+not sorted. (Default: \code{NULL})
 }}
 
 \item{dimred}{\code{Character scalar}.  Determines the reduced dimension to
 plot.}
 
 \item{layout}{\code{Character scalar}. Determines the layout of plot. Must be
-either \code{"barplot"}, \code{"heatmap"}, or \code{"lollipop"}.
-(Default: \code{"barplot"})}
+either \code{"lollipop"}, \code{"heatmap"}, or \code{"barplot"}.
+(Default: \code{"lollipop"})}
 
 \item{ncomponents}{\code{Numeric scalar}. Number of components must be lower
 or equal to the number of components chosen in the reduction method.
@@ -84,7 +94,10 @@ data("GlobalPatterns", package = "mia")
 tse <- GlobalPatterns
 
 # Calculate PCA
-tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
+tse <- agglomerateByRank(tse, rank = "Phylum", update.tree = TRUE)
+tse <- subsetBy(
+    tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE,
+    update.tree = TRUE)
 tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 
@@ -105,6 +118,9 @@ plotLoadings(tse, dimred = "PCA", ncomponents = 2, n = 12)
 plotLoadings(loadings_matrix, layout = "heatmap")
 
 # Plot with less components
-plotLoadings(tse, "PCA", layout = "heatmap", ncomponents = 2)
+plotLoadings(
+    tse, "PCA", layout = "heatmap",
+    ncomponents = 2, sort.method = "PCA_angle"
+)
 
 }

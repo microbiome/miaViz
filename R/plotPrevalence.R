@@ -100,8 +100,7 @@
 #' \code{rank} argument.
 #'
 #' To exclude certain taxa, preprocess \code{x} to your liking, for example
-#' with subsetting via \code{getPrevalent} or
-#' \code{agglomerateByPrevalence}.
+#' with \code{subsetBy}.
 #'
 #' @return
 #' A \code{ggplot2} object or \code{plotly} object, if more than one
@@ -109,7 +108,7 @@
 #'
 #' @seealso
 #' \code{\link[mia:getPrevalence]{getPrevalence}},
-#' \code{\link[mia:getPrevalence]{agglomerateByPrevalence}},
+#' \code{\link[mia:subsetBy]{subsetBy}},
 #' \code{\link[mia:agglomerate-methods]{agglomerateByRank}}
 #'
 #' @name plotPrevalence
@@ -599,8 +598,8 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
             do.call(geom_point, point_args$args)
         # Adjust the colour scale and legend title
         plot_out <- .resolve_plot_colours(
-            plot_out, plot_data$colour_by, colour_by, fill = TRUE,
-            na.translate = FALSE)
+            plot_out, plot_data$colour_by, colour_by,
+            fill = point_args$fill, na.translate = FALSE)
         # Add legend for shape_by and size_by if they were used.
         plot_out <- .add_extra_guide(plot_out, shape_by, size_by)
     } else if(layout == "heatmap"){
