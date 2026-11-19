@@ -64,3 +64,4 @@ Changes in version 1.21.x
 + Plots use the palette set with the ggplot2.discrete.colour or ggplot2.discrete.fill option, if it has enough colours, e.g. for colour-blind-friendly figures (1.21.15, 2026-11-17)
 + Require mia (>= 1.21.31) for subsetBy(), used in examples and tests; until it is available from Bioconductor devel, mia is installed from GitHub (Remotes) (1.21.17, 2026-11-20)
 + plotForest: confidence intervals from 'err.var' use the degrees of freedom given with the new 'df.var' or 'df' arguments; previously the number of columns of the results table was used. Without them, the normal distribution is used with a warning (1.21.18, 2026-11-20)
++ The default discrete palette is the colour-blind-friendly Okabe-Ito palette (up to 8 groups) instead of Tableau; viridis is used for more groups (1.21.19, 2026-11-20)
