@@ -141,7 +141,8 @@ data("Tengeler2020", package = "mia")
 tse <- Tengeler2020
 
 # Agglomerate by genus and subset by prevalence
-tse <- subsetByPrevalent(tse, rank = "Genus", prevalence = 10/100)
+tse <- agglomerateByRank(tse, rank = "Genus")
+tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 10/100)
 # Agglomeration drops the phylogenetic tree; add a tree based on taxonomy
 tse <- addHierarchyTree(tse)
 
