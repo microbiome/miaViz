@@ -155,7 +155,11 @@ library(mia)
 ```
 
 ```{r gettop}
+# Agglomeration drops the phylogenetic tree, so we add a tree based on the
+# taxonomic hierarchy
 altExp(GlobalPatterns,"Genus") <- agglomerateByRank(GlobalPatterns,"Genus")
+altExp(GlobalPatterns,"Genus") <- addHierarchyTree(
+    altExp(GlobalPatterns,"Genus"))
 altExp(GlobalPatterns,"Genus") <- addPerFeatureQC(
     altExp(GlobalPatterns,"Genus"))
 rowData(altExp(GlobalPatterns,"Genus"))$log_mean <- log(

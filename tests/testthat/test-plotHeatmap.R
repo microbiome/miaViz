@@ -1,7 +1,8 @@
 test_that("plotHeatmap works for SummarizedExperiment", {
 
     data(GlobalPatterns)
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 
     p <- plotHeatmap(
         tse,
@@ -14,7 +15,8 @@ test_that("plotHeatmap works for SummarizedExperiment", {
 test_that("plotHeatmap supports scaling", {
 
     data(GlobalPatterns)
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 
     expect_s3_class(
         plotHeatmap(
@@ -48,7 +50,8 @@ test_that("plotHeatmap supports scaling", {
 test_that("plotHeatmap supports row and column facets", {
 
     data(GlobalPatterns)
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 
     expect_s3_class(
         plotHeatmap(
@@ -82,7 +85,8 @@ test_that("plotHeatmap supports row and column facets", {
 test_that("plotHeatmap validates arguments", {
 
     data(GlobalPatterns)
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 
     expect_error(
         plotHeatmap(
@@ -130,7 +134,8 @@ test_that("plotHeatmap works for TreeSummarizedExperiment", {
 
     data(GlobalPatterns)
 
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 
     p <- plotHeatmap(
         tse,
@@ -144,7 +149,10 @@ test_that("plotHeatmap adds row tree", {
 
     data(GlobalPatterns)
 
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
+    # Agglomeration drops the tree; add one from the taxonomy
+    tse <- addHierarchyTree(tse)
 
     p <- plotHeatmap(
         tse,
@@ -276,6 +284,8 @@ test_that("row tree and heatmap use the same feature order", {
     data(GlobalPatterns)
 
     tse <- agglomerateByRank(GlobalPatterns, rank = "Family")
+    # Agglomeration drops the tree; add one from the taxonomy
+    tse <- addHierarchyTree(tse)
 
     p <- plotHeatmap(
         tse,
@@ -301,9 +311,14 @@ test_that("row tree and heatmap use the same feature order", {
 
     heatmap_order <- as.character(heatmap_data$FeatureID)
 
+    # Tips of the taxonomy tree are labelled as "Family:<name>"; map them to
+    # the feature names with rowLinks
+    links <- rowLinks(tse)
+    tip_features <- rownames(tse)[match(tree_tips$label, links$nodeLab)]
+
     expect_identical(
         heatmap_order,
-        tree_tips$label
+        tip_features
     )
 
 })
@@ -311,7 +326,8 @@ test_that("row tree and heatmap use the same feature order", {
 test_that("plotHeatmap sorts rows and columns", {
     skip_if_not_installed("seriation")
     data(GlobalPatterns)
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 
     # By default, the order of the object is kept
     p <- plotHeatmap(tse, assay.type = "counts")
@@ -335,7 +351,10 @@ test_that("plotHeatmap sorts rows and columns", {
 test_that("plotHeatmap sorts only columns when tree is shown", {
     skip_if_not_installed("seriation")
     data(GlobalPatterns)
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
+    # Agglomeration drops the tree; add one from the taxonomy
+    tse <- addHierarchyTree(tse)
     p_tree <- plotHeatmap(tse, assay.type = "counts", show.tree = TRUE)
     p <- plotHeatmap(
         tse, assay.type = "counts", show.tree = TRUE, sort.method = "Heatmap")
@@ -350,7 +369,10 @@ test_that("plotHeatmap sorts only columns when tree is shown", {
 test_that("plotHeatmap supports separate row and column sorting", {
     skip_if_not_installed("seriation")
     data(GlobalPatterns)
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Class")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Class")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
+    # Agglomeration drops the tree; add one from the taxonomy
+    tse <- addHierarchyTree(tse)
     mat <- as.matrix(assay(tse, "counts"))
     # sort.rows and sort.cols override sort.method
     p <- plotHeatmap(
@@ -376,4 +398,17 @@ test_that("plotHeatmap supports separate row and column sorting", {
             tse, assay.type = "counts", show.tree = TRUE,
             sort.cols = "Heatmap"),
         "patchwork")
+})
+
+test_that("plotHeatmap facets rows and columns by a variable with the same name", {
+    data(GlobalPatterns)
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
+    tse <- tse[1:6, 1:6]
+    rowData(tse)$cluster <- factor(rep(c("a", "b"), each = 3))
+    tse$cluster <- factor(rep(c("c", "d", "e"), each = 2))
+    p <- plotHeatmap(
+        tse, assay.type = "counts", row.var = "cluster", col.var = "cluster")
+    layout <- ggplot2::ggplot_build(p)$layout$layout
+    expect_setequal(unique(as.character(layout$cluster_row)), c("a", "b"))
+    expect_setequal(unique(as.character(layout$cluster_col)), c("c", "d", "e"))
 })

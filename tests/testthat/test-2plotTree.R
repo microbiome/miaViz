@@ -19,6 +19,8 @@ test_that("plot tree", {
     library(mia)
     data(GlobalPatterns)
     altExp(GlobalPatterns,"genus") <- agglomerateByRank(GlobalPatterns,"Genus", make_unique = FALSE)
+    # Agglomeration drops the tree; add one from the taxonomy
+    altExp(GlobalPatterns,"genus") <- addHierarchyTree(altExp(GlobalPatterns,"genus"))
     altExp(GlobalPatterns,"genus") <- addPerFeatureQC(altExp(GlobalPatterns,"genus"))
     rowData(altExp(GlobalPatterns,"genus"))$log_mean <- log(rowData(altExp(GlobalPatterns,"genus"))$mean)
     top_taxa <- getTop(altExp(GlobalPatterns,"genus"),

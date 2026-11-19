@@ -126,7 +126,8 @@ row tree is shown, rows follow the tree and only columns are sorted.
 data(GlobalPatterns)
 tse <- GlobalPatterns
 
-tse <- agglomerateByPrevalence(tse, rank = "Class")
+tse <- agglomerateByRank(tse, rank = "Class")
+tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
 
 # Plot raw counts
 plotHeatmap(
@@ -158,7 +159,9 @@ plotHeatmap(
     sort.method = "PCA_angle"
 )
 
-# Add phylogeny
+# Add a tree. Agglomeration drops the phylogenetic tree, so we add a tree
+# based on the taxonomy.
+tse <- addHierarchyTree(tse)
 plotHeatmap(
     tse,
     assay.type = "counts",

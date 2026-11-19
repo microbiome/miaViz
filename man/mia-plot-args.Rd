@@ -7,6 +7,27 @@
 To be able to fine tune plotting, several additional plotting arguments are
 available. These are described on this page.
 }
+\section{Colours}{
+
+
+Discrete variables are coloured with the palette set with the
+\code{ggplot2.discrete.colour} (or, for fills,
+\code{ggplot2.discrete.fill}) option, if it is set and has enough colours.
+As in \code{ggplot2}, the option can be a character vector of colours or a
+list of them. In a list, the first palette with enough colours is used, so
+the palettes can be given in order of preference.
+Otherwise, the Tableau palettes are used for up to 20 groups and viridis for
+more. Continuous variables are coloured with viridis.
+
+For example, the colour-blind-friendly Okabe-Ito palette can be used in all
+plots with:
+
+\preformatted{
+pal <- palette.colors(palette = "Okabe-Ito")[-1]
+options(ggplot2.discrete.colour = pal, ggplot2.discrete.fill = pal)
+}
+}
+
 \section{Tree plotting}{
 
 
