@@ -8,7 +8,10 @@ test_that("plot Loadings", {
   expect_error(plotLoadings(tse), "No reducedDims found.")
 
   # Run/calculate PCA
-  tse <- agglomerateByPrevalence(tse, rank = "Phylum", update.tree = TRUE)
+  tse <- agglomerateByRank(tse, rank = "Phylum", update.tree = TRUE)
+  tse <- subsetBy(
+    tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE,
+    update.tree = TRUE)
   tse <- transformAssay(tse, method = "clr", pseudocount = 1)
   tse <- scater::runPCA(tse, ncomponents = 5, assay.type = "clr")
 
@@ -85,7 +88,8 @@ test_that("plot Loadings", {
 
 test_that("plotLoadings sorts features in heatmap", {
     data("GlobalPatterns", package = "mia")
-    tse <- agglomerateByPrevalence(GlobalPatterns, rank = "Phylum")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
+    tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
     tse <- transformAssay(tse, method = "clr", pseudocount = 1)
     tse <- scater::runPCA(tse, ncomponents = 5, assay.type = "clr")
     loadings <- attr(reducedDim(tse, "PCA"), "rotation")

@@ -68,7 +68,10 @@
 #' tse <- GlobalPatterns
 #'
 #' # Calculate PCA
-#' tse <- agglomerateByPrevalence(tse, rank="Phylum", update.tree = TRUE)
+#' tse <- agglomerateByRank(tse, rank = "Phylum", update.tree = TRUE)
+#' tse <- subsetBy(
+#'     tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE,
+#'     update.tree = TRUE)
 #' tse <- transformAssay(tse, method = "clr", pseudocount = 1)
 #' tse <- runPCA(tse, ncomponents = 5, assay.type = "clr")
 #'
