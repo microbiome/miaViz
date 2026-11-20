@@ -121,6 +121,12 @@ rows and columns. The order is determined with
 \code{\link{getHeatmapOrder}} from the plotted values, i.e., after optional
 scaling and centering. Within facets, the same order is preserved. When the
 row tree is shown, rows follow the tree and only columns are sorted.
+
+Column labels are drawn vertically so that they stay readable when there
+are many samples. The returned object is a \code{ggplot}, so the labels can
+be changed afterwards, e.g., with
+\code{+ theme(axis.text.x = element_text(angle = 0))} or removed with
+\code{+ theme(axis.text.x = element_blank())}.
 }
 \examples{
 data(GlobalPatterns)

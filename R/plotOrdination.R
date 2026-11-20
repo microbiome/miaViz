@@ -116,7 +116,12 @@
 #'   \code{"fixed"})
 #'
 #'   \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
-#'   Defaults to the ordination component names.
+#'   Defaults to the ordination component names. If the reduced dimension
+#'   has no column names and its name starts with a known ordination method
+#'   followed by an underscore (e.g., \code{"MDS_bray"} or
+#'   \code{"NMDS_aitchison"}), the method and the component number are used,
+#'   e.g., \code{"MDS1"}. Otherwise, the name of the reduced dimension and the
+#'   component number are used, e.g., \code{"unifrac1"}.
 #'
 #'   \item \code{aspect.ratio}: \code{character scalar}. How to set the panel
 #'   aspect ratio. \code{"equal"} uses the same scale on both axes,
@@ -383,9 +388,13 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         !names(orig_attributes) %in% c("dim", "dimnames") ]
     # Subset the data to include specified columns to plot
     df <- df[, ncomponents]
-    # Add colnames if they are not present
+    # Add colnames if they are not present. The axis titles are then the
+    # ordination method and the component number, e.g., "MDS1" for
+    # "MDS_bray", instead of "MDS_bray1".
+    axis_titles <- colnames(df)
     if( is.null(colnames(df)) ){
         colnames(df) <- paste0(dimred, ncomponents)
+        axis_titles <- paste0(.get_ordination_method(dimred), ncomponents)
     }
     df <- df |> as.data.frame()
     # Take names of the columns that will be plotted
@@ -403,8 +412,8 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         colnames(rotation) <- colnames(df)
     }
 
-    xlab <- x_var
-    ylab <- y_var
+    xlab <- axis_titles[[1L]]
+    ylab <- axis_titles[[2L]]
     eigen_names <- c("eig", "percentVar")
     eigen <- NULL
     # Get the explained variance whenever it is available. It is used for the
@@ -768,6 +777,24 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     4 * 1.06 * min(sd(x), (r[[2]] - r[[1]])/1.34) * length(x)^(-0.2)
 }
 
+# Get the ordination method from the name of a reducedDim, for axis titles.
+# mia names reducedDims as <method>_<details>, e.g., "MDS_bray" or
+# "NMDS_aitchison". If the part before the first underscore is a known
+# ordination method, it is returned (e.g., "MDS"). Otherwise, the whole name
+# is returned so that arbitrary names (e.g., "my_mds") are kept as they are.
+.get_ordination_method <- function(dimred){
+    known <- c(
+        "PCA", "PCoA", "MDS", "NMDS", "UMAP", "TSNE", "tSNE", "RDA", "dbRDA",
+        "CCA", "DPCoA", "NMF", "LDA", "MOFA", "JointRPCA", "RPCA")
+    prefix <- sub("_.*$", "", dimred)
+    if( grepl("_", dimred, fixed = TRUE) &&
+            toupper(prefix) %in% toupper(known) ){
+        # Use the spelling from the list, e.g., "PCoA" for "pcoa"
+        return(known[ match(toupper(prefix), toupper(known)) ])
+    }
+    return(dimred)
+}
+
 # This function adjusts the theme of the plot
 .adjust_ordination_theme <- function(
         p, df,
@@ -799,7 +826,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         p <- p + labs(shape = attributes(df)[["shape.by"]])
     }
     if( !is.null(attributes(df)[["size.by"]]) ){
-        p <- p + labs(shape = attributes(df)[["size.by"]])
+        p <- p + labs(size = attributes(df)[["size.by"]])
     }
     if( !is.null(attributes(df)[["linetype.by"]]) ){
         p <- p + labs(linetype = attributes(df)[["linetype.by"]])
