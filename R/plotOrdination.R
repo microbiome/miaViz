@@ -116,7 +116,9 @@
 #'   \code{"fixed"})
 #'
 #'   \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
-#'   Defaults to the ordination component names.
+#'   Defaults to the ordination component names. If the reduced dimension
+#'   has no column names, the name of the reduced dimension and the component
+#'   number are used, e.g., \code{"MDS_bray 1"}.
 #'
 #'   \item \code{panel.by.eigen}: \code{logical scalar}. Whether to scale the
 #'   panel aspect ratio according to the eigenvalues of the ordination when
@@ -380,9 +382,13 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         !names(orig_attributes) %in% c("dim", "dimnames") ]
     # Subset the data to include specified columns to plot
     df <- df[, ncomponents]
-    # Add colnames if they are not present
+    # Add colnames if they are not present. The axis titles are then the name
+    # of the reducedDim and the component number separated by a space, e.g.,
+    # "MDS_bray 1" instead of "MDS_bray1".
+    axis_titles <- colnames(df)
     if( is.null(colnames(df)) ){
         colnames(df) <- paste0(dimred, ncomponents)
+        axis_titles <- paste(dimred, ncomponents)
     }
     df <- df |> as.data.frame()
     # Take names of the columns that will be plotted
@@ -400,8 +406,8 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         colnames(rotation) <- colnames(df)
     }
 
-    xlab <- x_var
-    ylab <- y_var
+    xlab <- axis_titles[[1L]]
+    ylab <- axis_titles[[2L]]
     eigen_names <- c("eig", "percentVar")
     eigen <- NULL
     if( add.expl.var && any(eigen_names %in% names(orig_attributes)) ){

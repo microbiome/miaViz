@@ -236,3 +236,26 @@ test_that("add.expl.var converts raw eigenvalues to percentages", {
     expect_match(p$labels$x, "(60%)", fixed = TRUE)
     expect_match(p$labels$y, "(20%)", fixed = TRUE)
 })
+
+test_that("axis titles separate reducedDim name and component number", {
+    tse <- .make_tse()
+    # Named components are used as they are
+    p <- plotOrdination(tse, "PCA")
+    expect_identical(p$labels$x, "PC1")
+    expect_identical(p$labels$y, "PC2")
+    # Without colnames, the name of the reducedDim and the component number
+    # are separated by a space
+    coords <- matrix(rnorm(ncol(tse) * 3), ncol = 3)
+    attr(coords, "eig") <- c(3, 1, 1)
+    reducedDim(tse, "MDS_bray") <- coords
+    p <- plotOrdination(tse, "MDS_bray", ncomponents = c(1, 3))
+    expect_identical(p$labels$x, "MDS_bray 1")
+    expect_identical(p$labels$y, "MDS_bray 3")
+    p <- plotOrdination(tse, "MDS_bray", add.expl.var = TRUE)
+    expect_identical(p$labels$x, "MDS_bray 1 (60%)")
+    expect_identical(p$labels$y, "MDS_bray 2 (20%)")
+    # User-specified titles are still used
+    p <- plotOrdination(tse, "MDS_bray", xlab = "Axis 1", ylab = "Axis 2")
+    expect_identical(p$labels$x, "Axis 1")
+    expect_identical(p$labels$y, "Axis 2")
+})

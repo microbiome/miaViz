@@ -100,7 +100,9 @@ plots. Passed to \code{ggplot2::facet_wrap()}. (Default:
 \code{"fixed"})
 
 \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
-Defaults to the ordination component names.
+Defaults to the ordination component names. If the reduced dimension
+has no column names, the name of the reduced dimension and the component
+number are used, e.g., \code{"MDS_bray 1"}.
 
 \item \code{panel.by.eigen}: \code{logical scalar}. Whether to scale the
 panel aspect ratio according to the eigenvalues of the ordination when
