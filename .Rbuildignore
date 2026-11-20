@@ -10,3 +10,4 @@ inst/extras/
 ^doc$
 ^Meta$
 ^\.Rprofile$
+^pkgdown$
