@@ -115,3 +115,57 @@ test_that("plotLoadings sorts features in heatmap", {
     expect_error(
         plotLoadings(tse, "PCA", layout = "heatmap", sort.method = mean))
 })
+
+test_that("plotLoadings uses readable component names and titles", {
+    set.seed(1)
+    mat <- matrix(rnorm(60), 20, 3)
+    rownames(mat) <- paste0("taxon", seq_len(nrow(mat)))
+    # Components without names are labelled "Component 1", ...
+    p <- plotLoadings(mat, ncomponents = 2)
+    expect_identical(levels(p$data[["PC"]]), c("Component 1", "Component 2"))
+    # The same applies to the default names "V1", "V2", ...
+    colnames(mat) <- c("V1", "V2", "V3")
+    p <- plotLoadings(mat, ncomponents = 3)
+    expect_identical(
+        levels(p$data[["PC"]]), c("Component 1", "Component 2", "Component 3"))
+    # Other names are kept and components are in their original order
+    colnames(mat) <- c("PC10", "PC2", "PC1")
+    p <- plotLoadings(mat, ncomponents = 3)
+    expect_identical(levels(p$data[["PC"]]), c("PC10", "PC2", "PC1"))
+    # Sorting by a component still uses the original names
+    colnames(mat) <- c("V1", "V2", "V3")
+    p <- plotLoadings(mat, layout = "heatmap", ncomponents = 2,
+        sort.method = "V2")
+    expect_identical(
+        levels(p$data[["Feature"]]),
+        rownames(mat)[order(mat[, "V2"], decreasing = TRUE)])
+    expect_identical(levels(p$data[["PC"]]), c("Component 1", "Component 2"))
+    expect_identical(p$labels$fill, "Loading")
+    # Axis titles
+    p <- plotLoadings(mat, ncomponents = 2)
+    expect_identical(p$labels$x, "Loading (absolute value)")
+    expect_null(p$labels$y)
+    p <- plotLoadings(mat, ncomponents = 2, absolute.scale = FALSE)
+    expect_identical(p$labels$x, "Loading")
+})
+
+test_that("plotLoadings omits the sign legend when all signs are equal", {
+    set.seed(1)
+    mat <- matrix(rnorm(40), 20, 2)
+    rownames(mat) <- paste0("taxon", seq_len(nrow(mat)))
+    # Both signs: legend is shown
+    p <- plotLoadings(mat, ncomponents = 2, n = 20)
+    expect_false(is.null(ggplot2::get_guide_data(p, "colour")))
+    p <- plotLoadings(mat, layout = "barplot", ncomponents = 2, n = 20)
+    expect_false(is.null(ggplot2::get_guide_data(p, "fill")))
+    # Only positive loadings: legend is omitted
+    mat <- abs(mat)
+    p <- plotLoadings(mat, ncomponents = 2)
+    expect_null(ggplot2::get_guide_data(p, "colour"))
+    p <- plotLoadings(mat, layout = "barplot", ncomponents = 2)
+    expect_null(ggplot2::get_guide_data(p, "fill"))
+    # The user can add the legend back
+    p <- plotLoadings(mat, ncomponents = 2) +
+        ggplot2::guides(colour = "legend")
+    expect_false(is.null(ggplot2::get_guide_data(p, "colour")))
+})

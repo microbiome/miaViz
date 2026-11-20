@@ -542,7 +542,7 @@ test_that("loadings are plotted per layer with plotLoadings", {
     # n is capped by the number of features in a layer
     p <- plotJointRPCALoadings(tse, "JointRPCA", n = 3, ncomponents = 2)
     expect_equal(nrow(p$data), 2 * 3)
-    expect_equal(sort(unique(p$data$PC)), c("PC1", "PC2"))
+    expect_equal(sort(unique(as.character(p$data$PC))), c("PC1", "PC2"))
     expect_no_error(plotJointRPCALoadings(tse, "JointRPCA", n = 100))
     #
     expect_error(
