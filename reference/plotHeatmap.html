@@ -20,7 +20,7 @@ samples as columns."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/a
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.23</span>
       </span>
     </div>
 
@@ -191,6 +191,11 @@ rows and columns. The order is determined with
 <code><a href="getHeatmapOrder.html">getHeatmapOrder</a></code> from the plotted values, i.e., after optional
 scaling and centering. Within facets, the same order is preserved. When the
 row tree is shown, rows follow the tree and only columns are sorted.</p>
+<p>Column labels are drawn vertically so that they stay readable when there
+are many samples. The returned object is a <code>ggplot</code>, so the labels can
+be changed afterwards, e.g., with
+<code>+ theme(axis.text.x = element_text(angle = 0))</code> or removed with
+<code>+ theme(axis.text.x = element_blank())</code>.</p>
     </div>
     <div id="see-also">
     <h2>See also</h2>

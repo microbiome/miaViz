@@ -19,7 +19,7 @@ A tree from rowTree can be added to heatmap layout."><!-- mathjax --><script src
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.23</span>
       </span>
     </div>
 
@@ -150,6 +150,14 @@ Inspired by the <code>plotASVcircular</code> method using <code>phyloseq</code>.
 <code>TreeSummarizedExperiment</code> object is expected to have
 content in <code>reducedDim</code> slot calculated with standardized methods from
 <code>mia</code> or <code>scater</code> package.</p>
+<p>The components are shown with the column names of the loadings matrix. If
+the matrix has no column names, or it has the default names <code>"V1"</code>,
+<code>"V2"</code>, ..., the components are labelled <code>"Component 1"</code>,
+<code>"Component 2"</code>, ... In barplot and lollipop layouts, the legend
+showing the sign of the loadings is omitted when all the loadings have the
+same sign; it can be shown with, e.g.,
+<code>+ guides(colour = "legend")</code> (lollipop) or
+<code>+ guides(fill = "legend")</code> (barplot).</p>
     </div>
 
     <div id="ref-examples">

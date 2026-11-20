@@ -23,7 +23,7 @@ estimates can be added."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.22</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.23</span>
       </span>
     </div>
 
@@ -145,7 +145,12 @@ percentage of explained variance to the axis labels when available.
 plots. Passed to <code><a href="https://ggplot2.tidyverse.org/reference/facet_wrap.html" class="external-link">ggplot2::facet_wrap()</a></code>. (Default:
 <code>"fixed"</code>)</p></li>
 <li><p><code>xlab</code>, <code>ylab</code>: <code>character scalar</code>. Axis labels.
-Defaults to the ordination component names.</p></li>
+Defaults to the ordination component names. If the reduced dimension
+has no column names and its name starts with a known ordination method
+followed by an underscore (e.g., <code>"MDS_bray"</code> or
+<code>"NMDS_aitchison"</code>), the method and the component number are used,
+e.g., <code>"MDS1"</code>. Otherwise, the name of the reduced dimension and the
+component number are used, e.g., <code>"unifrac1"</code>.</p></li>
 <li><p><code>aspect.ratio</code>: <code>character scalar</code>. How to set the panel
 aspect ratio. <code>"equal"</code> uses the same scale on both axes,
 <code>"eigen"</code> makes the panel height relative to its width equal to the
