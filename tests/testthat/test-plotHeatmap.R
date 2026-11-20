@@ -412,3 +412,24 @@ test_that("plotHeatmap facets rows and columns by a variable with the same name"
     expect_setequal(unique(as.character(layout$cluster_row)), c("a", "b"))
     expect_setequal(unique(as.character(layout$cluster_col)), c("c", "d", "e"))
 })
+
+test_that("plotHeatmap and plotDissimilarity legend title can be set with labs()", {
+    fill_title <- function(p){
+        ggplot2::ggplot_build(p)$plot$guides$get_params("fill")$title
+    }
+    data(GlobalPatterns)
+    tse <- GlobalPatterns[1:10, 1:6]
+    # The default title is the assay name
+    p <- plotHeatmap(tse, assay.type = "counts")
+    expect_identical(fill_title(p), "counts")
+    expect_identical(
+        fill_title(p + ggplot2::labs(fill = "Abundance")), "Abundance")
+    p <- plotHeatmap(tse, assay.type = "counts", scale = TRUE)
+    expect_identical(
+        fill_title(p + ggplot2::labs(fill = "Abundance")), "Abundance")
+    # plotDissimilarity uses the same code
+    tse <- addDissimilarity(GlobalPatterns[1:50, 1:6], method = "bray")
+    p <- plotDissimilarity(tse, "bray")
+    expect_identical(fill_title(p), "Dissimilarity")
+    expect_identical(fill_title(p + ggplot2::labs(fill = "Bray")), "Bray")
+})

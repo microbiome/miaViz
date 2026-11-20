@@ -431,7 +431,7 @@ setMethod(
 
 # Create the base heatmap.
 #' @importFrom ggplot2 aes element_rect element_text geom_tile ggplot labs
-#'     scale_fill_gradient2 theme theme_minimal
+#'     scale_fill_gradient2 theme theme_minimal waiver
 .plot_heatmap <- function(
         df,
         fill,
@@ -470,18 +470,20 @@ setMethod(
             )
         )
 
-    # Remove axis titles
+    # Remove axis titles. The legend title is set with labs() rather than as
+    # the scale name, so that it can be overridden with labs(fill = ...).
     p <- p +
         labs(
             x = NULL,
-            y = NULL
+            y = NULL,
+            fill = fill
         )
 
     # Apply the fill scale
     p <- .resolve_heatmap_scale(
         p = p,
         values = df[[fill]],
-        name = fill,
+        name = waiver(),
         scale = scale
     )
 
