@@ -1348,7 +1348,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         p <- p + labs(shape = attributes(df)[["shape.by"]])
     }
     if( !is.null(attributes(df)[["size.by"]]) ){
-        p <- p + labs(shape = attributes(df)[["size.by"]])
+        p <- p + labs(size = attributes(df)[["size.by"]])
     }
 
     # Adjust colors

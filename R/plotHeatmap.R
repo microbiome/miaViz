@@ -33,6 +33,12 @@
 #' scaling and centering. Within facets, the same order is preserved. When the
 #' row tree is shown, rows follow the tree and only columns are sorted.
 #'
+#' Column labels are drawn vertically so that they stay readable when there
+#' are many samples. The returned object is a \code{ggplot}, so the labels can
+#' be changed afterwards, e.g., with
+#' \code{+ theme(axis.text.x = element_text(angle = 0))} or removed with
+#' \code{+ theme(axis.text.x = element_blank())}.
+#'
 #' @return
 #' A \code{ggplot2} object. If \code{show.tree = TRUE}, the returned object is
 #' a combined \code{patchwork} object containing the row tree and the heatmap.
@@ -467,6 +473,14 @@ setMethod(
             strip.text = element_text(
                 face = "bold",
                 colour = "black"
+            ),
+            # Column (sample) labels are drawn vertically so that they do not
+            # overlap when there are many columns. This can be overridden by
+            # adding theme(axis.text.x = ...) to the returned plot.
+            axis.text.x = element_text(
+                angle = 90,
+                hjust = 1,
+                vjust = 0.5
             )
         )
 
@@ -760,8 +774,7 @@ setMethod("plotDissimilarity", signature = c(x = "SummarizedExperiment"),
 
 # Heatmap, optionally with rows and/or columns split by sample variables
 .plot_dissimilarity <- function(df, row.var = NULL, col.var = NULL, ...){
-    p <- .plot_heatmap(df, fill = "Dissimilarity") +
-        theme(axis.text.x = element_text(angle = 90, hjust = 1))
+    p <- .plot_heatmap(df, fill = "Dissimilarity")
     if( !is.null(row.var) || !is.null(col.var) ){
         p <- .resolve_heatmap_facets(
             p, row.var = row.var, col.var = col.var, ...)
