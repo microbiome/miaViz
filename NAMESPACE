@@ -221,6 +221,7 @@ importFrom(patchwork,
 importFrom(rlang,
   "!!",
   ":=",
+  expr,
   sym
 )
 importFrom(scales,
