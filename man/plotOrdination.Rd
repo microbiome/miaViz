@@ -102,9 +102,12 @@ plots. Passed to \code{ggplot2::facet_wrap()}. (Default:
 \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
 Defaults to the ordination component names.
 
-\item \code{panel.by.eigen}: \code{logical scalar}. Whether to scale the
-panel aspect ratio according to the eigenvalues of the ordination when
-available. (Default: \code{TRUE})
+\item \code{aspect.ratio}: \code{character scalar}. How to set the panel
+aspect ratio. \code{"equal"} uses the same scale on both axes,
+\code{"eigen"} makes the panel height relative to its width equal to the
+ratio of the explained variances of the plotted components (when
+available), and \code{"free"} leaves the aspect ratio unset.
+(Default: \code{"equal"})
 
 \item \code{point.shape}: Shape used for points.
 (Default: \code{19})
