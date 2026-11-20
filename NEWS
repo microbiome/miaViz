@@ -73,3 +73,4 @@ Changes in version 1.21.x
 + plotBoxplot: works when a variable is named "x", "y" or "df"; variable names that clash with internal columns (e.g. "x_point") give an error instead of being silently overwritten (#239) (2026-11-20)
 + plotRDA, plotCCA: samples excluded from the ordination (e.g. na.action = na.exclude) are not plotted, so they no longer add an empty NA entry to the legends (#260) (2026-11-20)
 + plotBoxplot: outlier.size, outlier.colour, outlier.alpha and outlier.shape style the boxplot outliers shown with add.points = FALSE (#227) (2026-11-20)
++ plotJointRPCACovariance: column labels are drawn vertically, as in plotHeatmap, instead of at 45 degrees where long feature names overlapped (2026-11-21)
