@@ -129,6 +129,15 @@ layer. (Default: \code{0.5})
 \item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
 By default, it is calculated based so that the width matches with the
 width of boxes.
+
+\item \code{outlier.size}, \code{outlier.colour},
+\code{outlier.alpha}, \code{outlier.shape}: Size, colour, transparency
+and shape of the outlier points of the boxplot layer, passed to
+\code{\link[ggplot2:geom_boxplot]{geom_boxplot}}. Outliers are drawn
+only when \code{add.points = FALSE}; otherwise all observations are
+already shown as points. If \code{NULL}, \code{ggplot2} defaults are
+used, and the shape defaults to \code{point.shape}.
+(Default: \code{NULL})
 }}
 
 \item{assay.type}{\code{NULL} or \code{character scalar}. Specifies the
