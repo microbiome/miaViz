@@ -95,6 +95,7 @@ importFrom(S4Vectors,
   unfactor
 )
 importFrom(SingleCellExperiment,
+  "reducedDim<-",
   reducedDim,
   reducedDimNames,
   reducedDims
@@ -189,7 +190,8 @@ importFrom(ggplot2,
   theme,
   theme_bw,
   theme_classic,
-  theme_minimal
+  theme_minimal,
+  waiver
 )
 importFrom(ggrepel,
   geom_label_repel,
@@ -220,6 +222,7 @@ importFrom(patchwork,
 importFrom(rlang,
   "!!",
   ":=",
+  expr,
   sym
 )
 importFrom(scales,
