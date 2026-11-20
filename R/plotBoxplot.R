@@ -364,6 +364,21 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         col = length(c(col.var, assay.type))>0
     )
     temp <- .check_metadata_variable(tse, pair.by, col = TRUE)
+    # The plotting data gets internal columns. Variables with the same name
+    # would be overwritten.
+    reserved <- c(
+        "x_point", "y_point",
+        if( is.null(x) ) "x_axis",
+        if( !is.null(x) && !is.null(group.by) ) "x_box",
+        if( isTRUE(add.change) ) "difference")
+    used <- c(assay.type, row.var, col.var, x, group.by, fill.by, colour.by,
+        size.by, shape.by, facet.by, pair.by)
+    if( any(used %in% reserved) ){
+        stop("Variable name(s) ",
+            paste0("'", intersect(used, reserved), "'", collapse = ", "),
+            " reserved for internal use. Please rename the variable.",
+            call. = FALSE)
+    }
     # Check that pairing variables are correct
     if( !.is_a_bool(add.change) ){
         stop("'add.change' must be TRUE or FALSE.", call. = FALSE)
@@ -1094,10 +1109,9 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     #
     # Initialize the plot
     p <- ggplot(df, aes(
-        x = .data[[attributes(df)[["x"]]]],
-        y = .data[[attributes(df)[["value"]]]],
-        group = if(!is.null(attributes(df)[["group.by"]]))
-            .data[[attributes(df)[["group.by"]]]]
+        x = .data[[!!attributes(df)[["x"]]]],
+        y = .data[[!!attributes(df)[["value"]]]],
+        group = !!.data_or_null(attributes(df)[["group.by"]])
     ))
     # Add boxplot
     if( add.box ){
@@ -1138,6 +1152,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     return(p)
 }
 
+# Map an aesthetic to a column, or to nothing if the column name is NULL. The
+# name is injected into the mapping so that it is not evaluated in the data,
+# where columns named, e.g., "x", "y" or "df" would mask the variables (#239).
+#' @importFrom rlang expr
+.data_or_null <- function(var){
+    if( is.null(var) ) NULL else expr(.data[[!!var]])
+}
+
 # This function adds boxplot layer
 .add_boxplot_layer <- function(
         p, df, add.points, box.alpha = 0.5, dodge.width = 0.8, box.width = 0.75,
@@ -1147,10 +1169,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     }
     p <- p + geom_boxplot(
         mapping = aes(
-            fill = if(!is.null(attributes(df)[["fill.by"]]))
-                .data[[attributes(df)[["fill.by"]]]],
-            group = if(!is.null(attributes(df)[["x.box"]]))
-                .data[[attributes(df)[["x.box"]]]]
+            fill = !!.data_or_null(attributes(df)[["fill.by"]]),
+            group = !!.data_or_null(attributes(df)[["x.box"]])
             ),
         # If user wants to add points, we do not add outliers as otherwise they
         # would be plotted twice.
@@ -1171,20 +1191,18 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         x = NULL, y = NULL,
         point.alpha = 0.65, point.size = 2, point.shape = 19L,
         point.colour = point.color, point.color = "grey70", ...){
-    # To disable "no visible binding for global variable" message in cmdcheck
-    x_point <- y_point <- NULL
+    # The column names are injected with !! so that they are not looked up
+    # from the data, where columns named, e.g., "x" or "y" would mask them.
+    x <- if( !is.null(x) ) x else "x_point"
+    y <- if( !is.null(y) ) y else "y_point"
     args <- list(
         mapping = aes(
-            x = if(!is.null(x)) .data[[x]] else x_point,
-            y = if(!is.null(y)) .data[[y]] else  y_point,
-            colour = if(!is.null(attributes(df)[["colour.by"]]))
-                .data[[attributes(df)[["colour.by"]]]],
-            shape = if(!is.null(attributes(df)[["shape.by"]]))
-                .data[[attributes(df)[["shape.by"]]]],
-            size = if(!is.null(attributes(df)[["size.by"]]))
-                .data[[attributes(df)[["size.by"]]]],
-            fill = if(!is.null(attributes(df)[["fill.by"]]))
-                .data[[attributes(df)[["fill.by"]]]]
+            x = .data[[!!x]],
+            y = .data[[!!y]],
+            colour = !!.data_or_null(attributes(df)[["colour.by"]]),
+            shape = !!.data_or_null(attributes(df)[["shape.by"]]),
+            size = !!.data_or_null(attributes(df)[["size.by"]]),
+            fill = !!.data_or_null(attributes(df)[["fill.by"]])
         ),
         shape = if(is.null(attributes(df)[["shape.by"]])) point.shape,
         alpha = point.alpha,
@@ -1206,9 +1224,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         mapping = aes(
             x = x_point,
             y = y_point,
-            group = .data[[attributes(df)[["pair.by"]]]],
-            color = if(!is.null(attributes(df)[["difference"]]))
-                .data[[attributes(df)[["difference"]]]]
+            group = .data[[!!attributes(df)[["pair.by"]]]],
+            color = !!.data_or_null(attributes(df)[["difference"]])
         ),
         alpha = line.alpha,
         linetype = linetype,
