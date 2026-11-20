@@ -101,8 +101,11 @@ plots. Passed to \code{ggplot2::facet_wrap()}. (Default:
 
 \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
 Defaults to the ordination component names. If the reduced dimension
-has no column names, the name of the reduced dimension and the component
-number are used, e.g., \code{"MDS_bray 1"}.
+has no column names and its name starts with a known ordination method
+followed by an underscore (e.g., \code{"MDS_bray"} or
+\code{"NMDS_aitchison"}), the method and the component number are used,
+e.g., \code{"MDS1"}. Otherwise, the name of the reduced dimension and the
+component number are used, e.g., \code{"unifrac1"}.
 
 \item \code{panel.by.eigen}: \code{logical scalar}. Whether to scale the
 panel aspect ratio according to the eigenvalues of the ordination when

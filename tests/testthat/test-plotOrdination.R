@@ -237,23 +237,33 @@ test_that("add.expl.var converts raw eigenvalues to percentages", {
     expect_match(p$labels$y, "(20%)", fixed = TRUE)
 })
 
-test_that("axis titles separate reducedDim name and component number", {
+test_that("axis titles use the ordination method and component number", {
     tse <- .make_tse()
     # Named components are used as they are
     p <- plotOrdination(tse, "PCA")
     expect_identical(p$labels$x, "PC1")
     expect_identical(p$labels$y, "PC2")
-    # Without colnames, the name of the reducedDim and the component number
-    # are separated by a space
+    # Without colnames, a "<method>_<details>" name gives "<method><number>"
     coords <- matrix(rnorm(ncol(tse) * 3), ncol = 3)
     attr(coords, "eig") <- c(3, 1, 1)
     reducedDim(tse, "MDS_bray") <- coords
     p <- plotOrdination(tse, "MDS_bray", ncomponents = c(1, 3))
-    expect_identical(p$labels$x, "MDS_bray 1")
-    expect_identical(p$labels$y, "MDS_bray 3")
+    expect_identical(p$labels$x, "MDS1")
+    expect_identical(p$labels$y, "MDS3")
     p <- plotOrdination(tse, "MDS_bray", add.expl.var = TRUE)
-    expect_identical(p$labels$x, "MDS_bray 1 (60%)")
-    expect_identical(p$labels$y, "MDS_bray 2 (20%)")
+    expect_identical(p$labels$x, "MDS1 (60%)")
+    expect_identical(p$labels$y, "MDS2 (20%)")
+    # The method spelling is normalised, and longer names work
+    reducedDim(tse, "pcoa_aitchison_pc1") <- coords
+    p <- plotOrdination(tse, "pcoa_aitchison_pc1")
+    expect_identical(p$labels$x, "PCoA1")
+    # Other names are used as they are, as before
+    reducedDim(tse, "unifrac") <- coords
+    p <- plotOrdination(tse, "unifrac")
+    expect_identical(p$labels$x, "unifrac1")
+    reducedDim(tse, "my_mds") <- coords
+    p <- plotOrdination(tse, "my_mds")
+    expect_identical(p$labels$x, "my_mds1")
     # User-specified titles are still used
     p <- plotOrdination(tse, "MDS_bray", xlab = "Axis 1", ylab = "Axis 2")
     expect_identical(p$labels$x, "Axis 1")
