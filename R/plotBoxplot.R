@@ -148,6 +148,15 @@
 #'   \item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
 #'   By default, it is calculated based so that the width matches with the
 #'   width of boxes.
+#'
+#'   \item \code{outlier.size}, \code{outlier.colour},
+#'   \code{outlier.alpha}, \code{outlier.shape}: Size, colour, transparency
+#'   and shape of the outlier points of the boxplot layer, passed to
+#'   \code{\link[ggplot2:geom_boxplot]{geom_boxplot}}. Outliers are drawn
+#'   only when \code{add.points = FALSE}; otherwise all observations are
+#'   already shown as points. If \code{NULL}, \code{ggplot2} defaults are
+#'   used, and the shape defaults to \code{point.shape}.
+#'   (Default: \code{NULL})
 #' }
 #'
 #' @examples
@@ -1079,11 +1088,38 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 # This function adds boxplot layer
 .add_boxplot_layer <- function(
         p, df, add.points, box.alpha = 0.5, dodge.width = 0.8, box.width = 0.75,
-        point.shape = 21, ...){
+        point.shape = 21, outlier.size = NULL,
+        outlier.colour = outlier.color, outlier.color = NULL,
+        outlier.alpha = NULL, outlier.shape = NULL, ...){
     if( !.is_a_numeric(box.width) ){
         stop("'box.width' must be numeric.", call. = FALSE)
     }
-    p <- p + geom_boxplot(
+    if( !(is.null(outlier.size) || .is_a_numeric(outlier.size)) ){
+        stop("'outlier.size' must be NULL or a single numeric value.",
+            call. = FALSE)
+    }
+    if( !(is.null(outlier.alpha) || .is_a_numeric(outlier.alpha)) ){
+        stop("'outlier.alpha' must be NULL or a single numeric value.",
+            call. = FALSE)
+    }
+    if( !(is.null(outlier.colour) || .is_a_string(outlier.colour)) ){
+        stop("'outlier.colour' must be NULL or a single character value.",
+            call. = FALSE)
+    }
+    if( !(is.null(outlier.shape) || length(outlier.shape) == 1L) ){
+        stop("'outlier.shape' must be NULL or a single value.",
+            call. = FALSE)
+    }
+    # Optional styling of outliers. Only the specified ones are passed so
+    # that ggplot2 defaults are used otherwise.
+    outlier_args <- list(
+        outlier.size = outlier.size, outlier.colour = outlier.colour,
+        outlier.alpha = outlier.alpha)
+    outlier_args <- outlier_args[ lengths(outlier_args) > 0L ]
+    if( is.null(outlier.shape) ){
+        outlier.shape <- point.shape
+    }
+    p <- p + do.call(geom_boxplot, c(list(
         mapping = aes(
             fill = if(!is.null(attributes(df)[["fill.by"]]))
                 .data[[attributes(df)[["fill.by"]]]],
@@ -1092,14 +1128,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             ),
         # If user wants to add points, we do not add outliers as otherwise they
         # would be plotted twice.
-        outlier.shape = if(add.points) NA else point.shape,
+        outlier.shape = if(add.points) NA else outlier.shape,
         alpha = box.alpha,
         # For boxplot, we can use ggplot's dodging functionality as these
         # positions are deterministic. For points, we set them manually with the
         # jitter.
         position = position_dodge(width = dodge.width),
         width = box.width
-    )
+    ), outlier_args))
     return(p)
 }
 

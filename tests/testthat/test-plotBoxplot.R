@@ -133,3 +133,36 @@ test_that("plotBoxplot draws paired lines in time order", {
     expect_equal(
         p$data[["difference"]][p$data[["subject"]] == "b"], c(0, 6, NA))
 })
+
+test_that("plotBoxplot passes outlier styling to the boxplot layer", {
+    tse <- makeTSE(nrow = 1L, ncol = 10L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["score"]] <- c(1:9, 100)
+    # Get outlier parameters of the boxplot layer (ggplot2 >= 4.0 stores them
+    # in outlier_gp)
+    .outlier <- function(p){
+        params <- p$layers[[1]]$geom_params
+        if( !is.null(params$outlier_gp) ) params$outlier_gp else list(
+            colour = params$outlier.colour, shape = params$outlier.shape,
+            size = params$outlier.size, alpha = params$outlier.alpha)
+    }
+
+    p <- plotBoxplot(
+        tse, col.var = "score", add.points = FALSE,
+        outlier.size = 5, outlier.colour = "red", outlier.alpha = 0.4,
+        outlier.shape = 17)
+    gp <- .outlier(p)
+    expect_equal(gp$size, 5)
+    expect_equal(gp$colour, "red")
+    expect_equal(gp$alpha, 0.4)
+    expect_equal(gp$shape, 17)
+    # Without outlier arguments, shape follows point.shape as before
+    p <- plotBoxplot(tse, col.var = "score", add.points = FALSE)
+    expect_equal(.outlier(p)$shape, 21)
+    # With points, outliers are not drawn twice
+    p <- plotBoxplot(tse, col.var = "score", outlier.size = 5)
+    expect_true(is.na(.outlier(p)$shape))
+    expect_error(
+        plotBoxplot(tse, col.var = "score", outlier.size = "big"),
+        "'outlier.size' must be")
+})
