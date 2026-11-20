@@ -143,3 +143,25 @@ test_that("plotBoxplot: size.by sets the title of the size legend", {
     expect_identical(p$labels$size, "depth")
     expect_null(p$labels$shape)
 })
+
+test_that("plotBoxplot works with variables named like internal objects", {
+    tse <- makeTSE(nrow = 10L, ncol = 10L)
+    tse[["group"]] <- rep(c("a", "b"), each = 5L)
+    tse[["col"]] <- rep(c("c", "d"), 5L)
+    vals <- as.numeric(seq_len(ncol(tse)))
+    # Columns named "x", "y" or "df" masked internal variables in aes() (#239)
+    for( nm in c("y", "x", "df") ){
+        tse[[nm]] <- vals
+        p <- plotBoxplot(
+            tse, col.var = nm, x = "group", colour.by = "col",
+            point.offset = "none")
+        pts <- layer_data(p, 2L)
+        expect_equal(sort(pts[["y"]]), vals)
+        expect_identical(length(unique(pts[["colour"]])), 2L)
+        tse[[nm]] <- NULL
+    }
+    # Variables that would be overwritten by internal columns give an error
+    tse[["x_point"]] <- vals
+    expect_error(
+        plotBoxplot(tse, col.var = "x_point", x = "group"), "reserved")
+})
