@@ -85,6 +85,6 @@ Suggests:
     vipor
 Roxygen: list(markdown = TRUE)
 VignetteBuilder: knitr
-URL: https://github.com/microbiome/miaViz
+URL: https://microbiome.github.io/miaViz/, https://github.com/microbiome/miaViz
 BugReports: https://github.com/microbiome/miaViz/issues
 Config/roxygen2/version: 8.1.1
