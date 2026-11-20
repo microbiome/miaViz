@@ -259,3 +259,10 @@ test_that("axis titles separate reducedDim name and component number", {
     expect_identical(p$labels$x, "Axis 1")
     expect_identical(p$labels$y, "Axis 2")
 })
+
+test_that("size.by sets the title of the size legend", {
+    tse <- .make_tse()
+    p <- plotOrdination(tse, "PCA", size.by = "numeric")
+    expect_identical(p$labels$size, "numeric")
+    expect_null(p$labels$shape)
+})

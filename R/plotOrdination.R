@@ -796,7 +796,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         p <- p + labs(shape = attributes(df)[["shape.by"]])
     }
     if( !is.null(attributes(df)[["size.by"]]) ){
-        p <- p + labs(shape = attributes(df)[["size.by"]])
+        p <- p + labs(size = attributes(df)[["size.by"]])
     }
     if( !is.null(attributes(df)[["linetype.by"]]) ){
         p <- p + labs(linetype = attributes(df)[["linetype.by"]])
