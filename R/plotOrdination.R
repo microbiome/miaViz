@@ -116,11 +116,19 @@
 #'   \code{"fixed"})
 #'
 #'   \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
-#'   Defaults to the ordination component names.
+#'   Defaults to the ordination component names. If the reduced dimension
+#'   has no column names and its name starts with a known ordination method
+#'   followed by an underscore (e.g., \code{"MDS_bray"} or
+#'   \code{"NMDS_aitchison"}), the method and the component number are used,
+#'   e.g., \code{"MDS1"}. Otherwise, the name of the reduced dimension and the
+#'   component number are used, e.g., \code{"unifrac1"}.
 #'
-#'   \item \code{panel.by.eigen}: \code{logical scalar}. Whether to scale the
-#'   panel aspect ratio according to the eigenvalues of the ordination when
-#'   available. (Default: \code{TRUE})
+#'   \item \code{aspect.ratio}: \code{character scalar}. How to set the panel
+#'   aspect ratio. \code{"equal"} uses the same scale on both axes,
+#'   \code{"eigen"} makes the panel height relative to its width equal to the
+#'   ratio of the explained variances of the plotted components (when
+#'   available), and \code{"free"} leaves the aspect ratio unset.
+#'   (Default: \code{"equal"})
 #'
 #'   \item \code{point.shape}: Shape used for points.
 #'   (Default: \code{19})
@@ -380,9 +388,13 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         !names(orig_attributes) %in% c("dim", "dimnames") ]
     # Subset the data to include specified columns to plot
     df <- df[, ncomponents]
-    # Add colnames if they are not present
+    # Add colnames if they are not present. The axis titles are then the
+    # ordination method and the component number, e.g., "MDS1" for
+    # "MDS_bray", instead of "MDS_bray1".
+    axis_titles <- colnames(df)
     if( is.null(colnames(df)) ){
         colnames(df) <- paste0(dimred, ncomponents)
+        axis_titles <- paste0(.get_ordination_method(dimred), ncomponents)
     }
     df <- df |> as.data.frame()
     # Take names of the columns that will be plotted
@@ -400,11 +412,13 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         colnames(rotation) <- colnames(df)
     }
 
-    xlab <- x_var
-    ylab <- y_var
+    xlab <- axis_titles[[1L]]
+    ylab <- axis_titles[[2L]]
     eigen_names <- c("eig", "percentVar")
     eigen <- NULL
-    if( add.expl.var && any(eigen_names %in% names(orig_attributes)) ){
+    # Get the explained variance whenever it is available. It is used for the
+    # axis labels (add.expl.var) and for aspect.ratio = "eigen".
+    if( any(eigen_names %in% names(orig_attributes)) ){
         eigen_names <- eigen_names[
             eigen_names %in% names(orig_attributes)][[1L]]
         eigen <- orig_attributes[[eigen_names]]
@@ -413,14 +427,18 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         if( eigen_names %in% c("eig") ){
             eigen <- eigen / sum(eigen[eigen > 0]) * 100
         }
+        # Keep only the plotted components
+        eigen <- eigen[ncomponents]
+    }
+    if( add.expl.var && !is.null(eigen) ){
         xlab <- paste0(
             xlab, " (",
-            round(eigen[ncomponents][[1L]], 1),
+            round(eigen[[1L]], 1),
             "%)"
         )
         ylab <- paste0(
             ylab, " (",
-            round(eigen[ncomponents][[2L]], 1),
+            round(eigen[[2L]], 1),
             "%)"
         )
     } else if( add.expl.var ){
@@ -759,6 +777,24 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     4 * 1.06 * min(sd(x), (r[[2]] - r[[1]])/1.34) * length(x)^(-0.2)
 }
 
+# Get the ordination method from the name of a reducedDim, for axis titles.
+# mia names reducedDims as <method>_<details>, e.g., "MDS_bray" or
+# "NMDS_aitchison". If the part before the first underscore is a known
+# ordination method, it is returned (e.g., "MDS"). Otherwise, the whole name
+# is returned so that arbitrary names (e.g., "my_mds") are kept as they are.
+.get_ordination_method <- function(dimred){
+    known <- c(
+        "PCA", "PCoA", "MDS", "NMDS", "UMAP", "TSNE", "tSNE", "RDA", "dbRDA",
+        "CCA", "DPCoA", "NMF", "LDA", "MOFA", "JointRPCA", "RPCA")
+    prefix <- sub("_.*$", "", dimred)
+    if( grepl("_", dimred, fixed = TRUE) &&
+            toupper(prefix) %in% toupper(known) ){
+        # Use the spelling from the list, e.g., "PCoA" for "pcoa"
+        return(known[ match(toupper(prefix), toupper(known)) ])
+    }
+    return(dimred)
+}
+
 # This function adjusts the theme of the plot
 .adjust_ordination_theme <- function(
         p, df,
@@ -790,7 +826,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         p <- p + labs(shape = attributes(df)[["shape.by"]])
     }
     if( !is.null(attributes(df)[["size.by"]]) ){
-        p <- p + labs(shape = attributes(df)[["size.by"]])
+        p <- p + labs(size = attributes(df)[["size.by"]])
     }
     if( !is.null(attributes(df)[["linetype.by"]]) ){
         p <- p + labs(linetype = attributes(df)[["linetype.by"]])
@@ -803,12 +839,18 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         # same physical length as one unit on the y-axis. This preserves
         # distances and angles in the ordination and avoids visual distortion.
         p <- p + coord_equal()
-    } else if ( aspect.ratio == "eigen" && "eigen" %in% attributes(df) ){
+    } else if( aspect.ratio == "eigen" ){
         # Make the panel dimensions proportional to the eigenvalues so that the
         # relative lengths of the axes reflect the variation explained by each
         # ordination axis.
         eigen <- attributes(df)[["eigen"]]
-        p <- p + theme(aspect.ratio = eigen[2] / eigen[1])
+        if( length(eigen) == 2L && all(is.finite(eigen)) && all(eigen > 0) ){
+            p <- p + theme(aspect.ratio = eigen[[2L]] / eigen[[1L]])
+        } else{
+            warning(
+                "No explained variance found from the data; ",
+                "'aspect.ratio' = \"eigen\" is ignored.", call. = FALSE)
+        }
     }
 
     # Adjust colors

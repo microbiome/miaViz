@@ -236,3 +236,66 @@ test_that("add.expl.var converts raw eigenvalues to percentages", {
     expect_match(p$labels$x, "(60%)", fixed = TRUE)
     expect_match(p$labels$y, "(20%)", fixed = TRUE)
 })
+
+test_that("axis titles use the ordination method and component number", {
+    tse <- .make_tse()
+    # Named components are used as they are
+    p <- plotOrdination(tse, "PCA")
+    expect_identical(p$labels$x, "PC1")
+    expect_identical(p$labels$y, "PC2")
+    # Without colnames, a "<method>_<details>" name gives "<method><number>"
+    coords <- matrix(rnorm(ncol(tse) * 3), ncol = 3)
+    attr(coords, "eig") <- c(3, 1, 1)
+    reducedDim(tse, "MDS_bray") <- coords
+    p <- plotOrdination(tse, "MDS_bray", ncomponents = c(1, 3))
+    expect_identical(p$labels$x, "MDS1")
+    expect_identical(p$labels$y, "MDS3")
+    p <- plotOrdination(tse, "MDS_bray", add.expl.var = TRUE)
+    expect_identical(p$labels$x, "MDS1 (60%)")
+    expect_identical(p$labels$y, "MDS2 (20%)")
+    # The method spelling is normalised, and longer names work
+    reducedDim(tse, "pcoa_aitchison_pc1") <- coords
+    p <- plotOrdination(tse, "pcoa_aitchison_pc1")
+    expect_identical(p$labels$x, "PCoA1")
+    # Other names are used as they are, as before
+    reducedDim(tse, "unifrac") <- coords
+    p <- plotOrdination(tse, "unifrac")
+    expect_identical(p$labels$x, "unifrac1")
+    reducedDim(tse, "my_mds") <- coords
+    p <- plotOrdination(tse, "my_mds")
+    expect_identical(p$labels$x, "my_mds1")
+    # User-specified titles are still used
+    p <- plotOrdination(tse, "MDS_bray", xlab = "Axis 1", ylab = "Axis 2")
+    expect_identical(p$labels$x, "Axis 1")
+    expect_identical(p$labels$y, "Axis 2")
+})
+
+test_that("size.by sets the title of the size legend", {
+    tse <- .make_tse()
+    p <- plotOrdination(tse, "PCA", size.by = "numeric")
+    expect_identical(p$labels$size, "numeric")
+    expect_null(p$labels$shape)
+})
+
+
+test_that("aspect.ratio = 'eigen' scales the panel by explained variance", {
+    tse <- .make_tse()
+    # Explained variance is 60%, 30% and 10%. The ratio is set also when the
+    # variance is not added to the axis labels.
+    p <- plotOrdination(tse, "PCA", aspect.ratio = "eigen")
+    expect_equal(p$theme$aspect.ratio, 30 / 60)
+    expect_false(grepl("%", p$labels$x, fixed = TRUE))
+    # The plotted components are used
+    p <- plotOrdination(
+        tse, "PCA", ncomponents = c(1, 3), aspect.ratio = "eigen")
+    expect_equal(p$theme$aspect.ratio, 10 / 60)
+    # Other choices do not set the theme aspect ratio
+    p <- plotOrdination(tse, "PCA", aspect.ratio = "free")
+    expect_null(p$theme$aspect.ratio)
+    # Without explained variance, the choice is ignored with a warning
+    attr(reducedDim(tse, "PCA"), "eig") <- NULL
+    expect_warning(
+        p <- plotOrdination(tse, "PCA", aspect.ratio = "eigen"),
+        "aspect.ratio")
+    expect_null(p$theme$aspect.ratio)
+})
