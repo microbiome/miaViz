@@ -818,6 +818,8 @@ setMethod("plotJointRPCALoadings",
         .require_package("shadowtext")
         p <- p + shadowtext::geom_shadowtext(
             aes(label = sprintf("%.0f%%", 100 * .data[[name]])))
+        # Only a few components, so their labels fit horizontally
+        p <- p + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
     } else{
         # Split features by layer
         p <- p + facet_grid(Layer ~ ., scales = "free", space = "free")

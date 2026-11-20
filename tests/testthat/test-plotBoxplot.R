@@ -134,6 +134,17 @@ test_that("plotBoxplot draws paired lines in time order", {
         p$data[["difference"]][p$data[["subject"]] == "b"], c(0, 6, NA))
 })
 
+test_that("plotBoxplot: size.by sets the title of the size legend", {
+    tse <- makeTSE(nrow = 10L, ncol = 10L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["value"]] <- rnorm(ncol(tse))
+    colData(tse)[["depth"]] <- seq_len(ncol(tse))
+    p <- plotBoxplot(tse, col.var = "value", size.by = "depth")
+    expect_identical(p$labels$size, "depth")
+    expect_null(p$labels$shape)
+})
+
+
 test_that("plotBoxplot passes outlier styling to the boxplot layer", {
     tse <- makeTSE(nrow = 1L, ncol = 10L)
     assayNames(tse) <- "counts"
