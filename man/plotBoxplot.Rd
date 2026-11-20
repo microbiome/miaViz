@@ -129,6 +129,10 @@ layer. (Default: \code{0.5})
 \item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
 By default, it is calculated based so that the width matches with the
 width of boxes.
+
+\item \code{step.increase}: \code{Numeric scalar}. Distance of
+significance brackets from the highest group they span, and between
+stacked brackets, as a fraction of the y axis range. (Default: \code{0.12})
 }}
 
 \item{assay.type}{\code{NULL} or \code{character scalar}. Specifies the

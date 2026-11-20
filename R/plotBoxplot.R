@@ -148,6 +148,10 @@
 #'   \item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
 #'   By default, it is calculated based so that the width matches with the
 #'   width of boxes.
+#'
+#'   \item \code{step.increase}: \code{Numeric scalar}. Distance of
+#'   significance brackets from the highest group they span, and between
+#'   stacked brackets, as a fraction of the y axis range. (Default: \code{0.12})
 #' }
 #'
 #' @examples
@@ -545,7 +549,7 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     # variable. Check that this is correct.
     if( !is.null(p.value) && length(c(group.by, fill.by)) > 0L &&
             !all(c(p.value[["group1"]], p.value[["group2"]]) %in%
-                df[[unique(fill.by, group.by)]]) ){
+                df[[c(fill.by, group.by)[[1L]]]]) ){
         stop("Groups in p.value[['group1']] and p.value[['group2']] ",
             "must match with 'fill.by'/'group.by'.", call. = FALSE)
     } else if( !is.null(p.value) && length(c(group.by, fill.by)) == 0L &&
@@ -935,7 +939,10 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 #' @importFrom dplyr group_by across all_of summarise rename mutate
 .add_p_value_position <- function(
         pvals, x, y, group.by, fill.by, facet.by, df, dodge.width = 0.8,
-        step.increase = 0.12, ...){
+        step.increase = 0.12, scales = "fixed", ...){
+    if( !.is_a_numeric(step.increase) ){
+        stop("'step.increase' must be a single numeric value.", call. = FALSE)
+    }
     if( any(!c("y.position", "xmin", "xmax") %in% colnames(pvals)) ){
         # We could use rstatix::add_xy_position for calculating position for
         # p-values. However, that approach would only work for p-values
@@ -951,41 +958,6 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         }
         grouping_vars <- grouping_vars[ !grouping_vars %in% comparison_vars ]
 
-        # Calculate y axis positions. They are defined based on maximum y axis
-        # values for each comparison. Each facet gets its own value.
-        ypos <- df |>
-            group_by(across(all_of(c(x, grouping_vars, comparison_vars)))) |>
-            summarise(
-                y.position = max(y_point, na.rm = TRUE) * (1+step.increase),
-                .groups = "drop")
-        # Add the positions to p values
-        pvals <- pvals |>
-            dplyr::left_join(ypos, by = setNames(
-                c(comparison_vars, grouping_vars), c("group1", grouping_vars))
-                ) |>
-            rename(y1 = y.position) |>
-            dplyr::left_join(ypos, by = setNames(
-                c(comparison_vars, grouping_vars), c("group2", grouping_vars))
-                ) |>
-            rename(y2 = y.position) |>
-            mutate(
-                y.position = pmax(y1, y2)
-            ) |>
-            dplyr::select(-y1, -y2)
-
-        # Avoid overlapping. Add some random deviation.
-        cols_to_group <- intersect(
-            c(x, grouping_vars, comparison_vars),
-            colnames(pvals)
-        )
-        pvals <- pvals |>
-            group_by(across(all_of(cols_to_group))) |>
-            mutate(
-                y.position = y.position +
-                    (seq_along(y.position) - 1) * 0.05 * max(y.position)
-            ) |>
-            ungroup()
-
         # Calculate x axis positions. They are defined based on x axis and
         # grouping. Each facet gets own positions.
         # Determine dodge grouping variable, if any
@@ -994,8 +966,21 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
         xpos <- .categorical_x_to_numeric(df, x, facet.by)
         # Apply dodge to get position of center of box
         xpos <- .apply_dodge(xpos, x, dodge_var, dodge.width)
-        # Add x position to p-balues
-        variables <- c(x, grouping_vars, comparison_vars, "x_point") |> unique()
+        # Get the center and the highest value of each box. The value is
+        # taken from both the original values and the plotted points as
+        # points might be jittered in y axis.
+        box_vars <- c(facet.by, x, grouping_vars, comparison_vars) |> unique()
+        boxes <- xpos |>
+            as.data.frame() |>
+            group_by(across(all_of(box_vars))) |>
+            summarise(
+                x_point = x_point[[1L]],
+                y_max = .max_finite(c(.data[[y]], .data[["y_point"]])),
+                .groups = "drop") |>
+            as.data.frame()
+        # Add x position to p-values
+        variables <- c(x, grouping_vars, comparison_vars, "x_point") |>
+            unique()
         xpos <- xpos[, variables] |> unique()
         pvals <- pvals |>
             dplyr::left_join(xpos, by = setNames(
@@ -1011,8 +996,76 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 xmax = pmax(x1, x2)
             ) |>
             dplyr::select(-x1, -x2)
+
+        # Calculate y axis positions. A bracket is placed above all the boxes
+        # it spans, i.e., also above the boxes between the compared groups.
+        # Brackets that overlap in x axis are stacked so that they do not
+        # cross each other. The distances are relative to the y axis range
+        # of the panel.
+        panel <- if( !is.null(facet.by) ) as.character(pvals[[facet.by]]) else
+            rep("all", nrow(pvals))
+        box_panel <- if( !is.null(facet.by) )
+            as.character(boxes[[facet.by]]) else rep("all", nrow(boxes))
+        # Each facet has its own y range if y axis is free. Otherwise, all
+        # facets share the same range.
+        free_y <- scales %in% c("free", "free_y")
+        y_vals <- c(df[[y]], df[["y_point"]])
+        y_panel <- if( !is.null(facet.by) && free_y )
+            rep(as.character(df[[facet.by]]), 2L) else
+            rep("all", length(y_vals))
+        y.position <- rep(NA_real_, nrow(pvals))
+        for( pan in unique(panel) ){
+            ind <- which(panel == pan)
+            vals <- y_vals[ y_panel == (if(free_y) pan else "all") ]
+            vals <- vals[ is.finite(vals) ]
+            y_range <- if( length(vals) > 0L ) diff(range(vals)) else 0
+            # If all the values are equal, use the value itself as a scale.
+            if( y_range == 0 ){
+                y_range <- if( length(vals) > 0L && vals[[1L]] != 0 )
+                    abs(vals[[1L]]) else 1
+            }
+            step <- step.increase * y_range
+            panel_boxes <- boxes[box_panel == pan, , drop = FALSE]
+            # Get the highest value among the boxes that each bracket spans
+            base <- vapply(ind, function(i){
+                spanned <- panel_boxes[["x_point"]] >=
+                    pvals[["xmin"]][[i]] - 1e-8 &
+                    panel_boxes[["x_point"]] <= pvals[["xmax"]][[i]] + 1e-8
+                .max_finite(panel_boxes[["y_max"]][spanned])
+            }, numeric(1L))
+            y.position[ind] <- .stack_brackets(
+                pvals[["xmin"]][ind], pvals[["xmax"]][ind], base + step, step)
+        }
+        pvals[["y.position"]] <- y.position
     }
     return(pvals)
+}
+
+# This function returns maximum of finite values or NA if there are none.
+.max_finite <- function(x){
+    x <- x[ is.finite(x) ]
+    res <- if( length(x) > 0L ) max(x) else NA_real_
+    return(res)
+}
+
+# This function stacks brackets so that brackets overlapping in x axis do not
+# cross each other. Brackets are placed from the narrowest to the widest; each
+# bracket is placed at its minimum height, or a step above the brackets it
+# overlaps with if they are higher.
+.stack_brackets <- function(xmin, xmax, base, step){
+    y <- rep(NA_real_, length(base))
+    ord <- order(xmax - xmin, xmin, xmax)
+    placed <- integer(0L)
+    for( i in ord ){
+        if( is.na(base[[i]]) || is.na(xmin[[i]]) || is.na(xmax[[i]]) ){
+            next
+        }
+        overlap <- placed[
+            xmin[placed] <= xmax[[i]] + 1e-8 & xmax[placed] >= xmin[[i]] - 1e-8]
+        y[[i]] <- max(c(base[[i]], y[overlap] + step))
+        placed <- c(placed, i)
+    }
+    return(y)
 }
 
 # This function is the main plotter function
@@ -1286,8 +1339,11 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 }
 
 # This function adds user-defined p-values to the plot
-.add_pvalues_to_boxplot <- function(p, df, ...){
+.add_pvalues_to_boxplot <- function(p, df, step.increase = NULL, ...){
     .require_package("ggpubr")
+    # step.increase is already used when the positions of brackets were
+    # calculated. That is why it is not passed to ggpubr, as otherwise it would
+    # be applied twice.
     # Add p-values
     p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], ...)
     return(p)

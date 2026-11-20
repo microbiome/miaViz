@@ -133,3 +133,77 @@ test_that("plotBoxplot draws paired lines in time order", {
     expect_equal(
         p$data[["difference"]][p$data[["subject"]] == "b"], c(0, 6, NA))
 })
+
+test_that("plotBoxplot places significance brackets above all spanned groups", {
+    skip_if_not_installed("ggpubr")
+    tse <- makeTSE(nrow = 1L, ncol = 12L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["grp"]] <- rep(c("A", "B", "C"), each = 4L)
+    colData(tse)[["batch"]] <- rep(c("b1", "b2"), 6L)
+    # The middle group is the highest
+    colData(tse)[["score"]] <- c(1:4, 11:14, 1:4)
+    pvals <- data.frame(
+        group1 = c("A", "A", "B"), group2 = c("B", "C", "C"),
+        p = c(0.01, 0.5, 0.01))
+
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none")
+    pos <- attributes(p$data)[["p.value"]]
+    ac <- pos[["group1"]] == "A" & pos[["group2"]] == "C"
+    # A-C bracket must be above B, even though A and C are low
+    expect_true(pos[["y.position"]][ac] > max(tse[["score"]]))
+    # All brackets overlap in x axis, so they must not be at the same height
+    expect_equal(length(unique(pos[["y.position"]])), 3L)
+    # The widest bracket is the top one
+    expect_equal(pos[["y.position"]][ac], max(pos[["y.position"]]))
+
+    # step.increase is applied only once; ggpubr does not shift the brackets
+    # further
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none", step.increase = 0.2)
+    pos <- attributes(p$data)[["p.value"]]
+    is_bracket <- vapply(
+        p$layers, function(l) inherits(l$geom, "GeomBracket"), logical(1L))
+    br <- layer_data(p, which(is_bracket))
+    horizontal <- br[["y"]] == br[["yend"]] & br[["x"]] != br[["xend"]]
+    expect_equal(
+        sort(unique(br[["y"]][horizontal])), sort(pos[["y.position"]]))
+    # The gap between stacked brackets follows step.increase
+    y_range <- diff(range(tse[["score"]]))
+    expect_equal(diff(sort(pos[["y.position"]])), rep(0.2 * y_range, 2L))
+
+    # With facets, each facet gets its own brackets
+    pvals_f <- rbind(
+        cbind(pvals, batch = "b1"), cbind(pvals, batch = "b2"))
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals_f,
+        facet.by = "batch", point.offset = "none")
+    pos <- attributes(p$data)[["p.value"]]
+    for( b in c("b1", "b2") ){
+        temp <- pos[pos[["batch"]] == b, ]
+        ac <- temp[["group1"]] == "A" & temp[["group2"]] == "C"
+        b_max <- max(tse[["score"]][tse[["grp"]] == "B" & tse[["batch"]] == b])
+        expect_true(temp[["y.position"]][ac] > b_max)
+        expect_equal(length(unique(temp[["y.position"]])), 3L)
+    }
+})
+
+test_that("plotBoxplot adds p-values when groups are given with group.by", {
+    skip_if_not_installed("ggpubr")
+    tse <- makeTSE(nrow = 1L, ncol = 12L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["grp"]] <- rep(c("A", "B"), each = 6L)
+    colData(tse)[["sex"]] <- rep(c("m", "f"), 6L)
+    colData(tse)[["score"]] <- seq_len(12L)
+    pvals <- data.frame(
+        grp = c("A", "B"), group1 = "f", group2 = "m", p = c(0.1, 0.2))
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", group.by = "sex", p.value = pvals,
+        point.offset = "none")
+    pos <- attributes(p$data)[["p.value"]]
+    expect_true(all(pos[["xmax"]] - pos[["xmin"]] > 0))
+    expect_true(all(pos[["y.position"]] > tapply(
+        tse[["score"]], tse[["grp"]], max)[pos[["grp"]]]))
+})
