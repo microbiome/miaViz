@@ -118,9 +118,12 @@
 #'   \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
 #'   Defaults to the ordination component names.
 #'
-#'   \item \code{panel.by.eigen}: \code{logical scalar}. Whether to scale the
-#'   panel aspect ratio according to the eigenvalues of the ordination when
-#'   available. (Default: \code{TRUE})
+#'   \item \code{aspect.ratio}: \code{character scalar}. How to set the panel
+#'   aspect ratio. \code{"equal"} uses the same scale on both axes,
+#'   \code{"eigen"} makes the panel height relative to its width equal to the
+#'   ratio of the explained variances of the plotted components (when
+#'   available), and \code{"free"} leaves the aspect ratio unset.
+#'   (Default: \code{"equal"})
 #'
 #'   \item \code{point.shape}: Shape used for points.
 #'   (Default: \code{19})
@@ -404,7 +407,9 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
     ylab <- y_var
     eigen_names <- c("eig", "percentVar")
     eigen <- NULL
-    if( add.expl.var && any(eigen_names %in% names(orig_attributes)) ){
+    # Get the explained variance whenever it is available. It is used for the
+    # axis labels (add.expl.var) and for aspect.ratio = "eigen".
+    if( any(eigen_names %in% names(orig_attributes)) ){
         eigen_names <- eigen_names[
             eigen_names %in% names(orig_attributes)][[1L]]
         eigen <- orig_attributes[[eigen_names]]
@@ -413,14 +418,18 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         if( eigen_names %in% c("eig") ){
             eigen <- eigen / sum(eigen[eigen > 0]) * 100
         }
+        # Keep only the plotted components
+        eigen <- eigen[ncomponents]
+    }
+    if( add.expl.var && !is.null(eigen) ){
         xlab <- paste0(
             xlab, " (",
-            round(eigen[ncomponents][[1L]], 1),
+            round(eigen[[1L]], 1),
             "%)"
         )
         ylab <- paste0(
             ylab, " (",
-            round(eigen[ncomponents][[2L]], 1),
+            round(eigen[[2L]], 1),
             "%)"
         )
     } else if( add.expl.var ){
@@ -803,12 +812,18 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
         # same physical length as one unit on the y-axis. This preserves
         # distances and angles in the ordination and avoids visual distortion.
         p <- p + coord_equal()
-    } else if ( aspect.ratio == "eigen" && "eigen" %in% attributes(df) ){
+    } else if( aspect.ratio == "eigen" ){
         # Make the panel dimensions proportional to the eigenvalues so that the
         # relative lengths of the axes reflect the variation explained by each
         # ordination axis.
         eigen <- attributes(df)[["eigen"]]
-        p <- p + theme(aspect.ratio = eigen[2] / eigen[1])
+        if( length(eigen) == 2L && all(is.finite(eigen)) && all(eigen > 0) ){
+            p <- p + theme(aspect.ratio = eigen[[2L]] / eigen[[1L]])
+        } else{
+            warning(
+                "No explained variance found from the data; ",
+                "'aspect.ratio' = \"eigen\" is ignored.", call. = FALSE)
+        }
     }
 
     # Adjust colors
