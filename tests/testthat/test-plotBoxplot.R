@@ -207,3 +207,52 @@ test_that("plotBoxplot adds p-values when groups are given with group.by", {
     expect_true(all(pos[["y.position"]] > tapply(
         tse[["score"]], tse[["grp"]], max)[pos[["grp"]]]))
 })
+
+test_that("plotBoxplot hide.ns drops brackets before placing them", {
+    skip_if_not_installed("ggpubr")
+    tse <- makeTSE(nrow = 1L, ncol = 12L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["grp"]] <- rep(c("A", "B", "C"), each = 4L)
+    colData(tse)[["score"]] <- c(1:4, 11:14, 1:4)
+    # A-C (the widest bracket) is not significant
+    pvals <- data.frame(
+        group1 = c("A", "A", "B"), group2 = c("B", "C", "C"),
+        p = c(0.01, 0.5, 0.01))
+    p_all <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none")
+    pos_all <- attributes(p_all$data)[["p.value"]]
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none", hide.ns = TRUE)
+    pos <- attributes(p$data)[["p.value"]]
+    # Only the significant comparisons are placed and drawn
+    expect_equal(nrow(pos), 2L)
+    expect_false(any(pos[["group1"]] == "A" & pos[["group2"]] == "C"))
+    # The hidden bracket leaves no gap: the shown brackets are not higher
+    # than the lowest levels used when all brackets are shown
+    expect_true(
+        max(pos[["y.position"]]) <= sort(pos_all[["y.position"]])[[2L]])
+    # Character hide.ns filters on the given column
+    pvals[["p.adj"]] <- c(0.01, 0.5, 0.2)
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none", label = "p.adj", hide.ns = "p.adj")
+    expect_equal(nrow(attributes(p$data)[["p.value"]]), 1L)
+    # Nothing significant: the plot is drawn without brackets
+    pvals[["p"]] <- 0.5
+    pvals[["p.adj"]] <- NULL
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none", hide.ns = TRUE)
+    expect_equal(nrow(attributes(p$data)[["p.value"]]), 0L)
+    expect_false(any(vapply(
+        p$layers, function(l) inherits(l$geom, c("GeomBracket", "GeomText")),
+        logical(1L))))
+    expect_no_warning(ggplot2::ggplot_build(p))
+    # Invalid values
+    expect_error(
+        plotBoxplot(tse, col.var = "score", x = "grp", p.value = pvals,
+            hide.ns = "q"),
+        "hide.ns")
+})

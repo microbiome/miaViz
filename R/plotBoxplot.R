@@ -152,6 +152,11 @@
 #'   \item \code{step.increase}: \code{Numeric scalar}. Distance of
 #'   significance brackets from the highest group they span, and between
 #'   stacked brackets, as a fraction of the y axis range. (Default: \code{0.12})
+#'
+#'   \item \code{hide.ns}: \code{Logical scalar} or \code{"p"} or
+#'   \code{"p.adj"}. Whether to hide non-significant comparisons, as in
+#'   \code{ggpubr::stat_pvalue_manual}. Hidden comparisons do not take space,
+#'   so the shown brackets are stacked without gaps. (Default: \code{FALSE})
 #' }
 #'
 #' @examples
@@ -939,10 +944,14 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
 #' @importFrom dplyr group_by across all_of summarise rename mutate
 .add_p_value_position <- function(
         pvals, x, y, group.by, fill.by, facet.by, df, dodge.width = 0.8,
-        step.increase = 0.12, scales = "fixed", ...){
+        step.increase = 0.12, scales = "fixed", hide.ns = FALSE, ...){
     if( !.is_a_numeric(step.increase) ){
         stop("'step.increase' must be a single numeric value.", call. = FALSE)
     }
+    # Drop non-significant comparisons before the brackets are placed, so that
+    # the shown brackets are stacked without gaps. ggpubr::stat_pvalue_manual
+    # would drop them only after the placement.
+    pvals <- .remove_ns_pvalues(pvals, hide.ns)
     if( any(!c("y.position", "xmin", "xmax") %in% colnames(pvals)) ){
         # We could use rstatix::add_xy_position for calculating position for
         # p-values. However, that approach would only work for p-values
@@ -1338,14 +1347,48 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
     return(p)
 }
 
+# Remove non-significant comparisons in the same way as the 'hide.ns'
+# argument of ggpubr::stat_pvalue_manual.
+.remove_ns_pvalues <- function(pvals, hide.ns = FALSE){
+    if( !(.is_a_bool(hide.ns) || (.is_a_string(hide.ns) &&
+            hide.ns %in% c("p", "p.adj"))) ){
+        stop("'hide.ns' must be TRUE, FALSE, \"p\" or \"p.adj\".",
+            call. = FALSE)
+    }
+    cols <- colnames(pvals)
+    keep <- rep(TRUE, nrow(pvals))
+    if( isTRUE(hide.ns) ){
+        if( "p.adj.signif" %in% cols ){
+            keep <- pvals[["p.adj.signif"]] != "ns"
+        } else if( "p.adj" %in% cols ){
+            keep <- pvals[["p.adj"]] <= 0.05
+        } else if( "p.signif" %in% cols ){
+            keep <- pvals[["p.signif"]] != "ns"
+        } else if( "p" %in% cols ){
+            keep <- pvals[["p"]] <= 0.05
+        }
+    } else if( identical(hide.ns, "p") && "p" %in% cols ){
+        keep <- pvals[["p"]] <= 0.05
+    } else if( identical(hide.ns, "p.adj") && "p.adj" %in% cols ){
+        keep <- pvals[["p.adj"]] <= 0.05
+    }
+    keep[ is.na(keep) ] <- FALSE
+    pvals[keep, , drop = FALSE]
+}
+
 # This function adds user-defined p-values to the plot
 .add_pvalues_to_boxplot <- function(p, df, step.increase = NULL, ...){
     .require_package("ggpubr")
     # step.increase is already used when the positions of brackets were
     # calculated. That is why it is not passed to ggpubr, as otherwise it would
     # be applied twice.
-    # Add p-values
-    p <- p + ggpubr::stat_pvalue_manual(attributes(df)[["p.value"]], ...)
+    # Add p-values. If all comparisons were hidden (hide.ns), there is
+    # nothing to draw.
+    pvals <- attributes(df)[["p.value"]]
+    if( nrow(pvals) == 0L ){
+        return(p)
+    }
+    p <- p + ggpubr::stat_pvalue_manual(pvals, ...)
     return(p)
 }
 
