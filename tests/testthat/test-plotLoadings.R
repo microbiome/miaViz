@@ -116,22 +116,40 @@ test_that("plotLoadings sorts features in heatmap", {
         plotLoadings(tse, "PCA", layout = "heatmap", sort.method = mean))
 })
 
+# Order in which the components are drawn: facets for barplot/lollipop, x axis
+# for heatmap
+.shown_components <- function(p){
+    b <- ggplot2::ggplot_build(p)
+    if( inherits(p$facet, "FacetNull") ){
+        return(b$layout$panel_params[[1]]$x$get_labels())
+    }
+    lay <- b$layout$layout
+    facet_col <- setdiff(
+        colnames(lay), c("PANEL", "ROW", "COL", "SCALE_X", "SCALE_Y"))
+    as.character(lay[order(lay$PANEL), facet_col[[1]]])
+}
+
 test_that("plotLoadings uses readable component names and titles", {
     set.seed(1)
     mat <- matrix(rnorm(60), 20, 3)
     rownames(mat) <- paste0("taxon", seq_len(nrow(mat)))
     # Components without names are labelled "Component 1", ...
     p <- plotLoadings(mat, ncomponents = 2)
-    expect_identical(levels(p$data[["PC"]]), c("Component 1", "Component 2"))
+    # Component names are returned as character, as before
+    expect_type(p$data[["PC"]], "character")
+    expect_identical(.shown_components(p), c("Component 1", "Component 2"))
     # The same applies to the default names "V1", "V2", ...
     colnames(mat) <- c("V1", "V2", "V3")
     p <- plotLoadings(mat, ncomponents = 3)
     expect_identical(
-        levels(p$data[["PC"]]), c("Component 1", "Component 2", "Component 3"))
+        .shown_components(p), c("Component 1", "Component 2", "Component 3"))
     # Other names are kept and components are in their original order
     colnames(mat) <- c("PC10", "PC2", "PC1")
     p <- plotLoadings(mat, ncomponents = 3)
-    expect_identical(levels(p$data[["PC"]]), c("PC10", "PC2", "PC1"))
+    expect_identical(.shown_components(p), c("PC10", "PC2", "PC1"))
+    p <- plotLoadings(mat, layout = "heatmap", ncomponents = 3)
+    expect_type(p$data[["PC"]], "character")
+    expect_identical(.shown_components(p), c("PC10", "PC2", "PC1"))
     # Sorting by a component still uses the original names
     colnames(mat) <- c("V1", "V2", "V3")
     p <- plotLoadings(mat, layout = "heatmap", ncomponents = 2,
@@ -139,7 +157,7 @@ test_that("plotLoadings uses readable component names and titles", {
     expect_identical(
         levels(p$data[["Feature"]]),
         rownames(mat)[order(mat[, "V2"], decreasing = TRUE)])
-    expect_identical(levels(p$data[["PC"]]), c("Component 1", "Component 2"))
+    expect_identical(.shown_components(p), c("Component 1", "Component 2"))
     expect_identical(p$labels$fill, "Loading")
     # Axis titles
     p <- plotLoadings(mat, ncomponents = 2)

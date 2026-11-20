@@ -286,11 +286,11 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     if( !is.numeric(res[["Value"]]) ){
         stop("Values must be numeric.", call. = FALSE)
     }
-    # Show components in their original order and with readable names. This
-    # is done after sorting the features so that 'sort.method' can still refer
-    # to the original column names.
-    res[["PC"]] <- factor(
-        res[["PC"]], levels = colnames(df), labels = component_labels)
+    # Give components readable names. This is done after sorting the features
+    # so that 'sort.method' can still refer to the original column names. The
+    # column stays character; the plot orders the components with
+    # .get_component_levels().
+    res[["PC"]] <- component_labels[ match(res[["PC"]], colnames(df)) ]
     # Calculate max and min values along with maximum absolute value and sign
     res <- .calculate_max_and_min_for_loadings(res)
     return(res)
@@ -395,11 +395,21 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     return(df)
 }
 
+# This function returns the components in the order they appear in the data.
+# The data is built component by component (or column by column for heatmap),
+# so the order of first appearance is the original order of the components.
+.get_component_levels <- function(df){
+    unique(as.character(df[["PC"]]))
+}
+
 # This functions plots a data.frame in barplot or heatmap layout.
 #' @importFrom ggplot2 geom_tile scale_fill_gradient2
 .plot_loadings <- function(df, layout, ...) {
     # To disable "no visible binding for global variable" message in cmdcheck
     PC <- Feature <- Value <- NULL
+    # Components are shown in their original order, not alphabetically
+    # (e.g. PC2 before PC10)
+    pc_levels <- .get_component_levels(df)
     # Initialize a plot
     plot_out <- ggplot(df)
     # Either create a heatmap or barplot/lollipop
@@ -407,7 +417,9 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         plot_out <- plot_out +
             # Create a heatmap
             geom_tile(
-                mapping = aes(x = PC, y = Feature, fill = Value),
+                mapping = aes(
+                    x = factor(PC, levels = pc_levels), y = Feature,
+                    fill = Value),
                 position = position_identity()
                 ) +
             # Adjust color scale
@@ -450,6 +462,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     #
     # Set the variables to use for aesthetics
     value_var <- if (absolute.scale) "Value_abs" else "Value"
+    # Components are shown in their original order, not alphabetically
+    pc_levels <- .get_component_levels(df)
     # Set the y aesthetics with reorder_within, making sure 'df' is referenced
     y_aes <- reorder_within(
         df$Feature,
@@ -518,7 +532,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     # Final wrangle, set facets and order the data
     plot_out <- plot_out +
         scale_y_reordered() +
-        facet_wrap(~PC, scales = "free") +
+        facet_wrap(vars(factor(PC, levels = pc_levels)), scales = "free") +
         labs(
             x = if( absolute.scale ) "Loading (absolute value)" else "Loading",
             y = NULL)
