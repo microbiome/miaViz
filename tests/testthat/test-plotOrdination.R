@@ -276,3 +276,26 @@ test_that("size.by sets the title of the size legend", {
     expect_identical(p$labels$size, "numeric")
     expect_null(p$labels$shape)
 })
+
+
+test_that("aspect.ratio = 'eigen' scales the panel by explained variance", {
+    tse <- .make_tse()
+    # Explained variance is 60%, 30% and 10%. The ratio is set also when the
+    # variance is not added to the axis labels.
+    p <- plotOrdination(tse, "PCA", aspect.ratio = "eigen")
+    expect_equal(p$theme$aspect.ratio, 30 / 60)
+    expect_false(grepl("%", p$labels$x, fixed = TRUE))
+    # The plotted components are used
+    p <- plotOrdination(
+        tse, "PCA", ncomponents = c(1, 3), aspect.ratio = "eigen")
+    expect_equal(p$theme$aspect.ratio, 10 / 60)
+    # Other choices do not set the theme aspect ratio
+    p <- plotOrdination(tse, "PCA", aspect.ratio = "free")
+    expect_null(p$theme$aspect.ratio)
+    # Without explained variance, the choice is ignored with a warning
+    attr(reducedDim(tse, "PCA"), "eig") <- NULL
+    expect_warning(
+        p <- plotOrdination(tse, "PCA", aspect.ratio = "eigen"),
+        "aspect.ratio")
+    expect_null(p$theme$aspect.ratio)
+})
