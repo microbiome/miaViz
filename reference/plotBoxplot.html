@@ -157,6 +157,14 @@ layer. (Default: <code>0.5</code>)</p></li>
 <li><p><code>bar.width</code>: <code>Numeric scalar</code>. Width of proportion bars.
 By default, it is calculated based so that the width matches with the
 width of boxes.</p></li>
+<li><p><code>outlier.size</code>, <code>outlier.colour</code>,
+<code>outlier.alpha</code>, <code>outlier.shape</code>: Size, colour, transparency
+and shape of the outlier points of the boxplot layer, passed to
+<code><a href="https://ggplot2.tidyverse.org/reference/geom_boxplot.html" class="external-link">geom_boxplot</a></code>. Outliers are drawn
+only when <code>add.points = FALSE</code>; otherwise all observations are
+already shown as points. If <code>NULL</code>, <code>ggplot2</code> defaults are
+used, and the shape defaults to <code>point.shape</code>.
+(Default: <code>NULL</code>)</p></li>
 </ul></dd>
 
 
