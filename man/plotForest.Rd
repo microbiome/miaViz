@@ -24,6 +24,8 @@ plotForest(x, ...)
   color.by = colour.by,
   colour.by = NULL,
   conf.level = 0.95,
+  df.var = NULL,
+  df = NULL,
   tree.name = "phylo",
   show.tree = TRUE,
   ...
@@ -43,7 +45,9 @@ plotForest(x, ...)
   facet.by = NULL,
   color.by = colour.by,
   colour.by = NULL,
-  conf.level = 0.95
+  conf.level = 0.95,
+  df.var = NULL,
+  df = NULL
 )
 
 \S4method{plotForest}{data.frame}(
@@ -59,7 +63,9 @@ plotForest(x, ...)
   facet.by = NULL,
   color.by = colour.by,
   colour.by = NULL,
-  conf.level = 0.95
+  conf.level = 0.95,
+  df.var = NULL,
+  df = NULL
 )
 }
 \arguments{
@@ -83,8 +89,11 @@ which corresponds to the upper CI boundaries. (Default: \code{"upper"})}
 
 \item{err.var}{\code{Character scalar}. Specifies the variable of x which
 corresponds to the standard errors associated with \code{effect.var}.
-When defined, it overwrites \code{ci.lower.var} and \code{ci.upper.var}.
-(Default: \code{"pval"})}
+When defined, it overwrites \code{ci.lower.var} and \code{ci.upper.var},
+and the confidence intervals are computed as
+\code{effect.var} ± quantile × \code{err.var}, where the quantile is taken
+from the t distribution with the degrees of freedom given by \code{df.var}
+or \code{df}. (Default: \code{NULL})}
 
 \item{pval.var}{\code{Character scalar}. Specifies the variable of x which
 corresponds to the p-values associated with \code{effect.var}.
@@ -116,6 +125,19 @@ which observations are coloured. (Default: \code{NULL})}
 the interval when inferred from \code{err.var}. It is ignored when
 \code{ci.lower.var} and \code{ci.upper.var} are defined.
 (Default: \code{0.95})}
+
+\item{df.var}{\code{Character scalar}. Specifies the variable of x which
+corresponds to the degrees of freedom of each estimate, used with
+\code{err.var}. Rows with missing or non-positive degrees of freedom get no
+confidence interval. Use \code{Inf} for estimates based on the normal
+distribution (e.g. Wald z tests of logistic regression).
+(Default: \code{NULL})}
+
+\item{df}{\code{Numeric scalar}. Degrees of freedom used for all estimates
+with \code{err.var}, when they are not given per row with \code{df.var}.
+If neither \code{df.var} nor \code{df} is given, the normal distribution
+is used (\code{df = Inf}) with a warning, which gives too narrow intervals
+for small samples. (Default: \code{NULL})}
 
 \item{tree.name}{\code{Character scalar}. Specifies a row/colTree from x.
 (Default: \code{"phylo"})}
@@ -160,11 +182,18 @@ maaslin3_out <- maaslin3(
 maaslin3_abund <- maaslin3_out$fit_data_abundance$results
 maaslin3_abund <- maaslin3_abund[!is.na(maaslin3_abund$coef), ]
 
+# Degrees of freedom of the linear model for each feature: the number of
+# samples with non-zero abundance minus the number of estimated
+# coefficients (including the intercept)
+n_coef <- 1 + ave(maaslin3_abund$coef, maaslin3_abund$feature, FUN = length)
+maaslin3_abund$df <- maaslin3_abund$N_not_zero - n_coef
+
 # Visualize abundance results
 plotForest(
     maaslin3_abund,
     effect.var = "coef",
     err.var = "stderr",
+    df.var = "df",
     pval.var = "qval_joint",
     id.var = "feature",
     label.by = c("CI", "P-Value"),
@@ -181,6 +210,7 @@ plotForest(
     tse,
     effect.var = "coef",
     err.var = "stderr",
+    df.var = "df",
     pval.var = "qval_joint",
     label.by = c("CI", "P-Value")
 )
@@ -188,6 +218,9 @@ plotForest(
 # Retrieve prevalence results
 maaslin3_prev <- maaslin3_out$fit_data_prevalence$results
 maaslin3_prev <- maaslin3_prev[!is.na(maaslin3_prev$coef), ]
+
+# Logistic regression uses Wald z tests: normal distribution (df = Inf)
+maaslin3_prev$df <- Inf
 
 # Combine abundance and prevalence results
 maaslin3_res <- rbind(maaslin3_abund, maaslin3_prev)
@@ -207,7 +240,8 @@ plotForest(
     label.by = c("CI", "P-Value"),
     order.by = "coef",
     facet.by = "association",
-    colour.by = "association"
+    colour.by = "association",
+    df.var = "df"
 )
 
 }
