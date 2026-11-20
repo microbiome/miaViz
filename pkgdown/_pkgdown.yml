@@ -1,5 +1,82 @@
+url: https://microbiome.github.io/miaViz/
+
 figures:
   dev: ragg::agg_png
   dpi: 300
   fig.width: 10
   fig.height: 7
+
+reference:
+- title: Abundance and prevalence
+  desc: Visualize the abundance, composition and prevalence of features.
+  contents:
+  - plotAbundance
+  - plotAbundanceDensity
+  - plotPrevalence
+
+- title: Distributions and metadata
+  desc: Plot the distribution of assay values, rowData or colData variables.
+  contents:
+  - plotBoxplot
+  - plotHistogram
+  - plotColTile
+
+- title: Ordination
+  desc: Visualize reduced dimensions, explained variance and feature loadings.
+  contents:
+  - plotOrdination
+  - plotCCA
+  - plotNMDS
+  - plotScree
+  - plotLoadings
+
+- title: Heatmaps
+  desc: Visualize assay values and dissimilarities as heatmaps.
+  contents:
+  - plotHeatmap
+  - plotDissimilarity
+  - getHeatmapOrder
+
+- title: Trees
+  desc: Plot row or column trees and enrich them with additional data.
+  contents:
+  - plotTree
+  - treeData
+
+- title: Networks and graphs
+  desc: Plot graph objects together with information from the data.
+  contents:
+  - plotGraph
+
+- title: Time series
+  desc: Visualize abundances over time or another series variable.
+  contents:
+  - plotSeries
+
+- title: Models and statistical results
+  desc: Visualize results from clustering, statistical tests and mediation analysis.
+  contents:
+  - plotDMN
+  - plotForest
+  - plotMediation
+
+- title: Multi-omics
+  desc: Visualize results from multi-omics integration.
+  contents:
+  - plotJointRPCA
+
+- title: Datasets
+  desc: Example data shipped with the package.
+  contents:
+  - mia-datasets
+
+- title: Package and shared arguments
+  desc: Package overview and arguments common to plotting functions.
+  contents:
+  - miaViz-package
+  - mia-plot-args
+
+- title: Deprecated functions
+  desc: Functions that will be removed in future releases.
+  contents:
+  - deprecate
