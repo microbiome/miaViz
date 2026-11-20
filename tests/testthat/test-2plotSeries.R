@@ -167,9 +167,25 @@ test_that("plotSeries draws one line per feature in rownames order", {
         colour.by = "rownames", linetype.by = "rownames",
         colour.lab = "Feature")
     b <- ggplot_build(p)
-    expect_equal(b@plot@scales$get_scales("colour")$get_limits(), rownames(tse))
+    expect_equal(b$plot$scales$get_scales("colour")$get_limits(), rownames(tse))
     expect_equal(
-        b@plot@scales$get_scales("linetype")$get_limits(), rownames(tse))
-    # colour.lab is used also for line type so that the legends are merged
-    expect_equal(p@guides$guides$linetype$params$title, "Feature")
+        b$plot$scales$get_scales("linetype")$get_limits(), rownames(tse))
+    # colour.lab is used also for line type so that the legends are merged.
+    # ($ works with both ggplot2 3.5 and 4.x)
+    expect_equal(p$guides$guides$linetype$params$title, "Feature")
+    # ... and for line width (size.by)
+    tse_small <- tse[1:3, ]
+    # (ggplot2 warns about size for a discrete variable, which is expected)
+    expect_warning(
+        p <- plotSeries(
+            tse_small, assay.type = "counts", time.col = "time",
+            colour.by = "rownames", size.by = "rownames",
+            colour.lab = "Feature"),
+        "discrete")
+    expect_equal(p$guides$guides$linewidth$params$title, "Feature")
+    # Without colour.lab, the variable name is kept as the title
+    p <- plotSeries(
+        tse_small, assay.type = "counts", time.col = "time",
+        colour.by = "rownames", linetype.by = "rownames")
+    expect_equal(p$guides$guides$linetype$params$title, "rownames")
 })
