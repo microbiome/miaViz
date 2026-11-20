@@ -100,7 +100,12 @@ plots. Passed to \code{ggplot2::facet_wrap()}. (Default:
 \code{"fixed"})
 
 \item \code{xlab}, \code{ylab}: \code{character scalar}. Axis labels.
-Defaults to the ordination component names.
+Defaults to the ordination component names. If the reduced dimension
+has no column names and its name starts with a known ordination method
+followed by an underscore (e.g., \code{"MDS_bray"} or
+\code{"NMDS_aitchison"}), the method and the component number are used,
+e.g., \code{"MDS1"}. Otherwise, the name of the reduced dimension and the
+component number are used, e.g., \code{"unifrac1"}.
 
 \item \code{aspect.ratio}: \code{character scalar}. How to set the panel
 aspect ratio. \code{"equal"} uses the same scale on both axes,

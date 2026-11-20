@@ -85,6 +85,15 @@ Inspired by the \code{plotASVcircular} method using \code{phyloseq}.
 \code{TreeSummarizedExperiment} object is expected to have
 content in \code{reducedDim} slot calculated with standardized methods from
 \code{mia} or \code{scater} package.
+
+The components are shown with the column names of the loadings matrix. If
+the matrix has no column names, or it has the default names \code{"V1"},
+\code{"V2"}, ..., the components are labelled \code{"Component 1"},
+\code{"Component 2"}, ... In barplot and lollipop layouts, the legend
+showing the sign of the loadings is omitted when all the loadings have the
+same sign; it can be shown with, e.g.,
+\code{+ guides(colour = "legend")} (lollipop) or
+\code{+ guides(fill = "legend")} (barplot).
 }
 \examples{
 
