@@ -412,3 +412,17 @@ test_that("plotHeatmap facets rows and columns by a variable with the same name"
     expect_setequal(unique(as.character(layout$cluster_row)), c("a", "b"))
     expect_setequal(unique(as.character(layout$cluster_col)), c("c", "d", "e"))
 })
+
+test_that("plotHeatmap draws column labels vertically and they can be overridden", {
+    data(GlobalPatterns)
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Phylum")[1:5, ]
+    p <- plotHeatmap(tse, assay.type = "counts")
+    expect_equal(p$theme$axis.text.x$angle, 90)
+    # The user can still change the labels with theme()
+    p <- p + ggplot2::theme(axis.text.x = ggplot2::element_text(angle = 0))
+    expect_equal(p$theme$axis.text.x$angle, 0)
+    # plotDissimilarity uses the same heatmap
+    tse <- addDissimilarity(tse, method = "bray", assay.type = "counts")
+    p <- plotDissimilarity(tse, "bray", sort.method = NULL)
+    expect_equal(p$theme$axis.text.x$angle, 90)
+})

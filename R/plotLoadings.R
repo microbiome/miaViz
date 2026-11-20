@@ -54,6 +54,15 @@
 #' content in \code{reducedDim} slot calculated with standardized methods from
 #' \code{mia} or \code{scater} package.
 #'
+#' The components are shown with the column names of the loadings matrix. If
+#' the matrix has no column names, or it has the default names \code{"V1"},
+#' \code{"V2"}, ..., the components are labelled \code{"Component 1"},
+#' \code{"Component 2"}, ... In barplot and lollipop layouts, the legend
+#' showing the sign of the loadings is omitted when all the loadings have the
+#' same sign; it can be shown with, e.g.,
+#' \code{+ guides(colour = "legend")} (lollipop) or
+#' \code{+ guides(fill = "legend")} (barplot).
+#'
 #' @return
 #' A \code{ggplot2} object.
 #'
@@ -254,6 +263,9 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
 #' @importFrom tidyr pivot_longer
 .get_loadings_plot_data <- function(
         df, layout, ncomponents, n = min(nrow(df), 10L), ...) {
+    # Get the names of the components shown in facets. If the matrix does not
+    # have proper names, components are named "Component 1", "Component 2", ...
+    component_labels <- .get_loadings_component_labels(df, ncomponents)
     # Transform into a dataframe
     df <- as.data.frame(df)
     # Keep only the number of components needed
@@ -274,9 +286,28 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     if( !is.numeric(res[["Value"]]) ){
         stop("Values must be numeric.", call. = FALSE)
     }
+    # Give components readable names. This is done after sorting the features
+    # so that 'sort.method' can still refer to the original column names. The
+    # column stays character; the plot orders the components with
+    # .get_component_levels().
+    res[["PC"]] <- component_labels[ match(res[["PC"]], colnames(df)) ]
     # Calculate max and min values along with maximum absolute value and sign
     res <- .calculate_max_and_min_for_loadings(res)
     return(res)
+}
+
+# This function returns the names of the components that are shown in the
+# plot. If the loadings matrix has no column names, or it has default names
+# "V1", "V2", ... that as.data.frame() gives, the components are named
+# "Component 1", "Component 2", ... Otherwise, the column names are used.
+.get_loadings_component_labels <- function(mat, ncomponents){
+    labels <- colnames(mat)
+    default_names <- paste0("V", seq_len(ncol(mat)))
+    if( is.null(labels) || identical(labels, default_names) ){
+        labels <- paste("Component", seq_len(ncol(mat)))
+    }
+    labels <- labels[seq_len(ncomponents)]
+    return(labels)
 }
 
 # This function subsets the data so that it selects top features that have the
@@ -364,11 +395,21 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     return(df)
 }
 
+# This function returns the components in the order they appear in the data.
+# The data is built component by component (or column by column for heatmap),
+# so the order of first appearance is the original order of the components.
+.get_component_levels <- function(df){
+    unique(as.character(df[["PC"]]))
+}
+
 # This functions plots a data.frame in barplot or heatmap layout.
 #' @importFrom ggplot2 geom_tile scale_fill_gradient2
 .plot_loadings <- function(df, layout, ...) {
     # To disable "no visible binding for global variable" message in cmdcheck
     PC <- Feature <- Value <- NULL
+    # Components are shown in their original order, not alphabetically
+    # (e.g. PC2 before PC10)
+    pc_levels <- .get_component_levels(df)
     # Initialize a plot
     plot_out <- ggplot(df)
     # Either create a heatmap or barplot/lollipop
@@ -376,14 +417,19 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         plot_out <- plot_out +
             # Create a heatmap
             geom_tile(
-                mapping = aes(x = PC, y = Feature, fill = Value),
+                mapping = aes(
+                    x = factor(PC, levels = pc_levels), y = Feature,
+                    fill = Value),
                 position = position_identity()
                 ) +
             # Adjust color scale
             scale_fill_gradient2(
                 limits = c(-max(abs(df$Value)), max(abs(df$Value))),
                 low = "darkblue", mid = "white", high = "darkred"
-                )
+                ) +
+            # Components and features are self-explanatory from the axis
+            # labels
+            labs(x = NULL, y = NULL, fill = "Loading")
     } else if( layout %in% c("barplot", "lollipop") ){
         plot_out <- .plot_bar_or_lollipop(plot_out, df, layout, ...)
     }
@@ -416,6 +462,8 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
     #
     # Set the variables to use for aesthetics
     value_var <- if (absolute.scale) "Value_abs" else "Value"
+    # Components are shown in their original order, not alphabetically
+    pc_levels <- .get_component_levels(df)
     # Set the y aesthetics with reorder_within, making sure 'df' is referenced
     y_aes <- reorder_within(
         df$Feature,
@@ -468,20 +516,26 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         scale_FUN <- if( layout == "barplot" ) scale_fill_manual else
             scale_color_manual
         # Currently the legend has title that shows the function call and the
-        # values shows + or -. Make the legend nicer.
+        # values shows + or -. Make the legend nicer. If all loadings have the
+        # same sign, the legend does not give any information, and it is
+        # not shown. It can be added back with guides().
+        n_signs <- length(unique(df[["Sign"]][ df[["Sign"]] != "" ]))
         plot_out <- plot_out +
             scale_FUN(
                 name = "Effect",
                 values = c("+" = "red", "-" = "blue"),
-                labels = c("+" = "positive", "-" = "negative")
+                labels = c("+" = "positive", "-" = "negative"),
+                guide = if( n_signs > 1L ) "legend" else "none"
             )
     }
 
     # Final wrangle, set facets and order the data
     plot_out <- plot_out +
         scale_y_reordered() +
-        facet_wrap(~PC, scales = "free") +
-        labs(x = "Value", y = "Feature")
+        facet_wrap(vars(factor(PC, levels = pc_levels)), scales = "free") +
+        labs(
+            x = if( absolute.scale ) "Loading (absolute value)" else "Loading",
+            y = NULL)
 
     return(plot_out)
 }
@@ -582,7 +636,7 @@ setMethod("plotLoadings", signature = c(x = "matrix"),
         scale_fill_gradient2(
             limits = c(-max_value, max_value),
             low = "darkslateblue", mid = "white", high = "darkred",
-            name = "Value"
+            name = "Loading"
         )
     return(plot_out)
 }
