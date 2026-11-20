@@ -67,6 +67,7 @@ Changes in version 1.21.x
 + The default discrete palette is the colour-blind-friendly Okabe-Ito palette (up to 8 groups) instead of Tableau; viridis is used for more groups (1.21.19, 2026-11-20)
 + plotRowTree, plotColTree: Added heatmap.by option for showing per-taxon values as a heatmap or rings next to the tree tips (1.21.20, 2026-11-20)
 + Removed the temporary Remotes entry for mia, as Bioconductor devel now has mia >= 1.21.31 (1.21.21, 2026-11-20)
++ plotOrdination: aspect.ratio = "eigen" now scales the panel by the explained variance of the plotted components (it previously had no effect); aspect.ratio is documented in place of the non-existent panel.by.eigen (1.21.22, 2026-11-20)
 + plotHeatmap, plotDissimilarity: labs(fill = ...) now overrides the legend title (#259) (2026-11-20)
 + plotBoxplot: works when a variable is named "x", "y" or "df"; variable names that clash with internal columns (e.g. "x_point") give an error instead of being silently overwritten (#239) (2026-11-20)
 + plotRDA, plotCCA: samples excluded from the ordination (e.g. na.action = na.exclude) are not plotted, so they no longer add an empty NA entry to the legends (#260) (2026-11-20)
