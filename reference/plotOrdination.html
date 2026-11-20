@@ -23,7 +23,7 @@ estimates can be added."><!-- mathjax --><script src="https://cdnjs.cloudflare.c
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.21</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.22</span>
       </span>
     </div>
 
@@ -146,9 +146,12 @@ plots. Passed to <code><a href="https://ggplot2.tidyverse.org/reference/facet_wr
 <code>"fixed"</code>)</p></li>
 <li><p><code>xlab</code>, <code>ylab</code>: <code>character scalar</code>. Axis labels.
 Defaults to the ordination component names.</p></li>
-<li><p><code>panel.by.eigen</code>: <code>logical scalar</code>. Whether to scale the
-panel aspect ratio according to the eigenvalues of the ordination when
-available. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>aspect.ratio</code>: <code>character scalar</code>. How to set the panel
+aspect ratio. <code>"equal"</code> uses the same scale on both axes,
+<code>"eigen"</code> makes the panel height relative to its width equal to the
+ratio of the explained variances of the plotted components (when
+available), and <code>"free"</code> leaves the aspect ratio unset.
+(Default: <code>"equal"</code>)</p></li>
 <li><p><code>point.shape</code>: Shape used for points.
 (Default: <code>19</code>)</p></li>
 <li><p><code>point.alpha</code>: <code>numeric scalar</code>. Transparency of points.
