@@ -184,6 +184,8 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
         # Get data for plotting
         plot_args <- list()
         plot_args[["vector_data"]] <- do.call(.get_rda_vector_data, args)
+        # Plot only the samples that were used in the ordination
+        x <- .drop_samples_excluded_from_rda(x, dimred)
         p <- plotOrdination(x, dimred = dimred, ...)
         # Create a final plot
         p <- .rda_plotter_vector(p, plot_args, ...)
@@ -192,6 +194,28 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
 )
 
 ################################ HELP FUNCTIONS ################################
+
+# Samples excluded from the RDA, e.g., with na.action = na.exclude because of
+# missing covariates, have only NA coordinates. They cannot be plotted, and
+# would add NA levels to the legends (#260), so they are removed. Subsetting
+# drops the attributes of the reducedDim (e.g., eigenvalues), so they are
+# restored.
+#' @importFrom SingleCellExperiment reducedDim reducedDim<-
+.drop_samples_excluded_from_rda <- function(x, dimred){
+    reduced_dim <- reducedDim(x, dimred)
+    keep <- rowSums(!is.na(as.matrix(reduced_dim))) > 0L
+    if( all(keep) ){
+        return(x)
+    }
+    attrs <- attributes(reduced_dim)
+    attrs <- attrs[ !names(attrs) %in% c("dim", "dimnames", "names",
+        "row.names", "class") ]
+    x <- x[, keep]
+    reduced_dim <- reducedDim(x, dimred)
+    attributes(reduced_dim)[names(attrs)] <- attrs
+    reducedDim(x, dimred) <- reduced_dim
+    return(x)
+}
 
 # This function retrieves data for creating vectors. Moreover, it wrangles the
 # vector data and controls what information is added to vector text or labels.

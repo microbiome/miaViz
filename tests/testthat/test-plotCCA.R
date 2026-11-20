@@ -87,3 +87,24 @@ test_that("plot RDA/CCA", {
   }
 
 })
+
+test_that("plotRDA plots only samples used in the ordination", {
+    data("Tengeler2020", package = "mia")
+    tse <- Tengeler2020
+    # Samples with missing covariates are excluded from the RDA (#260)
+    tse$patient_status[1:5] <- NA
+    tse <- addRDA(
+        tse, assay.type = "counts", formula = assay ~ patient_status + cohort,
+        na.action = na.exclude)
+    rd <- reducedDim(tse, "RDA")
+    expect_true(all(is.na(rd[1:5, ])))
+    p <- plotRDA(tse, "RDA", colour.by = "patient_status")
+    expect_identical(nrow(p$data), ncol(tse) - 5L)
+    expect_false(anyNA(get_guide_data(p, "colour")[[".label"]]))
+    # Explained variance is still shown on the axes
+    p <- plotRDA(tse, "RDA", add.expl.var = TRUE)
+    expect_match(p$labels$x, "%")
+    # The object is not modified when no samples were excluded
+    expect_identical(.drop_samples_excluded_from_rda(tse[, -(1:5)], "RDA"),
+        tse[, -(1:5)])
+})

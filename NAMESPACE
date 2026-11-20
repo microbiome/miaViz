@@ -95,6 +95,7 @@ importFrom(S4Vectors,
   unfactor
 )
 importFrom(SingleCellExperiment,
+  "reducedDim<-",
   reducedDim,
   reducedDimNames,
   reducedDims
