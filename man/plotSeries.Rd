@@ -86,6 +86,10 @@ This function plots time series data.
 This function creates series plot, where x-axis includes e.g. time points,
 and y-axis abundances of selected taxa. If there are multiple observations
 for single system and time point, mean and standard deviation is plotted.
+Each feature is drawn as its own line. To give each feature its own colour
+and line type, like \code{matplot()}, use
+\code{colour.by = "rownames", linetype.by = "rownames"}; the legend then
+follows the order of \code{rownames(x)}.
 }
 \examples{
 \dontrun{
