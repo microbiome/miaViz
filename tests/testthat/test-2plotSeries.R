@@ -145,3 +145,47 @@ test_that("plot series", {
     p <- plotSeries(tse, col.var = "shannon", time.col = "DAY_ORDER")
     expect_s3_class(p, "ggplot")
 })
+
+test_that("plotSeries draws one line per feature in rownames order", {
+    tse <- makeTSE(nrow = 10L, ncol = 6L)
+    assayNames(tse) <- "counts"
+    rownames(tse) <- paste0("sp", seq_len(nrow(tse)))
+    colData(tse)[["time"]] <- seq_len(ncol(tse))
+    rowData(tse)[["grp"]] <- rep(c("a", "b"), 5L)
+
+    # Without styling, each feature still gets its own line
+    p <- plotSeries(tse, assay.type = "counts", time.col = "time")
+    expect_equal(length(unique(layer_data(p)[["group"]])), nrow(tse))
+    # Lines are not merged when several features share a colour
+    p <- plotSeries(
+        tse, assay.type = "counts", time.col = "time", colour.by = "grp")
+    expect_equal(length(unique(layer_data(p)[["group"]])), nrow(tse))
+
+    # Legend follows the order of rownames, not alphabetical order
+    p <- plotSeries(
+        tse, assay.type = "counts", time.col = "time",
+        colour.by = "rownames", linetype.by = "rownames",
+        colour.lab = "Feature")
+    b <- ggplot_build(p)
+    expect_equal(b$plot$scales$get_scales("colour")$get_limits(), rownames(tse))
+    expect_equal(
+        b$plot$scales$get_scales("linetype")$get_limits(), rownames(tse))
+    # colour.lab is used also for line type so that the legends are merged.
+    # ($ works with both ggplot2 3.5 and 4.x)
+    expect_equal(p$guides$guides$linetype$params$title, "Feature")
+    # ... and for line width (size.by)
+    tse_small <- tse[1:3, ]
+    # (ggplot2 warns about size for a discrete variable, which is expected)
+    expect_warning(
+        p <- plotSeries(
+            tse_small, assay.type = "counts", time.col = "time",
+            colour.by = "rownames", size.by = "rownames",
+            colour.lab = "Feature"),
+        "discrete")
+    expect_equal(p$guides$guides$linewidth$params$title, "Feature")
+    # Without colour.lab, the variable name is kept as the title
+    p <- plotSeries(
+        tse_small, assay.type = "counts", time.col = "time",
+        colour.by = "rownames", linetype.by = "rownames")
+    expect_equal(p$guides$guides$linetype$params$title, "rownames")
+})
