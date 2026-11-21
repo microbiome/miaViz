@@ -360,6 +360,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
     if(!is.null(label)){
         ans$label[!label] <- NA
     }
+    attr(ans, "xlab") <- if( as_relative ) "Mean relative abundance" else
+        paste0("Mean abundance (", assay.type, ")")
     return(ans)
 }
 

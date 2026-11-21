@@ -41,6 +41,8 @@ test_that("prevalence plots name the detection thresholds in their unit", {
     p <- plotRowPrevalence(tse, detection = detection)
     expect_equal(p$labels$x, "Detection threshold (counts)")
     expect_equal(levels(p$data$X), c("1", "10", "100"))
+    p <- plotPrevalentAbundance(tse)
+    expect_equal(p$labels$x, "Mean relative abundance")
     p <- plotRowPrevalence(tse, detection = NULL)
     expect_equal(p$labels$x, "Detection threshold (relative abundance [%])")
 })
