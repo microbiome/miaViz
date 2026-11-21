@@ -74,4 +74,5 @@ Changes in version 1.21.x
 + plotRDA, plotCCA: samples excluded from the ordination (e.g. na.action = na.exclude) are not plotted, so they no longer add an empty NA entry to the legends (#260) (2026-11-20)
 + plotBoxplot: outlier.size, outlier.colour, outlier.alpha and outlier.shape style the boxplot outliers shown with add.points = FALSE (#227) (2026-11-20)
 + plotBoxplot: significance brackets are placed above all groups they span and stacked so that they do not cross boxes or each other; step.increase is no longer applied twice; hide.ns removes non-significant comparisons before placing the brackets, so the shown ones are stacked without gaps (#258) (2026-11-20)
++ plotSeries: each feature is drawn as its own line, also without colour.by; legends keyed by rownames follow the order of rownames(x); colour.lab also titles the line type and size legends when they use the same variable (#236) (2026-11-20)
 + plotJointRPCACovariance: column labels are drawn vertically, as in plotHeatmap, instead of at 45 degrees where long feature names overlapped (2026-11-21)
