@@ -125,6 +125,9 @@ DEPRECATED AND DEFUNCT
 
 BUG FIXES
 
++ Legend titles of coloured or filled variables (colour.by, fill.by, ...)
+  can be changed with labs(), e.g. + labs(colour = "Sample type"); the
+  title was set as the scale name, which labs() cannot override
 + plotOrdination: the explained variance shown in the axis titles is the
   percentage of the total variance for ordinations that store eigenvalues
   (e.g. MDS); earlier the eigenvalues were multiplied by 100
