@@ -5,7 +5,8 @@ test_that("plots follow the ggplot2 discrete palette options", {
     tse <- mia::transformAssay(tse, method = "relabundance")
     tse <- mia::agglomerateByRank(tse, rank = "Phylum")
     tse <- tse[mia::getTop(tse, 4), ]
-    pal <- unname(palette.colors(palette = "Okabe-Ito"))[-1]
+    pal <- unname(palette.colors(palette = "Okabe-Ito"))
+    pal <- c(pal[-1], pal[1])
     fills <- function(p) unique(ggplot2::ggplot_build(p)$data[[1]]$fill)
     # Default: Okabe-Ito palette
     old <- options(
@@ -65,16 +66,23 @@ test_that("palette option counts only the groups present in the data", {
     expect_true(all(fills %in% pal))
 })
 
-test_that("default palette is viridis for more than 8 groups", {
+test_that("default palette is Okabe-Ito with black for 9 groups", {
     data(GlobalPatterns, package = "mia")
     tse <- mia::transformAssay(GlobalPatterns, method = "relabundance")
     tse <- mia::agglomerateByRank(tse, rank = "Phylum")
-    tse <- tse[mia::getTop(tse, 9), ]
     old <- options(
         ggplot2.discrete.colour = NULL, ggplot2.discrete.fill = NULL)
     on.exit(options(old))
-    p <- plotAbundance(tse, assay.type = "relabundance")
-    fills <- unique(ggplot2::ggplot_build(p)$data[[1]]$fill)
-    expect_length(fills, 9)
-    expect_false(any(fills %in% miaViz:::.okabe_ito))
+    fills <- function(p) unique(ggplot2::ggplot_build(p)$data[[1]]$fill)
+    # Up to 8 groups: black is not used
+    p <- plotAbundance(tse[mia::getTop(tse, 8), ], assay.type = "relabundance")
+    expect_setequal(fills(p), miaViz:::.okabe_ito[1:8])
+    # 9 groups: black is added
+    p <- plotAbundance(tse[mia::getTop(tse, 9), ], assay.type = "relabundance")
+    expect_setequal(fills(p), miaViz:::.okabe_ito)
+    # More than 9 groups: viridis
+    p <- plotAbundance(
+        tse[mia::getTop(tse, 10), ], assay.type = "relabundance")
+    expect_length(fills(p), 10)
+    expect_false(any(fills(p) %in% miaViz:::.okabe_ito))
 })
