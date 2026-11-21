@@ -182,7 +182,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
         # Plot the data
         p <- .prevalence_plotter(plot_data,
                             layout = "line",
-                            ylab = "N",
+                            ylab = "Number of features",
                             colour_by = "Prevalence [%]",
                             size_by = NULL,
                             shape_by = NULL,
@@ -241,6 +241,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
     # Add the values to result table
     ans[["n"]] <- unlist(temp)
     colnames(ans) <- c("X","colour_by","Y")
+    attr(ans, "xlab") <- .detection_title(assay.type, as_relative)
     return(ans)
 }
 
@@ -445,6 +446,14 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+# Title for the detection thresholds. The thresholds are in the unit of the
+# assay unless relative abundances were calculated.
+.detection_title <- function(assay.type, as_relative, unit = NULL){
+    unit <- if( as_relative ) paste(c("relative abundance", unit),
+        collapse = " ") else assay.type
+    paste0("Detection threshold (", unit, ")")
+}
+
 .is_continuous <- function(i){
     i <- sort(unique(i))
     z <- round(c(i[-1L],max(i)) - i,5L)
@@ -526,7 +535,11 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         pivot_longer(!ID, names_to = "detection", values_to = "prevalence")
     colnames(ans) <- c("Y","X","colour_by")
     # Round values
-    ans$X <- round(as.numeric(ans$X),4) * 100
+    ans$X <- round(as.numeric(ans$X),4)
+    # Relative abundances are shown in percent
+    if( as_relative ){
+        ans$X <- ans$X * 100
+    }
     # If the values are discrete, convert them to factors
     if( !.is_continuous(ans$X) ){
         ans$X <- factor(
@@ -534,6 +547,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
     }
     # Convert taxa to factor. The order is based on prevalence of taxa.
     ans$Y <- factor(ans$Y,lvls)
+    attr(ans, "xlab") <- .detection_title(assay.type, as_relative, "[%]")
     return(ans)
 }
 
@@ -542,7 +556,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
 #'   theme_classic
 .prevalence_plotter <- function(plot_data,
         layout = c("line","point","heatmap"),
-        xlab = paste0(ifelse(as.relative, "Rel. ", ""),"Abundance"),
+        xlab = attr(plot_data, "xlab"),
         ylab,
         colour_by,
         size_by,
@@ -563,6 +577,11 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         as.relative = as_relative,
         as_relative = FALSE,
         ...){
+    # Default title for the x axis. In plotPrevalence and plotRowPrevalence,
+    # it is set by the data as the detection thresholds can be in any unit.
+    if( is.null(xlab) ){
+        xlab <- paste0(ifelse(as.relative, "Rel. ", ""),"Abundance")
+    }
     # Start plotting
     plot_out <- ggplot(plot_data, aes(x = .data[["X"]], y = .data[["Y"]])) +
         labs(x = xlab, y = ylab)

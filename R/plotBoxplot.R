@@ -527,6 +527,15 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
                 p.value[["rownames"]] %in% features, , drop = FALSE]
         }
     }
+    # Facets by rownames follow the order of features (or rownames) instead
+    # of alphabetical order
+    if( identical(facet.by, "rownames") ){
+        levels <- unique(if( is.null(features) ) rownames(tse) else features)
+        df[[facet.by]] <- factor(df[[facet.by]], levels = levels)
+        if( !is.null(p.value) ){
+            p.value[[facet.by]] <- factor(p.value[[facet.by]], levels = levels)
+        }
+    }
 
     # If user specified, calculate difference
     difference <- NULL

@@ -28,3 +28,19 @@ test_that("plot prevalence", {
     expect_s3_class(plot,"ggplot")
     expect_equal(dim(plot$data),c(341,4))
 })
+
+test_that("prevalence plots name the detection thresholds in their unit", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns[seq_len(100), ]
+    detection <- c(1, 10, 100)
+    p <- plotPrevalence(tse, detection = detection, as.relative = TRUE)
+    expect_equal(p$labels$x, "Detection threshold (counts)")
+    expect_equal(p$labels$y, "Number of features")
+    expect_equal(plotPrevalence(tse, xlab = "x")$labels$x, "x")
+    # Counts are not shown in percent
+    p <- plotRowPrevalence(tse, detection = detection)
+    expect_equal(p$labels$x, "Detection threshold (counts)")
+    expect_equal(levels(p$data$X), c("1", "10", "100"))
+    p <- plotRowPrevalence(tse, detection = NULL)
+    expect_equal(p$labels$x, "Detection threshold (relative abundance [%])")
+})

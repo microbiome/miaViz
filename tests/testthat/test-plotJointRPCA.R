@@ -559,3 +559,8 @@ test_that("loadings are plotted per layer with plotLoadings", {
         "ncomponents")
     expect_error(plotJointRPCALoadings(tse, "JointRPCA", n = 0), "'n'")
 })
+
+test_that("covariance heatmap draws column labels vertically", {
+    p <- plotJointRPCACovariance(.make_joint_cov(), "JointRPCA")
+    expect_equal(p$theme$axis.text.x$angle, 90)
+})

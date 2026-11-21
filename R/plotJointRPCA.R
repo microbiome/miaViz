@@ -799,10 +799,10 @@ setMethod("plotJointRPCALoadings",
     # scale = TRUE gives a blue-white-red scale where zero is white
     p <- .plot_heatmap(df, fill = name, scale = TRUE)
     # Split into layer blocks. space = "free" sizes each panel by its number
-    # of features, so that all cells are equal size.
+    # of features, so that all cells are equal size. Column labels are drawn
+    # vertically, as in plotHeatmap().
     p <- p +
-        facet_grid(Layer ~ ColLayer, scales = "free", space = "free") +
-        theme(axis.text.x = element_text(angle = 45, hjust = 1))
+        facet_grid(Layer ~ ColLayer, scales = "free", space = "free")
     return(p)
 }
 
