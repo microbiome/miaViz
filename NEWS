@@ -158,6 +158,8 @@ BUG FIXES
 
 MINOR NOTES
 
++ Vignette: overview of all functions grouped by use case, and new examples
+  of heatmaps, ordination, group comparisons and forest plots
 + Requires mia (>= 1.21.31), whose subsetBy() is used in examples and tests
 + plotBoxplot: variable names that clash with internal columns
   (e.g. "x_point") give an error instead of being silently overwritten
