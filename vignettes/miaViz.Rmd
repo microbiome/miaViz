@@ -44,6 +44,39 @@ library(scater)
 data(GlobalPatterns, package = "mia")
 ```
 
+# Overview of miaViz functions
+
+All plotting functions return `ggplot2` objects, so titles, scales and themes
+can be adjusted with the usual `ggplot2` functions, e.g. `+ labs()`. Common
+arguments, such as `colour.by`, `shape.by` and the default colour palette, are
+described in `?"mia-plot-args"`. Most functions are demonstrated below; further
+examples are in Orchestrating Microbiome Analysis [@OMA].
+
+| Use case | Functions | What they show |
+|:---|:---|:---|
+| Community composition | `plotAbundance()` | Stacked barplot of abundances per sample |
+| | `plotAbundanceDensity()` | Distribution of abundances of the top features |
+| Distributions and groups | `plotHistogram()`, `plotBarplot()` | Histogram or barplot of assay values or sample/feature variables |
+| | `plotBoxplot()` | Boxplots of assay values or variables, with optional significance tests and paired lines |
+| Prevalence | `plotPrevalence()`, `plotRowPrevalence()`, `plotPrevalentAbundance()` | Prevalence across detection thresholds and abundance |
+| Heatmaps | `plotHeatmap()`, `plotDissimilarity()` | Heatmap of an assay, or of a dissimilarity matrix between samples |
+| | `getHeatmapOrder()` | Row and column order used for sorting heatmaps |
+| Ordination | `plotOrdination()` | Samples in a reduced dimension (PCA, MDS, NMDS, ...) |
+| | `plotScree()` | Explained variance or eigenvalues per component |
+| | `plotLoadings()` | Feature loadings of the components |
+| | `plotRDA()`, `plotCCA()` | Constrained ordination (RDA/CCA) with vectors of the covariates |
+| Statistical results | `plotForest()` | Effect sizes with confidence intervals, e.g. from differential abundance analysis |
+| | `plotMediation()` | Results of `mia::addMediation()` as a heatmap or forest plot |
+| | `plotDMNFit()` | Model fit of Dirichlet-Multinomial mixtures |
+| Trees | `plotRowTree()`, `plotColTree()` | Tree of features or samples with tip, node and edge annotations |
+| | `rowTreeData()`, `colTreeData()`, `combineTreeData()` | Access and combine the data used for annotating trees |
+| Graphs and networks | `plotRowGraph()`, `plotColGraph()` | Graph of features or samples with data from the object |
+| Factor data | `plotColTile()`, `plotRowTile()` | Relation of two categorical variables as tiles |
+| Time series | `plotSeries()` | Abundance of features over time |
+| Multi-omics (Joint-RPCA) | `plotJointRPCA()`, `plotJointRPCAExplainedVariance()`, `plotJointRPCALoadings()`, `plotJointRPCACovariance()`, `plotJointRPCANetwork()` | Results of `mia::addJointRPCA()`: ordination, variance, loadings, covariance and feature network |
+
+The examples below use the `GlobalPatterns` data from the `mia` package.
+
 # Abundance plotting
 
 In contrast to other fields of sequencing based fields of research for which
@@ -139,6 +172,119 @@ plotPrevalence(
     detections = c(0.01, 0.1, 1, 2, 5, 10, 20)/100,
     prevalences = seq(0.1, 1, 0.1))
 ```
+
+# Heatmaps
+
+`plotHeatmap()` draws an assay as a heatmap. Here, the 10 most abundant phyla
+are shown as CLR-transformed and standardized values, and the samples are
+split by sample type.
+
+```{r heatmap}
+tse_phylum <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
+tse_phylum <- transformAssay(tse_phylum, method = "clr", pseudocount = 1)
+tse_phylum <- transformAssay(
+    tse_phylum, assay.type = "clr", method = "standardize", MARGIN = "rows",
+    name = "clr_z")
+tse_top <- tse_phylum[getTop(tse_phylum, top = 10L), ]
+# scater also has a plotHeatmap() function, so the package is given
+miaViz::plotHeatmap(tse_top, assay.type = "clr_z", col.var = "SampleType")
+```
+
+`plotDissimilarity()` shows a dissimilarity matrix between samples, and
+`getHeatmapOrder()` returns the order of rows or columns used for sorting.
+
+```{r dissimilarity}
+tse_phylum <- addDissimilarity(
+    tse_phylum, assay.type = "relabundance", method = "bray", name = "bray")
+plotDissimilarity(tse_phylum, name = "bray", col.var = "SampleType")
+```
+
+# Ordination
+
+`plotOrdination()` plots samples in a reduced dimension stored in
+`reducedDim()`. `plotScree()` shows the explained variance of the components
+and `plotLoadings()` the contribution of the features.
+
+```{r ordination}
+tse_phylum <- addPCA(
+    tse_phylum, assay.type = "clr", name = "PCA", ncomponents = 5)
+plotOrdination(tse_phylum, dimred = "PCA", colour.by = "SampleType")
+```
+
+```{r scree}
+plotScree(tse_phylum, dimred = "PCA")
+```
+
+```{r loadings}
+plotLoadings(tse_phylum, dimred = "PCA", ncomponents = 2, n = 10)
+```
+
+For redundancy analysis (RDA), `plotRDA()` adds the vectors of the
+covariates. `plotCCA()` works in the same way for canonical correspondence
+analysis. Here, the samples from three environments are compared.
+
+```{r rda}
+tse_env <- tse_phylum[, tse_phylum$SampleType %in% c("Ocean", "Soil", "Feces")]
+tse_env$SampleType <- droplevels(tse_env$SampleType)
+tse_env <- addRDA(
+    tse_env, assay.type = "relabundance", formula = x ~ SampleType,
+    distance = "bray")
+plotRDA(tse_env, "RDA", colour.by = "SampleType")
+```
+
+# Distributions and group comparisons
+
+`plotHistogram()` and `plotBarplot()` show the distribution of assay values
+or of variables in `colData()` or `rowData()`.
+
+```{r histogram}
+plotHistogram(tse_phylum, assay.type = "clr")
+```
+
+```{r barplot}
+plotBarplot(tse_phylum, col.var = "SampleType")
+```
+
+`plotBoxplot()` compares assay values or variables between groups.
+
+```{r boxplot}
+plotBoxplot(
+    tse_phylum, assay.type = "clr", features = c("Bacteroidetes", "Firmicutes"),
+    x = "SampleType", facet.by = "rownames") +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+`plotAbundanceDensity()` shows the distribution of abundances of the most
+abundant features.
+
+```{r abundancedensity}
+plotAbundanceDensity(
+    tse_phylum, layout = "jitter", assay.type = "relabundance", n = 10) +
+    scale_x_log10()
+```
+
+# Visualising statistical results
+
+`plotForest()` shows effect sizes with their confidence intervals, for
+example from a differential abundance analysis. Here we compare the
+CLR-transformed abundances of fecal and other samples with a linear model for
+each of the 10 most abundant phyla.
+
+```{r forest}
+fecal <- tse_top$SampleType %in% c("Feces", "Mock")
+res <- apply(assay(tse_top, "clr"), 1L, function(y){
+    fit <- summary(lm(y ~ fecal))$coefficients
+    c(effect = fit[2L, 1L], stderr = fit[2L, 2L], pval = fit[2L, 4L],
+        df = length(y) - 2L)
+})
+res <- data.frame(t(res))
+plotForest(
+    res, effect.var = "effect", err.var = "stderr", df.var = "df",
+    pval.var = "pval", label.by = c("CI", "P-Value"), order.by = "effect")
+```
+
+`plotMediation()` visualizes the results of `mia::addMediation()`; see
+`?plotMediation` and the mediation chapter of [@OMA].
 
 # Tree plotting
 
