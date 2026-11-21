@@ -137,6 +137,8 @@ BUG FIXES
   works
 + plotRDA, plotCCA: samples left out of the ordination (e.g. with
   na.action = na.exclude) no longer add an empty "NA" legend entry
++ plotAbundance: a row named "Other" (e.g. from subsetBy(collapse = TRUE))
+  is shown last in the bars and legend instead of among the features
 + plotRowGraph, plotPrevalentAbundance: points are coloured correctly when
   both colour.by and shape.by are given
 

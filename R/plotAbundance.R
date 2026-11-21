@@ -40,7 +40,9 @@
 #'   value. By name (\code{"name"}) for sorting the taxonomic labels
 #'   alphabetically, by abundance (\code{"abund"}) to sort by abundance
 #'   values or by a reverse order of
-#'   abundance values (\code{"revabund"}). (Default: \code{"name"})
+#'   abundance values (\code{"revabund"}). A row named \code{"Other"}, such as
+#'   the one created by \code{subsetBy(..., collapse = TRUE)}, is placed last
+#'   unless \code{row.levels} is given. (Default: \code{"name"})
 #'
 #'   \item \code{row.levels}: \code{Character vector}. Specifies order of rows
 #'   in a plot. Can be combined with \code{order.row.by} to control order
@@ -379,6 +381,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
             "of a row.", call. = FALSE)
     }
     #
+    user_levels <- !is.null(row.levels)
     # If user specified levels to use, we get those levels and combine them with
     # rownames so that user do not have to specify all names
     if( !is.null(row.levels) ){
@@ -398,6 +401,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
                 mean_abundance) |>
             distinct(colour_by) |>
             pull(colour_by)
+    }
+    # The "Other" group (e.g. from subsetBy(collapse = TRUE)) goes last
+    if( !user_levels && "Other" %in% row.levels ){
+        row.levels <- c(setdiff(as.character(row.levels), "Other"), "Other")
     }
     # If user wants to order columns based on abundance of certain taxa, the
     # taxa will be added on top of the figure
