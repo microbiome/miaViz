@@ -23,9 +23,14 @@ object or a \code{data.frame}, returned as output from
 \itemize{
 \item \code{add.significance}: \code{Character scalar}. Controls how
 p-values are displayed in the heatmap. Options include \code{"symbol"}
-(p-values displayed as symbols), \code{"numeric"} (p-values displayed as
-numeric values) and \code{NULL} (p-values not displayed).
+(adjusted p-values displayed as stars: * < 0.05, ** < 0.01,
+*** < 0.001), \code{"numeric"} (adjusted p-values displayed as numbers,
+e.g. "p=0.012" or "p<0.001") and \code{NULL} (p-values not displayed).
 (Default: \code{"symbol"})
+
+\item \code{add.estimate}: \code{Logical scalar}. Should the effect
+estimate be printed in each tile of the heatmap? The significance symbol
+or p-value is shown after it. (Default: \code{TRUE})
 }}
 
 \item{name}{\code{Character scalar} value defining which mediation data
@@ -55,6 +60,13 @@ SummarizedExperiment, this should contain the output of addMediation
 in the metadata slot and the argument \code{name} needs to be defined.
 When the input is a data.frame, this should be returned as output from
 getMediation.
+
+In the heatmap, ACME, ADE and the total effect share one colour scale,
+centred at zero, so that colours can be compared between the columns.
+Because the ACME is often much smaller than the total effect, its tiles
+can be pale; the printed estimates show their size.
+The total effect does not depend on the mediator, so it is the same in
+every row. It is the sum of ACME and ADE and serves as their reference.
 }
 \examples{
 \dontrun{

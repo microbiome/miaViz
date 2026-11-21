@@ -102,6 +102,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
   - plotBoxplot facets (facet.by = "rownames") follow the order of
     'features', and plotMediation forest panels the order of the components
   - plotJointRPCANetwork keeps labels off the nodes
++ plotMediation heatmap: each tile shows the effect estimate with its
+  significance, the colours use the colour-blind-safe red-blue palette and
+  the panel is grey, so that small ACME effects stay visible on the shared
+  colour scale. add.estimate = FALSE shows only the significance, and
+  add.significance = "numeric" shows "p=0.012" or "p<0.001"
 + plotForest: confidence intervals from 'err.var' use the degrees of freedom
   given with the new 'df.var' or 'df' arguments; without them, the normal
   distribution is used with a warning. Earlier, the number of columns of the
