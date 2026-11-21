@@ -53,32 +53,100 @@ Changes in version 1.19.x
 + plotBoxplot: Added option to add p-values (2026-01-07)
 
 Changes in version 1.21.x
-+ Added plotOrdination and plotJointRPCA (2026-08-04)
-+ Added plotHeatmap (2026-08-10)
-+ Added multimedia_data_demo example datasets (se_relative, tse_relative, tse_pathway) (2026-09-01)
-+ plotBoxplot: paired lines follow the time order with more than two time points (1.21.8, 2026-11-02)
-+ plotBoxplot, fix typo in argument name: add.chance -> add.change (1.21.10, 2026-11-03)
-+ Added plotJointRPCACovariance, plotJointRPCAExplainedVariance and plotJointRPCANetwork (1.21.12, 2026-11-07)
-+ Added plotDissimilarity (1.21.13, 2026-11-07)
-+ Added getHeatmapOrder for sorting heatmaps; plotHeatmap and plotDissimilarity gain sort.method; getNeatOrder is deprecated (1.21.14, 2026-11-09)
-+ Plots use the palette set with the ggplot2.discrete.colour or ggplot2.discrete.fill option, if it has enough colours, e.g. for colour-blind-friendly figures (1.21.15, 2026-11-17)
-+ Require mia (>= 1.21.31) for subsetBy(), used in examples and tests; until it is available from Bioconductor devel, mia is installed from GitHub (Remotes) (1.21.17, 2026-11-20)
-+ plotForest: confidence intervals from 'err.var' use the degrees of freedom given with the new 'df.var' or 'df' arguments; previously the number of columns of the results table was used. Without them, the normal distribution is used with a warning (1.21.18, 2026-11-20)
-+ The default discrete palette is the colour-blind-friendly Okabe-Ito palette (up to 8 groups) instead of Tableau; viridis is used for more groups (1.21.19, 2026-11-20)
-+ plotRowTree, plotColTree: Added heatmap.by option for showing per-taxon values as a heatmap or rings next to the tree tips (1.21.20, 2026-11-20)
-+ Removed the temporary Remotes entry for mia, as Bioconductor devel now has mia >= 1.21.31 (1.21.21, 2026-11-20)
-+ plotOrdination: aspect.ratio = "eigen" now scales the panel by the explained variance of the plotted components (it previously had no effect); aspect.ratio is documented in place of the non-existent panel.by.eigen (1.21.22, 2026-11-20)
-+ Readable plot defaults (OMA#965): plotHeatmap draws column labels vertically; plotOrdination axis titles use the ordination method and component number ("MDS1" for "MDS_bray") when the components have no names; plotLoadings labels unnamed components "Component 1", ..., shows components in their original order (PC2 before PC10), titles the value axis "Loading", and omits the sign legend when all loadings have the same sign; plotOrdination and plotBoxplot use size.by as the title of the size legend (1.21.23, 2026-11-20)
-+ plotHeatmap, plotDissimilarity: labs(fill = ...) now overrides the legend title (#259) (2026-11-20)
-+ plotBoxplot: works when a variable is named "x", "y" or "df"; variable names that clash with internal columns (e.g. "x_point") give an error instead of being silently overwritten (#239) (2026-11-20)
-+ plotRDA, plotCCA: samples excluded from the ordination (e.g. na.action = na.exclude) are not plotted, so they no longer add an empty NA entry to the legends (#260) (2026-11-20)
-+ plotBoxplot: outlier.size, outlier.colour, outlier.alpha and outlier.shape style the boxplot outliers shown with add.points = FALSE (#227) (2026-11-20)
-+ plotBoxplot: significance brackets are placed above all groups they span and stacked so that they do not cross boxes or each other; step.increase is no longer applied twice; hide.ns removes non-significant comparisons before placing the brackets, so the shown ones are stacked without gaps (#258) (2026-11-20)
-+ plotSeries: each feature is drawn as its own line, also without colour.by; legends keyed by rownames follow the order of rownames(x); colour.lab also titles the line type and size legends when they use the same variable (#236) (2026-11-20)
-+ plotJointRPCACovariance: column labels are drawn vertically, as in plotHeatmap, instead of at 45 degrees where long feature names overlapped (2026-11-21)
-+ plotPrevalence, plotRowPrevalence: the x axis is titled "Detection threshold" with the assay.type (e.g. "(counts)") instead of "Rel. Abundance", the y axis of plotPrevalence "Number of features" instead of "N", and plotRowPrevalence no longer multiplies count thresholds by 100 (2026-11-21)
-+ plotBoxplot: facets follow the order of 'features' (or rownames) when facet.by = "rownames" (#209) (2026-11-21)
-+ plotJointRPCANetwork: with show.label = TRUE, labels are kept off the node symbols and have a white halo so that edges do not run through them (2026-11-21)
-+ Default discrete palette: Okabe-Ito with black as the 9th colour, so that 9 groups get colour-blind-friendly colours instead of viridis; plots with up to 8 groups are unchanged (#157) (2026-11-21)
-+ plotPrevalence, plotRowPrevalence, plotPrevalentAbundance: as.relative and as_relative are deprecated; calculate relative abundances with transformAssay() and select them with assay.type. Until removed, as.relative works as documented instead of being ignored. plotPrevalentAbundance titles its x axis "Mean relative abundance" instead of "Abundance" (#267) (2026-11-21)
-+ plotBoxplot: the help page lists all customisation arguments grouped by plot layer (mapping, layers, box, points, lines, proportion bars, facets, significance), including the significance and facet arguments that were not documented, and says that other arguments go to ggpubr::stat_pvalue_manual (#227) (2026-11-21)
+
+NEW FEATURES
+
++ plotHeatmap: heatmap of features by samples straight from a TreeSE, as a
+  ggplot2 object, with row and column facets from rowData/colData and an
+  optional row tree
++ plotDissimilarity: heatmap of a dissimilarity matrix between samples
++ getHeatmapOrder and sort.method (in plotHeatmap and plotDissimilarity):
+  sort the rows and columns of heatmaps
++ plotOrdination for ordinations stored in reducedDims
++ Joint-RPCA visualisations: plotJointRPCA, plotJointRPCACovariance,
+  plotJointRPCAExplainedVariance and plotJointRPCANetwork
++ plotRowTree, plotColTree: heatmap.by shows per-taxon values as a heatmap
+  or as rings next to the tree tips
++ plotSeries: each feature is drawn as its own line, as in matplot(), also
+  without colour.by
++ plotBoxplot: outlier.size, outlier.colour, outlier.alpha and outlier.shape
+  style the boxplot outliers (shown with add.points = FALSE). The help page
+  now lists all customisation arguments, grouped by plot layer
++ New example datasets in multimedia_data_demo: se_relative, tse_relative and
+  tse_pathway
+
+SIGNIFICANT USER-VISIBLE CHANGES
+
++ Colour-blind-friendly colours by default: discrete variables are coloured
+  with the Okabe-Ito palette for up to 9 groups (black is used only for the
+  9th) and with viridis for more, instead of the Tableau palette
++ A palette set with options(ggplot2.discrete.colour = ...) or
+  options(ggplot2.discrete.fill = ...) is used in all plots, so one palette
+  can be chosen for every figure, e.g. the earlier Tableau palette
+  (see ?"mia-plot-args")
++ More readable default labels:
+  - plotHeatmap and plotJointRPCACovariance draw column labels vertically
+  - plotOrdination titles the axes by the method and component, e.g.
+    "MDS1 (23.4%)" instead of "MDS_bray1"
+  - plotLoadings shows the components in their order (PC2 before PC10),
+    names unnamed components "Component 1", ..., titles the value axis
+    "Loading" and leaves out the sign legend when all loadings have the
+    same sign
+  - Prevalence plots title their axes "Detection threshold (<assay>)",
+    "Number of features" and "Mean relative abundance"
+  - plotBoxplot facets (facet.by = "rownames") follow the order of
+    'features', and plotMediation forest panels the order of the components
+  - plotJointRPCANetwork keeps labels off the nodes
++ plotForest: confidence intervals from 'err.var' use the degrees of freedom
+  given with the new 'df.var' or 'df' arguments; without them, the normal
+  distribution is used with a warning. Earlier, the number of columns of the
+  results table was used as the degrees of freedom
+
+DEPRECATED AND DEFUNCT
+
++ plotPrevalence, plotRowPrevalence, plotPrevalentAbundance: as.relative and
+  as_relative are deprecated. Calculate relative abundances with
+  transformAssay(x, method = "relabundance") and use
+  assay.type = "relabundance" instead
++ getNeatOrder is deprecated; use getHeatmapOrder
++ plotTaxaPrevalence and plotFeaturePrevalence are removed (deprecated since
+  2025); use plotRowPrevalence
++ plotBoxplot: the misspelled argument add.chance is renamed to add.change
+
+BUG FIXES
+
++ plotOrdination: the explained variance shown in the axis titles is the
+  percentage of the total variance for ordinations that store eigenvalues
+  (e.g. MDS); earlier the eigenvalues were multiplied by 100
++ plotOrdination: aspect.ratio = "eigen" now scales the panel by the explained
+  variance (it had no effect); the documentation named a non-existent
+  panel.by.eigen argument
++ plotBoxplot: significance brackets no longer run through boxes or each
+  other, and hide.ns = TRUE stacks the shown brackets without gaps
++ plotBoxplot: paired lines follow the time order with more than two time
+  points
++ plotBoxplot: variables named "x", "y" or "df" work
++ plotRowPrevalence: count thresholds are no longer multiplied by 100
++ plotHeatmap, plotDissimilarity: labs(fill = ...) sets the legend title
++ plotHeatmap: facetting rows and columns by variables with the same name
+  works
++ plotRDA, plotCCA: samples left out of the ordination (e.g. with
+  na.action = na.exclude) no longer add an empty "NA" legend entry
++ plotRowGraph, plotPrevalentAbundance: points are coloured correctly when
+  both colour.by and shape.by are given
+
+MINOR NOTES
+
++ Requires mia (>= 1.21.31), whose subsetBy() is used in examples and tests
++ plotBoxplot: variable names that clash with internal columns
+  (e.g. "x_point") give an error instead of being silently overwritten
++ plotBoxplot: step.increase is applied once (it was applied twice) and is
+  measured from the highest group a bracket spans; other arguments are
+  passed to ggpubr::stat_pvalue_manual
++ plotSeries: legends keyed by rownames follow the order of rownames(x), and
+  colour.lab also titles the line type and size legends when they use the
+  same variable
++ plotOrdination, plotBoxplot: size.by titles the size legend
++ plotPrevalence, plotRowPrevalence: until removed, as.relative works as
+  documented (earlier only as_relative did)
++ The pkgdown reference page groups the functions into categories
