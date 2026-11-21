@@ -80,3 +80,4 @@ Changes in version 1.21.x
 + plotBoxplot: facets follow the order of 'features' (or rownames) when facet.by = "rownames" (#209) (2026-11-21)
 + plotJointRPCANetwork: with show.label = TRUE, labels are kept off the node symbols and have a white halo so that edges do not run through them (2026-11-21)
 + Default discrete palette: Okabe-Ito with black as the 9th colour, so that 9 groups get colour-blind-friendly colours instead of viridis; plots with up to 8 groups are unchanged (#157) (2026-11-21)
++ plotPrevalence, plotRowPrevalence, plotPrevalentAbundance: as.relative and as_relative are deprecated; calculate relative abundances with transformAssay() and select them with assay.type. Until removed, as.relative works as documented instead of being ignored. plotPrevalentAbundance titles its x axis "Mean relative abundance" instead of "Abundance" (#267) (2026-11-21)

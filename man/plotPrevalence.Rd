@@ -65,8 +65,8 @@ plotPrevalence(x, ...)
 object.}
 
 \item{detection}{\code{Numeric scalar}. Detection thresholds for
-absence/presence. Either an absolutes value compared directly to the values
-of \code{x} or a relative value between 0 and 1, if \code{TRUE}.}
+absence/presence, in the unit of \code{assay.type}. For example, use values
+between 0 and 1 with relative abundances.}
 
 \item{detections}{Deprecated. Use \code{detection} instead.}
 
@@ -83,12 +83,13 @@ use. (Default: \code{"relabundance"})}
 
 \item{rank, ...}{additional arguments
 \itemize{
-\item as.relative \code{Logical scalar}. Should the relative values
-be calculated? (Default: \code{FALSE})
+\item as.relative,as_relative Deprecated. Calculate relative abundances
+with \code{\link[mia:transformAssay]{transformAssay}} and select them
+with \code{assay.type} instead (see examples).
 
 \item ndetection \code{Integer scalar}. Determines the number of breaks
-calculated detection thresholds when \code{detection=NULL}. When
-\code{TRUE},  \code{as_relative} is then also regarded as \code{TRUE}.
+calculated detection thresholds when \code{detection=NULL}. The
+thresholds are then relative abundances between 0 and 1.
 (Default: \code{20})
 
 \item{If \code{!is.null(rank)} matching arguments are passed on to
@@ -174,6 +175,11 @@ GlobalPatterns <- transformAssay(GlobalPatterns, method = "relabundance")
 
 # plotting N of prevalence exceeding taxa on the Phylum level
 plotPrevalence(GlobalPatterns, rank = "Phylum")
+
+# detection thresholds for relative abundances
+plotPrevalence(
+    GlobalPatterns, rank = "Phylum", assay.type = "relabundance",
+    detection = c(0.0001, 0.001, 0.01, 0.1))
 plotPrevalence(GlobalPatterns, rank = "Phylum") + scale_x_log10()
 
 # plotting prevalence per taxa for different detection thresholds as heatmap
