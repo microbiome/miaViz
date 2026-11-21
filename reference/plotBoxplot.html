@@ -81,22 +81,20 @@ object.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Additional parameters for plotting.</p><ul><li><p><code>point.offset</code>: <code>Character scalar</code>. Utilized method
-for offsetting points. The available options include:
-<code>"center"</code>, <code>"compactswarm"</code>, <code>"hex"</code>, <code>"square"</code>,
-<code>"swarm"</code>
-(see <code><a href="https://rdrr.io/pkg/beeswarm/man/beeswarm.html" class="external-link">beeswarm::beeswarm()</a></code> for details),
-<code>"frowney"</code>, <code>"maxout"</code>, <code>"minout"</code>, <code>"pseudorandom"</code>,
-<code>"quasirandom"</code>,  <code>"smiley"</code>, <code>"tukey"</code>, <code>"tukeyDense"</code>
-(see <code><a href="https://rdrr.io/pkg/vipor/man/offsetX.html" class="external-link">vipor::offsetSingleGroup()</a></code>
-for details), <code>"jitter"</code>, and <code>"none"</code>,
-If <code>"none"</code>, ofsetting is not applied. (Default: <code>"jitter"</code>)</p></li>
-<li><p><code>colour.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
+<dd><p>Additional parameters for plotting. They are grouped below by
+the part of the plot they customise. Each layer has its own prefixed
+arguments (<code>box.*</code>, <code>point.*</code>, <code>line.*</code>, <code>outlier.*</code>).
+Arguments not listed here are passed on to
+<code><a href="https://rpkgs.datanovia.com/ggpubr/reference/stat_pvalue_manual.html" class="external-link">ggpubr::stat_pvalue_manual()</a></code>
+when p-values are shown (see "Significance" below). Anything else, such
+as titles, scales and themes, can be changed by adding <code>ggplot2</code>
+layers to the returned plot, e.g. <code>+ labs(y = "Shannon")</code>.</p>
+<p><strong>Mapping variables to aesthetics</strong></p><ul><li><p><code>colour.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
 variable from <code>colData(x)</code> or <code>rowData(x)</code> which is used to
 colour observations. (Default: <code>NULL</code>)</p></li>
 <li><p><code>fill.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
 variable from <code>colData(x)</code> or <code>rowData(x)</code> which is used to
-colour observations. (Default: <code>NULL</code>)</p></li>
+fill boxes and points. (Default: <code>NULL</code>)</p></li>
 <li><p><code>size.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
 variable from <code>colData(x)</code> or <code>rowData(x)</code> which is used to scale
 observation points. (Default: <code>NULL</code>)</p></li>
@@ -105,58 +103,30 @@ variable from <code>colData(x)</code> or <code>rowData(x)</code> which is used t
 observation points. (Default: <code>NULL</code>)</p></li>
 <li><p><code>facet.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
 variable from <code>colData(x)</code> or <code>rowData(x)</code> which is used to facet
-or group observations. (Default: <code>NULL</code>)</p></li>
+or group observations. Use <code>"rownames"</code> to draw each of
+<code>features</code> in its own facet. (Default: <code>NULL</code>)</p></li>
 <li><p><code>pair.by</code>: <code>NULL</code> or <code>character scalar</code>. Specifies a
 variable from <code>colData(x)</code> which is used to pair observation points.
-(Default: <code>NULL</code>)</p></li>
+Paired points are joined with lines. (Default: <code>NULL</code>)</p></li>
 <li><p><code>add.change</code>: <code>Logical scalar</code>. Whether to colour paired
 observations by the change between time points. (Default: <code>FALSE</code>)</p></li>
-<li><p><code>add.box</code>: <code>Logical scalar</code>. Whether to add a boxplot
-layout. (Default: <code>TRUE</code>)</p></li>
+</ul><p><strong>Layers</strong></p><ul><li><p><code>add.box</code>: <code>Logical scalar</code>. Whether to add a boxplot
+layer. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>add.points</code>: <code>Logical scalar</code>. Whether to add a point
-layout. (Default: <code>TRUE</code>)</p></li>
+layer. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>add.proportion</code>: <code>Logical scalar</code>. Whether to add a
-barplot layout denoting the proportion of observations above
+barplot layer denoting the proportion of observations above
 <code>threshold</code>. (Default: <code>FALSE</code>)</p></li>
-<li><p><code>add.threshold</code>: <code>Logical scalar</code>. Whether to add a
-<code>threshold</code> as horizontal line when <code>add.proportion = TRUE</code> is
-specified. (Default: <code>TRUE</code>)</p></li>
-<li><p><code>threshold</code>: <code>Numeric scalar</code>. Specifies threshold for the
-barplots. (Default: <code>0</code>)</p></li>
-<li><p><code>jitter.width</code>: <code>Numeric scalar</code>. Width of jitter.
-(Default: <code>0.3</code>)</p></li>
-<li><p><code>jitter.height</code>: <code>Numeric scalar</code>. Height of jitter.
-(Default: <code>0</code>)</p></li>
-<li><p><code>dodge.width</code>: <code>Numeric scalar</code>. Width of dodge. How far
-apart the groups are plotted? (Default: <code>0</code>)</p></li>
-<li><p><code>beeswarm.corral</code>: <code>Character scalar</code>. Beeswarm's "corral"
-method. Fed to function <code><a href="https://rdrr.io/pkg/beeswarm/man/beeswarm.html" class="external-link">beeswarm::beeswarm()</a></code>.
-(Default: <code>"none"</code>)</p></li>
-<li><p><code>scales</code>: <code>Character scalar</code>. Adjust scales of facets.
-(Default: <code>"fixed"</code>)</p></li>
-<li><p><code>box.alpha</code>: <code>Numeric scalar</code>. Transparency of the boxplot
-layer. (Default: <code>0.5</code>)</p></li>
-<li><p><code>point.alpha</code>: <code>Numeric scalar</code>. Transparency of the point
-layer. (Default: <code>0.65</code>)</p></li>
-<li><p><code>line.alpha</code>: <code>Numeric scalar</code>. Transparency of the line
-layer. (Default: <code>0.5</code>)</p></li>
-<li><p><code>point.shape</code>: <code>Numeric scalar</code>. Shape of points.
-(Default: <code>21</code>)</p></li>
-<li><p><code>point.size</code>: <code>Numeric scalar</code>. Size of points.
-(Default: <code>2</code>)</p></li>
-<li><p><code>point.colour</code>: <code>Character scalar</code>. Colour of points.
-(Default: <code>"grey70"</code>)</p></li>
-<li><p><code>linetype</code>: <code>Numeric scalar</code>. Type of lines.
-(Default: <code>1</code>)</p></li>
-<li><p><code>linewidth</code>: <code>Numeric scalar</code>. Width of lines.
-(Default: <code>1</code>)</p></li>
-<li><p><code>line.colour</code>: <code>Character scalar</code>. Colour of lines.
-(Default: <code>"grey70"</code>)</p></li>
+<li><p><code>add.threshold</code>: <code>Logical scalar</code>. Whether to add
+<code>threshold</code> as a horizontal line. The line is always added with
+<code>add.proportion = TRUE</code>. (Default: <code>FALSE</code>)</p></li>
+<li><p><code>add.significance</code>: <code>Logical scalar</code>. Whether to test
+and show the significance of differences between groups (see
+"Significance" below). (Default: <code>FALSE</code>)</p></li>
+</ul><p><strong>Box layer</strong></p><ul><li><p><code>box.alpha</code>: <code>Numeric scalar</code>. Transparency of the boxes.
+(Default: <code>0.5</code>)</p></li>
 <li><p><code>box.width</code>: <code>Numeric scalar</code>. Width of boxes.
 (Default: <code>0.75</code>)</p></li>
-<li><p><code>bar.width</code>: <code>Numeric scalar</code>. Width of proportion bars.
-By default, it is calculated based so that the width matches with the
-width of boxes.</p></li>
 <li><p><code>outlier.size</code>, <code>outlier.colour</code>,
 <code>outlier.alpha</code>, <code>outlier.shape</code>: Size, colour, transparency
 and shape of the outlier points of the boxplot layer, passed to
@@ -165,6 +135,71 @@ only when <code>add.points = FALSE</code>; otherwise all observations are
 already shown as points. If <code>NULL</code>, <code>ggplot2</code> defaults are
 used, and the shape defaults to <code>point.shape</code>.
 (Default: <code>NULL</code>)</p></li>
+</ul><p><strong>Point layer</strong></p><ul><li><p><code>point.alpha</code>: <code>Numeric scalar</code>. Transparency of points.
+(Default: <code>0.65</code>)</p></li>
+<li><p><code>point.shape</code>: <code>Numeric scalar</code>. Shape of points.
+(Default: <code>21</code>)</p></li>
+<li><p><code>point.size</code>: <code>Numeric scalar</code>. Size of points.
+(Default: <code>2</code>)</p></li>
+<li><p><code>point.colour</code>: <code>Character scalar</code>. Colour of points.
+(Default: <code>"grey70"</code>)</p></li>
+<li><p><code>point.offset</code>: <code>Character scalar</code>. Method for offsetting
+points so that they do not overlap. The available options include:
+<code>"center"</code>, <code>"compactswarm"</code>, <code>"hex"</code>, <code>"square"</code>,
+<code>"swarm"</code>
+(see <code><a href="https://rdrr.io/pkg/beeswarm/man/beeswarm.html" class="external-link">beeswarm::beeswarm()</a></code> for details),
+<code>"frowney"</code>, <code>"maxout"</code>, <code>"minout"</code>, <code>"pseudorandom"</code>,
+<code>"quasirandom"</code>,  <code>"smiley"</code>, <code>"tukey"</code>, <code>"tukeyDense"</code>
+(see <code><a href="https://rdrr.io/pkg/vipor/man/offsetX.html" class="external-link">vipor::offsetSingleGroup()</a></code>
+for details), <code>"jitter"</code>, and <code>"none"</code>.
+If <code>"none"</code>, offsetting is not applied. (Default: <code>"jitter"</code>)</p></li>
+<li><p><code>jitter.width</code>: <code>Numeric scalar</code>. Width of jitter.
+(Default: <code>0.3</code>)</p></li>
+<li><p><code>jitter.height</code>: <code>Numeric scalar</code>. Height of jitter.
+(Default: <code>0</code>)</p></li>
+<li><p><code>beeswarm.corral</code>: <code>Character scalar</code>. Beeswarm's "corral"
+method. Fed to function <code><a href="https://rdrr.io/pkg/beeswarm/man/beeswarm.html" class="external-link">beeswarm::beeswarm()</a></code>.
+(Default: <code>"none"</code>)</p></li>
+<li><p><code>dodge.width</code>: <code>Numeric scalar</code>. Width of dodge. How far
+apart the groups are plotted? Applies to boxes, points and bars.
+(Default: <code>0</code>)</p></li>
+</ul><p><strong>Line layer</strong> (paired observations, <code>pair.by</code>)</p><ul><li><p><code>line.alpha</code>: <code>Numeric scalar</code>. Transparency of lines.
+(Default: <code>0.5</code>)</p></li>
+<li><p><code>line.colour</code>: <code>Character scalar</code>. Colour of lines.
+(Default: <code>"grey70"</code>)</p></li>
+<li><p><code>linetype</code>: <code>Numeric scalar</code>. Type of lines.
+(Default: <code>1</code>)</p></li>
+<li><p><code>linewidth</code>: <code>Numeric scalar</code>. Width of lines.
+(Default: <code>1</code>)</p></li>
+</ul><p><strong>Proportion bars</strong> (<code>add.proportion = TRUE</code>)</p><ul><li><p><code>threshold</code>: <code>Numeric scalar</code>. Specifies threshold for the
+barplots. (Default: <code>0</code>)</p></li>
+<li><p><code>bar.width</code>: <code>Numeric scalar</code>. Width of proportion bars.
+By default, it is calculated so that the width matches with the
+width of boxes.</p></li>
+</ul><p><strong>Facets</strong></p><ul><li><p><code>scales</code>: <code>Character scalar</code>. Adjust scales of facets.
+(Default: <code>"fixed"</code>)</p></li>
+<li><p><code>nrow</code>, <code>ncol</code>: <code>NULL</code> or <code>integer scalar</code>.
+Number of rows and columns of facets. (Default: <code>NULL</code>)</p></li>
+</ul><p><strong>Significance</strong> (<code>add.significance = TRUE</code> or <code>p.value</code>)</p><ul><li><p><code>p.value</code>: <code>NULL</code> or <code>data.frame</code>. Pre-calculated
+p-values to show instead of testing with <code>add.significance</code>. It must
+have columns <code>group1</code> and <code>group2</code>, one of <code>p</code>,
+<code>p.adj</code> or <code>p.adj.signif</code>, and the facet and x axis variables
+that are not compared, e.g. the output of <code><a href="https://rpkgs.datanovia.com/rstatix/reference/t_test.html" class="external-link">rstatix::t_test()</a></code>
+(see examples). (Default: <code>NULL</code>)</p></li>
+<li><p><code>significance.method</code>: <code>Character scalar</code>. Test used
+with <code>add.significance</code>: <code>"wilcox.test"</code> (or
+<code>"wilcoxon"</code>) or <code>"t.test"</code> (or <code>"t-test"</code>).
+(Default: <code>"wilcox.test"</code>)</p></li>
+<li><p><code>paired</code>: <code>Logical scalar</code>. Whether to use a paired
+test. (Default: <code>TRUE</code> if <code>pair.by</code> is specified)</p></li>
+<li><p><code>p.adjust.method</code>: <code>Character scalar</code>. Method for
+adjusting p-values for multiple testing, see
+<code><a href="https://rdrr.io/r/stats/p.adjust.html" class="external-link">p.adjust</a></code>. (Default: <code>"fdr"</code>)</p></li>
+<li><p><code>mark.significance</code>: <code>Logical scalar</code>. Whether to show
+significance levels as asterisks instead of p-values.
+(Default: <code>FALSE</code>)</p></li>
+<li><p><code>digits</code>: <code>Integer scalar</code>. Number of digits in the
+shown p-values. (Default: <code>3</code>)</p></li>
 <li><p><code>step.increase</code>: <code>Numeric scalar</code>. Distance of
 significance brackets from the highest group they span, and between
 stacked brackets, as a fraction of the y axis range. (Default: <code>0.12</code>)</p></li>
@@ -172,7 +207,12 @@ stacked brackets, as a fraction of the y axis range. (Default: <code>0.12</code>
 <code>"p.adj"</code>. Whether to hide non-significant comparisons, as in
 <code><a href="https://rpkgs.datanovia.com/ggpubr/reference/stat_pvalue_manual.html" class="external-link">ggpubr::stat_pvalue_manual</a></code>. Hidden comparisons do not take space,
 so the shown brackets are stacked without gaps. (Default: <code>FALSE</code>)</p></li>
-</ul></dd>
+<li><p>Other arguments are passed to
+<code><a href="https://rpkgs.datanovia.com/ggpubr/reference/stat_pvalue_manual.html" class="external-link">ggpubr::stat_pvalue_manual()</a></code>,
+for example <code>label</code>, <code>label.size</code>, <code>bracket.size</code>,
+<code>tip.length</code> and <code>color</code>.</p></li>
+</ul><p>The American spellings <code>color.by</code>, <code>point.color</code>,
+<code>line.color</code> and <code>outlier.color</code> are also accepted.</p></dd>
 
 
 <dt id="arg-assay-type">assay.type<a class="anchor" aria-label="anchor" href="#arg-assay-type"></a></dt>
