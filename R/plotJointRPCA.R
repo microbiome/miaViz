@@ -873,10 +873,13 @@ setMethod("plotJointRPCALoadings",
         # Nodes
         geom_node_point(aes(shape = .data[["Layer"]]), size = 3) +
         theme_graph(base_family = "", background = NA)
-    # Feature names next to the nodes
+    # Feature names next to the nodes. Labels are kept off the node symbols
+    # (point.size matches the nodes) and have a white halo to stay readable
+    # where they cross edges.
     if( show.label ){
         p <- p + geom_node_text(
-            aes(label = .data[["name"]]), repel = TRUE, size = 3)
+            aes(label = .data[["name"]]), repel = TRUE, size = 3,
+            point.size = 3, bg.colour = "white")
     }
     return(p)
 }
