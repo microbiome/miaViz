@@ -118,6 +118,12 @@ underscores in the labels. (Default: <code>" "</code>)</p></li>
 be used to label vectors. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>repel.labels</code>: <code>Logical scalar</code>. Should labels be
 repelled. (Default: <code>TRUE</code>)</p></li>
+<li><p><code>vec.scale</code>: <code>Logical scalar</code> or <code>numeric scalar</code>.
+Common multiplier for the lengths of the vectors. If <code>TRUE</code>, the
+vectors are scaled so that the longest one reaches 75\<!-- % of the extent of -->
+the samples, as in <code>vegan</code> biplots. The relative lengths and
+directions of the vectors do not change. If <code>FALSE</code>, the vectors are
+drawn at their original length. (Default: <code>TRUE</code>)</p></li>
 <li><p><code>parse.labels</code>: <code>Logical scalar</code>. Should labels be parsed.
 (Default: <code>TRUE</code>)</p></li>
 <li><p><code>add.significance</code>: <code>Logical scalar</code>. Should explained
@@ -198,6 +204,8 @@ arguments inherited from <code><a href="https://rdrr.io/pkg/scater/man/plotReduc
 <span class="r-in"><span><span class="co"># Create RDA plot without vectors</span></span></span>
 <span class="r-in"><span><span class="fu">plotRDA</span><span class="op">(</span><span class="va">tse</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"ClinicalStatus"</span>, add.vectors <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Too few points to calculate an ellipse</span>
 <span class="r-plt img"><img src="plotCCA-1.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
