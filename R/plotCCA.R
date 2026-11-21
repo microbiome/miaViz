@@ -70,6 +70,13 @@
 #'   \item \code{repel.labels}: \code{Logical scalar}. Should labels be
 #'   repelled. (Default: \code{TRUE})
 #'
+#'   \item \code{vec.scale}: \code{Logical scalar} or \code{numeric scalar}.
+#'   Common multiplier for the lengths of the vectors. If \code{TRUE}, the
+#'   vectors are scaled so that the longest one reaches 75\% of the extent of
+#'   the samples, as in \code{vegan} biplots. The relative lengths and
+#'   directions of the vectors do not change. If \code{FALSE}, the vectors are
+#'   drawn at their original length. (Default: \code{TRUE})
+#'
 #'   \item \code{parse.labels}: \code{Logical scalar}. Should labels be parsed.
 #'   (Default: \code{TRUE})
 #'
@@ -471,6 +478,31 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
     return(res)
 }
 
+# Multiply the coordinates of the vectors by a common factor. With
+# vec.scale = TRUE, the factor makes the longest vector reach 75% of the
+# extent of the samples, as vegan::ordiArrowMul() does for biplots. The
+# relative lengths and the directions of the vectors do not change.
+#' @importFrom ggplot2 layer_data
+.scale_rda_vectors <- function(plot, data, xvar, yvar, vec.scale){
+    if( isFALSE(vec.scale) ){
+        return(data)
+    }
+    if( isTRUE(vec.scale) ){
+        pts <- layer_data(plot, 1L)
+        vec_max <- c(max(abs(data[[xvar]])), max(abs(data[[yvar]])))
+        pts_max <- c(max(abs(pts[["x"]]), na.rm = TRUE),
+            max(abs(pts[["y"]]), na.rm = TRUE))
+        ratio <- pts_max / vec_max
+        vec.scale <- 0.75 * min(ratio[is.finite(ratio)], Inf)
+        if( !is.finite(vec.scale) ){
+            return(data)
+        }
+    }
+    data[[xvar]] <- data[[xvar]] * vec.scale
+    data[[yvar]] <- data[[yvar]] * vec.scale
+    return(data)
+}
+
 # This function adds vector and text layer to the plot.
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter_vector <- function(
@@ -480,7 +512,7 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
         vec.text = TRUE, repel.labels = TRUE, parse.labels = TRUE,
         add.significance = TRUE, vec.linetype = 1, min.segment.length = 5,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
-        max.overlaps = 10, ...
+        max.overlaps = 10, vec.scale = TRUE, ...
         ){
     #
     if ( !(is.numeric(vec.size) && vec.size > 0) ) {
@@ -512,6 +544,12 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
     if( !.is_a_bool(add.significance) ){
         stop("'add.significance' must be TRUE or FALSE.", call. = FALSE)
     }
+    if( !(.is_a_bool(vec.scale) ||
+            (is.numeric(vec.scale) && length(vec.scale) == 1L &&
+            vec.scale > 0)) ){
+        stop("'vec.scale' must be TRUE, FALSE or a positive number.",
+            call. = FALSE)
+    }
     if( parse.labels && !add.significance ){
         parse.labels <- FALSE
         warning("'parse.labels' was turned off because 'add.significance' ",
@@ -522,6 +560,8 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
     if( !is.null(data) ){
         xvar <- colnames(data)[[1]]
         yvar <- colnames(data)[[2]]
+        # Scale the arrows so that they are visible next to the samples
+        data <- .scale_rda_vectors(plot, data, xvar, yvar, vec.scale)
         # Add vectors
         plot <- plot +
             geom_segment(data = data, aes(

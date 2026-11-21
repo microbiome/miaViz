@@ -77,6 +77,11 @@ NEW FEATURES
 
 SIGNIFICANT USER-VISIBLE CHANGES
 
++ plotRDA, plotCCA: the vectors are scaled by a common factor so that the
+  longest one reaches 75% of the extent of the samples (as in vegan
+  biplots), instead of crowding at the origin. Their relative lengths and
+  directions are unchanged; vec.scale = FALSE draws them at the original
+  length, and a number sets the multiplier
 + Colour-blind-friendly colours by default: discrete variables are coloured
   with the Okabe-Ito palette for up to 9 groups (black is used only for the
   9th) and with viridis for more, instead of the Tableau palette
