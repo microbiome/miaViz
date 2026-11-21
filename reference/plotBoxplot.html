@@ -165,6 +165,13 @@ only when <code>add.points = FALSE</code>; otherwise all observations are
 already shown as points. If <code>NULL</code>, <code>ggplot2</code> defaults are
 used, and the shape defaults to <code>point.shape</code>.
 (Default: <code>NULL</code>)</p></li>
+<li><p><code>step.increase</code>: <code>Numeric scalar</code>. Distance of
+significance brackets from the highest group they span, and between
+stacked brackets, as a fraction of the y axis range. (Default: <code>0.12</code>)</p></li>
+<li><p><code>hide.ns</code>: <code>Logical scalar</code> or <code>"p"</code> or
+<code>"p.adj"</code>. Whether to hide non-significant comparisons, as in
+<code><a href="https://rpkgs.datanovia.com/ggpubr/reference/stat_pvalue_manual.html" class="external-link">ggpubr::stat_pvalue_manual</a></code>. Hidden comparisons do not take space,
+so the shown brackets are stacked without gaps. (Default: <code>FALSE</code>)</p></li>
 </ul></dd>
 
 
