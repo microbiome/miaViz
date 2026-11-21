@@ -98,6 +98,175 @@ function from <code>BiocManager</code> and load <code>miaViz</code>.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="overview-of-miaviz-functions">Overview of miaViz functions<a class="anchor" aria-label="anchor" href="#overview-of-miaviz-functions"></a>
+</h2>
+<p>All plotting functions return <code>ggplot2</code> objects, so
+titles, scales and themes can be adjusted with the usual
+<code>ggplot2</code> functions, e.g. <code>+ labs()</code>. Common
+arguments, such as <code>colour.by</code>, <code>shape.by</code> and the
+default colour palette, are described in <code><a href="../reference/mia-plot-args.html">?"mia-plot-args"</a></code>.
+Most functions are demonstrated below; further examples are in
+Orchestrating Microbiome Analysis <span class="citation">(Lahti et al.
+2021)</span>.</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr class="header">
+<th align="left">Use case</th>
+<th align="left">Functions</th>
+<th align="left">What they show</th>
+</tr></thead>
+<tbody>
+<tr class="odd">
+<td align="left">Community composition</td>
+<td align="left"><code><a href="../reference/plotAbundance.html">plotAbundance()</a></code></td>
+<td align="left">Stacked barplot of abundances per sample</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><code><a href="../reference/plotAbundanceDensity.html">plotAbundanceDensity()</a></code></td>
+<td align="left">Distribution of abundances of the top features</td>
+</tr>
+<tr class="odd">
+<td align="left">Distributions and groups</td>
+<td align="left">
+<code><a href="../reference/plotHistogram.html">plotHistogram()</a></code>,
+<code><a href="../reference/plotHistogram.html">plotBarplot()</a></code>
+</td>
+<td align="left">Histogram or barplot of assay values or sample/feature
+variables</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><code><a href="../reference/plotBoxplot.html">plotBoxplot()</a></code></td>
+<td align="left">Boxplots of assay values or variables, with optional
+significance tests and paired lines</td>
+</tr>
+<tr class="odd">
+<td align="left">Prevalence</td>
+<td align="left">
+<code><a href="../reference/plotPrevalence.html">plotPrevalence()</a></code>,
+<code><a href="../reference/plotPrevalence.html">plotRowPrevalence()</a></code>,
+<code><a href="../reference/plotPrevalence.html">plotPrevalentAbundance()</a></code>
+</td>
+<td align="left">Prevalence across detection thresholds and
+abundance</td>
+</tr>
+<tr class="even">
+<td align="left">Heatmaps</td>
+<td align="left">
+<code><a href="../reference/plotHeatmap.html">plotHeatmap()</a></code>,
+<code><a href="../reference/plotDissimilarity.html">plotDissimilarity()</a></code>
+</td>
+<td align="left">Heatmap of an assay, or of a dissimilarity matrix
+between samples</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><code><a href="../reference/getHeatmapOrder.html">getHeatmapOrder()</a></code></td>
+<td align="left">Row and column order used for sorting heatmaps</td>
+</tr>
+<tr class="even">
+<td align="left">Ordination</td>
+<td align="left"><code><a href="../reference/plotOrdination.html">plotOrdination()</a></code></td>
+<td align="left">Samples in a reduced dimension (PCA, MDS, NMDS, …)</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><code><a href="../reference/plotScree.html">plotScree()</a></code></td>
+<td align="left">Explained variance or eigenvalues per component</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><code><a href="../reference/plotLoadings.html">plotLoadings()</a></code></td>
+<td align="left">Feature loadings of the components</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left">
+<code><a href="../reference/plotCCA.html">plotRDA()</a></code>, <code><a href="../reference/plotCCA.html">plotCCA()</a></code>
+</td>
+<td align="left">Constrained ordination (RDA/CCA) with vectors of the
+covariates</td>
+</tr>
+<tr class="even">
+<td align="left">Statistical results</td>
+<td align="left"><code><a href="../reference/plotForest.html">plotForest()</a></code></td>
+<td align="left">Effect sizes with confidence intervals, e.g. from
+differential abundance analysis</td>
+</tr>
+<tr class="odd">
+<td align="left"></td>
+<td align="left"><code><a href="../reference/plotMediation.html">plotMediation()</a></code></td>
+<td align="left">Results of <code><a href="https://microbiome.github.io/mia/reference/getMediation.html" class="external-link">mia::addMediation()</a></code> as a
+heatmap or forest plot</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left"><code><a href="../reference/plotDMN.html">plotDMNFit()</a></code></td>
+<td align="left">Model fit of Dirichlet-Multinomial mixtures</td>
+</tr>
+<tr class="odd">
+<td align="left">Trees</td>
+<td align="left">
+<code><a href="../reference/plotTree.html">plotRowTree()</a></code>,
+<code><a href="../reference/plotTree.html">plotColTree()</a></code>
+</td>
+<td align="left">Tree of features or samples with tip, node and edge
+annotations</td>
+</tr>
+<tr class="even">
+<td align="left"></td>
+<td align="left">
+<code><a href="../reference/treeData.html">rowTreeData()</a></code>, <code><a href="../reference/treeData.html">colTreeData()</a></code>,
+<code><a href="../reference/treeData.html">combineTreeData()</a></code>
+</td>
+<td align="left">Access and combine the data used for annotating
+trees</td>
+</tr>
+<tr class="odd">
+<td align="left">Graphs and networks</td>
+<td align="left">
+<code><a href="../reference/plotGraph.html">plotRowGraph()</a></code>,
+<code><a href="../reference/plotGraph.html">plotColGraph()</a></code>
+</td>
+<td align="left">Graph of features or samples with data from the
+object</td>
+</tr>
+<tr class="even">
+<td align="left">Factor data</td>
+<td align="left">
+<code><a href="../reference/plotColTile.html">plotColTile()</a></code>,
+<code><a href="../reference/plotColTile.html">plotRowTile()</a></code>
+</td>
+<td align="left">Relation of two categorical variables as tiles</td>
+</tr>
+<tr class="odd">
+<td align="left">Time series</td>
+<td align="left"><code><a href="../reference/plotSeries.html">plotSeries()</a></code></td>
+<td align="left">Abundance of features over time</td>
+</tr>
+<tr class="even">
+<td align="left">Multi-omics (Joint-RPCA)</td>
+<td align="left">
+<code><a href="../reference/plotJointRPCA.html">plotJointRPCA()</a></code>,
+<code><a href="../reference/plotJointRPCA.html">plotJointRPCAExplainedVariance()</a></code>,
+<code><a href="../reference/plotJointRPCA.html">plotJointRPCALoadings()</a></code>,
+<code><a href="../reference/plotJointRPCA.html">plotJointRPCACovariance()</a></code>,
+<code><a href="../reference/plotJointRPCA.html">plotJointRPCANetwork()</a></code>
+</td>
+<td align="left">Results of <code><a href="https://microbiome.github.io/mia/reference/getRPCA.html" class="external-link">mia::addJointRPCA()</a></code>:
+ordination, variance, loadings, covariance and feature network</td>
+</tr>
+</tbody>
+</table>
+<p>The examples below use the <code>GlobalPatterns</code> data from the
+<code>mia</code> package.</p>
+</div>
+<div class="section level2">
 <h2 id="abundance-plotting">Abundance plotting<a class="anchor" aria-label="anchor" href="#abundance-plotting"></a>
 </h2>
 <p>In contrast to other fields of sequencing based fields of research
@@ -175,7 +344,7 @@ the mean relative abundance on the chosen taxonomic level.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotPrevalence.html">plotPrevalentAbundance</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>, colour.by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Duplicated labels were made unique.</span></span></code></pre></div>
+<span><span class="co">#&gt; 7 duplicated label(s) were made unique (make.unique = TRUE): Alteromonadaceae -&gt; Alteromonadaceae_1, Piscirickettsiaceae -&gt; Piscirickettsiaceae_1, Piscirickettsiaceae -&gt; Piscirickettsiaceae_2, Chromatiaceae -&gt; Chromatiaceae_1, Thiotrichaceae -&gt; Thiotrichaceae_1, ... (2 more)</span></span></code></pre></div>
 <p><img src="miaViz_files/figure-html/plotprevalentabundance-1.png" class="r-plt" alt="" width="3000"></p>
 <p><code>plotPrevalence</code> plot the number of samples and their
 prevalence across different abundance thresholds. Abundance steps can be
@@ -190,6 +359,118 @@ argument.</p>
 <p><img src="miaViz_files/figure-html/plotprevalence-1.png" class="r-plt" alt="" width="3000"></p>
 </div>
 <div class="section level2">
+<h2 id="heatmaps">Heatmaps<a class="anchor" aria-label="anchor" href="#heatmaps"></a>
+</h2>
+<p><code><a href="../reference/plotHeatmap.html">plotHeatmap()</a></code> draws an assay as a heatmap. Here, the 10
+most abundant phyla are shown as CLR-transformed and standardized
+values, and the samples are split by sample type.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span>
+<span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span><span class="va">tse_phylum</span>, method <span class="op">=</span> <span class="st">"clr"</span>, pseudocount <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/transformAssay.html" class="external-link">transformAssay</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"clr"</span>, method <span class="op">=</span> <span class="st">"standardize"</span>, MARGIN <span class="op">=</span> <span class="st">"rows"</span>,</span>
+<span>    name <span class="op">=</span> <span class="st">"clr_z"</span><span class="op">)</span></span>
+<span><span class="va">tse_top</span> <span class="op">&lt;-</span> <span class="va">tse_phylum</span><span class="op">[</span><span class="fu"><a href="https://microbiome.github.io/mia/reference/summary.html" class="external-link">getTop</a></span><span class="op">(</span><span class="va">tse_phylum</span>, top <span class="op">=</span> <span class="fl">10L</span><span class="op">)</span>, <span class="op">]</span></span>
+<span><span class="co"># scater also has a plotHeatmap() function, so the package is given</span></span>
+<span><span class="fu">miaViz</span><span class="fu">::</span><span class="fu"><a href="../reference/plotHeatmap.html">plotHeatmap</a></span><span class="op">(</span><span class="va">tse_top</span>, assay.type <span class="op">=</span> <span class="st">"clr_z"</span>, col.var <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/heatmap-1.png" class="r-plt" alt="" width="3000"></p>
+<p><code><a href="../reference/plotDissimilarity.html">plotDissimilarity()</a></code> shows a dissimilarity matrix between
+samples, and <code><a href="../reference/getHeatmapOrder.html">getHeatmapOrder()</a></code> returns the order of rows or
+columns used for sorting.</p>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/getDissimilarity.html" class="external-link">addDissimilarity</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, method <span class="op">=</span> <span class="st">"bray"</span>, name <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plotDissimilarity.html">plotDissimilarity</a></span><span class="op">(</span><span class="va">tse_phylum</span>, name <span class="op">=</span> <span class="st">"bray"</span>, col.var <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Registered S3 method overwritten by 'seriation':</span></span>
+<span><span class="co">#&gt;   method         from </span></span>
+<span><span class="co">#&gt;   reorder.hclust vegan</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/dissimilarity-1.png" class="r-plt" alt="" width="3000"></p>
+</div>
+<div class="section level2">
+<h2 id="ordination">Ordination<a class="anchor" aria-label="anchor" href="#ordination"></a>
+</h2>
+<p><code><a href="../reference/plotOrdination.html">plotOrdination()</a></code> plots samples in a reduced dimension
+stored in <code><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim()</a></code>. <code><a href="../reference/plotScree.html">plotScree()</a></code> shows the
+explained variance of the components and <code><a href="../reference/plotLoadings.html">plotLoadings()</a></code> the
+contribution of the features.</p>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tse_phylum</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/addPCA.html" class="external-link">addPCA</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"clr"</span>, name <span class="op">=</span> <span class="st">"PCA"</span>, ncomponents <span class="op">=</span> <span class="fl">5</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plotOrdination.html">plotOrdination</a></span><span class="op">(</span><span class="va">tse_phylum</span>, dimred <span class="op">=</span> <span class="st">"PCA"</span>, colour.by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/ordination-1.png" class="r-plt" alt="" width="3000"></p>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotScree.html">plotScree</a></span><span class="op">(</span><span class="va">tse_phylum</span>, dimred <span class="op">=</span> <span class="st">"PCA"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/scree-1.png" class="r-plt" alt="" width="3000"></p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotLoadings.html">plotLoadings</a></span><span class="op">(</span><span class="va">tse_phylum</span>, dimred <span class="op">=</span> <span class="st">"PCA"</span>, ncomponents <span class="op">=</span> <span class="fl">2</span>, n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/loadings-1.png" class="r-plt" alt="" width="3000"></p>
+<p>For redundancy analysis (RDA), <code><a href="../reference/plotCCA.html">plotRDA()</a></code> adds the
+vectors of the covariates. <code><a href="../reference/plotCCA.html">plotCCA()</a></code> works in the same way
+for canonical correspondence analysis. Here, the samples from three
+environments are compared.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">tse_env</span> <span class="op">&lt;-</span> <span class="va">tse_phylum</span><span class="op">[</span>, <span class="va">tse_phylum</span><span class="op">$</span><span class="va">SampleType</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Ocean"</span>, <span class="st">"Soil"</span>, <span class="st">"Feces"</span><span class="op">)</span><span class="op">]</span></span>
+<span><span class="va">tse_env</span><span class="op">$</span><span class="va">SampleType</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/droplevels.html" class="external-link">droplevels</a></span><span class="op">(</span><span class="va">tse_env</span><span class="op">$</span><span class="va">SampleType</span><span class="op">)</span></span>
+<span><span class="va">tse_env</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/runCCA.html" class="external-link">addRDA</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_env</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, formula <span class="op">=</span> <span class="va">x</span> <span class="op">~</span> <span class="va">SampleType</span>,</span>
+<span>    distance <span class="op">=</span> <span class="st">"bray"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plotCCA.html">plotRDA</a></span><span class="op">(</span><span class="va">tse_env</span>, <span class="st">"RDA"</span>, colour.by <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/rda-1.png" class="r-plt" alt="" width="3000"></p>
+</div>
+<div class="section level2">
+<h2 id="distributions-and-group-comparisons">Distributions and group comparisons<a class="anchor" aria-label="anchor" href="#distributions-and-group-comparisons"></a>
+</h2>
+<p><code><a href="../reference/plotHistogram.html">plotHistogram()</a></code> and <code><a href="../reference/plotHistogram.html">plotBarplot()</a></code> show the
+distribution of assay values or of variables in <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData()</a></code>
+or <code><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">rowData()</a></code>.</p>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotHistogram.html">plotHistogram</a></span><span class="op">(</span><span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"clr"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/histogram-1.png" class="r-plt" alt="" width="3000"></p>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotHistogram.html">plotBarplot</a></span><span class="op">(</span><span class="va">tse_phylum</span>, col.var <span class="op">=</span> <span class="st">"SampleType"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/barplot-1.png" class="r-plt" alt="" width="3000"></p>
+<p><code><a href="../reference/plotBoxplot.html">plotBoxplot()</a></code> compares assay values or variables between
+groups.</p>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotBoxplot.html">plotBoxplot</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, assay.type <span class="op">=</span> <span class="st">"clr"</span>, features <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Bacteroidetes"</span>, <span class="st">"Firmicutes"</span><span class="op">)</span>,</span>
+<span>    x <span class="op">=</span> <span class="st">"SampleType"</span>, facet.by <span class="op">=</span> <span class="st">"rownames"</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>axis.text.x <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>angle <span class="op">=</span> <span class="fl">45</span>, hjust <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/boxplot-1.png" class="r-plt" alt="" width="3000"></p>
+<p><code><a href="../reference/plotAbundanceDensity.html">plotAbundanceDensity()</a></code> shows the distribution of
+abundances of the most abundant features.</p>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plotAbundanceDensity.html">plotAbundanceDensity</a></span><span class="op">(</span></span>
+<span>    <span class="va">tse_phylum</span>, layout <span class="op">=</span> <span class="st">"jitter"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>, n <span class="op">=</span> <span class="fl">10</span><span class="op">)</span> <span class="op">+</span></span>
+<span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/abundancedensity-1.png" class="r-plt" alt="" width="3000"></p>
+</div>
+<div class="section level2">
+<h2 id="visualising-statistical-results">Visualising statistical results<a class="anchor" aria-label="anchor" href="#visualising-statistical-results"></a>
+</h2>
+<p><code><a href="../reference/plotForest.html">plotForest()</a></code> shows effect sizes with their confidence
+intervals, for example from a differential abundance analysis. Here we
+compare the CLR-transformed abundances of fecal and other samples with a
+linear model for each of the 10 most abundant phyla.</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fecal</span> <span class="op">&lt;-</span> <span class="va">tse_top</span><span class="op">$</span><span class="va">SampleType</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Feces"</span>, <span class="st">"Mock"</span><span class="op">)</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/apply.html" class="external-link">apply</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">assay</a></span><span class="op">(</span><span class="va">tse_top</span>, <span class="st">"clr"</span><span class="op">)</span>, <span class="fl">1L</span>, <span class="kw">function</span><span class="op">(</span><span class="va">y</span><span class="op">)</span><span class="op">{</span></span>
+<span>    <span class="va">fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/summary.html" class="external-link">summary</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lm.html" class="external-link">lm</a></span><span class="op">(</span><span class="va">y</span> <span class="op">~</span> <span class="va">fecal</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">coefficients</span></span>
+<span>    <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>effect <span class="op">=</span> <span class="va">fit</span><span class="op">[</span><span class="fl">2L</span>, <span class="fl">1L</span><span class="op">]</span>, stderr <span class="op">=</span> <span class="va">fit</span><span class="op">[</span><span class="fl">2L</span>, <span class="fl">2L</span><span class="op">]</span>, pval <span class="op">=</span> <span class="va">fit</span><span class="op">[</span><span class="fl">2L</span>, <span class="fl">4L</span><span class="op">]</span>,</span>
+<span>        df <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">y</span><span class="op">)</span> <span class="op">-</span> <span class="fl">2L</span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
+<span><span class="va">res</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/t.html" class="external-link">t</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plotForest.html">plotForest</a></span><span class="op">(</span></span>
+<span>    <span class="va">res</span>, effect.var <span class="op">=</span> <span class="st">"effect"</span>, err.var <span class="op">=</span> <span class="st">"stderr"</span>, df.var <span class="op">=</span> <span class="st">"df"</span>,</span>
+<span>    pval.var <span class="op">=</span> <span class="st">"pval"</span>, label.by <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"CI"</span>, <span class="st">"P-Value"</span><span class="op">)</span>, order.by <span class="op">=</span> <span class="st">"effect"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="miaViz_files/figure-html/forest-1.png" class="r-plt" alt="" width="3000"></p>
+<p><code><a href="../reference/plotMediation.html">plotMediation()</a></code> visualizes the results of
+<code><a href="https://microbiome.github.io/mia/reference/getMediation.html" class="external-link">mia::addMediation()</a></code>; see <code><a href="../reference/plotMediation.html">?plotMediation</a></code> and
+the mediation chapter of <span class="citation">(Lahti et al.
+2021)</span>.</p>
+</div>
+<div class="section level2">
 <h2 id="tree-plotting">Tree plotting<a class="anchor" aria-label="anchor" href="#tree-plotting"></a>
 </h2>
 <p>The information stored in the <code>rowTree</code> can be directly
@@ -197,14 +478,14 @@ plotted. However, sizes of stored trees have to be kept in mind and
 plotting of large trees rarely makes sense.</p>
 <p>For this example we limit the information plotted to the top 100 taxa
 as judged by mean abundance on the genus level.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="http://bioconductor.org/packages/scater/" class="external-link">scater</a></span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://microbiome.github.io/mia/" class="external-link">mia</a></span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Agglomeration drops the phylogenetic tree, so we add a tree based on the</span></span>
 <span><span class="co"># taxonomic hierarchy</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/agglomerate-methods.html" class="external-link">agglomerateByRank</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Duplicated labels were made unique.</span></span>
+<span><span class="co">#&gt; 13 duplicated label(s) were made unique (make.unique = TRUE): Streptomyces -&gt; Streptomyces_1, Mycoplana -&gt; Mycoplana_1, Clostridium -&gt; Clostridium_1, Eubacterium -&gt; Eubacterium_1, Clostridium -&gt; Clostridium_2, ... (8 more)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://microbiome.github.io/mia/reference/hierarchy-tree.html" class="external-link">addHierarchyTree</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Warning in toTree(td): The root is added with label 'ALL'</span></span>
@@ -227,7 +508,7 @@ currently information for nodes have to be provided via the
 <p>Data will be matched via the <code>node</code> or <code>label</code>
 argument depending on which was provided. <code>label</code> takes
 precedent.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>, tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>,</span>
 <span>    tip.size.by <span class="op">=</span> <span class="st">"detected"</span><span class="op">)</span></span></code></pre></div>
@@ -239,7 +520,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance
 </div>
 <p>Tip and node labels can be shown as well. Setting
 <code>show_label = TRUE</code> shows the tip labels only …</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
 <span>    tip.colour.by <span class="op">=</span> <span class="st">"log_mean"</span>, tip.size.by <span class="op">=</span> <span class="st">"detected"</span>, show.label <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -254,7 +535,7 @@ well.
 logical vector to <code>show_label</code>.</p>
 <p>Please note that currently <code>ggtree</code> can only plot node
 labels in a rectangular layout.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">labels</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"Genus:Providencia"</span>, <span class="st">"Genus:Morganella"</span>, <span class="st">"0.961.60"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
@@ -269,7 +550,7 @@ Tree plot using ggtree with tip labels decorated by mean abundance
 </p>
 </div>
 <p>Information can also be visualized on the edges of the tree plot.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotTree.html">plotRowTree</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">[</span><span class="va">top_taxa</span>,<span class="op">]</span>,</span>
 <span>    edge.colour.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
@@ -291,7 +572,7 @@ provided separately or as an element from the <code>metedata</code>.</p>
 <p>Here we load an example graph. As graph data, all objects types
 accepted by <code>as_tbl_graph</code> from the <code>tidygraph</code>
 package are supported.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">col_graph</span><span class="op">)</span></span></code></pre></div>
 <p>In the following examples, the <code>weight</code> data is
 automatically generated from the graph data. The
@@ -299,7 +580,7 @@ automatically generated from the graph data. The
 overlapping rownames with the node names of the graph. Using this link
 the graph plot can incorporate data from the
 <code>SummarizedExperiment</code>.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotGraph.html">plotColGraph</a></span><span class="op">(</span></span>
 <span>    <span class="va">col_graph</span>,</span>
 <span>    <span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span>,</span>
@@ -313,14 +594,14 @@ the graph plot can incorporate data from the
 <p><img src="miaViz_files/figure-html/plotcolgraph-1.png" class="r-plt" alt="" width="3000"></p>
 <p>As mentioned the graph data can be provided from the
 <code>metadata</code> of the <code>SummarizedExperiment</code>.</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">metadata</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/altExps.html" class="external-link">altExp</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>,<span class="st">"Genus"</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="va">col_graph</span></span></code></pre></div>
 <p>This produces the same plot as shown above.</p>
 </div>
 <div class="section level2">
 <h2 id="plotting-of-serial-data">Plotting of serial data<a class="anchor" aria-label="anchor" href="#plotting-of-serial-data"></a>
 </h2>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Load data from miaTime package</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://github.com/microbiome/miaTime" class="external-link">"miaTime"</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">SilvermanAGutData</span>, package<span class="op">=</span><span class="st">"miaTime"</span><span class="op">)</span></span>
@@ -333,7 +614,7 @@ reference data from the <code>colData</code> to use as descriptor for
 ordering the data. The <code>features</code> argument selects the
 feature to show. Since plotting a lot of features is not advised a
 maximum of 20 features can plotted at the same time.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span>
@@ -346,7 +627,7 @@ maximum of 20 features can plotted at the same time.</p>
 calculation of the <code>mean</code> and <code>sd</code> and plotted as
 a range. Data from different assays can be used for plotting via the
 <code>assay.type</code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span><span class="op">[</span><span class="va">taxa</span>,<span class="op">]</span>,</span>
 <span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
@@ -354,7 +635,7 @@ a range. Data from different assays can be used for plotting via the
 <span>    linetype.by <span class="op">=</span> <span class="st">"Phylum"</span>,</span>
 <span>    assay.type <span class="op">=</span> <span class="st">"relabundance"</span><span class="op">)</span></span></code></pre></div>
 <p>Additional variables can be used to modify line type aesthetics.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plotSeries.html">plotSeries</a></span><span class="op">(</span></span>
 <span>    <span class="va">tse</span>,</span>
 <span>    time.col <span class="op">=</span> <span class="st">"DAY_ORDER"</span>,</span>
@@ -369,7 +650,7 @@ a range. Data from different assays can be used for plotting via the
 <p>To visualize the relative relations between two groupings among the
 factor data, two functions are available for the purpose;
 <code>plotColTile</code> and <code>plotRowTile</code>.</p>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">GlobalPatterns</span>, package<span class="op">=</span><span class="st">"mia"</span><span class="op">)</span></span>
 <span><span class="va">se</span> <span class="op">&lt;-</span> <span class="va">GlobalPatterns</span></span>
 <span><span class="fu"><a href="../reference/plotColTile.html">plotColTile</a></span><span class="op">(</span><span class="va">se</span>,<span class="st">"SampleType"</span>,<span class="st">"Primer"</span><span class="op">)</span> <span class="op">+</span></span>
@@ -386,7 +667,7 @@ samples, could be approached with the Dirichlet Multinomial Mixtures
 as a number of clusters are used to observe the best fit (see also
 <code>getDMN</code> and <code>getBestDMNFit</code>). To visualize the
 fit using e.g. “laplace” as a measure of goodness of fit:</p>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">dmn_se</span>, package <span class="op">=</span> <span class="st">"mia"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="fu">metadata</span><span class="op">(</span><span class="va">dmn_se</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "DMN"</span></span>
@@ -402,7 +683,7 @@ fit using e.g. “laplace” as a measure of goodness of fit:</p>
 </h2>
 <p>Principal Coordinates Analysis using Bray-Curtis dissimilarity on the
 <code>hitchip1006</code> dataset:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/miaTime" class="external-link">miaTime</a></span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">hitchip1006</span>, package <span class="op">=</span> <span class="st">"miaTime"</span><span class="op">)</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="va">hitchip1006</span></span>
@@ -415,7 +696,7 @@ fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <span><span class="va">p</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/scater/man/plotReducedDim.html" class="external-link">plotReducedDim</a></span><span class="op">(</span><span class="va">tse</span>, dimred <span class="op">=</span> <span class="st">"PCoA_BC"</span><span class="op">)</span></span>
 <span><span class="va">p</span></span></code></pre></div>
 <p>Retrieving information about all available trajectories:</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># List subjects with two time points</span></span>
@@ -425,7 +706,7 @@ fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">tse</span><span class="op">$</span><span class="va">subject</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/rename.html" class="external-link">rename</a></span><span class="op">(</span>Timepoints<span class="op">=</span><span class="va">Var1</span>, Subjects<span class="op">=</span><span class="va">Freq</span><span class="op">)</span></span></code></pre></div>
 <p>Lets look at all trajectories having two time points in the data:</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># plot</span></span>
 <span><span class="va">p</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_path.html" class="external-link">geom_path</a></span><span class="op">(</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">X1</span>, y<span class="op">=</span><span class="va">X2</span>, group<span class="op">=</span><span class="va">subject</span><span class="op">)</span>, </span>
@@ -439,7 +720,7 @@ fit using e.g. “laplace” as a measure of goodness of fit:</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Filtering the two time point trajectories by divergence and
 displaying top 10%:</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/microbiome/miaTime" class="external-link">miaTime</a></span><span class="op">)</span></span>
 <span><span class="co"># calculating step wise divergence based on the microbial profiles</span></span>
 <span><span class="va">tse</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/miaTime/man/getStepwiseDivergence.html" class="external-link">getStepwiseDivergence</a></span><span class="op">(</span><span class="va">tse</span>, group <span class="op">=</span> <span class="st">"subject"</span>, time_field <span class="op">=</span> <span class="st">"time"</span><span class="op">)</span></span>
@@ -467,7 +748,7 @@ displaying top 10%:</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>plot.title <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>hjust <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Plotting an example of the trajectory with the maximum total
 divergence:</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Get subject with the maximum total divergence</span></span>
 <span><span class="va">selected.subject</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/SingleCellExperiment/man/reducedDims.html" class="external-link">reducedDim</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/pkg/SummarizedExperiment/man/SummarizedExperiment-class.html" class="external-link">colData</a></span><span class="op">(</span><span class="va">tse</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
 <span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">subject</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
@@ -489,7 +770,7 @@ Analysis <span class="citation">(Lahti et al. 2021)</span>.</p>
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; R version 4.6.1 (2026-06-24)</span></span>
 <span><span class="co">#&gt; Platform: x86_64-pc-linux-gnu</span></span>
@@ -541,54 +822,57 @@ Analysis <span class="citation">(Lahti et al. 2021)</span>.</p>
 <span><span class="co">#&gt;  [21] tokenizers_0.3.0            htmlwidgets_1.6.4          </span></span>
 <span><span class="co">#&gt;  [23] desc_1.4.3                  plyr_1.8.9                 </span></span>
 <span><span class="co">#&gt;  [25] DECIPHER_3.9.6              cachem_1.1.0               </span></span>
-<span><span class="co">#&gt;  [27] igraph_2.3.4                lifecycle_1.0.5            </span></span>
-<span><span class="co">#&gt;  [29] pkgconfig_2.0.3             rsvd_1.0.6                 </span></span>
-<span><span class="co">#&gt;  [31] Matrix_1.7-6                R6_2.6.1                   </span></span>
-<span><span class="co">#&gt;  [33] fastmap_1.2.0               rbibutils_2.4.1            </span></span>
-<span><span class="co">#&gt;  [35] tidytext_0.4.3              treelayout_0.1.0           </span></span>
-<span><span class="co">#&gt;  [37] digest_0.6.39               aplot_0.3.2                </span></span>
-<span><span class="co">#&gt;  [39] ggnewscale_0.5.2            patchwork_1.3.2            </span></span>
-<span><span class="co">#&gt;  [41] irlba_2.4.1                 SnowballC_0.7.1            </span></span>
-<span><span class="co">#&gt;  [43] textshaping_1.0.5           vegan_2.7-6                </span></span>
-<span><span class="co">#&gt;  [45] beachmat_2.29.3             labeling_0.4.3             </span></span>
-<span><span class="co">#&gt;  [47] polyclip_1.10-7             abind_1.4-8                </span></span>
-<span><span class="co">#&gt;  [49] mgcv_1.9-4                  compiler_4.6.1             </span></span>
-<span><span class="co">#&gt;  [51] fontquiver_0.2.1            withr_3.0.3                </span></span>
-<span><span class="co">#&gt;  [53] S7_0.2.2                    BiocParallel_1.47.0        </span></span>
-<span><span class="co">#&gt;  [55] viridis_0.6.5               DBI_1.3.0                  </span></span>
-<span><span class="co">#&gt;  [57] ggforce_0.5.0               MASS_7.3-66                </span></span>
-<span><span class="co">#&gt;  [59] rappdirs_0.3.4              DelayedArray_0.39.8        </span></span>
-<span><span class="co">#&gt;  [61] bluster_1.23.1              permute_0.9-10             </span></span>
-<span><span class="co">#&gt;  [63] tools_4.6.1                 vipor_0.4.7                </span></span>
-<span><span class="co">#&gt;  [65] otel_0.2.0                  beeswarm_0.4.0             </span></span>
-<span><span class="co">#&gt;  [67] ape_5.8-1                   glue_1.8.1                 </span></span>
-<span><span class="co">#&gt;  [69] nlme_3.1-171                grid_4.6.1                 </span></span>
-<span><span class="co">#&gt;  [71] cluster_2.1.8.3             reshape2_1.4.5             </span></span>
-<span><span class="co">#&gt;  [73] gtable_0.3.6                tidyr_1.3.2                </span></span>
-<span><span class="co">#&gt;  [75] BiocSingular_1.29.3         tidygraph_1.3.1            </span></span>
-<span><span class="co">#&gt;  [77] ScaledMatrix_1.21.0         ggrepel_0.9.8              </span></span>
-<span><span class="co">#&gt;  [79] pillar_1.11.1               stringr_1.6.0              </span></span>
-<span><span class="co">#&gt;  [81] yulab.utils_0.2.6           splines_4.6.1              </span></span>
-<span><span class="co">#&gt;  [83] dplyr_1.2.1                 tweenr_2.0.3               </span></span>
-<span><span class="co">#&gt;  [85] treeio_1.37.1               lattice_0.23-1             </span></span>
-<span><span class="co">#&gt;  [87] tidyselect_1.2.1            DirichletMultinomial_1.55.1</span></span>
-<span><span class="co">#&gt;  [89] fontLiberation_0.1.0        knitr_1.52                 </span></span>
-<span><span class="co">#&gt;  [91] fontBitstreamVera_0.1.1     gridExtra_2.3.1            </span></span>
-<span><span class="co">#&gt;  [93] bookdown_0.48               xfun_0.62                  </span></span>
-<span><span class="co">#&gt;  [95] graphlayouts_1.2.5          stringi_1.8.9              </span></span>
-<span><span class="co">#&gt;  [97] lazyeval_0.2.3              ggfun_0.2.2                </span></span>
-<span><span class="co">#&gt;  [99] yaml_2.3.12                 evaluate_1.0.5             </span></span>
-<span><span class="co">#&gt; [101] codetools_0.2-20            gdtools_0.5.2              </span></span>
-<span><span class="co">#&gt; [103] tibble_3.3.1                BiocManager_1.30.27        </span></span>
-<span><span class="co">#&gt; [105] ggplotify_0.1.4             cli_3.6.6                  </span></span>
-<span><span class="co">#&gt; [107] systemfonts_1.3.2           Rdpack_2.6.6               </span></span>
-<span><span class="co">#&gt; [109] jquerylib_0.1.4             Rcpp_1.1.2                 </span></span>
-<span><span class="co">#&gt; [111] parallel_4.6.1              pkgdown_2.2.1              </span></span>
-<span><span class="co">#&gt; [113] sparseMatrixStats_1.25.0    decontam_1.33.0            </span></span>
-<span><span class="co">#&gt; [115] viridisLite_0.4.3           tidytree_0.4.9             </span></span>
-<span><span class="co">#&gt; [117] ggiraph_0.9.6               scales_1.4.0               </span></span>
-<span><span class="co">#&gt; [119] purrr_1.2.2                 crayon_1.5.3               </span></span>
-<span><span class="co">#&gt; [121] rlang_1.3.0                 cowplot_1.2.0</span></span></code></pre></div>
+<span><span class="co">#&gt;  [27] igraph_2.3.4                iterators_1.0.14           </span></span>
+<span><span class="co">#&gt;  [29] lifecycle_1.0.5             pkgconfig_2.0.3            </span></span>
+<span><span class="co">#&gt;  [31] rsvd_1.0.6                  Matrix_1.7-6               </span></span>
+<span><span class="co">#&gt;  [33] R6_2.6.1                    fastmap_1.2.0              </span></span>
+<span><span class="co">#&gt;  [35] rbibutils_2.4.1             tidytext_0.4.3             </span></span>
+<span><span class="co">#&gt;  [37] treelayout_0.1.0            digest_0.6.39              </span></span>
+<span><span class="co">#&gt;  [39] aplot_0.3.2                 ggnewscale_0.5.2           </span></span>
+<span><span class="co">#&gt;  [41] patchwork_1.3.2             irlba_2.4.1                </span></span>
+<span><span class="co">#&gt;  [43] SnowballC_0.7.1             textshaping_1.0.5          </span></span>
+<span><span class="co">#&gt;  [45] seriation_1.6.0             vegan_2.7-6                </span></span>
+<span><span class="co">#&gt;  [47] beachmat_2.29.3             labeling_0.4.3             </span></span>
+<span><span class="co">#&gt;  [49] polyclip_1.10-7             abind_1.4-8                </span></span>
+<span><span class="co">#&gt;  [51] mgcv_1.9-4                  compiler_4.6.1             </span></span>
+<span><span class="co">#&gt;  [53] fontquiver_0.2.1            withr_3.0.3                </span></span>
+<span><span class="co">#&gt;  [55] S7_0.2.2                    BiocParallel_1.47.0        </span></span>
+<span><span class="co">#&gt;  [57] viridis_0.6.5               DBI_1.3.0                  </span></span>
+<span><span class="co">#&gt;  [59] ggforce_0.5.0               MASS_7.3-66                </span></span>
+<span><span class="co">#&gt;  [61] rappdirs_0.3.4              DelayedArray_0.39.8        </span></span>
+<span><span class="co">#&gt;  [63] bluster_1.23.1              permute_0.9-10             </span></span>
+<span><span class="co">#&gt;  [65] tools_4.6.1                 vipor_0.4.7                </span></span>
+<span><span class="co">#&gt;  [67] otel_0.2.0                  beeswarm_0.4.0             </span></span>
+<span><span class="co">#&gt;  [69] ape_5.8-1                   glue_1.8.1                 </span></span>
+<span><span class="co">#&gt;  [71] nlme_3.1-171                grid_4.6.1                 </span></span>
+<span><span class="co">#&gt;  [73] cluster_2.1.8.3             reshape2_1.4.5             </span></span>
+<span><span class="co">#&gt;  [75] gtable_0.3.6                ca_0.72                    </span></span>
+<span><span class="co">#&gt;  [77] tidyr_1.3.2                 BiocSingular_1.29.3        </span></span>
+<span><span class="co">#&gt;  [79] tidygraph_1.3.1             ScaledMatrix_1.21.0        </span></span>
+<span><span class="co">#&gt;  [81] foreach_1.5.2               ggrepel_0.9.8              </span></span>
+<span><span class="co">#&gt;  [83] pillar_1.11.1               stringr_1.6.0              </span></span>
+<span><span class="co">#&gt;  [85] yulab.utils_0.2.6           splines_4.6.1              </span></span>
+<span><span class="co">#&gt;  [87] dplyr_1.2.1                 tweenr_2.0.3               </span></span>
+<span><span class="co">#&gt;  [89] treeio_1.37.1               lattice_0.23-1             </span></span>
+<span><span class="co">#&gt;  [91] tidyselect_1.2.1            DirichletMultinomial_1.55.1</span></span>
+<span><span class="co">#&gt;  [93] registry_0.5-1              fontLiberation_0.1.0       </span></span>
+<span><span class="co">#&gt;  [95] knitr_1.52                  fontBitstreamVera_0.1.1    </span></span>
+<span><span class="co">#&gt;  [97] gridExtra_2.3.1             bookdown_0.48              </span></span>
+<span><span class="co">#&gt;  [99] xfun_0.62                   graphlayouts_1.2.5         </span></span>
+<span><span class="co">#&gt; [101] stringi_1.8.9               lazyeval_0.2.3             </span></span>
+<span><span class="co">#&gt; [103] ggfun_0.2.2                 yaml_2.3.12                </span></span>
+<span><span class="co">#&gt; [105] evaluate_1.0.5              codetools_0.2-20           </span></span>
+<span><span class="co">#&gt; [107] gdtools_0.5.2               tibble_3.3.1               </span></span>
+<span><span class="co">#&gt; [109] BiocManager_1.30.27         ggplotify_0.1.4            </span></span>
+<span><span class="co">#&gt; [111] cli_3.6.6                   systemfonts_1.3.2          </span></span>
+<span><span class="co">#&gt; [113] Rdpack_2.6.6                jquerylib_0.1.4            </span></span>
+<span><span class="co">#&gt; [115] Rcpp_1.1.2                  parallel_4.6.1             </span></span>
+<span><span class="co">#&gt; [117] pkgdown_2.2.1               sparseMatrixStats_1.25.0   </span></span>
+<span><span class="co">#&gt; [119] decontam_1.33.0             viridisLite_0.4.3          </span></span>
+<span><span class="co">#&gt; [121] tidytree_0.4.9              ggiraph_0.9.6              </span></span>
+<span><span class="co">#&gt; [123] scales_1.4.0                purrr_1.2.2                </span></span>
+<span><span class="co">#&gt; [125] crayon_1.5.3                rlang_1.3.0                </span></span>
+<span><span class="co">#&gt; [127] TSP_1.2.7                   cowplot_1.2.0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
