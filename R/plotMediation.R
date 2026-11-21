@@ -199,7 +199,6 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
             ))
     } else{
         # If p-values are displayed as numbers, format them with 3 decimals
-        # character
         df[["padj"]] <- ifelse(df[["padj"]] < 0.001, "p<0.001",
             paste0("p=", formatC(df[["padj"]], format = "f", digits = 3L)))
     }
