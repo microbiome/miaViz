@@ -27,7 +27,13 @@ test_that("plot mediation", {
     # Check heatmap
     expect_equal(length(heatmap_data), 2)
     expect_equal(length(forest_data), 3)
-    expect_true(all(heatmap_data[[2]][["label"]] == "***"))
+    expect_true(all(grepl("^-?[0-9]+\\.[0-9]{2}\\*\\*\\*$",
+        heatmap_data[[2]][["label"]])))
+    # Without estimates only the symbols are shown
+    p <- plotMediation(df, add.estimate = FALSE)
+    expect_true(all(layer_data(p, 2L)[["label"]] == "***"))
+    expect_error(plotMediation(df, add.estimate = "yes"),
+        "'add.estimate' must be TRUE or FALSE.", fixed = TRUE)
     # Check forest plot
     expect_true(all(forest_data[[2]][["xmin"]] ==
         df[c("acme_lower", "ade_lower", "total_lower")]))
@@ -60,4 +66,27 @@ test_that("plotMediation forest shows components in their natural order", {
     # Other mediators keep the order of significance
     p <- plotMediation(.med_df(c("c", "a", "b")), layout = "forest")
     expect_equal(.facets(p), c("c", "a", "b"))
+})
+
+test_that("plotMediation heatmap shares one symmetric scale", {
+    df <- data.frame(mediator = c("a", "b"))
+    vals <- list(acme = c(-0.004, 0.01), ade = c(-0.2, -0.1),
+        total = c(-0.3, -0.3))
+    for( col in names(vals) ){
+        df[[col]] <- vals[[col]]
+        df[[paste0(col, "_lower")]] <- vals[[col]] - 0.1
+        df[[paste0(col, "_upper")]] <- vals[[col]] + 0.1
+        df[[paste0(col, "_pval")]] <- c(0.01, 0.5)
+        df[[paste0(col, "_padj")]] <- c(0.01, 0.5)
+    }
+    p <- plotMediation(df)
+    expect_equal(p$scales$get_scales("fill")$get_limits(), c(-0.3, 0.3))
+    labs <- layer_data(p, 2L)[["label"]]
+    # No negative zero, and the symbol follows the estimate
+    expect_true("0.00*" %in% labs)
+    expect_false(any(grepl("^-0\\.00", labs)))
+    expect_equal(p$labels$fill, "Effect")
+    # Numeric p-values go on their own line
+    p <- plotMediation(df, add.significance = "numeric")
+    expect_true("-0.30\np=0.010" %in% layer_data(p, 2L)[["label"]])
 })
