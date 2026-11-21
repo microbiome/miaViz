@@ -42,10 +42,23 @@
 #' \itemize{
 #'   \item \code{add.significance}: \code{Character scalar}. Controls how
 #'   p-values are displayed in the heatmap. Options include \code{"symbol"}
-#'   (p-values displayed as symbols), \code{"numeric"} (p-values displayed as
-#'   numeric values) and \code{NULL} (p-values not displayed).
+#'   (adjusted p-values displayed as stars: * < 0.05, ** < 0.01,
+#'   *** < 0.001), \code{"numeric"} (adjusted p-values displayed as numbers,
+#'   e.g. "p=0.012" or "p<0.001") and \code{NULL} (p-values not displayed).
 #'   (Default: \code{"symbol"})
+#'
+#'   \item \code{add.estimate}: \code{Logical scalar}. Should the effect
+#'   estimate be printed in each tile of the heatmap? The significance symbol
+#'   or p-value is shown after it. (Default: \code{TRUE})
 #' }
+#'
+#' @details
+#' In the heatmap, ACME, ADE and the total effect share one colour scale,
+#' centred at zero, so that colours can be compared between the columns.
+#' Because the ACME is often much smaller than the total effect, its tiles
+#' can be pale; the printed estimates show their size.
+#' The total effect does not depend on the mediator, so it is the same in
+#' every row. It is the sum of ACME and ADE and serves as their reference.
 #'
 #' @examples
 #' \dontrun{
@@ -117,11 +130,10 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
         # Wrangle meditation data into correct format
         df <- .get_mediation_data(x, ...)
         # Create the plot
-        FUN <- switch(layout,
-            "heatmap" = .plot_mediation_heatmap,
-            "forest" = .plot_mediation_forest
+        p <- switch(layout,
+            "heatmap" = .plot_mediation_heatmap(df, ...),
+            "forest" = .plot_mediation_forest(df)
             )
-        p <- FUN(df)
         return(p)
     }
 )
@@ -186,35 +198,46 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
                 TRUE ~ ""
             ))
     } else{
-        # If p-values are displayed as raw values, round them and convert to
-        # character
-        df[["padj"]] <- as.character( round(df[["padj"]], 3L) )
+        # If p-values are displayed as numbers, format them with 3 decimals
+        df[["padj"]] <- ifelse(df[["padj"]] < 0.001, "p<0.001",
+            paste0("p=", formatC(df[["padj"]], format = "f", digits = 3L)))
     }
     return(df)
 }
 
 # This function creates a heatmap from mediation results
-.plot_mediation_heatmap <- function(df){
-    .require_package("shadowtext")
+.plot_mediation_heatmap <- function(df, add.estimate = TRUE, ...){
     # To disable "no visible binding for global variable" message in cmdcheck
-    Condition <- mediator <- estimate <- padj <- NULL
-
-    # For heatmap color scale
-    effect_max <- max(abs(df[["estimate"]]))
+    Condition <- mediator <- estimate <- label <- NULL
+    if( !.is_a_bool(add.estimate) ){
+        stop("'add.estimate' must be TRUE or FALSE.", call. = FALSE)
+    }
+    # Labels: estimate followed by the significance symbol or p-value
+    df[["label"]] <- df[["padj"]]
+    if( add.estimate ){
+        est <- sprintf("%.2f", df[["estimate"]])
+        # Avoid "-0.00"
+        est <- sub("^-(0\\.0+)$", "\\1", est)
+        sep <- ifelse(startsWith(df[["padj"]], "p"), "\n", "")
+        df[["label"]] <- paste0(est, sep, df[["padj"]])
+    }
+    # Symmetric colour scale shared by all effects
+    effect_max <- max(abs(df[["estimate"]]), na.rm = TRUE)
+    if( !is.finite(effect_max) || effect_max == 0 ) effect_max <- 1
     #
     p <- ggplot(df, aes(x = Condition, y = mediator, fill = estimate)) +
-        # Add heatmap tiles
-        geom_tile(
-            mapping = aes(fill = estimate),
-            color = "white", lwd = 1.5, linetype = 1) +
-        # Adjust color scale
-        scale_fill_gradientn(
-            colours = c("blue", "white", "red"),
-            limits = c(-effect_max, effect_max), name = "Effect") +
-        # Add p-values
-        shadowtext::geom_shadowtext(aes(label = padj)) +
-        # Modify x and y axis titles
-        labs(x = "", y = "")
+        geom_tile(color = "white", linewidth = 1) +
+        # Colour-blind-safe diverging palette, red for positive effects
+        scale_fill_distiller(
+            palette = "RdBu", direction = -1,
+            limits = c(-effect_max, effect_max)) +
+        geom_text(aes(label = label), size = 3.5) +
+        labs(x = NULL, y = NULL, fill = "Effect") +
+        # Grey panel so that tiles close to zero remain visible
+        theme_minimal() +
+        theme(
+            panel.grid = element_blank(),
+            panel.background = element_rect(fill = "grey90", colour = NA))
     return(p)
 }
 
@@ -236,7 +259,8 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
         # Add points for estimates
         geom_point(size = 3) +
         # Add error bars for confidence intervals
-        geom_errorbarh(aes(xmin = lower, xmax = upper), height = 0) +
+        geom_errorbar(
+            aes(xmin = lower, xmax = upper), width = 0, orientation = "y") +
         # Add a line to 0 to denote zero effect
         geom_vline(xintercept = 0, linetype = "dashed", colour = "red") +
         facet_wrap(. ~ mediator) +
