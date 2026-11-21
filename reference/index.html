@@ -47,30 +47,10 @@
     </div>
 
     <table class="ref-index"><colgroup><col class="alias"><col class="title"></colgroup><tbody><tr><th colspan="2">
-          <h2 id="all-functions">All functions <a href="#all-functions" class="anchor" aria-hidden="true"></a></h2>
-          <p class="section-desc"></p>
+          <h2 id="abundance-and-prevalence">Abundance and prevalence <a href="#abundance-and-prevalence" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Visualize the abundance, composition and prevalence of features.</p>
         </th>
       </tr></tbody><tbody><tr><td>
-          <p><code><a href="deprecate.html">getNeatOrder()</a></code> </p>
-        </td>
-        <td><p>These functions will be deprecated. Please use other functions instead.</p></td>
-      </tr><tr><td>
-          <p><code><a href="getHeatmapOrder.html">getHeatmapOrder()</a></code> </p>
-        </td>
-        <td><p>Order rows or columns for heatmap visualization</p></td>
-      </tr><tr><td>
-          <p><code><a href="mia-datasets.html">col_graph</a></code> <code><a href="mia-datasets.html">row_graph</a></code> <code><a href="mia-datasets.html">row_graph_order</a></code> </p>
-        </td>
-        <td><p>miaViz example data</p></td>
-      </tr><tr><td>
-          <p><code><a href="mia-plot-args.html">mia-plot-args</a></code> </p>
-        </td>
-        <td><p>Additional arguments for plotting</p></td>
-      </tr><tr><td>
-          <p><code><a href="miaViz-package.html">miaViz</a></code> <code><a href="miaViz-package.html">miaViz-package</a></code> </p>
-        </td>
-        <td><p>miaViz - Microbiome Analysis Plotting and Visualization</p></td>
-      </tr><tr><td>
           <p><code><a href="plotAbundance.html">plotAbundance()</a></code> </p>
         </td>
         <td><p>Plotting abundance data</p></td>
@@ -79,74 +59,70 @@
         </td>
         <td><p>Plot abundance density</p></td>
       </tr><tr><td>
+          <p><code><a href="plotPrevalence.html">plotRowPrevalence()</a></code> <code><a href="plotPrevalence.html">plotPrevalentAbundance()</a></code> <code><a href="plotPrevalence.html">plotPrevalence()</a></code> </p>
+        </td>
+        <td><p>Plot prevalence information</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="distributions-and-metadata">Distributions and metadata <a href="#distributions-and-metadata" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Plot the distribution of assay values, rowData or colData variables.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="plotBoxplot.html">plotBoxplot()</a></code> </p>
         </td>
         <td><p>Create boxplot of <code>assay</code>, <code>rowData</code> or <code>colData</code>.</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotCCA.html">plotCCA()</a></code> <code><a href="plotCCA.html">plotRDA()</a></code> </p>
-        </td>
-        <td><p>Plot RDA or CCA object</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotColTile.html">plotColTile()</a></code> <code><a href="plotColTile.html">plotRowTile()</a></code> </p>
-        </td>
-        <td><p>Plot factor data as tiles</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotDMN.html">plotDMNFit()</a></code> </p>
-        </td>
-        <td><p>Plotting Dirichlet-Multinomial Mixture Model data</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotDissimilarity.html">plotDissimilarity()</a></code> </p>
-        </td>
-        <td><p>Visualize a dissimilarity matrix as a heatmap</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotForest.html">plotForest()</a></code> </p>
-        </td>
-        <td><p>Visualize estimated results with forest plots</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotGraph.html">plotColGraph()</a></code> <code><a href="plotGraph.html">plotRowGraph()</a></code> </p>
-        </td>
-        <td><p>Plotting igraph objects with information from a <code>SummarizedExperiment</code></p></td>
-      </tr><tr><td>
-          <p><code><a href="plotHeatmap.html">plotHeatmap()</a></code> </p>
-        </td>
-        <td><p>Visualize assay values as a heatmap</p></td>
       </tr><tr><td>
           <p><code><a href="plotHistogram.html">plotHistogram()</a></code> <code><a href="plotHistogram.html">plotBarplot()</a></code> </p>
         </td>
         <td><p>Create histogram or barplot of <code>assay</code>, <code>rowData</code> or <code>colData</code></p></td>
       </tr><tr><td>
-          <p><code><a href="plotJointRPCA.html">plotJointRPCA()</a></code> <code><a href="plotJointRPCA.html">plotJointRPCACovariance()</a></code> <code><a href="plotJointRPCA.html">plotJointRPCAExplainedVariance()</a></code> <code><a href="plotJointRPCA.html">plotJointRPCANetwork()</a></code> <code><a href="plotJointRPCA.html">plotJointRPCALoadings()</a></code> </p>
+          <p><code><a href="plotColTile.html">plotColTile()</a></code> <code><a href="plotColTile.html">plotRowTile()</a></code> </p>
         </td>
-        <td><p>Visualize Joint-RPCA results</p></td>
+        <td><p>Plot factor data as tiles</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="ordination">Ordination <a href="#ordination" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Visualize reduced dimensions, explained variance and feature loadings.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="plotOrdination.html">plotOrdination()</a></code> </p>
+        </td>
+        <td><p>Visualize ordination results</p></td>
       </tr><tr><td>
-          <p><code><a href="plotLoadings.html">plotLoadings()</a></code> </p>
+          <p><code><a href="plotCCA.html">plotCCA()</a></code> <code><a href="plotCCA.html">plotRDA()</a></code> </p>
         </td>
-        <td><p>Plot feature loadings for TreeSummarizedExperiment objects or feature loadings numeric matrix.</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotMediation.html">plotMediation()</a></code> </p>
-        </td>
-        <td><p>Visualize mediation</p></td>
+        <td><p>Plot RDA or CCA object</p></td>
       </tr><tr><td>
           <p><code><a href="plotNMDS.html">plotNMDS()</a></code> </p>
         </td>
         <td><p>Wrapper for scater::plotReducedDim()</p></td>
       </tr><tr><td>
-          <p><code><a href="plotOrdination.html">plotOrdination()</a></code> </p>
-        </td>
-        <td><p>Visualize ordination results</p></td>
-      </tr><tr><td>
-          <p><code><a href="plotPrevalence.html">plotRowPrevalence()</a></code> <code><a href="plotPrevalence.html">plotPrevalentAbundance()</a></code> <code><a href="plotPrevalence.html">plotPrevalence()</a></code> </p>
-        </td>
-        <td><p>Plot prevalence information</p></td>
-      </tr><tr><td>
           <p><code><a href="plotScree.html">plotScree()</a></code> </p>
         </td>
         <td><p>Create a scree plot</p></td>
       </tr><tr><td>
-          <p><code><a href="plotSeries.html">plotSeries()</a></code> </p>
+          <p><code><a href="plotLoadings.html">plotLoadings()</a></code> </p>
         </td>
-        <td><p>Plot Series</p></td>
+        <td><p>Plot feature loadings for TreeSummarizedExperiment objects or feature loadings numeric matrix.</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="heatmaps">Heatmaps <a href="#heatmaps" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Visualize assay values and dissimilarities as heatmaps.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="plotHeatmap.html">plotHeatmap()</a></code> </p>
+        </td>
+        <td><p>Visualize assay values as a heatmap</p></td>
       </tr><tr><td>
+          <p><code><a href="plotDissimilarity.html">plotDissimilarity()</a></code> </p>
+        </td>
+        <td><p>Visualize a dissimilarity matrix as a heatmap</p></td>
+      </tr><tr><td>
+          <p><code><a href="getHeatmapOrder.html">getHeatmapOrder()</a></code> </p>
+        </td>
+        <td><p>Order rows or columns for heatmap visualization</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="trees">Trees <a href="#trees" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Plot row or column trees and enrich them with additional data.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
           <p><code><a href="plotTree.html">plotRowTree()</a></code> <code><a href="plotTree.html">plotColTree()</a></code> </p>
         </td>
         <td><p>Plotting tree information enriched with information</p></td>
@@ -154,6 +130,74 @@
           <p><code><a href="treeData.html">rowTreeData()</a></code> <code><a href="treeData.html">colTreeData()</a></code> <code><a href="treeData.html">`rowTreeData&lt;-`()</a></code> <code><a href="treeData.html">`colTreeData&lt;-`()</a></code> <code><a href="treeData.html">combineTreeData()</a></code> </p>
         </td>
         <td><p>Adding information to tree data in <code>TreeSummarizedExperiment</code></p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="networks-and-graphs">Networks and graphs <a href="#networks-and-graphs" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Plot graph objects together with information from the data.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="plotGraph.html">plotColGraph()</a></code> <code><a href="plotGraph.html">plotRowGraph()</a></code> </p>
+        </td>
+        <td><p>Plotting igraph objects with information from a <code>SummarizedExperiment</code></p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="time-series">Time series <a href="#time-series" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Visualize abundances over time or another series variable.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="plotSeries.html">plotSeries()</a></code> </p>
+        </td>
+        <td><p>Plot Series</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="models-and-statistical-results">Models and statistical results <a href="#models-and-statistical-results" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Visualize results from clustering, statistical tests and mediation analysis.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="plotDMN.html">plotDMNFit()</a></code> </p>
+        </td>
+        <td><p>Plotting Dirichlet-Multinomial Mixture Model data</p></td>
+      </tr><tr><td>
+          <p><code><a href="plotForest.html">plotForest()</a></code> </p>
+        </td>
+        <td><p>Visualize estimated results with forest plots</p></td>
+      </tr><tr><td>
+          <p><code><a href="plotMediation.html">plotMediation()</a></code> </p>
+        </td>
+        <td><p>Visualize mediation</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="multi-omics">Multi-omics <a href="#multi-omics" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Visualize results from multi-omics integration.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="plotJointRPCA.html">plotJointRPCA()</a></code> <code><a href="plotJointRPCA.html">plotJointRPCACovariance()</a></code> <code><a href="plotJointRPCA.html">plotJointRPCAExplainedVariance()</a></code> <code><a href="plotJointRPCA.html">plotJointRPCANetwork()</a></code> <code><a href="plotJointRPCA.html">plotJointRPCALoadings()</a></code> </p>
+        </td>
+        <td><p>Visualize Joint-RPCA results</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="datasets">Datasets <a href="#datasets" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Example data shipped with the package.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="mia-datasets.html">col_graph</a></code> <code><a href="mia-datasets.html">row_graph</a></code> <code><a href="mia-datasets.html">row_graph_order</a></code> </p>
+        </td>
+        <td><p>miaViz example data</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="package-and-shared-arguments">Package and shared arguments <a href="#package-and-shared-arguments" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Package overview and arguments common to plotting functions.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="miaViz-package.html">miaViz</a></code> <code><a href="miaViz-package.html">miaViz-package</a></code> </p>
+        </td>
+        <td><p>miaViz - Microbiome Analysis Plotting and Visualization</p></td>
+      </tr><tr><td>
+          <p><code><a href="mia-plot-args.html">mia-plot-args</a></code> </p>
+        </td>
+        <td><p>Additional arguments for plotting</p></td>
+      </tr></tbody><tbody><tr><th colspan="2">
+          <h2 id="deprecated-functions">Deprecated functions <a href="#deprecated-functions" class="anchor" aria-hidden="true"></a></h2>
+          <p class="section-desc"></p><p>Functions that will be removed in future releases.</p>
+        </th>
+      </tr></tbody><tbody><tr><td>
+          <p><code><a href="deprecate.html">getNeatOrder()</a></code> </p>
+        </td>
+        <td><p>These functions will be deprecated. Please use other functions instead.</p></td>
       </tr></tbody></table></div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
