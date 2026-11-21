@@ -206,7 +206,7 @@ NULL
     "#CC79A7", "#999999", "#000000")
 # Adjusted function originally developed for scater package by Aaron Lun
 #' @importFrom viridis scale_fill_viridis scale_colour_viridis
-#' @importFrom ggplot2 scale_fill_manual scale_colour_manual
+#' @importFrom ggplot2 scale_fill_manual scale_colour_manual labs
 .resolve_plot_colours <- function(
         plot_out, colour_by, colour_by_name,
         fill = FALSE,
@@ -243,7 +243,7 @@ NULL
     }
     if (is.numeric(colour_by)) {
         plot_out <- plot_out + VIRIDFUN(
-            name = colour_by_name, option = option, na.value = na.value, ...)
+            option = option, na.value = na.value, ...)
     }
     else {
         # Count only the groups present in the data
@@ -256,26 +256,30 @@ NULL
         if (!is.null(option_palette) && type == "normal") {
             plot_out <- plot_out + SCALEFUN(
                 values = option_palette,
-                name = colour_by_name,
                 na.translate = na.translate,
                 na.value = na.value)
         }
         else if (nlevs_colour_by <= length(.okabe_ito)) {
             plot_out <- plot_out + SCALEFUN(
                 values = .okabe_ito,
-                name = colour_by_name,
                 na.translate = na.translate,
                 na.value = na.value)
         }
         else {
             plot_out <- plot_out + VIRIDFUN(
-                name = colour_by_name,
                 discrete = TRUE,
                 na.translate = na.translate,
                 option = option,
                 na.value = na.value)
         }
     }
+    # The legend title is set with labs() and not as the name of the scale,
+    # so that it can be overridden with labs() by the user (a scale name
+    # takes precedence over labs()).
+    aes_name <- paste0(
+        if (type == "edges") "edge_" else "", if (fill) "fill" else "colour")
+    plot_out <- plot_out +
+        do.call(labs, setNames(list(colour_by_name), aes_name))
     plot_out
 }
 
