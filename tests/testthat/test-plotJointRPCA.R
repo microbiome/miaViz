@@ -471,6 +471,13 @@ test_that("network keeps edges above threshold", {
     expect_false(has_text(p))
     expect_true(has_text(plotJointRPCANetwork(
         .make_joint_cov(), "JointRPCA", show.label = TRUE)))
+    # Repelled labels avoid the node symbols and have a halo over edges
+    p <- plotJointRPCANetwork(.make_joint_cov(), "JointRPCA",
+        show.label = TRUE)
+    text <- p$layers[[length(p$layers)]]
+    expect_s3_class(text$geom, "GeomTextRepel")
+    expect_equal(text$aes_params$point.size, 3)
+    expect_equal(text$aes_params$bg.colour, "white")
 })
 
 test_that("Joint-RPCA feature plots check input", {
