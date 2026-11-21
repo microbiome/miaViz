@@ -77,6 +77,13 @@ be used to label vectors. (Default: \code{TRUE})
 \item \code{repel.labels}: \code{Logical scalar}. Should labels be
 repelled. (Default: \code{TRUE})
 
+\item \code{vec.scale}: \code{Logical scalar} or \code{numeric scalar}.
+Common multiplier for the lengths of the vectors. If \code{TRUE}, the
+vectors are scaled so that the longest one reaches 75\\% of the extent of
+the samples, as in \code{vegan} biplots. The relative lengths and
+directions of the vectors do not change. If \code{FALSE}, the vectors are
+drawn at their original length. (Default: \code{TRUE})
+
 \item \code{parse.labels}: \code{Logical scalar}. Should labels be parsed.
 (Default: \code{TRUE})
 

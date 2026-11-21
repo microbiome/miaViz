@@ -108,3 +108,28 @@ test_that("plotRDA plots only samples used in the ordination", {
     expect_identical(.drop_samples_excluded_from_rda(tse[, -(1:5)], "RDA"),
         tse[, -(1:5)])
 })
+
+test_that("plotRDA scales the vectors with vec.scale", {
+    data("enterotype", package = "mia")
+    tse <- mia::transformAssay(enterotype, method = "relabundance")
+    tse <- mia::addRDA(
+        tse, assay.type = "relabundance",
+        formula = assay ~ ClinicalStatus + Age, distance = "bray",
+        na.action = na.exclude)
+    raw <- ggplot2::layer_data(plotRDA(tse, "RDA", vec.scale = FALSE), 2L)
+    p <- plotRDA(tse, "RDA")
+    pts <- ggplot2::layer_data(p, 1L)
+    scaled <- ggplot2::layer_data(p, 2L)
+    # One common multiplier: directions and relative lengths are kept
+    ratio <- c(scaled$xend / raw$xend, scaled$yend / raw$yend)
+    expect_equal(min(ratio), max(ratio))
+    # The longest vector reaches 75% of the extent of the samples
+    expect_equal(
+        max(max(abs(scaled$xend)) / max(abs(pts$x)),
+            max(abs(scaled$yend)) / max(abs(pts$y))),
+        0.75)
+    # A number is used as the multiplier
+    two <- ggplot2::layer_data(plotRDA(tse, "RDA", vec.scale = 2), 2L)
+    expect_equal(two$xend, 2 * raw$xend)
+    expect_error(plotRDA(tse, "RDA", vec.scale = -1), "vec.scale")
+})
