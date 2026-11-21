@@ -73,4 +73,5 @@ Changes in version 1.21.x
 + plotBoxplot: works when a variable is named "x", "y" or "df"; variable names that clash with internal columns (e.g. "x_point") give an error instead of being silently overwritten (#239) (2026-11-20)
 + plotRDA, plotCCA: samples excluded from the ordination (e.g. na.action = na.exclude) are not plotted, so they no longer add an empty NA entry to the legends (#260) (2026-11-20)
 + plotBoxplot: outlier.size, outlier.colour, outlier.alpha and outlier.shape style the boxplot outliers shown with add.points = FALSE (#227) (2026-11-20)
++ plotBoxplot: significance brackets are placed above all groups they span and stacked so that they do not cross boxes or each other; step.increase is no longer applied twice; hide.ns removes non-significant comparisons before placing the brackets, so the shown ones are stacked without gaps (#258) (2026-11-20)
 + plotMediation: with layout = "forest", reduced-dimension mediators (e.g. PCA1, PCA2, ..., PCA10) are faceted in the order of components instead of the order of significance (2026-11-21)
