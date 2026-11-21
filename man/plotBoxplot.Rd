@@ -23,26 +23,24 @@ plotBoxplot(object, ...)
 \code{\link[SummarizedExperiment:SummarizedExperiment-class]{SummarizedExperiment}}
 object.}
 
-\item{...}{Additional parameters for plotting.
-\itemize{
-\item \code{point.offset}: \code{Character scalar}. Utilized method
-for offsetting points. The available options include:
-\code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
-\code{"swarm"}
-(see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
-\code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
-\code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
-(see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
-for details), \code{"jitter"}, and \code{"none"},
-If \code{"none"}, ofsetting is not applied. (Default: \code{"jitter"})
+\item{...}{Additional parameters for plotting. They are grouped below by
+the part of the plot they customise. Each layer has its own prefixed
+arguments (\code{box.*}, \code{point.*}, \code{line.*}, \code{outlier.*}).
+Arguments not listed here are passed on to
+\code{\link[ggpubr:stat_pvalue_manual]{ggpubr::stat_pvalue_manual()}}
+when p-values are shown (see "Significance" below). Anything else, such
+as titles, scales and themes, can be changed by adding \code{ggplot2}
+layers to the returned plot, e.g. \code{+ labs(y = "Shannon")}.
 
+\strong{Mapping variables to aesthetics}
+\itemize{
 \item \code{colour.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} or \code{rowData(x)} which is used to
 colour observations. (Default: \code{NULL})
 
 \item \code{fill.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} or \code{rowData(x)} which is used to
-colour observations. (Default: \code{NULL})
+fill boxes and points. (Default: \code{NULL})
 
 \item \code{size.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} or \code{rowData(x)} which is used to scale
@@ -54,56 +52,60 @@ observation points. (Default: \code{NULL})
 
 \item \code{facet.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} or \code{rowData(x)} which is used to facet
-or group observations. (Default: \code{NULL})
+or group observations. Use \code{"rownames"} to draw each of
+\code{features} in its own facet. (Default: \code{NULL})
 
 \item \code{pair.by}: \code{NULL} or \code{character scalar}. Specifies a
 variable from \code{colData(x)} which is used to pair observation points.
-(Default: \code{NULL})
+Paired points are joined with lines. (Default: \code{NULL})
 
 \item \code{add.change}: \code{Logical scalar}. Whether to colour paired
 observations by the change between time points. (Default: \code{FALSE})
+}
 
+\strong{Layers}
+\itemize{
 \item \code{add.box}: \code{Logical scalar}. Whether to add a boxplot
-layout. (Default: \code{TRUE})
+layer. (Default: \code{TRUE})
 
 \item \code{add.points}: \code{Logical scalar}. Whether to add a point
-layout. (Default: \code{TRUE})
+layer. (Default: \code{TRUE})
 
 \item \code{add.proportion}: \code{Logical scalar}. Whether to add a
-barplot layout denoting the proportion of observations above
+barplot layer denoting the proportion of observations above
 \code{threshold}. (Default: \code{FALSE})
 
-\item \code{add.threshold}: \code{Logical scalar}. Whether to add a
-\code{threshold} as horizontal line when \code{add.proportion = TRUE} is
-specified. (Default: \code{TRUE})
+\item \code{add.threshold}: \code{Logical scalar}. Whether to add
+\code{threshold} as a horizontal line. The line is always added with
+\code{add.proportion = TRUE}. (Default: \code{FALSE})
 
-\item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
-barplots. (Default: \code{0})
+\item \code{add.significance}: \code{Logical scalar}. Whether to test
+and show the significance of differences between groups (see
+"Significance" below). (Default: \code{FALSE})
+}
 
-\item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
-(Default: \code{0.3})
+\strong{Box layer}
+\itemize{
+\item \code{box.alpha}: \code{Numeric scalar}. Transparency of the boxes.
+(Default: \code{0.5})
 
-\item \code{jitter.height}: \code{Numeric scalar}. Height of jitter.
-(Default: \code{0})
+\item \code{box.width}: \code{Numeric scalar}. Width of boxes.
+(Default: \code{0.75})
 
-\item \code{dodge.width}: \code{Numeric scalar}. Width of dodge. How far
-apart the groups are plotted? (Default: \code{0})
+\item \code{outlier.size}, \code{outlier.colour},
+\code{outlier.alpha}, \code{outlier.shape}: Size, colour, transparency
+and shape of the outlier points of the boxplot layer, passed to
+\code{\link[ggplot2:geom_boxplot]{geom_boxplot}}. Outliers are drawn
+only when \code{add.points = FALSE}; otherwise all observations are
+already shown as points. If \code{NULL}, \code{ggplot2} defaults are
+used, and the shape defaults to \code{point.shape}.
+(Default: \code{NULL})
+}
 
-\item \code{beeswarm.corral}: \code{Character scalar}. Beeswarm's "corral"
-method. Fed to function \code{beeswarm::beeswarm()}.
-(Default: \code{"none"})
-
-\item \code{scales}: \code{Character scalar}. Adjust scales of facets.
-(Default: \code{"fixed"})
-
-\item \code{box.alpha}: \code{Numeric scalar}. Transparency of the boxplot
-layer. (Default: \code{0.5})
-
-\item \code{point.alpha}: \code{Numeric scalar}. Transparency of the point
-layer. (Default: \code{0.65})
-
-\item \code{line.alpha}: \code{Numeric scalar}. Transparency of the line
-layer. (Default: \code{0.5})
+\strong{Point layer}
+\itemize{
+\item \code{point.alpha}: \code{Numeric scalar}. Transparency of points.
+(Default: \code{0.65})
 
 \item \code{point.shape}: \code{Numeric scalar}. Shape of points.
 (Default: \code{21})
@@ -114,30 +116,93 @@ layer. (Default: \code{0.5})
 \item \code{point.colour}: \code{Character scalar}. Colour of points.
 (Default: \code{"grey70"})
 
+\item \code{point.offset}: \code{Character scalar}. Method for offsetting
+points so that they do not overlap. The available options include:
+\code{"center"}, \code{"compactswarm"}, \code{"hex"}, \code{"square"},
+\code{"swarm"}
+(see \code{\link[beeswarm:beeswarm]{beeswarm::beeswarm()}} for details),
+\code{"frowney"}, \code{"maxout"}, \code{"minout"}, \code{"pseudorandom"},
+\code{"quasirandom"},  \code{"smiley"}, \code{"tukey"}, \code{"tukeyDense"}
+(see \code{\link[vipor:offsetSingleGroup]{vipor::offsetSingleGroup()}}
+for details), \code{"jitter"}, and \code{"none"}.
+If \code{"none"}, offsetting is not applied. (Default: \code{"jitter"})
+
+\item \code{jitter.width}: \code{Numeric scalar}. Width of jitter.
+(Default: \code{0.3})
+
+\item \code{jitter.height}: \code{Numeric scalar}. Height of jitter.
+(Default: \code{0})
+
+\item \code{beeswarm.corral}: \code{Character scalar}. Beeswarm's "corral"
+method. Fed to function \code{beeswarm::beeswarm()}.
+(Default: \code{"none"})
+
+\item \code{dodge.width}: \code{Numeric scalar}. Width of dodge. How far
+apart the groups are plotted? Applies to boxes, points and bars.
+(Default: \code{0})
+}
+
+\strong{Line layer} (paired observations, \code{pair.by})
+\itemize{
+\item \code{line.alpha}: \code{Numeric scalar}. Transparency of lines.
+(Default: \code{0.5})
+
+\item \code{line.colour}: \code{Character scalar}. Colour of lines.
+(Default: \code{"grey70"})
+
 \item \code{linetype}: \code{Numeric scalar}. Type of lines.
 (Default: \code{1})
 
 \item \code{linewidth}: \code{Numeric scalar}. Width of lines.
 (Default: \code{1})
+}
 
-\item \code{line.colour}: \code{Character scalar}. Colour of lines.
-(Default: \code{"grey70"})
-
-\item \code{box.width}: \code{Numeric scalar}. Width of boxes.
-(Default: \code{0.75})
+\strong{Proportion bars} (\code{add.proportion = TRUE})
+\itemize{
+\item \code{threshold}: \code{Numeric scalar}. Specifies threshold for the
+barplots. (Default: \code{0})
 
 \item \code{bar.width}: \code{Numeric scalar}. Width of proportion bars.
-By default, it is calculated based so that the width matches with the
+By default, it is calculated so that the width matches with the
 width of boxes.
+}
 
-\item \code{outlier.size}, \code{outlier.colour},
-\code{outlier.alpha}, \code{outlier.shape}: Size, colour, transparency
-and shape of the outlier points of the boxplot layer, passed to
-\code{\link[ggplot2:geom_boxplot]{geom_boxplot}}. Outliers are drawn
-only when \code{add.points = FALSE}; otherwise all observations are
-already shown as points. If \code{NULL}, \code{ggplot2} defaults are
-used, and the shape defaults to \code{point.shape}.
-(Default: \code{NULL})
+\strong{Facets}
+\itemize{
+\item \code{scales}: \code{Character scalar}. Adjust scales of facets.
+(Default: \code{"fixed"})
+
+\item \code{nrow}, \code{ncol}: \code{NULL} or \code{integer scalar}.
+Number of rows and columns of facets. (Default: \code{NULL})
+}
+
+\strong{Significance} (\code{add.significance = TRUE} or \code{p.value})
+\itemize{
+\item \code{p.value}: \code{NULL} or \code{data.frame}. Pre-calculated
+p-values to show instead of testing with \code{add.significance}. It must
+have columns \code{group1} and \code{group2}, one of \code{p},
+\code{p.adj} or \code{p.adj.signif}, and the facet and x axis variables
+that are not compared, e.g. the output of \code{rstatix::t_test()}
+(see examples). (Default: \code{NULL})
+
+\item \code{significance.method}: \code{Character scalar}. Test used
+with \code{add.significance}: \code{"wilcox.test"} (or
+\code{"wilcoxon"}) or \code{"t.test"} (or \code{"t-test"}).
+(Default: \code{"wilcox.test"})
+
+\item \code{paired}: \code{Logical scalar}. Whether to use a paired
+test. (Default: \code{TRUE} if \code{pair.by} is specified)
+
+\item \code{p.adjust.method}: \code{Character scalar}. Method for
+adjusting p-values for multiple testing, see
+\code{\link[stats:p.adjust]{p.adjust}}. (Default: \code{"fdr"})
+
+\item \code{mark.significance}: \code{Logical scalar}. Whether to show
+significance levels as asterisks instead of p-values.
+(Default: \code{FALSE})
+
+\item \code{digits}: \code{Integer scalar}. Number of digits in the
+shown p-values. (Default: \code{3})
 
 \item \code{step.increase}: \code{Numeric scalar}. Distance of
 significance brackets from the highest group they span, and between
@@ -147,7 +212,15 @@ stacked brackets, as a fraction of the y axis range. (Default: \code{0.12})
 \code{"p.adj"}. Whether to hide non-significant comparisons, as in
 \code{ggpubr::stat_pvalue_manual}. Hidden comparisons do not take space,
 so the shown brackets are stacked without gaps. (Default: \code{FALSE})
-}}
+
+\item Other arguments are passed to
+\code{\link[ggpubr:stat_pvalue_manual]{ggpubr::stat_pvalue_manual()}},
+for example \code{label}, \code{label.size}, \code{bracket.size},
+\code{tip.length} and \code{color}.
+}
+
+The American spellings \code{color.by}, \code{point.color},
+\code{line.color} and \code{outlier.color} are also accepted.}
 
 \item{assay.type}{\code{NULL} or \code{character scalar}. Specifies the
 abundace table to plot. (Default: \code{NULL})}

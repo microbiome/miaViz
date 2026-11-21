@@ -344,3 +344,17 @@ test_that("plotBoxplot facets follow the order of features (#209)", {
         as.character(ggplot2::ggplot_build(p)$layout$layout[["grp"]]),
         c("y", "x"))
 })
+
+test_that("plotBoxplot passes other arguments to stat_pvalue_manual", {
+    skip_if_not_installed("ggpubr")
+    skip_if_not_installed("rstatix")
+    data("Tito2024QMP", package = "mia")
+    tse <- mia::addAlpha(Tito2024QMP, index = "shannon")
+    p <- plotBoxplot(
+        tse, col.var = "shannon", x = "diagnosis",
+        add.significance = TRUE, label.size = 6, tip.length = 0)
+    layer <- p$layers[[length(p$layers)]]
+    expect_s3_class(layer$geom, "GeomBracket")
+    expect_equal(layer$aes_params$label.size, 6)
+    expect_equal(layer$stat_params$tip.length, 0)
+})
