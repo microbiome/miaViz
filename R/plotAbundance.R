@@ -40,9 +40,15 @@
 #'   value. By name (\code{"name"}) for sorting the taxonomic labels
 #'   alphabetically, by abundance (\code{"abund"}) to sort by abundance
 #'   values or by a reverse order of
-#'   abundance values (\code{"revabund"}). A row named \code{"Other"}, such as
-#'   the one created by \code{subsetBy(..., collapse = TRUE)}, is placed last
-#'   unless \code{row.levels} is given. (Default: \code{"name"})
+#'   abundance values (\code{"revabund"}). Rows named in \code{other.name}
+#'   are placed last. (Default: \code{"name"})
+#'
+#'   \item \code{other.name}: \code{Character vector} or \code{NULL}. Names
+#'   of rows that are shown last in the bars and legend, whatever
+#'   \code{order.row.by} is, such as the \code{"Other"} group created by
+#'   \code{subsetBy(..., collapse = TRUE)}. \code{NULL} orders all rows by
+#'   \code{order.row.by}. Ignored if \code{row.levels} is given.
+#'   (Default: \code{"Other"})
 #'
 #'   \item \code{row.levels}: \code{Character vector}. Specifies order of rows
 #'   in a plot. Can be combined with \code{order.row.by} to control order
@@ -360,7 +366,7 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
 .order_abundance_rows <- function(
         df, order.row.by = order_rank_by, order_rank_by = "name",
         row.levels = NULL, order.col.by = order_sample_by,
-        order_sample_by = NULL, ...){
+        order_sample_by = NULL, other.name = "Other", ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     colour_by <- Y <- mean_abundance <- NULL
     #
@@ -368,6 +374,11 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
         c("name", "abund", "revabund")
     if( !correct ){
         stop("'order.row.by' must be 'name', 'abund' or 'revabund'.",
+            call. = FALSE)
+    }
+    if( !(is.null(other.name) || (is.character(other.name) &&
+            !anyNA(other.name))) ){
+        stop("'other.name' must be a character vector or NULL.",
             call. = FALSE)
     }
     if( !(is.null(row.levels) || is.character(row.levels)) ){
@@ -402,9 +413,10 @@ setMethod("plotAbundance", signature = c("SummarizedExperiment"), function(
             distinct(colour_by) |>
             pull(colour_by)
     }
-    # The "Other" group (e.g. from subsetBy(collapse = TRUE)) goes last
-    if( !user_levels && "Other" %in% row.levels ){
-        row.levels <- c(setdiff(as.character(row.levels), "Other"), "Other")
+    # Groups such as "Other" (e.g. from subsetBy(collapse = TRUE)) go last
+    other <- intersect(other.name, row.levels)
+    if( !user_levels && length(other) > 0L ){
+        row.levels <- c(setdiff(as.character(row.levels), other), other)
     }
     # If user wants to order columns based on abundance of certain taxa, the
     # taxa will be added on top of the figure
