@@ -121,8 +121,8 @@ object.</p></dd>
 
 <dt id="arg-detection">detection<a class="anchor" aria-label="anchor" href="#arg-detection"></a></dt>
 <dd><p><code>Numeric scalar</code>. Detection thresholds for
-absence/presence. Either an absolutes value compared directly to the values
-of <code>x</code> or a relative value between 0 and 1, if <code>TRUE</code>.</p></dd>
+absence/presence, in the unit of <code>assay.type</code>. For example, use values
+between 0 and 1 with relative abundances.</p></dd>
 
 
 <dt id="arg-detections">detections<a class="anchor" aria-label="anchor" href="#arg-detections"></a></dt>
@@ -149,11 +149,12 @@ use. (Default: <code>"relabundance"</code>)</p></dd>
 
 
 <dt id="arg-rank-">rank, ...<a class="anchor" aria-label="anchor" href="#arg-rank-"></a></dt>
-<dd><p>additional arguments</p><ul><li><p>as.relative <code>Logical scalar</code>. Should the relative values
-be calculated? (Default: <code>FALSE</code>)</p></li>
+<dd><p>additional arguments</p><ul><li><p>as.relative,as_relative Deprecated. Calculate relative abundances
+with <code><a href="https://microbiome.github.io/mia/reference/transformAssay.html" class="external-link">transformAssay</a></code> and select them
+with <code>assay.type</code> instead (see examples).</p></li>
 <li><p>ndetection <code>Integer scalar</code>. Determines the number of breaks
-calculated detection thresholds when <code>detection=NULL</code>. When
-<code>TRUE</code>,  <code>as_relative</code> is then also regarded as <code>TRUE</code>.
+calculated detection thresholds when <code>detection=NULL</code>. The
+thresholds are then relative abundances between 0 and 1.
 (Default: <code>20</code>)</p></li>
 <li><p>If <code>!is.null(rank)</code> matching arguments are passed on to
 <code><a href="https://microbiome.github.io/mia/reference/agglomerate-methods.html" class="external-link">agglomerateByRank</a></code>. See
@@ -268,19 +269,25 @@ with <code>subsetBy</code>.</p>
 <span class="r-in"><span><span class="co"># plotting N of prevalence exceeding taxa on the Phylum level</span></span></span>
 <span class="r-in"><span><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPrevalence-1.png" alt="" width="3000" height="2100"></span>
-<span class="r-in"><span><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># detection thresholds for relative abundances</span></span></span>
+<span class="r-in"><span><span class="fu">plotPrevalence</span><span class="op">(</span></span></span>
+<span class="r-in"><span>    <span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
+<span class="r-in"><span>    detection <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.0001</span>, <span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plotPrevalence-2.png" alt="" width="3000" height="2100"></span>
+<span class="r-in"><span><span class="fu">plotPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plotPrevalence-3.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># plotting prevalence per taxa for different detection thresholds as heatmap</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowPrevalence</span><span class="op">(</span><span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotPrevalence-3.png" alt="" width="3000" height="2100"></span>
+<span class="r-plt img"><img src="plotPrevalence-4.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># by default a continuous scale is used for different detection levels,</span></span></span>
 <span class="r-in"><span><span class="co"># but this can be adjusted</span></span></span>
 <span class="r-in"><span><span class="fu">plotRowPrevalence</span><span class="op">(</span></span></span>
 <span class="r-in"><span>    <span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Phylum"</span>, assay.type <span class="op">=</span> <span class="st">"relabundance"</span>,</span></span>
 <span class="r-in"><span>    detection <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.001</span>, <span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.2</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plotPrevalence-4.png" alt="" width="3000" height="2100"></span>
+<span class="r-plt img"><img src="plotPrevalence-5.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># point layout for plotRowPrevalence can be used to visualize by additional</span></span></span>
 <span class="r-in"><span><span class="co"># information</span></span></span>
@@ -288,7 +295,7 @@ with <code>subsetBy</code>.</p>
 <span class="r-in"><span>    <span class="va">GlobalPatterns</span>, rank <span class="op">=</span> <span class="st">"Family"</span>, colour.by <span class="op">=</span> <span class="st">"Phylum"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated labels were made unique.</span>
-<span class="r-plt img"><img src="plotPrevalence-5.png" alt="" width="3000" height="2100"></span>
+<span class="r-plt img"><img src="plotPrevalence-6.png" alt="" width="3000" height="2100"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># When using function plotPrevalentAbundace, it is possible to create facets</span></span></span>
 <span class="r-in"><span><span class="co"># with 'facet.by'.</span></span></span>
@@ -297,7 +304,7 @@ with <code>subsetBy</code>.</p>
 <span class="r-in"><span>    colour.by <span class="op">=</span> <span class="st">"Phylum"</span>, facet.by <span class="op">=</span> <span class="st">"Kingdom"</span><span class="op">)</span> <span class="op">+</span></span></span>
 <span class="r-in"><span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_log10</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Duplicated labels were made unique.</span>
-<span class="r-plt img"><img src="plotPrevalence-6.png" alt="" width="3000" height="2100"></span>
+<span class="r-plt img"><img src="plotPrevalence-7.png" alt="" width="3000" height="2100"></span>
 </code></pre></div>
     </div>
   </div>
