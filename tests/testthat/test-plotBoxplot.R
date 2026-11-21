@@ -321,3 +321,26 @@ test_that("plotBoxplot hide.ns drops brackets before placing them", {
             hide.ns = "q"),
         "hide.ns")
 })
+
+test_that("plotBoxplot facets follow the order of features (#209)", {
+    tse <- makeTSE(nrow = 4, ncol = 10)
+    rownames(tse) <- c("d", "b", "c", "a")
+    assayNames(tse) <- "counts"
+    .facets <- function(p){
+        as.character(ggplot2::ggplot_build(p)$layout$layout[["rownames"]])
+    }
+    p <- plotBoxplot(
+        tse, assay.type = "counts", features = c("c", "a", "d"),
+        facet.by = "rownames")
+    expect_equal(.facets(p), c("c", "a", "d"))
+    # Without features, facets follow the order of rownames
+    p <- plotBoxplot(tse, assay.type = "counts", facet.by = "rownames")
+    expect_equal(.facets(p), rownames(tse))
+    # Factor levels of other facet variables are kept
+    rowData(tse)[["grp"]] <- factor(
+        c("x", "y", "x", "y"), levels = c("y", "x"))
+    p <- plotBoxplot(tse, assay.type = "counts", facet.by = "grp")
+    expect_equal(
+        as.character(ggplot2::ggplot_build(p)$layout$layout[["grp"]]),
+        c("y", "x"))
+})
