@@ -86,3 +86,26 @@ test_that("default palette is Okabe-Ito with black for 9 groups", {
     expect_length(fills(p), 10)
     expect_false(any(fills(p) %in% miaViz:::.okabe_ito))
 })
+
+test_that("legend titles of coloured variables can be changed with labs()", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns[seq_len(200), ]
+    tse <- mia::addMDS(tse, assay.type = "counts", method = "bray")
+    tse <- mia::addAlpha(tse, index = "shannon")
+    # Default title is the variable name
+    p <- plotOrdination(tse, "MDS", colour.by = "SampleType")
+    expect_equal(p$labels$colour, "SampleType")
+    # labs() overrides it, for discrete and continuous variables
+    p <- p + ggplot2::labs(colour = "Sample type")
+    expect_equal(p$labels$colour, "Sample type")
+    expect_s3_class(p$scales$get_scales("colour")$name, "waiver")
+    p <- plotOrdination(tse, "MDS", colour.by = "shannon") +
+        ggplot2::labs(colour = "Shannon")
+    expect_equal(p$labels$colour, "Shannon")
+    expect_s3_class(p$scales$get_scales("colour")$name, "waiver")
+    p <- plotBoxplot(
+        tse, col.var = "shannon", x = "SampleType", fill.by = "SampleType") +
+        ggplot2::labs(fill = "Sample type")
+    expect_equal(p$labels$fill, "Sample type")
+    expect_s3_class(p$scales$get_scales("fill")$name, "waiver")
+})
