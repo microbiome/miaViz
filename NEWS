@@ -79,3 +79,4 @@ Changes in version 1.21.x
 + plotPrevalence, plotRowPrevalence: the x axis is titled "Detection threshold" with the assay.type (e.g. "(counts)") instead of "Rel. Abundance", the y axis of plotPrevalence "Number of features" instead of "N", and plotRowPrevalence no longer multiplies count thresholds by 100 (2026-11-21)
 + plotBoxplot: facets follow the order of 'features' (or rownames) when facet.by = "rownames" (#209) (2026-11-21)
 + plotJointRPCANetwork: with show.label = TRUE, labels are kept off the node symbols and have a white halo so that edges do not run through them (2026-11-21)
++ Default discrete palette: Okabe-Ito with black as the 9th colour, so that 9 groups get colour-blind-friendly colours instead of viridis; plots with up to 8 groups are unchanged (#157) (2026-11-21)

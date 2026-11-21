@@ -11,8 +11,9 @@
 #' As in \code{ggplot2}, the option can be a character vector of colours or a
 #' list of them. In a list, the first palette with enough colours is used, so
 #' the palettes can be given in order of preference.
-#' Otherwise, the colour-blind-friendly Okabe-Ito palette (without black) is
-#' used for up to 8 groups and viridis for more. Continuous variables are
+#' Otherwise, the colour-blind-friendly Okabe-Ito palette is used for up to
+#' 9 groups and viridis for more. Black, the first colour of Okabe-Ito, is
+#' moved last so that it is only used when there are 9 groups. Continuous variables are
 #' coloured with viridis, which is also colour-blind friendly.
 #'
 #' For example, the Tableau palette, which miaViz used by default before
@@ -197,11 +198,12 @@
 #' @name mia-plot-args
 NULL
 
-# Colour-blind-friendly Okabe-Ito palette without black (Okabe and Ito 2008),
-# the same as palette.colors(palette = "Okabe-Ito")[-1]
+# Colour-blind-friendly Okabe-Ito palette (Okabe and Ito 2008), the same as
+# palette.colors(palette = "Okabe-Ito") but with black moved last, so that it
+# is only used when there are 9 groups
 .okabe_ito <- c(
     "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00",
-    "#CC79A7", "#999999")
+    "#CC79A7", "#999999", "#000000")
 # Adjusted function originally developed for scater package by Aaron Lun
 #' @importFrom viridis scale_fill_viridis scale_colour_viridis
 #' @importFrom ggplot2 scale_fill_manual scale_colour_manual
