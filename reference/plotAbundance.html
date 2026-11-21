@@ -93,9 +93,14 @@ character will be plotted as colour-code bar. (Default: <code>NULL</code>)</p></
 value. By name (<code>"name"</code>) for sorting the taxonomic labels
 alphabetically, by abundance (<code>"abund"</code>) to sort by abundance
 values or by a reverse order of
-abundance values (<code>"revabund"</code>). A row named <code>"Other"</code>, such as
-the one created by <code>subsetBy(..., collapse = TRUE)</code>, is placed last
-unless <code>row.levels</code> is given. (Default: <code>"name"</code>)</p></li>
+abundance values (<code>"revabund"</code>). Rows named in <code>other.name</code>
+are placed last. (Default: <code>"name"</code>)</p></li>
+<li><p><code>other.name</code>: <code>Character vector</code> or <code>NULL</code>. Names
+of rows that are shown last in the bars and legend, whatever
+<code>order.row.by</code> is, such as the <code>"Other"</code> group created by
+<code>subsetBy(..., collapse = TRUE)</code>. <code>NULL</code> orders all rows by
+<code>order.row.by</code>. Ignored if <code>row.levels</code> is given.
+(Default: <code>"Other"</code>)</p></li>
 <li><p><code>row.levels</code>: <code>Character vector</code>. Specifies order of rows
 in a plot. Can be combined with <code>order.row.by</code> to control order
 of only certain rows. If <code>NULL</code>, the order follows
