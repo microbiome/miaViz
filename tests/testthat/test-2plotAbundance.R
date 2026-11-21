@@ -106,3 +106,25 @@ test_that("plot abundance", {
     expect_error(plot <- plotAbundance(
         x_numeric_group, assay.type="counts", group = "Group"))
 })
+
+test_that("plotAbundance puts the 'Other' group last", {
+    data(GlobalPatterns, package = "mia")
+    tse <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
+    tse <- transformAssay(tse, method = "relabundance")
+    tse <- subsetBy(tse, rows = rank(-rowMeans(relabundance)) <= 3,
+        collapse = TRUE)
+    .levels <- function(p) levels(p$data$colour_by)
+    for( ord in c("name", "abund", "revabund") ){
+        p <- plotAbundance(tse, assay.type = "relabundance", order.row.by = ord)
+        expect_equal(tail(.levels(p), 1L), "Other")
+    }
+    # Ordering samples by a feature still puts that feature first
+    p <- plotAbundance(tse, assay.type = "relabundance",
+        order.row.by = "abund", order.col.by = "Bacteroidetes")
+    expect_equal(.levels(p)[[1L]], "Bacteroidetes")
+    expect_equal(tail(.levels(p), 1L), "Other")
+    # User-given levels are respected
+    p <- plotAbundance(tse, assay.type = "relabundance",
+        row.levels = "Other")
+    expect_equal(.levels(p)[[1L]], "Other")
+})
