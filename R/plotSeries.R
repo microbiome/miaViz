@@ -64,6 +64,10 @@
 #' This function creates series plot, where x-axis includes e.g. time points,
 #' and y-axis abundances of selected taxa. If there are multiple observations
 #' for single system and time point, mean and standard deviation is plotted.
+#' Each feature is drawn as its own line. To give each feature its own colour
+#' and line type, like \code{matplot()}, use
+#' \code{colour.by = "rownames", linetype.by = "rownames"}; the legend then
+#' follows the order of \code{rownames(x)}.
 #'
 #' @return
 #' A \code{ggplot2} object
@@ -286,6 +290,25 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
             distinct()
     }
 
+    # Keep features in the order of rownames(x) so that legends follow the
+    # original order instead of alphabetical order.
+    if( "rownames" %in% colnames(df) && !is.null(assay.type) ){
+        df[["rownames"]] <- factor(df[["rownames"]], levels = rownames(x))
+    }
+    # Each feature gets its own line. In addition, lines are split by discrete
+    # styling variables like ggplot2 does by default.
+    group_vars <- c("feature", colour.by, linetype.by, size.by) |> unique()
+    group_vars <- group_vars[ group_vars %in% colnames(df) ]
+    group_vars <- group_vars[ !vapply(
+        group_vars, function(v) is.numeric(df[[v]]), logical(1L)) ]
+    group_col <- NULL
+    if( length(group_vars) > 0L ){
+        group_col <- ".series_group"
+        df <- df |> ungroup() |> as.data.frame()
+        df[[group_col]] <- interaction(df[, group_vars, drop = FALSE],
+            drop = TRUE, lex.order = TRUE)
+    }
+
     # Ribbon can only have one color per time point and group, otherwise it lead
     # to an error. Of course, it does not make sense to color lines with
     # multiple values either, but it does not lead to an error.
@@ -311,7 +334,8 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
         colour.by = colour.by,
         colour.ribbon = colour.ribbon,
         size.by = size.by,
-        linetype.by = linetype.by
+        linetype.by = linetype.by,
+        group = group_col
     )
     # Return argument list with all the passed arguments
     args <- c(list(df = df), list(...))
@@ -351,7 +375,9 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     # Initialize a plot a plot
     plot_out <- ggplot(df, aes(
         x = .data[[attributes(df)[["x"]]]],
-        y = .data[[attributes(df)[["y"]]]])
+        y = .data[[attributes(df)[["y"]]]],
+        group = if( !is.null(attributes(df)[["group"]]) )
+            .data[[attributes(df)[["group"]]]])
         )
 
     # Fetches arguments for geom_line to plot mean
@@ -411,9 +437,18 @@ setMethod("plotSeries", signature = c(x = "SummarizedExperiment"),
     }
 
     # Add additional guides
+    # If colour and line type or size are specified by the same variable, they
+    # share the same title so that the legends are merged.
+    linetype_lab <- attributes(df)[["linetype.by"]]
+    size_lab <- attributes(df)[["size.by"]]
+    if( !is.null(colour.lab) ){
+        same_var <- function(v) !is.null(v) &&
+            identical(v, attributes(df)[["colour.by"]])
+        if( same_var(linetype_lab) ) linetype_lab <- colour.lab
+        if( same_var(size_lab) ) size_lab <- colour.lab
+    }
     plot_out <- .add_extra_line_guide(
-        plot_out, linetype_by = attributes(df)[["linetype.by"]],
-        size_by = attributes(df)[["size.by"]])
+        plot_out, linetype_by = linetype_lab, size_by = size_lab)
     # To choose if legend is kept, and its position
     plot_out <- .add_legend(plot_out, add_legend)
     # Set a theme
