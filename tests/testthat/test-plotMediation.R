@@ -36,3 +36,28 @@ test_that("plot mediation", {
     expect_true(all(forest_data[[2]][["x"]] ==
         df[c("acme", "ade", "total")]))
 })
+
+test_that("plotMediation forest shows components in their natural order", {
+    # Mediation table in the format of mia, sorted by significance
+    .med_df <- function(mediator){
+        n <- length(mediator)
+        df <- data.frame(mediator = mediator)
+        for( col in c("acme", "ade", "total") ){
+            df[[col]] <- seq_len(n)
+            df[[paste0(col, "_lower")]] <- seq_len(n) - 1
+            df[[paste0(col, "_upper")]] <- seq_len(n) + 1
+            df[[paste0(col, "_pval")]] <- seq_len(n) / 100
+            df[[paste0(col, "_padj")]] <- seq_len(n) / 100
+        }
+        df
+    }
+    .facets <- function(p){
+        as.character(ggplot_build(p)$layout$layout[["mediator"]])
+    }
+    p <- plotMediation(.med_df(c("PCA10", "PCA1", "PCA3", "PCA2")),
+        layout = "forest")
+    expect_equal(.facets(p), c("PCA1", "PCA2", "PCA3", "PCA10"))
+    # Other mediators keep the order of significance
+    p <- plotMediation(.med_df(c("c", "a", "b")), layout = "forest")
+    expect_equal(.facets(p), c("c", "a", "b"))
+})
