@@ -143,7 +143,11 @@ value from
     <h2>Details</h2>
     <p>This function creates series plot, where x-axis includes e.g. time points,
 and y-axis abundances of selected taxa. If there are multiple observations
-for single system and time point, mean and standard deviation is plotted.</p>
+for single system and time point, mean and standard deviation is plotted.
+Each feature is drawn as its own line. To give each feature its own colour
+and line type, like <code><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot()</a></code>, use
+<code>colour.by = "rownames", linetype.by = "rownames"</code>; the legend then
+follows the order of <code>rownames(x)</code>.</p>
     </div>
 
     <div id="ref-examples">
