@@ -166,3 +166,22 @@ test_that("plotForest degrees of freedom for CIs from standard errors", {
         rowData = df)
     expect_s3_class(plotForest(se, err.var = "err", df = 20), "ggplot")
 })
+
+test_that("plotForest labels use fixed decimals and show small p-values", {
+    df <- data.frame(
+        effect = c(1.5, -0.45), lower = c(1.2, -1.594), upper = c(1.8, 0.7),
+        pval = c(1e-6, 0.4281), row.names = c("a", "b"))
+    p <- plotForest(df, label.by = c("CI", "P-Value"))
+    # Collect the text of all label panels
+    labs <- unlist(lapply(seq_along(p), function(i){
+        q <- p[[i]]
+        if( inherits(q, "patchwork") ){
+            unlist(lapply(seq_along(q), function(j)
+                tryCatch(layer_data(q[[j]])$label, error = function(e) NULL)))
+        } else{
+            tryCatch(layer_data(q)$label, error = function(e) NULL)
+        }
+    }))
+    expect_true(all(c("1.50 (1.20, 1.80)", "-0.45 (-1.59, 0.70)") %in% labs))
+    expect_true(all(c("<0.001*", "0.428") %in% labs))
+})
