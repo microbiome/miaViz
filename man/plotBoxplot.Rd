@@ -138,6 +138,15 @@ only when \code{add.points = FALSE}; otherwise all observations are
 already shown as points. If \code{NULL}, \code{ggplot2} defaults are
 used, and the shape defaults to \code{point.shape}.
 (Default: \code{NULL})
+
+\item \code{step.increase}: \code{Numeric scalar}. Distance of
+significance brackets from the highest group they span, and between
+stacked brackets, as a fraction of the y axis range. (Default: \code{0.12})
+
+\item \code{hide.ns}: \code{Logical scalar} or \code{"p"} or
+\code{"p.adj"}. Whether to hide non-significant comparisons, as in
+\code{ggpubr::stat_pvalue_manual}. Hidden comparisons do not take space,
+so the shown brackets are stacked without gaps. (Default: \code{FALSE})
 }}
 
 \item{assay.type}{\code{NULL} or \code{character scalar}. Specifies the
