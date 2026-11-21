@@ -420,17 +420,19 @@ setMethod("plotForest", signature = c(x = "data.frame"),
     plots <- c(plots, forest_plot)
     # Construct CI label
     if( "CI" %in% label.by ){
+        .f2 <- function(v) formatC(v, format = "f", digits = 2L)
         x$CI <- paste0(
-            round(x[[effect.var]], 2), " (",
-            round(x[[ci.lower.var]], 2), "\u2014",
-            round(x[[ci.upper.var]], 2), ")"
+            .f2(x[[effect.var]]), " (",
+            .f2(x[[ci.lower.var]]), ", ",
+            .f2(x[[ci.upper.var]]), ")"
         )
     }
     # Construct P-Value label
     if( "P-Value" %in% label.by ){
+        p <- x[[pval.var]]
         x$`P-Value` <- paste0(
-            round(x[[pval.var]], 3),
-            ifelse(x[[pval.var]] < 0.05, "*", "")
+            ifelse(p < 0.001, "<0.001", formatC(p, format = "f", digits = 3L)),
+            ifelse(!is.na(p) & p < 0.05, "*", "")
         )
     }
     # Make label plots

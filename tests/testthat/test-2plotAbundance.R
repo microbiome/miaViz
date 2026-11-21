@@ -127,4 +127,18 @@ test_that("plotAbundance puts the 'Other' group last", {
     p <- plotAbundance(tse, assay.type = "relabundance",
         row.levels = "Other")
     expect_equal(.levels(p)[[1L]], "Other")
+    # other.name = NULL orders "Other" like the other rows
+    p <- plotAbundance(tse, assay.type = "relabundance",
+        order.row.by = "name", other.name = NULL)
+    expect_equal(.levels(p), sort(rownames(tse)))
+    # Users can name their own groups, which are shown in the given order
+    p <- plotAbundance(tse, assay.type = "relabundance",
+        order.row.by = "name", other.name = c("Proteobacteria", "Other"))
+    expect_equal(tail(.levels(p), 2L), c("Proteobacteria", "Other"))
+    # Names that are not present are ignored
+    p <- plotAbundance(tse, assay.type = "relabundance",
+        order.row.by = "name", other.name = "Unknown")
+    expect_equal(.levels(p), sort(rownames(tse)))
+    expect_error(plotAbundance(tse, assay.type = "relabundance",
+        other.name = 1), "'other.name' must be a character vector or NULL.")
 })
