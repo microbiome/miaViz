@@ -38,9 +38,15 @@ character will be plotted as colour-code bar. (Default: \code{NULL})
 value. By name (\code{"name"}) for sorting the taxonomic labels
 alphabetically, by abundance (\code{"abund"}) to sort by abundance
 values or by a reverse order of
-abundance values (\code{"revabund"}). A row named \code{"Other"}, such as
-the one created by \code{subsetBy(..., collapse = TRUE)}, is placed last
-unless \code{row.levels} is given. (Default: \code{"name"})
+abundance values (\code{"revabund"}). Rows named in \code{other.name}
+are placed last. (Default: \code{"name"})
+
+\item \code{other.name}: \code{Character vector} or \code{NULL}. Names
+of rows that are shown last in the bars and legend, whatever
+\code{order.row.by} is, such as the \code{"Other"} group created by
+\code{subsetBy(..., collapse = TRUE)}. \code{NULL} orders all rows by
+\code{order.row.by}. Ignored if \code{row.levels} is given.
+(Default: \code{"Other"})
 
 \item \code{row.levels}: \code{Character vector}. Specifies order of rows
 in a plot. Can be combined with \code{order.row.by} to control order
