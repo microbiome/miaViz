@@ -33,7 +33,7 @@ test_that("prevalence plots name the detection thresholds in their unit", {
     data(GlobalPatterns, package = "mia")
     tse <- GlobalPatterns[seq_len(100), ]
     detection <- c(1, 10, 100)
-    p <- plotPrevalence(tse, detection = detection, as.relative = TRUE)
+    p <- plotPrevalence(tse, detection = detection)
     expect_equal(p$labels$x, "Detection threshold (counts)")
     expect_equal(p$labels$y, "Number of features")
     expect_equal(plotPrevalence(tse, xlab = "x")$labels$x, "x")
@@ -43,4 +43,31 @@ test_that("prevalence plots name the detection thresholds in their unit", {
     expect_equal(levels(p$data$X), c("1", "10", "100"))
     p <- plotRowPrevalence(tse, detection = NULL)
     expect_equal(p$labels$x, "Detection threshold (relative abundance [%])")
+})
+
+test_that("as.relative and as_relative are deprecated", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns[seq_len(100), ]
+    tse <- mia::transformAssay(tse, method = "relabundance")
+    detection <- c(0.001, 0.01, 0.1)
+    # The replacement: relative abundances selected with assay.type
+    p <- plotPrevalence(tse, assay.type = "relabundance", detection = detection)
+    expect_equal(p$labels$x, "Detection threshold (relabundance)")
+    # Both names still work during deprecation and give the same result
+    expect_warning(
+        p1 <- plotPrevalence(tse, detection = detection, as.relative = TRUE),
+        "deprecated")
+    expect_warning(
+        p2 <- plotPrevalence(tse, detection = detection, as_relative = TRUE),
+        "deprecated")
+    expect_equal(p1$data, p2$data)
+    expect_equal(p1$data$Y, p$data$Y)
+    expect_warning(
+        plotRowPrevalence(tse, detection = detection, as.relative = TRUE),
+        "deprecated")
+    expect_warning(
+        plotPrevalentAbundance(tse, as.relative = TRUE), "deprecated")
+    # No warning without them
+    expect_no_warning(plotRowPrevalence(tse, detection = detection))
+    expect_no_warning(plotPrevalentAbundance(tse))
 })

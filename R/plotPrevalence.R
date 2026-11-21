@@ -12,12 +12,13 @@
 #'
 #' @param rank,... additional arguments
 #' \itemize{
-#'   \item as.relative \code{Logical scalar}. Should the relative values
-#'   be calculated? (Default: \code{FALSE})
+#'   \item as.relative,as_relative Deprecated. Calculate relative abundances
+#'   with \code{\link[mia:transformAssay]{transformAssay}} and select them
+#'   with \code{assay.type} instead (see examples).
 #'
 #'   \item ndetection \code{Integer scalar}. Determines the number of breaks
-#'   calculated detection thresholds when \code{detection=NULL}. When
-#'   \code{TRUE},  \code{as_relative} is then also regarded as \code{TRUE}.
+#'   calculated detection thresholds when \code{detection=NULL}. The
+#'   thresholds are then relative abundances between 0 and 1.
 #'   (Default: \code{20})
 #'
 #'   \item{If \code{!is.null(rank)} matching arguments are passed on to
@@ -74,8 +75,8 @@
 #' @param label Deprecated. Use \code{show.label} instead.
 #'
 #' @param detection \code{Numeric scalar}. Detection thresholds for
-#' absence/presence. Either an absolutes value compared directly to the values
-#' of \code{x} or a relative value between 0 and 1, if \code{TRUE}.
+#' absence/presence, in the unit of \code{assay.type}. For example, use values
+#' between 0 and 1 with relative abundances.
 #'
 #' @param detections Deprecated. Use \code{detection} instead.
 #'
@@ -121,6 +122,11 @@
 #'
 #' # plotting N of prevalence exceeding taxa on the Phylum level
 #' plotPrevalence(GlobalPatterns, rank = "Phylum")
+#'
+#' # detection thresholds for relative abundances
+#' plotPrevalence(
+#'     GlobalPatterns, rank = "Phylum", assay.type = "relabundance",
+#'     detection = c(0.0001, 0.001, 0.01, 0.1))
 #' plotPrevalence(GlobalPatterns, rank = "Phylum") + scale_x_log10()
 #'
 #' # plotting prevalence per taxa for different detection thresholds as heatmap
@@ -170,6 +176,7 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
                 call. = FALSE)
         }
         .check_assay_present(assay.type, x)
+        .deprecate_as_relative(...)
         #
         # Agglomerate data if specified
         if( !is.null(rank) ){
@@ -203,6 +210,8 @@ setMethod("plotPrevalence", signature = c(x = "SummarizedExperiment"),
         x, assay.type, detections, prevalences,
         BPPARAM = BiocParallel::SerialParam(), as.relative = as_relative,
         as_relative = FALSE, ...){
+    # as.relative is an alias of the deprecated as_relative
+    as_relative <- as.relative
     # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
@@ -267,6 +276,7 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
             ...){
         # input check
         .check_assay_present(assay.type, x)
+        .deprecate_as_relative(...)
 
         # Check facet.by It is FALSE by default, but user can specify it, but
         # the value must be in taxonomyRanks.
@@ -321,7 +331,10 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
 #' @importFrom DelayedArray rowMeans
 #' @importFrom SummarizedExperiment assay
 .get_prevalence_plot_point_data <- function(
-        x, assay.type, as_relative = TRUE, label = NULL, ...){
+        x, assay.type, as.relative = as_relative, as_relative = TRUE,
+        label = NULL, ...){
+    # as.relative is an alias of the deprecated as_relative
+    as_relative <- as.relative
     # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
@@ -418,6 +431,7 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
             stop("'detection' must be numeric values.", call. = FALSE)
         }
         .check_assay_present(assay.type, x)
+        .deprecate_as_relative(...)
 
         if(length(min.prevalence) != 1 || !.is_numeric_string(min.prevalence)){
             stop("'min.prevalence' must be single numeric values.",
@@ -446,6 +460,17 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
     }
 )
 
+# as.relative and as_relative are deprecated: relative abundances are
+# calculated with transformAssay() and selected with assay.type
+.deprecate_as_relative <- function(...){
+    if( any(c("as.relative", "as_relative") %in% names(list(...))) ){
+        .Deprecated(msg = paste0(
+            "'as.relative' and 'as_relative' are deprecated. Calculate ",
+            "relative abundances with transformAssay(x, method = ",
+            "\"relabundance\") and use assay.type = \"relabundance\" instead."))
+    }
+}
+
 # Title for the detection thresholds. The thresholds are in the unit of the
 # assay unless relative abundances were calculated.
 .detection_title <- function(assay.type, as_relative, unit = NULL){
@@ -472,6 +497,8 @@ setMethod("plotRowPrevalence", signature = c(x = "SummarizedExperiment"),
         ndetection = 20, ...){
     # To disable "no visible binding for global variable" message in cmdcheck
     ID <- NULL
+    # as.relative is an alias of the deprecated as_relative
+    as_relative <- as.relative
     # Input check
     if(!.is_a_bool(as_relative)){
         stop("'as_relative' must be TRUE or FALSE.", call. = FALSE)
