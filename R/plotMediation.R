@@ -223,6 +223,14 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
     # To disable "no visible binding for global variable" message in cmdcheck
     estimate <- Condition <- lower <- upper <- NULL
 
+    # Components of reduced dimensions (e.g. "PCA1", "PCA2", ..., "PCA10")
+    # are shown in their natural order instead of the order of significance
+    med <- levels(df[["mediator"]])
+    prefix <- sub("[0-9]+$", "", med)
+    if( all(grepl("[0-9]$", med)) && length(unique(prefix)) == 1L ){
+        num <- as.numeric(substring(med, nchar(prefix) + 1L))
+        df[["mediator"]] <- factor(df[["mediator"]], levels = med[order(num)])
+    }
     #
     p <- ggplot(df, aes(x = estimate, y = Condition)) +
         # Add points for estimates
