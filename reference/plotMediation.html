@@ -21,7 +21,7 @@ each mediator included in the object x."><!-- mathjax --><script src="https://cd
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.24</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
       </span>
     </div>
 
@@ -85,9 +85,13 @@ object or a <code>data.frame</code>, returned as output from
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Additional parameters for plotting.</p><ul><li><p><code>add.significance</code>: <code>Character scalar</code>. Controls how
 p-values are displayed in the heatmap. Options include <code>"symbol"</code>
-(p-values displayed as symbols), <code>"numeric"</code> (p-values displayed as
-numeric values) and <code>NULL</code> (p-values not displayed).
+(adjusted p-values displayed as stars: * &lt; 0.05, ** &lt; 0.01,
+*** &lt; 0.001), <code>"numeric"</code> (adjusted p-values displayed as numbers,
+e.g. "p=0.012" or "p&lt;0.001") and <code>NULL</code> (p-values not displayed).
 (Default: <code>"symbol"</code>)</p></li>
+<li><p><code>add.estimate</code>: <code>Logical scalar</code>. Should the effect
+estimate be printed in each tile of the heatmap? The significance symbol
+or p-value is shown after it. (Default: <code>TRUE</code>)</p></li>
 </ul></dd>
 
 
@@ -117,6 +121,12 @@ SummarizedExperiment, this should contain the output of addMediation
 in the metadata slot and the argument <code>name</code> needs to be defined.
 When the input is a data.frame, this should be returned as output from
 getMediation.</p>
+<p>In the heatmap, ACME, ADE and the total effect share one colour scale,
+centred at zero, so that colours can be compared between the columns.
+Because the ACME is often much smaller than the total effect, its tiles
+can be pale; the printed estimates show their size.
+The total effect does not depend on the mediator, so it is the same in
+every row. It is the sum of ACME and ADE and serves as their reference.</p>
     </div>
 
     <div id="ref-examples">
