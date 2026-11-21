@@ -199,6 +199,129 @@ test_that("plotBoxplot passes outlier styling to the boxplot layer", {
         "'outlier.size' must be")
 })
 
+test_that("plotBoxplot places significance brackets above all spanned groups", {
+    skip_if_not_installed("ggpubr")
+    tse <- makeTSE(nrow = 1L, ncol = 12L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["grp"]] <- rep(c("A", "B", "C"), each = 4L)
+    colData(tse)[["batch"]] <- rep(c("b1", "b2"), 6L)
+    # The middle group is the highest
+    colData(tse)[["score"]] <- c(1:4, 11:14, 1:4)
+    pvals <- data.frame(
+        group1 = c("A", "A", "B"), group2 = c("B", "C", "C"),
+        p = c(0.01, 0.5, 0.01))
+
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none")
+    pos <- attributes(p$data)[["p.value"]]
+    ac <- pos[["group1"]] == "A" & pos[["group2"]] == "C"
+    # A-C bracket must be above B, even though A and C are low
+    expect_true(pos[["y.position"]][ac] > max(tse[["score"]]))
+    # All brackets overlap in x axis, so they must not be at the same height
+    expect_equal(length(unique(pos[["y.position"]])), 3L)
+    # The widest bracket is the top one
+    expect_equal(pos[["y.position"]][ac], max(pos[["y.position"]]))
+
+    # step.increase is applied only once; ggpubr does not shift the brackets
+    # further
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none", step.increase = 0.2)
+    pos <- attributes(p$data)[["p.value"]]
+    is_bracket <- vapply(
+        p$layers, function(l) inherits(l$geom, "GeomBracket"), logical(1L))
+    br <- layer_data(p, which(is_bracket))
+    horizontal <- br[["y"]] == br[["yend"]] & br[["x"]] != br[["xend"]]
+    expect_equal(
+        sort(unique(br[["y"]][horizontal])), sort(pos[["y.position"]]))
+    # The gap between stacked brackets follows step.increase
+    y_range <- diff(range(tse[["score"]]))
+    expect_equal(diff(sort(pos[["y.position"]])), rep(0.2 * y_range, 2L))
+
+    # With facets, each facet gets its own brackets
+    pvals_f <- rbind(
+        cbind(pvals, batch = "b1"), cbind(pvals, batch = "b2"))
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals_f,
+        facet.by = "batch", point.offset = "none")
+    pos <- attributes(p$data)[["p.value"]]
+    for( b in c("b1", "b2") ){
+        temp <- pos[pos[["batch"]] == b, ]
+        ac <- temp[["group1"]] == "A" & temp[["group2"]] == "C"
+        b_max <- max(tse[["score"]][tse[["grp"]] == "B" & tse[["batch"]] == b])
+        expect_true(temp[["y.position"]][ac] > b_max)
+        expect_equal(length(unique(temp[["y.position"]])), 3L)
+    }
+})
+
+test_that("plotBoxplot adds p-values when groups are given with group.by", {
+    skip_if_not_installed("ggpubr")
+    tse <- makeTSE(nrow = 1L, ncol = 12L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["grp"]] <- rep(c("A", "B"), each = 6L)
+    colData(tse)[["sex"]] <- rep(c("m", "f"), 6L)
+    colData(tse)[["score"]] <- seq_len(12L)
+    pvals <- data.frame(
+        grp = c("A", "B"), group1 = "f", group2 = "m", p = c(0.1, 0.2))
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", group.by = "sex", p.value = pvals,
+        point.offset = "none")
+    pos <- attributes(p$data)[["p.value"]]
+    expect_true(all(pos[["xmax"]] - pos[["xmin"]] > 0))
+    expect_true(all(pos[["y.position"]] > tapply(
+        tse[["score"]], tse[["grp"]], max)[pos[["grp"]]]))
+})
+
+test_that("plotBoxplot hide.ns drops brackets before placing them", {
+    skip_if_not_installed("ggpubr")
+    tse <- makeTSE(nrow = 1L, ncol = 12L)
+    assayNames(tse) <- "counts"
+    colData(tse)[["grp"]] <- rep(c("A", "B", "C"), each = 4L)
+    colData(tse)[["score"]] <- c(1:4, 11:14, 1:4)
+    # A-C (the widest bracket) is not significant
+    pvals <- data.frame(
+        group1 = c("A", "A", "B"), group2 = c("B", "C", "C"),
+        p = c(0.01, 0.5, 0.01))
+    p_all <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none")
+    pos_all <- attributes(p_all$data)[["p.value"]]
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none", hide.ns = TRUE)
+    pos <- attributes(p$data)[["p.value"]]
+    # Only the significant comparisons are placed and drawn
+    expect_equal(nrow(pos), 2L)
+    expect_false(any(pos[["group1"]] == "A" & pos[["group2"]] == "C"))
+    # The hidden bracket leaves no gap: the shown brackets are not higher
+    # than the lowest levels used when all brackets are shown
+    expect_true(
+        max(pos[["y.position"]]) <= sort(pos_all[["y.position"]])[[2L]])
+    # Character hide.ns filters on the given column
+    pvals[["p.adj"]] <- c(0.01, 0.5, 0.2)
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none", label = "p.adj", hide.ns = "p.adj")
+    expect_equal(nrow(attributes(p$data)[["p.value"]]), 1L)
+    # Nothing significant: the plot is drawn without brackets
+    pvals[["p"]] <- 0.5
+    pvals[["p.adj"]] <- NULL
+    p <- plotBoxplot(
+        tse, col.var = "score", x = "grp", p.value = pvals,
+        point.offset = "none", hide.ns = TRUE)
+    expect_equal(nrow(attributes(p$data)[["p.value"]]), 0L)
+    expect_false(any(vapply(
+        p$layers, function(l) inherits(l$geom, c("GeomBracket", "GeomText")),
+        logical(1L))))
+    expect_no_warning(ggplot2::ggplot_build(p))
+    # Invalid values
+    expect_error(
+        plotBoxplot(tse, col.var = "score", x = "grp", p.value = pvals,
+            hide.ns = "q"),
+        "hide.ns")
+})
+
 test_that("plotBoxplot facets follow the order of features (#209)", {
     tse <- makeTSE(nrow = 4, ncol = 10)
     rownames(tse) <- c("d", "b", "c", "a")
