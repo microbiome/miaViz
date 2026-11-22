@@ -265,6 +265,7 @@ setMethod("plotMediation", signature = c(x = "data.frame"),
         geom_vline(xintercept = 0, linetype = "dashed", colour = "red") +
         facet_wrap(. ~ mediator) +
         # Modify x and y axis titles
-        labs(x = "Effect", y = "")
+        labs(x = "Effect", y = "") +
+        theme_bw()
     return(p)
 }

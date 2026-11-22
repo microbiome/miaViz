@@ -133,3 +133,26 @@ test_that("plotRDA scales the vectors with vec.scale", {
     expect_equal(two$xend, 2 * raw$xend)
     expect_error(plotRDA(tse, "RDA", vec.scale = -1), "vec.scale")
 })
+
+test_that("plotRDA labels avoid samples and arrows and are all kept", {
+    data("enterotype", package = "mia")
+    tse <- mia::transformAssay(enterotype, method = "relabundance")
+    tse <- mia::addRDA(
+        tse, assay.type = "relabundance",
+        formula = assay ~ ClinicalStatus + Age, distance = "bray",
+        na.action = na.exclude)
+    p <- plotRDA(tse, "RDA")
+    lab <- ggplot2::layer_data(p, 3L)
+    n_vec <- nrow(ggplot2::layer_data(p, 2L))
+    n_pts <- nrow(ggplot2::layer_data(p, 1L))
+    # One labelled row per vector, then empty labels for the samples and for
+    # 9 points along each arrow
+    expect_equal(nrow(lab), n_vec + n_pts + 9L * n_vec)
+    expect_true(all(lab$label[seq_len(n_vec)] != "''"))
+    expect_true(all(lab$label[-seq_len(n_vec)] == "''"))
+    # No label is dropped because of overlaps
+    expect_true(is.infinite(p$layers[[3L]]$geom_params$max.overlaps))
+    # Without repelling, only the vector labels are drawn
+    p <- plotRDA(tse, "RDA", repel.labels = FALSE)
+    expect_equal(nrow(ggplot2::layer_data(p, 3L)), n_vec)
+})

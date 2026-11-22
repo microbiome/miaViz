@@ -200,8 +200,9 @@ correlation). Nodes are shaped by data layer.
 In \code{plotJointRPCAExplainedVariance()}, the variance of feature
 \eqn{i} on component \eqn{j} is \eqn{s_j^2 V_{ij}^2}. For a layer, the
 values are summed over its features. Each row (layer or feature) is scaled
-to sum to one. The values describe the low-rank Joint-RPCA model, not the
-proportion of variance explained in the observed data. With
+to sum to 100\%, and the values are shown in percent. The values describe
+the low-rank Joint-RPCA model, not the proportion of variance explained in
+the observed data. With
 \code{add.total = TRUE}, a barplot of the total variance of each layer is
 added next to the heatmap. The total of a
 layer is its share of the total variance of the Joint-RPCA model,

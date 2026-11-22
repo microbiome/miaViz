@@ -339,6 +339,9 @@ test_that("explained variance by layer shows shadowed percentages", {
     expect_true(any(vapply(
         p$layers, function(l) inherits(l$geom, "GeomShadowText"),
         logical(1))))
+    # The legend is in percent, as the cell labels
+    expect_true("Explained variance (%)" %in% colnames(p$data))
+    expect_true(max(p$data[["Explained variance (%)"]]) > 1)
 })
 
 test_that("Joint-RPCA feature plots return ggplot for SCE and MAE", {

@@ -503,6 +503,29 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
     return(data)
 }
 
+# Add the sample points and points along the arrows to the label data with
+# empty labels. ggrepel moves labels away from all points of its layer, also
+# from those without a label.
+#' @importFrom ggplot2 layer_data
+.add_rda_label_points <- function(plot, data, xvar, yvar, parse.labels){
+    pts <- layer_data(plot, 1L)
+    pts <- pts[!is.na(pts[["x"]]) & !is.na(pts[["y"]]), c("x", "y")]
+    # Points along the arrows, so that the labels do not cross them either
+    pos <- seq(0.1, 0.9, by = 0.1)
+    arrows <- data.frame(
+        x = as.vector(outer(pos, data[[xvar]])),
+        y = as.vector(outer(pos, data[[yvar]])))
+    pts <- rbind(pts, arrows)
+    add <- data[rep(1L, nrow(pts)), , drop = FALSE]
+    add[[xvar]] <- pts[["x"]]
+    add[[yvar]] <- pts[["y"]]
+    # An empty label must still be valid when the labels are parsed
+    add[["vector_label"]] <- if( parse.labels ) "''" else ""
+    rownames(add) <- NULL
+    rownames(data) <- NULL
+    return(rbind(data, add))
+}
+
 # This function adds vector and text layer to the plot.
 #' @importFrom ggrepel geom_text_repel geom_label_repel
 .rda_plotter_vector <- function(
@@ -512,7 +535,7 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
         vec.text = TRUE, repel.labels = TRUE, parse.labels = TRUE,
         add.significance = TRUE, vec.linetype = 1, min.segment.length = 5,
         position = NULL, nudge_x = NULL, nudge_y = NULL, direction = "both",
-        max.overlaps = 10, vec.scale = TRUE, ...
+        max.overlaps = Inf, vec.scale = TRUE, ...
         ){
     #
     if ( !(is.numeric(vec.size) && vec.size > 0) ) {
@@ -570,7 +593,11 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
                 arrow = arrow(length = unit(arrow.size, "cm")),
                 color = vec.color, linetype = vec.linetype,
                 linewidth = vec.size)
-        # Add vector labels (text or label)
+        # Add vector labels (text or label). Repelled labels avoid the sample
+        # points as well as each other.
+        if( repel.labels ){
+            data <- .add_rda_label_points(plot, data, xvar, yvar, parse.labels)
+        }
         # Make list of arguments for geom_text/geom_label
         label_args <- list(
             data = data,
@@ -578,7 +605,7 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
             label = data[["vector_label"]], parse = parse.labels,
             color = label.color, size = label.size, stat = "identity",
             nudge_x = nudge_x, nudge_y = nudge_y, show.legend = NA,
-            na.rm = FALSE, inherit.aes = TRUE
+            na.rm = FALSE, inherit.aes = FALSE
         )
         # Based on desired outcome, get correct argument set
         if( repel.labels ){
@@ -586,7 +613,7 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
                 label_args, min.segment.length = min.segment.length,
                 box.padding = 0.25, point.padding = 1e-06, force = 1,
                 force_pull = 1,
-                max.time = 0.5, max.iter = 10000, max.overlaps = max.overlaps,
+                max.time = 1, max.iter = 10000, max.overlaps = max.overlaps,
                 direction = direction, seed = NA, verbose = FALSE
             )
         }

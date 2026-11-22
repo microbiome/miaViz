@@ -307,8 +307,8 @@ setMethod("plotPrevalentAbundance", signature = c(x = "SummarizedExperiment"),
         size_by <- vis_out$size_by
         shape_by <- vis_out$shape_by
         facet_by <- vis_out$facet_by
-        ylab <- paste0(
-            "Prevalence (", ifelse(is.null(rank), "Features", rank), ") [%]")
+        ylab <- if( is.null(rank) ) "Prevalence [%]" else
+            paste0("Prevalence (", rank, ") [%]")
         # Plot the data
         plot <- .prevalence_plotter(plot_data,
                             layout = "point",

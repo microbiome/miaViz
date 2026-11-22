@@ -267,8 +267,9 @@ setMethod("plotScree", signature = c(x = "ANY"),
     # Adjust the x-axis to display a subset of evenly spaced values for
     # improved readability
     if( is.numeric(df[["x"]]) ){
-        p <- p +
-            scale_x_continuous(breaks = pretty_breaks())
+        n <- length(unique(df[["x"]]))
+        breaks <- if( n <= 20L ) sort(unique(df[["x"]])) else pretty_breaks()
+        p <- p + scale_x_continuous(breaks = breaks)
     }
     # Adjust theme and remove legend
     p <- p + theme_classic() +
