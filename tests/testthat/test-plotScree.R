@@ -29,6 +29,9 @@ test_that("plot Eigenvalues", {
     expect_equal(df1, df2)
     
     # Test with different options
+    # Every component is labelled when there are few of them
+    expect_equal(
+        ggplot2::layer_scales(p2)$x$get_breaks(), seq_len(10L))
     p <- plotScree(tse, 1, eig.name = "test", add.cumulative = TRUE, n = 10000)
     expect_s3_class(p, "ggplot")
 })

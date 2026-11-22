@@ -52,8 +52,9 @@
 #' In \code{plotJointRPCAExplainedVariance()}, the variance of feature
 #' \eqn{i} on component \eqn{j} is \eqn{s_j^2 V_{ij}^2}. For a layer, the
 #' values are summed over its features. Each row (layer or feature) is scaled
-#' to sum to one. The values describe the low-rank Joint-RPCA model, not the
-#' proportion of variance explained in the observed data. With
+#' to sum to 100%, and the values are shown in percent. The values describe
+#' the low-rank Joint-RPCA model, not the proportion of variance explained in
+#' the observed data. With
 #' \code{add.total = TRUE}, a barplot of the total variance of each layer is
 #' added next to the heatmap. The total of a
 #' layer is its share of the total variance of the Joint-RPCA model,
@@ -808,7 +809,9 @@ setMethod("plotJointRPCALoadings",
 
 # Explained variance heatmap
 .plot_jrpca_explained_variance <- function(df, by){
-    name <- "Explained variance"
+    # In percent, so that the legend matches the cell labels
+    name <- "Explained variance (%)"
+    df[["value"]] <- 100 * df[["value"]]
     colnames(df)[colnames(df) == "value"] <- name
     # scale = FALSE gives a viridis scale
     p <- .plot_heatmap(df, fill = name, scale = FALSE)
@@ -817,7 +820,7 @@ setMethod("plotJointRPCALoadings",
         # is readable on both dark and light cells.
         .require_package("shadowtext")
         p <- p + shadowtext::geom_shadowtext(
-            aes(label = sprintf("%.0f%%", 100 * .data[[name]])))
+            aes(label = sprintf("%.0f%%", .data[[name]])))
         # Only a few components, so their labels fit horizontally
         p <- p + theme(axis.text.x = element_text(angle = 0, hjust = 0.5))
     } else{

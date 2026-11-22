@@ -47,7 +47,7 @@ NULL
 
 #' @rdname plotDMN
 #' @importFrom DirichletMultinomial mixture
-#' @importFrom ggplot2 ggplot aes geom_point geom_line theme_bw labs
+#' @importFrom ggplot2 ggplot aes geom_point geom_line theme_classic labs
 #' @export
 setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
     function(x, name = "DMN", type = c("laplace","AIC","BIC")){
@@ -69,7 +69,7 @@ setMethod("plotDMNFit", signature = c(x = "SummarizedExperiment"),
         ggplot(data.frame(k = k, fit = fit), aes(x = k, y = fit)) +
             geom_point() +
             geom_line() +
-            theme_bw() +
+            theme_classic() +
             labs(
                 x = "Number of Dirichlet Components",
                 y = paste0("Model Fit (",type,")"))
