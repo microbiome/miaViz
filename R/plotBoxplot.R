@@ -983,7 +983,8 @@ setMethod("plotBoxplot", signature = c(object = "SummarizedExperiment"),
             paste0(supported_methods, collapse = "', '"), "'", call. = FALSE)
     }
     if( !.is_a_string(p.adjust.method) ){
-        stop("'p.adjust.method' must be TRUE or FALSE.", call. = FALSE)
+        stop("'p.adjust.method' must be a single character value, e.g. ",
+            "\"fdr\" or \"none\".", call. = FALSE)
     }
     if( !.is_a_bool(mark.significance) ){
         stop("'mark.significance' must be TRUE or FALSE.", call. = FALSE)

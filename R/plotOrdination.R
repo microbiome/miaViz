@@ -134,7 +134,7 @@
 #'   (Default: \code{19})
 #'
 #'   \item \code{point.alpha}: \code{numeric scalar}. Transparency of points.
-#'   Must be between 0 and 1. (Default: \code{0.4})
+#'   Must be between 0 and 1. (Default: \code{0.7})
 #'
 #'   \item \code{ellipse.alpha}: \code{numeric scalar}. Transparency of ellipse
 #'   fills. Must be between 0 and 1. (Default: \code{0.2})
@@ -588,7 +588,7 @@ setMethod("plotOrdination", signature = c(x = "SingleCellExperiment"),
 
 # Add points for ordination plot
 .add_ordination_points <- function(
-        p, df, point.shape = 19, point.alpha = 0.4, ...){
+        p, df, point.shape = 19, point.alpha = 0.7, ...){
     p <-  .add_points_layer(
         p, df,
         x = attributes(df)[["x"]],

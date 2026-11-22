@@ -118,7 +118,7 @@ available), and \code{"free"} leaves the aspect ratio unset.
 (Default: \code{19})
 
 \item \code{point.alpha}: \code{numeric scalar}. Transparency of points.
-Must be between 0 and 1. (Default: \code{0.4})
+Must be between 0 and 1. (Default: \code{0.7})
 
 \item \code{ellipse.alpha}: \code{numeric scalar}. Transparency of ellipse
 fills. Must be between 0 and 1. (Default: \code{0.2})

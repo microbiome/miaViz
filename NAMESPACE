@@ -211,6 +211,7 @@ importFrom(ggtree,
   groupOTU,
   theme_tree
 )
+importFrom(grDevices,palette.colors)
 importFrom(grid,
   arrow,
   unit
