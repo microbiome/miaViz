@@ -82,8 +82,11 @@
 #' data("enterotype", package = "mia")
 #' tse <- enterotype
 #'
-#' # Run  PCA and store results into TreeSE
-#' tse <- transformAssay(tse, method = "clr", pseudocount = TRUE)
+#' # Run  PCA and store results into TreeSE. The counts are relative
+#' # abundances, so half of the smallest positive value is the pseudocount.
+#' mat <- assay(tse, "counts")
+#' tse <- transformAssay(
+#'     tse, method = "clr", pseudocount = min(mat[mat > 0]) / 2)
 #' tse <- runPCA(tse, assay.type = "clr")
 #'
 #' # Plot scree plot

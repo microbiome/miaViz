@@ -85,7 +85,7 @@
 #' data(GlobalPatterns)
 #' tse <- agglomerateByRank(GlobalPatterns, rank = "Phylum")
 #' tse <- subsetBy(tse, rows = rowMeans(counts > 0) > 0.5, collapse = TRUE)
-#' tse <- transformAssay(tse, method = "clr", pseudocount = TRUE)
+#' tse <- transformAssay(tse, method = "clr", pseudocount = 0.5)
 #'
 #' # Order features with NeatMap-like angular ordering
 #' row_order <- getHeatmapOrder(tse, assay.type = "clr")

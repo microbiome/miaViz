@@ -59,7 +59,7 @@
 #' plotHistogram(tse, assay.type = "counts")
 #'
 #' # Apply transformation
-#' tse <- transformAssay(tse, method = "clr", pseudocount = TRUE)
+#' tse <- transformAssay(tse, method = "clr", pseudocount = 0.5)
 #' # And plot specified rows
 #' plotHistogram(
 #'     tse,
