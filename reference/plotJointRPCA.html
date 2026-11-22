@@ -34,7 +34,7 @@ each component separately for each data layer.
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">miaViz</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.25</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">1.21.26</span>
       </span>
     </div>
 
@@ -280,8 +280,9 @@ correlation). Nodes are shaped by data layer.</p>
 <p>In <code>plotJointRPCAExplainedVariance()</code>, the variance of feature
 \(i\) on component \(j\) is \(s_j^2 V_{ij}^2\). For a layer, the
 values are summed over its features. Each row (layer or feature) is scaled
-to sum to one. The values describe the low-rank Joint-RPCA model, not the
-proportion of variance explained in the observed data. With
+to sum to 100%, and the values are shown in percent. The values describe
+the low-rank Joint-RPCA model, not the proportion of variance explained in
+the observed data. With
 <code>add.total = TRUE</code>, a barplot of the total variance of each layer is
 added next to the heatmap. The total of a
 layer is its share of the total variance of the Joint-RPCA model,
