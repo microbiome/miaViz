@@ -84,7 +84,11 @@ SIGNIFICANT USER-VISIBLE CHANGES
   length, and a number sets the multiplier
 + Colour-blind-friendly colours by default: discrete variables are coloured
   with the Okabe-Ito palette for up to 9 groups (black is used only for the
-  9th) and with viridis for more, instead of the Tableau palette
+  9th), with the Paired palette for 10 to 12 groups and with viridis for
+  more, instead of the Tableau palette
++ plotOrdination and the functions built on it (e.g. plotJointRPCA) draw
+  points with point.alpha = 0.7 instead of 0.4, so that light colours stay
+  visible
 + A palette set with options(ggplot2.discrete.colour = ...) or
   options(ggplot2.discrete.fill = ...) is used in all plots, so one palette
   can be chosen for every figure, e.g. the earlier Tableau palette
@@ -158,6 +162,8 @@ BUG FIXES
 
 MINOR NOTES
 
++ plotBoxplot: the error message for a wrong p.adjust.method asks for a
+  method name (it said 'must be TRUE or FALSE')
 + Vignette: overview of all functions grouped by use case, and new examples
   of heatmaps, ordination, group comparisons and forest plots
 + Requires mia (>= 1.21.31), whose subsetBy() is used in examples and tests

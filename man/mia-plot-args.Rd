@@ -17,8 +17,9 @@ As in \code{ggplot2}, the option can be a character vector of colours or a
 list of them. In a list, the first palette with enough colours is used, so
 the palettes can be given in order of preference.
 Otherwise, the colour-blind-friendly Okabe-Ito palette is used for up to
-9 groups and viridis for more. Black, the first colour of Okabe-Ito, is
-moved last so that it is only used when there are 9 groups. Continuous variables are
+9 groups, the "Paired" palette of ColorBrewer for 10 to 12 groups, and
+viridis for more. Black, the first colour of Okabe-Ito, is moved last so
+that it is only used when there are 9 groups. Continuous variables are
 coloured with viridis, which is also colour-blind friendly.
 
 For example, the Tableau palette, which miaViz used by default before

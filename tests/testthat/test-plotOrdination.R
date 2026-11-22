@@ -299,3 +299,11 @@ test_that("aspect.ratio = 'eigen' scales the panel by explained variance", {
         "aspect.ratio")
     expect_null(p$theme$aspect.ratio)
 })
+
+test_that("plotOrdination draws points with alpha 0.7 by default", {
+    data(GlobalPatterns, package = "mia")
+    tse <- GlobalPatterns[1:100, ]
+    tse <- mia::addMDS(tse, assay.type = "counts", method = "bray")
+    p <- plotOrdination(tse, "MDS", colour.by = "SampleType")
+    expect_true(all(ggplot2::layer_data(p, 1L)$alpha == 0.7))
+})

@@ -12,8 +12,9 @@
 #' list of them. In a list, the first palette with enough colours is used, so
 #' the palettes can be given in order of preference.
 #' Otherwise, the colour-blind-friendly Okabe-Ito palette is used for up to
-#' 9 groups and viridis for more. Black, the first colour of Okabe-Ito, is
-#' moved last so that it is only used when there are 9 groups. Continuous variables are
+#' 9 groups, the "Paired" palette of ColorBrewer for 10 to 12 groups, and
+#' viridis for more. Black, the first colour of Okabe-Ito, is moved last so
+#' that it is only used when there are 9 groups. Continuous variables are
 #' coloured with viridis, which is also colour-blind friendly.
 #'
 #' For example, the Tableau palette, which miaViz used by default before
@@ -207,6 +208,7 @@ NULL
 # Adjusted function originally developed for scater package by Aaron Lun
 #' @importFrom viridis scale_fill_viridis scale_colour_viridis
 #' @importFrom ggplot2 scale_fill_manual scale_colour_manual labs
+#' @importFrom grDevices palette.colors
 .resolve_plot_colours <- function(
         plot_out, colour_by, colour_by_name,
         fill = FALSE,
@@ -262,6 +264,15 @@ NULL
         else if (nlevs_colour_by <= length(.okabe_ito)) {
             plot_out <- plot_out + SCALEFUN(
                 values = .okabe_ito,
+                na.translate = na.translate,
+                na.value = na.value)
+        }
+        # For 10-12 groups, neighbouring viridis colours are hard to tell
+        # apart, e.g. in stacked barplots. The Paired palette has 12
+        # distinct colours.
+        else if (nlevs_colour_by <= 12L) {
+            plot_out <- plot_out + SCALEFUN(
+                values = unname(palette.colors(palette = "Paired")),
                 na.translate = na.translate,
                 na.value = na.value)
         }

@@ -80,11 +80,19 @@ test_that("default palette is Okabe-Ito with black for 9 groups", {
     # 9 groups: black is added
     p <- plotAbundance(tse[mia::getTop(tse, 9), ], assay.type = "relabundance")
     expect_setequal(fills(p), miaViz:::.okabe_ito)
-    # More than 9 groups: viridis
+    # 10-12 groups: Paired
+    paired <- unname(palette.colors(palette = "Paired"))
     p <- plotAbundance(
         tse[mia::getTop(tse, 10), ], assay.type = "relabundance")
-    expect_length(fills(p), 10)
-    expect_false(any(fills(p) %in% miaViz:::.okabe_ito))
+    expect_setequal(fills(p), paired[1:10])
+    p <- plotAbundance(
+        tse[mia::getTop(tse, 12), ], assay.type = "relabundance")
+    expect_setequal(fills(p), paired)
+    # More than 12 groups: viridis
+    p <- plotAbundance(
+        tse[mia::getTop(tse, 13), ], assay.type = "relabundance")
+    expect_length(fills(p), 13)
+    expect_false(any(fills(p) %in% c(miaViz:::.okabe_ito, paired)))
 })
 
 test_that("legend titles of coloured variables can be changed with labs()", {
