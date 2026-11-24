@@ -149,6 +149,8 @@ BUG FIXES
   works
 + plotRDA, plotCCA: samples left out of the ordination (e.g. with
   na.action = na.exclude) no longer add an empty "NA" legend entry
++ plotRDA, plotCCA: repl.underscore is applied also to the vector labels of
+  continuous variables (earlier only to categorical ones)
 + plotAbundance: rows named in the new other.name argument (default
   "Other", e.g. the group from subsetBy(collapse = TRUE)) are shown last in
   the bars and legend instead of among the features; other.name = NULL

@@ -427,8 +427,8 @@ setMethod("plotRDA", signature = c(x = "SingleCellExperiment"),
         vector_data[!num_var, "levels"]
     )
     # Replace underscores with space
-    vector_data[!num_var, "vector_label"] <- gsub(
-        "_", repl.underscore, vector_data[!num_var, "vector_label"])
+    vector_data[["vector_label"]] <- gsub(
+        "_", repl.underscore, vector_data[["vector_label"]])
     return(vector_data)
 }
 

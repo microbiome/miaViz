@@ -156,3 +156,26 @@ test_that("plotRDA labels avoid samples and arrows and are all kept", {
     p <- plotRDA(tse, "RDA", repel.labels = FALSE)
     expect_equal(nrow(ggplot2::layer_data(p, 3L)), n_vec)
 })
+
+test_that("plotRDA replaces underscores in the labels of all vectors", {
+    data("enterotype", package = "mia")
+    tse <- mia::transformAssay(enterotype, method = "relabundance")
+    tse$Host_sex <- tse$Gender
+    tse$Host_age <- tse$Age
+    tse <- mia::addRDA(
+        tse, assay.type = "relabundance",
+        formula = assay ~ Host_sex + Host_age, distance = "bray",
+        na.action = na.exclude, test.signif = FALSE)
+    # The labels of the vectors are the first rows of the label layer. Both
+    # the categorical and the continuous variable are tidied.
+    p <- plotRDA(tse, "RDA", add.significance = FALSE, parse.labels = FALSE)
+    expect_identical(
+        ggplot2::layer_data(p, 3L)$label[1:2],
+        c("Host sex \U2014 M", "Host age"))
+    p <- plotRDA(
+        tse, "RDA", add.significance = FALSE, parse.labels = FALSE,
+        repl.underscore = ".")
+    expect_identical(
+        ggplot2::layer_data(p, 3L)$label[1:2],
+        c("Host.sex \U2014 M", "Host.age"))
+})
